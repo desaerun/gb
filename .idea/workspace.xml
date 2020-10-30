@@ -457,17 +457,21 @@
     <option name="version" value="3" />
   </component>
   <component name="WindowStateProjectService">
-    <state x="-1180" y="611" key="FileChooserDialogImpl" timestamp="1604084312110">
+    <state x="-1180" y="611" key="FileChooserDialogImpl" timestamp="1604084782567">
       <screen x="-1920" y="350" width="1920" height="1040" />
     </state>
-    <state x="-1180" y="611" key="FileChooserDialogImpl/0.0.2560.1400/2560.350.1920.1040/-1920.350.1920.1040@-1920.350.1920.1040" timestamp="1604084312110" />
-    <state x="-1101" y="767" key="Github.ShareDialog" timestamp="1604084588956">
+    <state x="-1180" y="611" key="FileChooserDialogImpl/0.0.2560.1400/2560.350.1920.1040/-1920.350.1920.1040@-1920.350.1920.1040" timestamp="1604084782567" />
+    <state x="-1101" y="767" key="Github.ShareDialog" timestamp="1604084929590">
       <screen x="-1920" y="350" width="1920" height="1040" />
     </state>
-    <state x="-1101" y="767" key="Github.ShareDialog/0.0.2560.1400/2560.350.1920.1040/-1920.350.1920.1040@-1920.350.1920.1040" timestamp="1604084588956" />
-    <state x="-1297" y="575" width="672" height="678" key="search.everywhere.popup" timestamp="1604081207172">
+    <state x="-1101" y="767" key="Github.ShareDialog/0.0.2560.1400/2560.350.1920.1040/-1920.350.1920.1040@-1920.350.1920.1040" timestamp="1604084929590" />
+    <state x="-1177" y="761" key="git4idea.remote.GitConfigureRemotesDialog" timestamp="1604084977073">
       <screen x="-1920" y="350" width="1920" height="1040" />
     </state>
-    <state x="-1297" y="575" width="672" height="678" key="search.everywhere.popup/0.0.2560.1400/2560.350.1920.1040/-1920.350.1920.1040@-1920.350.1920.1040" timestamp="1604081207172" />
+    <state x="-1177" y="761" key="git4idea.remote.GitConfigureRemotesDialog/0.0.2560.1400/2560.350.1920.1040/-1920.350.1920.1040@-1920.350.1920.1040" timestamp="1604084977073" />
+    <state x="-1297" y="575" width="672" height="678" key="search.everywhere.popup" timestamp="1604084716917">
+      <screen x="-1920" y="350" width="1920" height="1040" />
+    </state>
+    <state x="-1297" y="575" width="672" height="678" key="search.everywhere.popup/0.0.2560.1400/2560.350.1920.1040/-1920.350.1920.1040@-1920.350.1920.1040" timestamp="1604084716917" />
   </component>
 </project>
