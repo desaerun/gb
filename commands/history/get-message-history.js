@@ -2,7 +2,21 @@ module.exports = {
     name: 'get-message-history',
     description: "Retrieves message history for the current channel",
     execute: async function (client, message, args) {
-        let messages = await message.channel.messages.fetch({ limit: 1000 });
+        let messageCount = 0;
+
+        let retrieveMessage = async () => {
+            return await message.channel.messages.fetch({limit: 100});
+        };
+
+        let messages = retrieveMessage();
+
+        while (messages.size === 100) {
+            messageCount += messages.size;
+            messages = retrieveMessage();
+        }
+
+        messageCount += messages.size;
+
         message.channel.send(`There have been ${messages.size} messages sent in this channel.`);
     }
 }

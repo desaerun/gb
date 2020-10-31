@@ -25,7 +25,7 @@
     </select>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="b53cdbac-cb68-43f5-a30a-2f52927e0e37" name="Default Changelist" comment="moving get-message-history.js into history commands dir">
+    <list default="true" id="b53cdbac-cb68-43f5-a30a-2f52927e0e37" name="Default Changelist" comment="set higher message size limit">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/commands/history/get-message-history.js" beforeDir="false" afterPath="$PROJECT_DIR$/commands/history/get-message-history.js" afterDir="false" />
     </list>
@@ -159,7 +159,21 @@
       <option name="project" value="LOCAL" />
       <updated>1604131931619</updated>
     </task>
-    <option name="localTasksCounter" value="11" />
+    <task id="LOCAL-00011" summary="testing message retrieval for entirety of channel">
+      <created>1604132456749</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1604132456749</updated>
+    </task>
+    <task id="LOCAL-00012" summary="set higher message size limit">
+      <created>1604132578391</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1604132578391</updated>
+    </task>
+    <option name="localTasksCounter" value="13" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -199,7 +213,9 @@
     <MESSAGE value="yay we did it" />
     <MESSAGE value="update birk id &amp; nickname, testing pinned message fetching" />
     <MESSAGE value="moving get-message-history.js into history commands dir" />
-    <option name="LAST_COMMIT_MESSAGE" value="moving get-message-history.js into history commands dir" />
+    <MESSAGE value="testing message retrieval for entirety of channel" />
+    <MESSAGE value="set higher message size limit" />
+    <option name="LAST_COMMIT_MESSAGE" value="set higher message size limit" />
   </component>
   <component name="WindowStateProjectService">
     <state x="992" y="478" key="#Node.js_and_NPM" timestamp="1604132195874">
@@ -218,10 +234,10 @@
       <screen x="-1920" y="350" width="1920" height="1040" />
     </state>
     <state x="-1101" y="767" key="Github.ShareDialog/0.0.2560.1400/2560.350.1920.1040/-1920.350.1920.1040@-1920.350.1920.1040" timestamp="1604084929590" />
-    <state x="736" y="339" key="Vcs.Push.Dialog.v2" timestamp="1604131933779">
+    <state x="736" y="339" key="Vcs.Push.Dialog.v2" timestamp="1604132581186">
       <screen x="0" y="0" width="2560" height="1400" />
     </state>
-    <state x="736" y="339" key="Vcs.Push.Dialog.v2/0.0.2560.1400/2560.0.2560.1440@0.0.2560.1400" timestamp="1604131933779" />
+    <state x="736" y="339" key="Vcs.Push.Dialog.v2/0.0.2560.1400/2560.0.2560.1440@0.0.2560.1400" timestamp="1604132581186" />
     <state x="-1368" y="602" key="Vcs.Push.Dialog.v2/0.0.2560.1400/2560.350.1920.1040/-1920.350.1920.1040@-1920.350.1920.1040" timestamp="1604129332944" />
     <state x="-1253" y="426" width="585" height="888" key="find.popup" timestamp="1604104998580">
       <screen x="-1920" y="350" width="1920" height="1040" />
