@@ -2,10 +2,10 @@
   "family": "",
   "taskRoleArn": "",
   "executionRoleArn": "",
-  "networkMode": "awsvpc",
+  "networkMode": "bridge",
   "containerDefinitions": [
     {
-      "name": "default",
+      "name": "",
       "image": "",
       "repositoryCredentials": {
         "credentialsParameter": ""
@@ -96,7 +96,7 @@
       "dependsOn": [
         {
           "containerName": "",
-          "condition": "START"
+          "condition": "COMPLETE"
         }
       ],
       "startTimeout": 0,
@@ -129,13 +129,13 @@
       },
       "ulimits": [
         {
-          "name": "stack",
+          "name": "nice",
           "softLimit": 0,
           "hardLimit": 0
         }
       ],
       "logConfiguration": {
-        "logDriver": "syslog",
+        "logDriver": "gelf",
         "options": {
           "KeyName": ""
         },
@@ -211,7 +211,7 @@
     }
   ],
   "requiresCompatibilities": [
-    "EC2"
+    "FARGATE"
   ],
   "cpu": "",
   "memory": "",
@@ -221,8 +221,8 @@
       "value": ""
     }
   ],
-  "pidMode": "host",
-  "ipcMode": "host",
+  "pidMode": "task",
+  "ipcMode": "task",
   "proxyConfiguration": {
     "type": "APPMESH",
     "containerName": "",
