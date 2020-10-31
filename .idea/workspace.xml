@@ -25,10 +25,9 @@
     </select>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="b53cdbac-cb68-43f5-a30a-2f52927e0e37" name="Default Changelist" comment="yay we did it">
-      <change afterPath="$PROJECT_DIR$/commands/general/get-message-history.js" afterDir="false" />
+    <list default="true" id="b53cdbac-cb68-43f5-a30a-2f52927e0e37" name="Default Changelist" comment="moving get-message-history.js into history commands dir">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/commands/general/is-birk-online.js" beforeDir="false" afterPath="$PROJECT_DIR$/commands/general/is-birk-online.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/commands/history/get-message-history.js" beforeDir="false" afterPath="$PROJECT_DIR$/commands/history/get-message-history.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -67,14 +66,15 @@
     <property name="vue.rearranger.settings.migration" value="true" />
   </component>
   <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\alexj\WebstormProjects\discordhistorybot\commands" />
+    </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\Charl\WebstormProjects\discordhistorybot\commands\history" />
       <recent name="C:\Users\alexj\WebstormProjects\discordhistorybot\commands\discord_control" />
       <recent name="C:\Users\alexj\WebstormProjects\discordhistorybot\commands\general" />
       <recent name="C:\Users\alexj\WebstormProjects\discordhistorybot\commands\youtube" />
       <recent name="C:\Users\alexj\WebstormProjects\discordhistorybot\config" />
-    </key>
-    <key name="CopyFile.RECENT_KEYS">
-      <recent name="C:\Users\alexj\WebstormProjects\discordhistorybot\commands" />
     </key>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
@@ -145,7 +145,21 @@
       <option name="project" value="LOCAL" />
       <updated>1604131043238</updated>
     </task>
-    <option name="localTasksCounter" value="9" />
+    <task id="LOCAL-00009" summary="update birk id &amp; nickname, testing pinned message fetching">
+      <created>1604131772626</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1604131772626</updated>
+    </task>
+    <task id="LOCAL-00010" summary="moving get-message-history.js into history commands dir">
+      <created>1604131931619</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1604131931619</updated>
+    </task>
+    <option name="localTasksCounter" value="11" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -183,9 +197,19 @@
     <MESSAGE value="learning async slowly" />
     <MESSAGE value="fifteenth time's the charm" />
     <MESSAGE value="yay we did it" />
-    <option name="LAST_COMMIT_MESSAGE" value="yay we did it" />
+    <MESSAGE value="update birk id &amp; nickname, testing pinned message fetching" />
+    <MESSAGE value="moving get-message-history.js into history commands dir" />
+    <option name="LAST_COMMIT_MESSAGE" value="moving get-message-history.js into history commands dir" />
   </component>
   <component name="WindowStateProjectService">
+    <state x="992" y="478" key="#Node.js_and_NPM" timestamp="1604132195874">
+      <screen x="0" y="0" width="2560" height="1400" />
+    </state>
+    <state x="992" y="478" key="#Node.js_and_NPM/0.0.2560.1400/2560.0.2560.1440@0.0.2560.1400" timestamp="1604132195874" />
+    <state x="92" y="92" width="2376" height="1216" key="DiffContextDialog" timestamp="1604132151128">
+      <screen x="0" y="0" width="2560" height="1400" />
+    </state>
+    <state x="92" y="92" width="2376" height="1216" key="DiffContextDialog/0.0.2560.1400/2560.0.2560.1440@2560.0.2560.1440" timestamp="1604132151128" />
     <state x="-1180" y="611" key="FileChooserDialogImpl" timestamp="1604084782567">
       <screen x="-1920" y="350" width="1920" height="1040" />
     </state>
@@ -194,10 +218,10 @@
       <screen x="-1920" y="350" width="1920" height="1040" />
     </state>
     <state x="-1101" y="767" key="Github.ShareDialog/0.0.2560.1400/2560.350.1920.1040/-1920.350.1920.1040@-1920.350.1920.1040" timestamp="1604084929590" />
-    <state x="736" y="339" key="Vcs.Push.Dialog.v2" timestamp="1604131047094">
+    <state x="736" y="339" key="Vcs.Push.Dialog.v2" timestamp="1604131933779">
       <screen x="0" y="0" width="2560" height="1400" />
     </state>
-    <state x="736" y="339" key="Vcs.Push.Dialog.v2/0.0.2560.1400/2560.0.2560.1440@0.0.2560.1400" timestamp="1604131047094" />
+    <state x="736" y="339" key="Vcs.Push.Dialog.v2/0.0.2560.1400/2560.0.2560.1440@0.0.2560.1400" timestamp="1604131933779" />
     <state x="-1368" y="602" key="Vcs.Push.Dialog.v2/0.0.2560.1400/2560.350.1920.1040/-1920.350.1920.1040@-1920.350.1920.1040" timestamp="1604129332944" />
     <state x="-1253" y="426" width="585" height="888" key="find.popup" timestamp="1604104998580">
       <screen x="-1920" y="350" width="1920" height="1040" />
