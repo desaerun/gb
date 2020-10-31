@@ -4,7 +4,7 @@ module.exports = {
     async execute(client, message, args) {
         try {
             const birkID = '97542223641464832';
-            const birk = await client.users.fetch(birkID, true, true);
+            const birk = await client.users.fetch(birkID);
         
             await message.channel.send(`Birk is ${birk.presence.status}.`);
         } catch(err) {
