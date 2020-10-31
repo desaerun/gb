@@ -1,8 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="BranchesTreeState">
+    <expand>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="LOCAL_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="GROUP_NODE:origin" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+    </expand>
+    <select>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="LOCAL_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="BRANCH:main" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+    </select>
+  </component>
   <component name="ChangeListManager">
-    <list default="true" id="b53cdbac-cb68-43f5-a30a-2f52927e0e37" name="Default Changelist" comment="added check-presence.js">
-      <change beforePath="$PROJECT_DIR$/commands/general/dinglemydongle.js" beforeDir="false" afterPath="$PROJECT_DIR$/commands/general/dinglemydongle.js" afterDir="false" />
+    <list default="true" id="b53cdbac-cb68-43f5-a30a-2f52927e0e37" name="Default Changelist" comment="testing guild.members.fetch for presence status">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/commands/general/is-birk-online.js" beforeDir="false" afterPath="$PROJECT_DIR$/commands/general/is-birk-online.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -15,6 +40,9 @@
         <option value="JavaScript File" />
       </list>
     </option>
+  </component>
+  <component name="Git.Pull.Settings">
+    <option name="BRANCH" value="main" />
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -87,6 +115,30 @@
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
   </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State>
+              <option name="FILTERS">
+                <map>
+                  <entry key="branch">
+                    <value>
+                      <list>
+                        <option value="main" />
+                      </list>
+                    </value>
+                  </entry>
+                </map>
+              </option>
+            </State>
+          </value>
+        </entry>
+      </map>
+    </option>
+    <option name="oldMeFiltersMigrated" value="true" />
+  </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="initial commit" />
     <MESSAGE value="added check-presence.js" />
@@ -101,9 +153,10 @@
       <screen x="-1920" y="350" width="1920" height="1040" />
     </state>
     <state x="-1101" y="767" key="Github.ShareDialog/0.0.2560.1400/2560.350.1920.1040/-1920.350.1920.1040@-1920.350.1920.1040" timestamp="1604084929590" />
-    <state x="-1368" y="602" key="Vcs.Push.Dialog.v2" timestamp="1604129332944">
-      <screen x="-1920" y="350" width="1920" height="1040" />
+    <state x="736" y="339" key="Vcs.Push.Dialog.v2" timestamp="1604129853493">
+      <screen x="0" y="0" width="2560" height="1400" />
     </state>
+    <state x="736" y="339" key="Vcs.Push.Dialog.v2/0.0.2560.1400/2560.0.2560.1440@0.0.2560.1400" timestamp="1604129853493" />
     <state x="-1368" y="602" key="Vcs.Push.Dialog.v2/0.0.2560.1400/2560.350.1920.1040/-1920.350.1920.1040@-1920.350.1920.1040" timestamp="1604129332944" />
     <state x="-1253" y="426" width="585" height="888" key="find.popup" timestamp="1604104998580">
       <screen x="-1920" y="350" width="1920" height="1040" />
