@@ -17,6 +17,6 @@ module.exports = {
 
         messageCount += messages.size;
 
-        message.channel.send(`There have been ${messages.size} messages sent in this channel.`);
+        message.channel.send(`There have been ${messageCount} messages sent in this channel.`);
     }
 }
