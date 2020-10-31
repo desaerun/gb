@@ -15,6 +15,7 @@
     "discord.js": "^12.4.1",
     "ffmpeg-static": "^4.2.7",
     "gapi": "0.0.3",
+    "moment": "^2.29.1",
     "superagent": "^6.1.0",
     "ytdl-core": "^4.0.0"
   }
