@@ -8,11 +8,11 @@ module.exports = {
             return await message.channel.messages.fetch({limit: 100});
         };
 
-        let messages = retrieveMessage();
+        let messages = await retrieveMessage();
 
         while (messages.size === 100) {
             messageCount += messages.size;
-            messages = retrieveMessage();
+            messages = await retrieveMessage();
         }
 
         messageCount += messages.size;
