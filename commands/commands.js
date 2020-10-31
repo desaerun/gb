@@ -39,9 +39,7 @@ module.exports = {
             return response;
         }
 
-        response += listCommands();
-
-        message.channel.send(response);
+        message.channel.send(listCommands());
     }
 }
 
