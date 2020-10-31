@@ -16,7 +16,7 @@ module.exports = {
             )
             .addFields({
                 name: `User ID`,
-                value: `${userinfoget.id}`}
+                value: `${user.id}`}
             )
             .addFields({
                 name: `Joined server:`,

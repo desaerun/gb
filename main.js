@@ -45,7 +45,14 @@ client.on('message',message => {
             client.commands.get(command).execute(client, message, args);
         } catch (err) {
             console.log(err);
-            message.channel.send("There was an error executing that command.");
+            message.channel.send("There was an error executing that command:");
+            const response = new Discord.MessageEmbed()
+                .setColor('#DAF7A6')
+                .addFields({
+                    name: `Error`,
+                    value: err
+                })
+            message.channel.send(response);
         }
     } else {
         message.channel.send(`_${command}_ is not a valid command`);
