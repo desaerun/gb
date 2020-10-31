@@ -8,7 +8,7 @@ module.exports = {
                 await message.guild.members.fetch(birkID);
             };
 
-            birk.then((value) => message.channel.send(`Kajoonie is ${value.presence.status}.`));
+            birk().then((value) => message.channel.send(`Kajoonie is ${value.presence.status}.`));
         } catch(err) {
             console.error(err);
         }
