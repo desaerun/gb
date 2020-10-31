@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
   <component name="BranchesTreeState">
     <expand>
       <path>
@@ -25,9 +28,9 @@
     </select>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="b53cdbac-cb68-43f5-a30a-2f52927e0e37" name="Default Changelist" comment="moving get-message-history.js into history commands dir">
+    <list default="true" id="b53cdbac-cb68-43f5-a30a-2f52927e0e37" name="Default Changelist" comment="set bot status on coming online">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/commands/history/get-message-history.js" beforeDir="false" afterPath="$PROJECT_DIR$/commands/history/get-message-history.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/commands/discord_control/get-user-info.js" beforeDir="false" afterPath="$PROJECT_DIR$/commands/discord_control/get-user-info.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -60,21 +63,21 @@
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="javascript.nodejs.core.library.configured.version" value="12.13.1" />
     <property name="javascript.nodejs.core.library.typings.version" value="12.19.3" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/commands/discord_control" />
     <property name="nodejs_interpreter_path" value="$APPLICATION_CONFIG_DIR$/node/node-v12.13.1-win-x64/node" />
     <property name="nodejs_package_manager_path" value="npm" />
     <property name="vue.rearranger.settings.migration" value="true" />
   </component>
   <component name="RecentsManager">
-    <key name="CopyFile.RECENT_KEYS">
-      <recent name="C:\Users\alexj\WebstormProjects\discordhistorybot\commands" />
-    </key>
     <key name="MoveFile.RECENT_KEYS">
-      <recent name="C:\Users\Charl\WebstormProjects\discordhistorybot\commands\history" />
       <recent name="C:\Users\alexj\WebstormProjects\discordhistorybot\commands\discord_control" />
       <recent name="C:\Users\alexj\WebstormProjects\discordhistorybot\commands\general" />
       <recent name="C:\Users\alexj\WebstormProjects\discordhistorybot\commands\youtube" />
       <recent name="C:\Users\alexj\WebstormProjects\discordhistorybot\config" />
+    </key>
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\alexj\WebstormProjects\discordhistorybot\commands\discord_control" />
+      <recent name="C:\Users\alexj\WebstormProjects\discordhistorybot\commands" />
     </key>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
@@ -138,28 +141,70 @@
       <option name="project" value="LOCAL" />
       <updated>1604130596312</updated>
     </task>
-    <task id="LOCAL-00008" summary="yay we did it">
-      <created>1604131043238</created>
+    <task id="LOCAL-00008" summary="&#10;add get-user-info.js">
+      <created>1604131406651</created>
       <option name="number" value="00008" />
       <option name="presentableId" value="LOCAL-00008" />
       <option name="project" value="LOCAL" />
-      <updated>1604131043238</updated>
+      <updated>1604131406651</updated>
     </task>
-    <task id="LOCAL-00009" summary="update birk id &amp; nickname, testing pinned message fetching">
-      <created>1604131772626</created>
+    <task id="LOCAL-00009" summary="fix get-user-info.js to have fallback">
+      <created>1604131522018</created>
       <option name="number" value="00009" />
       <option name="presentableId" value="LOCAL-00009" />
       <option name="project" value="LOCAL" />
-      <updated>1604131772626</updated>
+      <updated>1604131522018</updated>
     </task>
-    <task id="LOCAL-00010" summary="moving get-message-history.js into history commands dir">
-      <created>1604131931619</created>
+    <task id="LOCAL-00010" summary="fix get-user-info.js to have fallback">
+      <created>1604131717763</created>
       <option name="number" value="00010" />
       <option name="presentableId" value="LOCAL-00010" />
       <option name="project" value="LOCAL" />
-      <updated>1604131931619</updated>
+      <updated>1604131717763</updated>
     </task>
-    <option name="localTasksCounter" value="11" />
+    <task id="LOCAL-00011" summary="install moment.js,&#10;add user join date to get-user-info">
+      <created>1604131777502</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1604131777502</updated>
+    </task>
+    <task id="LOCAL-00012" summary="get-user-info updates">
+      <created>1604132189926</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1604132189926</updated>
+    </task>
+    <task id="LOCAL-00013" summary="removing some console.log from main.js">
+      <created>1604132309013</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1604132309013</updated>
+    </task>
+    <task id="LOCAL-00014" summary="import discord.js in get-user-info.js">
+      <created>1604132393701</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1604132393701</updated>
+    </task>
+    <task id="LOCAL-00015" summary="add more fields to get-user-info.js">
+      <created>1604132490136</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1604132490136</updated>
+    </task>
+    <task id="LOCAL-00016" summary="set bot status on coming online">
+      <created>1604132570253</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1604132570253</updated>
+    </task>
+    <option name="localTasksCounter" value="17" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -196,20 +241,17 @@
     <MESSAGE value="i'm dumb" />
     <MESSAGE value="learning async slowly" />
     <MESSAGE value="fifteenth time's the charm" />
-    <MESSAGE value="yay we did it" />
-    <MESSAGE value="update birk id &amp; nickname, testing pinned message fetching" />
-    <MESSAGE value="moving get-message-history.js into history commands dir" />
-    <option name="LAST_COMMIT_MESSAGE" value="moving get-message-history.js into history commands dir" />
+    <MESSAGE value="&#10;add get-user-info.js" />
+    <MESSAGE value="fix get-user-info.js to have fallback" />
+    <MESSAGE value="install moment.js,&#10;add user join date to get-user-info" />
+    <MESSAGE value="get-user-info updates" />
+    <MESSAGE value="removing some console.log from main.js" />
+    <MESSAGE value="import discord.js in get-user-info.js" />
+    <MESSAGE value="add more fields to get-user-info.js" />
+    <MESSAGE value="set bot status on coming online" />
+    <option name="LAST_COMMIT_MESSAGE" value="set bot status on coming online" />
   </component>
   <component name="WindowStateProjectService">
-    <state x="992" y="478" key="#Node.js_and_NPM" timestamp="1604132195874">
-      <screen x="0" y="0" width="2560" height="1400" />
-    </state>
-    <state x="992" y="478" key="#Node.js_and_NPM/0.0.2560.1400/2560.0.2560.1440@0.0.2560.1400" timestamp="1604132195874" />
-    <state x="92" y="92" width="2376" height="1216" key="DiffContextDialog" timestamp="1604132151128">
-      <screen x="0" y="0" width="2560" height="1400" />
-    </state>
-    <state x="92" y="92" width="2376" height="1216" key="DiffContextDialog/0.0.2560.1400/2560.0.2560.1440@2560.0.2560.1440" timestamp="1604132151128" />
     <state x="-1180" y="611" key="FileChooserDialogImpl" timestamp="1604084782567">
       <screen x="-1920" y="350" width="1920" height="1040" />
     </state>
@@ -218,11 +260,15 @@
       <screen x="-1920" y="350" width="1920" height="1040" />
     </state>
     <state x="-1101" y="767" key="Github.ShareDialog/0.0.2560.1400/2560.350.1920.1040/-1920.350.1920.1040@-1920.350.1920.1040" timestamp="1604084929590" />
-    <state x="736" y="339" key="Vcs.Push.Dialog.v2" timestamp="1604131933779">
-      <screen x="0" y="0" width="2560" height="1400" />
+    <state x="-1920" y="350" key="MergeDialog" timestamp="1604132511813">
+      <screen x="-1920" y="350" width="1920" height="1040" />
     </state>
-    <state x="736" y="339" key="Vcs.Push.Dialog.v2/0.0.2560.1400/2560.0.2560.1440@0.0.2560.1400" timestamp="1604131933779" />
-    <state x="-1368" y="602" key="Vcs.Push.Dialog.v2/0.0.2560.1400/2560.350.1920.1040/-1920.350.1920.1040@-1920.350.1920.1040" timestamp="1604129332944" />
+    <state x="-1920" y="350" key="MergeDialog/0.0.2560.1400/2560.350.1920.1040/-1920.350.1920.1040@-1920.350.1920.1040" timestamp="1604132511813" />
+    <state x="-1368" y="602" key="Vcs.Push.Dialog.v2" timestamp="1604132578340">
+      <screen x="-1920" y="350" width="1920" height="1040" />
+    </state>
+    <state x="736" y="339" key="Vcs.Push.Dialog.v2/0.0.2560.1400/2560.0.2560.1440@0.0.2560.1400" timestamp="1604130631544" />
+    <state x="-1368" y="602" key="Vcs.Push.Dialog.v2/0.0.2560.1400/2560.350.1920.1040/-1920.350.1920.1040@-1920.350.1920.1040" timestamp="1604132578340" />
     <state x="-1253" y="426" width="585" height="888" key="find.popup" timestamp="1604104998580">
       <screen x="-1920" y="350" width="1920" height="1040" />
     </state>
@@ -231,9 +277,9 @@
       <screen x="-1920" y="350" width="1920" height="1040" />
     </state>
     <state x="-1177" y="761" key="git4idea.remote.GitConfigureRemotesDialog/0.0.2560.1400/2560.350.1920.1040/-1920.350.1920.1040@-1920.350.1920.1040" timestamp="1604084977073" />
-    <state x="-1297" y="575" width="672" height="678" key="search.everywhere.popup" timestamp="1604084716917">
+    <state x="-1297" y="575" width="672" height="678" key="search.everywhere.popup" timestamp="1604132054550">
       <screen x="-1920" y="350" width="1920" height="1040" />
     </state>
-    <state x="-1297" y="575" width="672" height="678" key="search.everywhere.popup/0.0.2560.1400/2560.350.1920.1040/-1920.350.1920.1040@-1920.350.1920.1040" timestamp="1604084716917" />
+    <state x="-1297" y="575" width="672" height="678" key="search.everywhere.popup/0.0.2560.1400/2560.350.1920.1040/-1920.350.1920.1040@-1920.350.1920.1040" timestamp="1604132054550" />
   </component>
 </project>
