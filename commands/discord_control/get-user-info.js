@@ -5,8 +5,23 @@ module.exports = {
     description: "get info on a user",
     execute(client, message, args) {
         let user = message.mentions.members.first() || message.guild.members.cache.get(args[0]) || message.guild.member(message.author);
-        console.log(message.mentions);
-        message.channel.send(`${user}
-        \nJoined at: ${moment(user.joinedAt)}`);
+        const response = Discord.MessageEmbed()
+            .setColor('#DAF7A6')
+            .setAuthor(`${user.user.tag}`,user.user.displayAvatarURL())
+            .addFields({
+                name: `User ping`,
+                value: `<@${user.id}>`}
+            )
+            .addFields({
+                name: `Joined server:`,
+                value: moment(user.joinedAt).format('LLLL')
+            })
+            .addFields({
+                name: `Joined Discord:`,
+                value: moment(user.user.createdAt)
+            })
+            .setFooter('Just another discord bot');
+
+        message.channel.send(response);
     }
 }
