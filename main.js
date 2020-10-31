@@ -28,7 +28,6 @@ client.once('ready',() => {
     console.log("bot online.");
     let guilds = client.guilds;
     let rageaholics = client.guilds.fetch('270271948527894541');
-    console.log(rageaholics);
 });
 
 client.on('message',message => {
@@ -37,7 +36,6 @@ client.on('message',message => {
     const args = message.content.slice(CONFIG.prefix.length).split(/ +/);
     const command = args.shift().toLowerCase();
     const guild = client.guilds.fetch(message.guild.id);
-    console.log(guild);
 
     if (client.commands.has(command)) {
         try {
