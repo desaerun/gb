@@ -5,9 +5,8 @@ module.exports = {
         try {
             const birkID = '97388794692505600';
             let birk = await message.guild.members.fetch(birkID);
-            let status = await birk.presence.status;
 
-            message.channel.send(`Kajoonie is ${status}.`);
+            message.channel.send(`${birk.name} is ${birk.presence.status}.`);
         } catch (err) {
             console.error(err);
         }
