@@ -7,11 +7,16 @@ module.exports = {
     execute(client, message, args) {
         let user = message.mentions.members.first() || message.guild.members.cache.get(args[0]) || message.guild.member(message.author);
         const response = new Discord.MessageEmbed()
-            .setColor('#DAF7A6')
+            // .setColor('#DAF7A6')
+            .setColor('RANDOM')
             .setAuthor(`${user.user.tag}`,user.user.displayAvatarURL())
             .addFields({
                 name: `User ping`,
                 value: `<@${user.id}>`}
+            )
+            .addFields({
+                name: `User ID`,
+                value: `${userinfoget.id}`}
             )
             .addFields({
                 name: `Joined server:`,
@@ -23,7 +28,7 @@ module.exports = {
             })
             .addFields({
                 name: `Online status:`,
-                value: moment(user.presence.status)
+                value: `${user.presence.status}`
             })
             .setFooter('Just another discord bot');
 
