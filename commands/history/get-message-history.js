@@ -3,16 +3,12 @@ module.exports = {
     description: "Retrieves message history for the current channel",
     execute: async function (client, message, args) {
         let messageCount = 0;
-
-        let retrieveMessage = async () => {
-            return await message.channel.messages.fetch({limit: 100});
-        };
-
-        let messages = await retrieveMessage();
+        let messages = await message.channel.messages.fetch({limit: 100});
 
         while (messages.size === 100) {
             messageCount += messages.size;
-            messages = await retrieveMessage();
+            let last = messages.last().id;
+            messages = await message.channel.messages.fetch({limit:100, before: last});
         }
 
         messageCount += messages.size;
