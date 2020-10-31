@@ -28,6 +28,9 @@ client.once('ready',() => {
     console.log("bot online.");
     let guilds = client.guilds;
     let rageaholics = client.guilds.fetch('270271948527894541');
+    client.user.setActivity('with fire',{type: 'PLAYING'})
+        .then(console.log())
+        .catch(console.error);
 });
 
 client.on('message',message => {

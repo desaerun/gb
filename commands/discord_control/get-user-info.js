@@ -6,7 +6,7 @@ module.exports = {
     description: "get info on a user",
     execute(client, message, args) {
         let user = message.mentions.members.first() || message.guild.members.cache.get(args[0]) || message.guild.member(message.author);
-        const response = Discord.MessageEmbed()
+        const response = new Discord.MessageEmbed()
             .setColor('#DAF7A6')
             .setAuthor(`${user.user.tag}`,user.user.displayAvatarURL())
             .addFields({
@@ -20,6 +20,10 @@ module.exports = {
             .addFields({
                 name: `Joined Discord:`,
                 value: moment(user.user.createdAt)
+            })
+            .addFields({
+                name: `Online status:`,
+                value: moment(user.presence.status)
             })
             .setFooter('Just another discord bot');
 
