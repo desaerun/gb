@@ -3,6 +3,8 @@ module.exports = {
     description: "get info on a user",
     execute(client, message, args) {
         let user = message.mentions.members.first() || message.guild.members.cache.get(args[0]) || message.guild.member(message.author);
-        message.channel.send(user);
+        console.log(message.mentions);
+        message.channel.send(`${user}
+        \nJoined at: ${moment(user.joinedAt)}`);
     }
 }
