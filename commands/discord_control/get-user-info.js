@@ -1,3 +1,5 @@
+const moment = require('moment');
+
 module.exports = {
     name: 'get-user-info',
     description: "get info on a user",
