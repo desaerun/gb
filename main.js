@@ -47,6 +47,24 @@ client.once('ready',() => {
     client.user.setActivity('with fire',{type: 'PLAYING'})
         .then(console.log())
         .catch(console.error);
+
+    const mysql = require('mysql');
+
+    var connection = mysql.createConnection({
+        host     : process.env.RDS_HOSTNAME,
+        user     : process.env.RDS_USERNAME,
+        password : process.env.RDS_PASSWORD,
+        port     : process.env.RDS_PORT
+    });
+
+    connection.connect(function(err) {
+        if (err) {
+            console.error('Database connection failed: ' + err.stack);
+            return;
+        }
+
+        console.log('Connected to database.');
+    });
 });
 
 client.on('message',message => {
