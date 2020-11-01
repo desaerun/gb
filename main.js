@@ -155,8 +155,12 @@ function runCommands(message) {
  * @param message
  */
 function parseWithListeners(message) {
-    for (const listener of client.listenerSet) {
-        if (listener.execute(client, message)) return;
+    try {
+        for (const listener of client.listenerSet) {
+            if (listener.execute(client, message)) return;
+        }
+    } catch (err) {
+        console.log(err);
     }
 }
 
