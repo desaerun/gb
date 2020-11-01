@@ -28,8 +28,8 @@
     </select>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="b53cdbac-cb68-43f5-a30a-2f52927e0e37" name="Default Changelist" comment="add node modules">
-      <change beforePath="$PROJECT_DIR$/commands/general/is-birk-online.js" beforeDir="false" afterPath="$PROJECT_DIR$/commands/general/is-birk-online.js" afterDir="false" />
+    <list default="true" id="b53cdbac-cb68-43f5-a30a-2f52927e0e37" name="Default Changelist" comment="push 0 for to check if it changed things">
+      <change afterPath="$PROJECT_DIR$/.npmrc" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -273,7 +273,14 @@
       <option name="project" value="LOCAL" />
       <updated>1604216106524</updated>
     </task>
-    <option name="localTasksCounter" value="27" />
+    <task id="LOCAL-00027" summary="push 0 for to check if it changed things">
+      <created>1604216318092</created>
+      <option name="number" value="00027" />
+      <option name="presentableId" value="LOCAL-00027" />
+      <option name="project" value="LOCAL" />
+      <updated>1604216318092</updated>
+    </task>
+    <option name="localTasksCounter" value="28" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -328,7 +335,8 @@
     <MESSAGE value="adding token to repo" />
     <MESSAGE value="ebextensions" />
     <MESSAGE value="add node modules" />
-    <option name="LAST_COMMIT_MESSAGE" value="add node modules" />
+    <MESSAGE value="push 0 for to check if it changed things" />
+    <option name="LAST_COMMIT_MESSAGE" value="push 0 for to check if it changed things" />
   </component>
   <component name="WindowStateProjectService">
     <state x="405" y="505" key="#com.intellij.fileTypes.FileTypeChooser" timestamp="1604215029011">
@@ -351,12 +359,12 @@
       <screen x="-1920" y="350" width="1920" height="1040" />
     </state>
     <state x="-1322" y="631" key="MultipleFileMergeDialog/0.0.2560.1400/2560.350.1920.1040/-1920.350.1920.1040@-1920.350.1920.1040" timestamp="1604137388834" />
-    <state x="736" y="339" key="Vcs.Push.Dialog.v2" timestamp="1604216113928">
+    <state x="736" y="339" key="Vcs.Push.Dialog.v2" timestamp="1604216321649">
       <screen x="0" y="0" width="2560" height="1400" />
     </state>
     <state x="736" y="339" key="Vcs.Push.Dialog.v2/0.0.2560.1400/2560.0.2560.1440@0.0.2560.1400" timestamp="1604130631544" />
     <state x="-1368" y="602" key="Vcs.Push.Dialog.v2/0.0.2560.1400/2560.350.1920.1040/-1920.350.1920.1040@-1920.350.1920.1040" timestamp="1604137592032" />
-    <state x="736" y="339" key="Vcs.Push.Dialog.v2/2560.350.1920.1040/-1920.350.1920.1040/0.0.2560.1400@0.0.2560.1400" timestamp="1604216113928" />
+    <state x="736" y="339" key="Vcs.Push.Dialog.v2/2560.350.1920.1040/-1920.350.1920.1040/0.0.2560.1400@0.0.2560.1400" timestamp="1604216321649" />
     <state x="3112" y="602" key="Vcs.Push.Dialog.v2/2560.350.1920.1040/-1920.350.1920.1040/0.0.2560.1400@2560.350.1920.1040" timestamp="1604185540008" />
     <state x="3337" y="783" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2" timestamp="1604185527343">
       <screen x="2560" y="350" width="1920" height="1040" />
