@@ -26,6 +26,8 @@ getCommands("./commands");
 
 client.once('ready',() => {
     console.log("bot online.");
+    let desaerun = client.users.cache.get('187048556643876864');
+    desaerun.send("Bot has come back online.");
     let guilds = client.guilds;
     let rageaholics = client.guilds.fetch('270271948527894541');
     client.user.setActivity('with fire',{type: 'PLAYING'})
