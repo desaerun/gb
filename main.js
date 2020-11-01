@@ -31,7 +31,7 @@ client.once('ready',() => {
     let user_desaerun = client.users.cache.get('187048556643876864');
     let channel_code_shit = client.channels.cache.get('674824072126922753');
 
-    let online_status_message = Discord.MessageEmbed()
+    let online_status_message = new Discord.MessageEmbed()
         .setColor('RANDOM')
         .setAuthor("${client.user.username}","${client.user.displayAvatarURL}")
         .addFields({
