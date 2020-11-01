@@ -28,9 +28,10 @@
     </select>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="b53cdbac-cb68-43f5-a30a-2f52927e0e37" name="Default Changelist" comment="final commit before move to EC2">
+    <list default="true" id="b53cdbac-cb68-43f5-a30a-2f52927e0e37" name="Default Changelist" comment="pulling charles' changes back in">
+      <change afterPath="$PROJECT_DIR$/Procfile" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ecs-update.json" beforeDir="false" afterPath="$PROJECT_DIR$/task-definition.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/task-definition.json" beforeDir="false" afterPath="$PROJECT_DIR$/task-definition.json" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -218,7 +219,14 @@
       <option name="project" value="LOCAL" />
       <updated>1604133663143</updated>
     </task>
-    <option name="localTasksCounter" value="19" />
+    <task id="LOCAL-00019" summary="pulling charles' changes back in">
+      <created>1604136629616</created>
+      <option name="number" value="00019" />
+      <option name="presentableId" value="LOCAL-00019" />
+      <option name="project" value="LOCAL" />
+      <updated>1604136629616</updated>
+    </task>
+    <option name="localTasksCounter" value="20" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -265,9 +273,14 @@
     <MESSAGE value="set bot status on coming online" />
     <MESSAGE value="updates to get-user-info.js" />
     <MESSAGE value="final commit before move to EC2" />
-    <option name="LAST_COMMIT_MESSAGE" value="final commit before move to EC2" />
+    <MESSAGE value="pulling charles' changes back in" />
+    <option name="LAST_COMMIT_MESSAGE" value="pulling charles' changes back in" />
   </component>
   <component name="WindowStateProjectService">
+    <state x="405" y="505" key="#com.intellij.fileTypes.FileTypeChooser" timestamp="1604199200337">
+      <screen x="0" y="0" width="2560" height="1400" />
+    </state>
+    <state x="405" y="505" key="#com.intellij.fileTypes.FileTypeChooser/2560.350.1920.1040/-1920.350.1920.1040/0.0.2560.1400@0.0.2560.1400" timestamp="1604199200337" />
     <state x="-1180" y="611" key="FileChooserDialogImpl" timestamp="1604084782567">
       <screen x="-1920" y="350" width="1920" height="1040" />
     </state>
@@ -280,11 +293,21 @@
       <screen x="-1920" y="350" width="1920" height="1040" />
     </state>
     <state x="-1920" y="350" key="MergeDialog/0.0.2560.1400/2560.350.1920.1040/-1920.350.1920.1040@-1920.350.1920.1040" timestamp="1604132511813" />
-    <state x="-1368" y="602" key="Vcs.Push.Dialog.v2" timestamp="1604134146885">
+    <state x="-1322" y="631" key="MultipleFileMergeDialog" timestamp="1604137388834">
       <screen x="-1920" y="350" width="1920" height="1040" />
     </state>
+    <state x="-1322" y="631" key="MultipleFileMergeDialog/0.0.2560.1400/2560.350.1920.1040/-1920.350.1920.1040@-1920.350.1920.1040" timestamp="1604137388834" />
+    <state x="3112" y="602" key="Vcs.Push.Dialog.v2" timestamp="1604185540008">
+      <screen x="2560" y="350" width="1920" height="1040" />
+    </state>
     <state x="736" y="339" key="Vcs.Push.Dialog.v2/0.0.2560.1400/2560.0.2560.1440@0.0.2560.1400" timestamp="1604130631544" />
-    <state x="-1368" y="602" key="Vcs.Push.Dialog.v2/0.0.2560.1400/2560.350.1920.1040/-1920.350.1920.1040@-1920.350.1920.1040" timestamp="1604134146885" />
+    <state x="-1368" y="602" key="Vcs.Push.Dialog.v2/0.0.2560.1400/2560.350.1920.1040/-1920.350.1920.1040@-1920.350.1920.1040" timestamp="1604137592032" />
+    <state x="3112" y="602" key="Vcs.Push.Dialog.v2/2560.350.1920.1040/-1920.350.1920.1040/0.0.2560.1400@2560.350.1920.1040" timestamp="1604185540008" />
+    <state x="3337" y="783" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2" timestamp="1604185527343">
+      <screen x="2560" y="350" width="1920" height="1040" />
+    </state>
+    <state x="-1143" y="783" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2/0.0.2560.1400/2560.350.1920.1040/-1920.350.1920.1040@-1920.350.1920.1040" timestamp="1604137385113" />
+    <state x="3337" y="783" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2/2560.350.1920.1040/-1920.350.1920.1040/0.0.2560.1400@2560.350.1920.1040" timestamp="1604185527343" />
     <state x="-1253" y="426" width="585" height="888" key="find.popup" timestamp="1604104998580">
       <screen x="-1920" y="350" width="1920" height="1040" />
     </state>
