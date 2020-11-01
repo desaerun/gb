@@ -33,7 +33,7 @@ client.once('ready',() => {
 
     let online_status_message = new Discord.MessageEmbed()
         .setColor('RANDOM')
-        .setAuthor("${client.user.username}")
+        .setAuthor(`${client.user.username}`,`${client.user.displayAvatarURL()}`)
         .addFields({
             name: 'Bot status',
             value: 'Online'
