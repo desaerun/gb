@@ -2,7 +2,7 @@ module.exports = {
     name: 'josh-gym-shower-eat',
     description: 'Responds to Josh talking about the gym, showering, or eating.',
     listen(client, message) {
-        const joshID = '97388794692505600';
+        const joshID = '95693092430020608';
 
         if (message.author.id !== joshID) return false;
 
