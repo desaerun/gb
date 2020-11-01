@@ -67,6 +67,7 @@ client.once('ready',() => {
             value: 'Online'
         });
 
+    console.log("Sending Online Status message to bot owner and #code-shit")
     user_desaerun.send(online_status_message);
     channel_code_shit.send(online_status_message);
 
@@ -76,6 +77,7 @@ client.once('ready',() => {
         .then(console.log())
         .catch(console.error);
 
+    /*
     const mysql = require('mysql');
 
     var connection = mysql.createConnection({
@@ -95,6 +97,7 @@ client.once('ready',() => {
         console.log('Connected to database.');
         console.log(connection.query("SELECT DATABASE()"));
     });
+     */
 });
 
 client.on('message',message => {
