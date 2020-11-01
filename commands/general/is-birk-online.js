@@ -10,7 +10,7 @@ module.exports = {
 
             switch (birk.presence.status) {
                 case 'dnd':
-                    response = `AY YO ${birk.nickname} DON'T WANNA BE FUCKED WITH RIGHT NOW`;
+                    response = `AY YO ${birk.nickname} DON'T WANNA BE FUCKED WITH RIGHT N0W`;
                     break;
                 case 'idle':
                     response = `This motherfucker ${birk.nickname} thinks he can just STEP AWAY?`;
