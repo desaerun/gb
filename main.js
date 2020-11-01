@@ -31,8 +31,16 @@ client.once('ready',() => {
     let user_desaerun = client.users.cache.get('187048556643876864');
     let channel_code_shit = client.channels.cache.get('674824072126922753');
 
-    user_desaerun.send("Bot has come back online.");
-    channel_code_shit.send("Bot has come back online.");
+    let online_status_message = Discord.MessageEmbed()
+        .setColor('RANDOM')
+        .setAuthor("${client.user.username}","${client.user.displayAvatarURL}")
+        .addFields({
+            name: 'Bot status',
+            value: 'Online'
+        });
+
+    user_desaerun.send(online_status_message);
+    channel_code_shit.send(online_status_message);
 
 
     //set initial bot status
