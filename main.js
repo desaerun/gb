@@ -6,7 +6,13 @@ const {token} = require('./config/token');
 const fs = require('fs');
 
 client.commands = new Discord.Collection();
+client.listenerSet = new Discord.Collection();
 
+/**
+ * Gets all command .js files from /commands
+ * @param dir
+ * @param level
+ */
 function getCommands(dir, level=0) {
     const current_dir = `${dir}/`;
     const commandFiles = fs.readdirSync(current_dir);
@@ -23,6 +29,28 @@ function getCommands(dir, level=0) {
     }
 }
 getCommands("./commands");
+
+/**
+ * Gets all listener .js files from /listeners
+ * @param dir
+ * @param level
+ */
+function getListenerSet(dir, level=0) {
+    const current_dir = `${dir}/`;
+    const listenerFiles = fs.readdirSync(current_dir);
+
+    for (const file of listenerFiles) {
+        if (fs.statSync(`${current_dir}${file}`).isDirectory()) {
+            getListenerSet(`${current_dir}${file}`, level+1);
+        } else {
+            if (file.endsWith('.js')) {
+                const listener = require(`${current_dir}${file}`);
+                client.listenerSet.set(listener.name, listener);
+            }
+        }
+    }
+}
+getListenerSet("./listeners");
 
 client.once('ready',() => {
     console.log("bot online.");
@@ -70,8 +98,32 @@ client.once('ready',() => {
 });
 
 client.on('message',message => {
-    if (!message.content.startsWith(CONFIG.prefix) || message.author.bot) return;
+    // Ignore my own messages
+    if (message.author.bot) return;
 
+    // Attempt to parse commands
+    if (isCommand(message)) {
+        runCommands(message);
+    // Otherwise pass to listeners
+    } else {
+        parseWithListeners(message);
+    }
+});
+
+/**
+ * Identifies 'command' messages which must begin with CONFIG.prefix
+ * @param message
+ * @returns {boolean}
+ */
+function isCommand(message) {
+    return message.content.startsWith(CONFIG.prefix);
+}
+
+/**
+ * Searches client.commands for the parsed command, and executes if the command is valid
+ * @param message
+ */
+function runCommands(message) {
     const args = message.content.slice(CONFIG.prefix.length).split(/ +/);
     const command = args.shift().toLowerCase();
     const guild = client.guilds.fetch(message.guild.id);
@@ -93,6 +145,16 @@ client.on('message',message => {
     } else {
         message.channel.send(`_${command}_ is not a valid command`);
     }
-});
+}
+
+/**
+ * Attempts to execute from the set of listeners on any given message that is not a command
+ * @param message
+ */
+function parseWithListeners(message) {
+    for (const listener of client.listenerSet) {
+        if (listener.execute(client, message)) return;
+    }
+}
 
 client.login(token);
