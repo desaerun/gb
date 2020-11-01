@@ -159,7 +159,7 @@ function parseWithListeners(message) {
         for (const listener of client.listenerSet) {
             console.log(`listener: ${listener}`);
             console.log(`listener.description: ${listener.description}`)
-            if (listener.execute(client, message)) return;
+            if (listener.listen(client, message)) return;
         }
     } catch (err) {
         console.log(err);
