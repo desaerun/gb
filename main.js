@@ -66,7 +66,6 @@ client.once('ready',() => {
 
         console.log('Connected to database.');
         console.log(connection.query("SELECT DATABASE()"));
-        console.log(connection.query("CREATE TABLE test (name VARCHAR(255), address VARCHAR(255))"));
     });
 });
 
