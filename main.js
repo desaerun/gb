@@ -82,7 +82,8 @@ client.once('ready',() => {
         host     : process.env.RDS_HOSTNAME,
         user     : process.env.RDS_USERNAME,
         password : process.env.RDS_PASSWORD,
-        port     : process.env.RDS_PORT
+        port     : process.env.RDS_PORT,
+        database : process.env.RDS_DB_NAME
     });
 
     connection.connect(function(err) {
@@ -92,6 +93,8 @@ client.once('ready',() => {
         }
 
         console.log('Connected to database.');
+        console.log(connection.query("SELECT DATABASE()"));
+        console.log(connection.query("CREATE TABLE test (name VARCHAR(255), address VARCHAR(255))"));
     });
 });
 
