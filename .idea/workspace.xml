@@ -28,12 +28,9 @@
     </select>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="b53cdbac-cb68-43f5-a30a-2f52927e0e37" name="Default Changelist" comment="add procfile and build.sh">
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+    <list default="true" id="b53cdbac-cb68-43f5-a30a-2f52927e0e37" name="Default Changelist" comment="adding token to repo">
+      <change afterPath="$PROJECT_DIR$/.ebextensions/01_fix_permissions.config" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Procfile" beforeDir="false" afterPath="$PROJECT_DIR$/Procfile" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -256,7 +253,14 @@
       <option name="project" value="LOCAL" />
       <updated>1604202196100</updated>
     </task>
-    <option name="localTasksCounter" value="24" />
+    <task id="LOCAL-00024" summary="adding token to repo">
+      <created>1604214165576</created>
+      <option name="number" value="00024" />
+      <option name="presentableId" value="LOCAL-00024" />
+      <option name="project" value="LOCAL" />
+      <updated>1604214165576</updated>
+    </task>
+    <option name="localTasksCounter" value="25" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -308,13 +312,14 @@
     <MESSAGE value="remove procfile, add start script to package.json" />
     <MESSAGE value="test ebs auto deploy" />
     <MESSAGE value="add procfile and build.sh" />
-    <option name="LAST_COMMIT_MESSAGE" value="add procfile and build.sh" />
+    <MESSAGE value="adding token to repo" />
+    <option name="LAST_COMMIT_MESSAGE" value="adding token to repo" />
   </component>
   <component name="WindowStateProjectService">
-    <state x="405" y="505" key="#com.intellij.fileTypes.FileTypeChooser" timestamp="1604202495282">
+    <state x="405" y="505" key="#com.intellij.fileTypes.FileTypeChooser" timestamp="1604215029011">
       <screen x="0" y="0" width="2560" height="1400" />
     </state>
-    <state x="405" y="505" key="#com.intellij.fileTypes.FileTypeChooser/2560.350.1920.1040/-1920.350.1920.1040/0.0.2560.1400@0.0.2560.1400" timestamp="1604202495282" />
+    <state x="405" y="505" key="#com.intellij.fileTypes.FileTypeChooser/2560.350.1920.1040/-1920.350.1920.1040/0.0.2560.1400@0.0.2560.1400" timestamp="1604215029011" />
     <state x="-1180" y="611" key="FileChooserDialogImpl" timestamp="1604084782567">
       <screen x="-1920" y="350" width="1920" height="1040" />
     </state>
@@ -331,12 +336,12 @@
       <screen x="-1920" y="350" width="1920" height="1040" />
     </state>
     <state x="-1322" y="631" key="MultipleFileMergeDialog/0.0.2560.1400/2560.350.1920.1040/-1920.350.1920.1040@-1920.350.1920.1040" timestamp="1604137388834" />
-    <state x="736" y="339" key="Vcs.Push.Dialog.v2" timestamp="1604202205942">
+    <state x="736" y="339" key="Vcs.Push.Dialog.v2" timestamp="1604214169398">
       <screen x="0" y="0" width="2560" height="1400" />
     </state>
     <state x="736" y="339" key="Vcs.Push.Dialog.v2/0.0.2560.1400/2560.0.2560.1440@0.0.2560.1400" timestamp="1604130631544" />
     <state x="-1368" y="602" key="Vcs.Push.Dialog.v2/0.0.2560.1400/2560.350.1920.1040/-1920.350.1920.1040@-1920.350.1920.1040" timestamp="1604137592032" />
-    <state x="736" y="339" key="Vcs.Push.Dialog.v2/2560.350.1920.1040/-1920.350.1920.1040/0.0.2560.1400@0.0.2560.1400" timestamp="1604202205942" />
+    <state x="736" y="339" key="Vcs.Push.Dialog.v2/2560.350.1920.1040/-1920.350.1920.1040/0.0.2560.1400@0.0.2560.1400" timestamp="1604214169398" />
     <state x="3112" y="602" key="Vcs.Push.Dialog.v2/2560.350.1920.1040/-1920.350.1920.1040/0.0.2560.1400@2560.350.1920.1040" timestamp="1604185540008" />
     <state x="3337" y="783" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2" timestamp="1604185527343">
       <screen x="2560" y="350" width="1920" height="1040" />
