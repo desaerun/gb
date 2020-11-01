@@ -26,10 +26,16 @@ getCommands("./commands");
 
 client.once('ready',() => {
     console.log("bot online.");
-    let desaerun = client.users.cache.get('187048556643876864');
-    desaerun.send("Bot has come back online.");
     let guilds = client.guilds;
-    let rageaholics = client.guilds.fetch('270271948527894541');
+    let guild_rageaholics = guilds.fetch('270271948527894541');
+    let user_desaerun = client.users.cache.get('187048556643876864');
+    let channel_code_shit = guild_rageaholics.channels.get('674824072126922753');
+
+    user_desaerun.send("Bot has come back online.");
+    channel_code_shit.send("Bot has come back online.");
+
+
+    //set initial bot status
     client.user.setActivity('with fire',{type: 'PLAYING'})
         .then(console.log())
         .catch(console.error);
