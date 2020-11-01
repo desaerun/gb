@@ -156,11 +156,11 @@ function runCommands(message) {
  */
 function parseWithListeners(message) {
     try {
+        console.log(client.listenerSet);
         for (const listener of client.listenerSet) {
-            const listener = client.listenerSet.get(listener.key);
             console.log(`listener.name: ${listener.key}`);
             console.log(`listener.description: ${listener.value.description}`);
-            if (listener.value.listen(client, message)) return;
+            //if (client.listenerSet.get().listen(client, message)) return;
         }
     } catch (err) {
         console.log(err);
