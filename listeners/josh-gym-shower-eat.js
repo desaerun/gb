@@ -6,14 +6,19 @@ module.exports = {
 
         if (message.author.id !== joshID) return false;
 
-        if (message.content.includes('gym')) {
-            message.channel.send('Oh look Josh talking about the gym again');
-            return true;
-        } else if (message.content.includes('shower')) {
-            message.channel.send('Well hurry up Josh, I don\'t have all day');
-            return true;
-        } else if (message.content.includes('eat') || message.content.includes('food')) {
-            message.channel.send('Josh, you\'re going to get fat.');
+        let messageContent = message.content.split(' ');
+        let response;
+
+        if (messageContent.includes('gym')) {
+            response ='Oh look Josh talking about the gym again';
+        } else if (messageContent.includes('shower')) {
+            response ='Well hurry up Josh, I don\'t have all day';
+        } else if (messageContent.includes('eat') || messageContent.includes('food')) {
+            response = 'Josh, you\'re going to get fat.';
+        }
+
+        if (response) {
+            message.channel.send(response);
             return true;
         }
 
