@@ -30,6 +30,7 @@ module.exports = {
             switch (typeof (output_channel_ids)) {
                 case "string": {
                     let channel = this.client.channels.cache.get(output_channel_ids);
+                    console.log(`this.client.channels.get(${output_channel_ids}): ${channel}`);
                     channel.send(formatted_msg.substr(i,i+1024));
                     break;
                 }
@@ -55,7 +56,7 @@ module.exports = {
                 .setColor('#a90d0d')
                 .addFields({
                     name: 'Bot Message:',
-                    value: 'message'
+                    value: message
                 })
             this.client.channels.cache.get(channel_ids).send(response);
         }
