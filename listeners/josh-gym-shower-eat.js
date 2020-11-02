@@ -15,6 +15,8 @@ module.exports = {
             response ='Well hurry up Josh, I don\'t have all day';
         } else if (messageContent.includes('eat') || messageContent.includes('food')) {
             response = 'Josh, you\'re going to get fat.';
+        } else if (messageContent.includes('bail')) {
+            response = 'But Josh we neeeeeeeed you';
         }
 
         if (response) {
