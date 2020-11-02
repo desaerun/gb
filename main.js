@@ -2,7 +2,8 @@ const CONFIG = require('./config/config');
 const Discord = require('discord.js');
 const client = new Discord.Client();
 const {token} = require('./config/token');
-const dev_output = require('./dev_output').setClient(client);
+const dev_output = require('./dev_output');
+dev_output.setClient(client);
 
 const fs = require('fs');
 
