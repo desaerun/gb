@@ -12,13 +12,13 @@ module.exports = {
         const messageContent = message.content;
         let response;
 
-        if (messageContent.match('\bgym\n')) {
+        if (messageContent.match('/\bgym\b/g')) {
             response = `Oh look Josh talking about the gym again`;
-        } else if (messageContent.match('\bshower\b')) {
+        } else if (messageContent.match('/\bshower\b/g')) {
             response = `Well hurry up Josh, I don't have all day`;
-        } else if (messageContent.match('\beat\b') || messageContent.match('\bfood\b')) {
+        } else if (messageContent.match('/\beat\b/g') || messageContent.match('/\bfood\b/g')) {
             response = `Josh, you're going to get fat.`;
-        } else if (messageContent.match('\bbail\b')) {
+        } else if (messageContent.match('/\bbail\b/g')) {
             response = `But Josh we neeeeeeeed you`;
         }
 
