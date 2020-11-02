@@ -24,7 +24,7 @@ module.exports = {
                 if (file_name.endsWith('.js')) {
                     console.log(`loading file:  ./${subdir_name}/${file_name}`);
                     if (file_name === 'commands.js') {
-                        response += (`\n${indent(level)}${CONFIG.prefix}_commands_: Lists all the available commands.`).replace("_","\_");
+                        response += (`\n${indent(level)}${CONFIG.prefix}_commands_: Lists all the available commands.`).replace("_"," ");
                         continue;
                     }
                     const command = require(`./${subdir_name}/${file_name}`);
@@ -32,7 +32,7 @@ module.exports = {
                 } else if(fs.statSync(`${full_current_dir}/${file_name}`).isDirectory()) {
                     console.log(`${indent(level)}Recursing into directory ${full_current_dir}${file_name}`);
 
-                    response += (`\n${indent(level)}${file_name} commands:`).replace("_","\\_");
+                    response += (`\n${indent(level)}${file_name} commands:`).replace("_"," ");
                     listCommands(`${subdir_name}${file_name}`,level+1);
                 }
             }
