@@ -61,26 +61,17 @@ client.once('ready',() => {
     let user_desaerun = client.users.cache.get(CONFIG.user_desaerun_id);
     let channel_code_shit = client.channels.cache.get(CONFIG.channel_code_shit_id);
 
-    let online_status_message = new Discord.MessageEmbed()
-        .setColor('#0c1a70')
-        .setAuthor(`${client.user.username}`,`${client.user.displayAvatarURL()}`)
-        .addFields({
-            name: 'Bot status',
-            value: 'Online'
-        });
-        dev_output.sendTrace("Bot status: Online","success",CONFIG.channel_code_shit_id);
+    dev_output.sendTrace("Bot status: Online","success",CONFIG.channel_code_shit_id);
     if (CONFIG.verbosity >= 3) {
         console.log("Sending Online Status message to bot owner and #code-shit")
     }
-    user_desaerun.send(online_status_message);
-    channel_code_shit.send(online_status_message);
 
     //set initial bot status
     client.user.setActivity('with fire',{type: 'PLAYING'})
         .then(console.log())
-        .catch(dev_output.sendTrace("Bot failed to set status","err",CONFIG.channel_code_shit_id))
-    const mysql = require('mysql');
+        .catch(dev_output.sendTrace("Bot failed to set status","err",CONFIG.channel_code_shit_id));
 
+    const mysql = require('mysql');
     const connection = mysql.createConnection({
         host     : process.env.RDS_HOSTNAME,
         user     : process.env.RDS_USERNAME,
@@ -137,7 +128,7 @@ function runCommands(message) {
         try {
             client.commands.get(command).execute(client, message, args);
         } catch (err) {
-            dev_output.log(err,"err",'674824072126922753').setClient(client);
+            dev_output.sendTrace(err,"err",'674824072126922753').setClient(client);
         }
     } else {
         message.channel.send(`_${command}_ is not a valid command`);
@@ -151,12 +142,10 @@ function runCommands(message) {
 function parseWithListeners(message) {
     try {
         for (const listener of client.listenerSet.values()) {
-            console.log(`listener.name: ${listener.name}`);
-            console.log(`listener.description: ${listener.description}`);
             if (listener.listen(client, message)) return;
         }
     } catch (err) {
-        console.log(err);
+        dev_output.sendTrace(err,"err",CONFIG.channel_dev_id);
     }
 }
 
