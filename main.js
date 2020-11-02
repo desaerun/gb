@@ -75,15 +75,14 @@ client.once('ready',() => {
 
     connection = connectToDB();
 
-    connection.connect(function(err) {
+    connection.connect((err) => {
         if (err) {
-            dev_output(err,CONFIG.channel_dev_id)
+            dev_output.sendTrace(err,CONFIG.channel_dev_id)
             return;
         }
         //log -- verbosity level 2
         if(CONFIG.verbosity >= 2) {
             console.log('Connected to database.');
-            console.log(connection.query("SELECT DATABASE()"));
         }
     });
 });
