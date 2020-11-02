@@ -53,7 +53,7 @@ module.exports = {
         for (let i=0;i<message.length;i+=1024) {
             let response = new Discord.MessageEmbed()
                 .setAuthor(`${this.client.user.username}`, `${this.client.user.displayAvatarURL()}`)
-                .setColor('#a90d0d')
+                .setColor('#0d23c8')
                 .addFields({
                     name: 'Bot Message:',
                     value: message

@@ -69,7 +69,7 @@ client.once('ready',() => {
     //set initial bot status
     client.user.setActivity('with fire',{type: 'PLAYING'})
         .then(console.log())
-        .catch(dev_output.sendTrace("Bot failed to set status","err",CONFIG.channel_code_shit_id));
+        .catch(dev_output.sendTrace("Bot failed to set status",CONFIG.channel_code_shit_id));
 
     connection = connectToDB();
 
@@ -100,14 +100,13 @@ client.on('message',message => {
 });
 function connectToDB() {
     const mysql = require('mysql');
-    const connection = mysql.createConnection({
-        host     : process.env.RDS_HOSTNAME,
-        user     : process.env.RDS_USERNAME,
-        password : process.env.RDS_PASSWORD,
-        port     : process.env.RDS_PORT,
-        database : process.env.RDS_DB_NAME
+    return mysql.createConnection({
+        host: process.env.RDS_HOSTNAME,
+        user: process.env.RDS_USERNAME,
+        password: process.env.RDS_PASSWORD,
+        port: process.env.RDS_PORT,
+        database: process.env.RDS_DB_NAME
     });
-    return connection;
 }
 /**
  * Identifies 'command' messages which must begin with CONFIG.prefix
@@ -148,7 +147,7 @@ function parseWithListeners(message) {
             if (listener.listen(client, message)) return;
         }
     } catch (err) {
-        dev_output.sendTrace(err,"err",CONFIG.channel_dev_id);
+        dev_output.sendTrace(err,CONFIG.channel_dev_id);
     }
 }
 
