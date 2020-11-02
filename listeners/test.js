@@ -6,7 +6,6 @@ module.exports = {
             message.channel.send('this is an test listener response');
             return true;
         }
-
         return false;
     }
 }

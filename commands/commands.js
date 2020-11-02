@@ -30,11 +30,11 @@ module.exports = {
                         console.log(`loading file:  ./${subdir_name}/${file_name}`);
                     }
                     if (file_name === 'commands.js') {
-                        response += (`\n${indent(level)}${CONFIG.prefix}_commands_: Lists all the available commands.`).replace("_"," ");
+                        response += `\n${indent(level)}${CONFIG.prefix}_commands_: Lists all the available commands.`
                         continue;
                     }
                     const command = require(`./${subdir_name}/${file_name}`);
-                    response += `\n    _${CONFIG.prefix}${command.name}_: ${command.description}`;
+                    response += `\n${indent(level)}${CONFIG.prefix}_${command.name}_: ${command.description}`
                 } else if(fs.statSync(`${full_current_dir}/${file_name}`).isDirectory()) {
                     if (CONFIG.verbosity >= 2) {
                         console.log(`${indent(level)}Recursing into directory ${full_current_dir}${file_name}`);
