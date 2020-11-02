@@ -67,7 +67,7 @@ client.once('ready',() => {
             name: 'Bot status',
             value: 'Online'
         });
-        dev_output.sendTrace()
+        dev_output.sendTrace("Bot status: Online","success",CONFIG.channel_code_shit_id).setClient(client);
     if (CONFIG.verbosity >= 3) {
         console.log("Sending Online Status message to bot owner and #code-shit")
     }
