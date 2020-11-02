@@ -6,6 +6,10 @@ module.exports = {
     name: 'play',
     description: "play audio from a youtube file",
     execute(client, message, args) {
+        if (!message.member.voice.channel) {
+            message.channel.send("You must be in a voice channel to use this command.");
+            return false;
+        }
         let q = args.join(" ");
         let params = {
             key: youtube_token,
