@@ -9,7 +9,6 @@ module.exports = {
             messageCount += messages.size;
             let last = messages.last().id;
             messages = await message.channel.messages.fetch({limit:100, before: last});
-            console.log(messages);
         }
 
         messageCount += messages.size;
