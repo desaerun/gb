@@ -25,7 +25,7 @@ module.exports = {
                 })
                 .addFields({
                     name: 'Stack Trace',
-                    value: error_text
+                    value: error_text.substr(i,i+1024)
                 });
             switch (typeof (output_channel_ids)) {
                 case "string": {
