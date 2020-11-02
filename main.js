@@ -61,7 +61,7 @@ client.once('ready',() => {
     let user_desaerun = client.users.cache.get(CONFIG.user_desaerun_id);
     let channel_code_shit = client.channels.cache.get(CONFIG.channel_code_shit_id);
 
-    dev_output.sendTrace("Bot status: Online","success",CONFIG.channel_code_shit_id);
+    dev_output.sendMessage("Bot status: Online",CONFIG.channel_dev_id);
     if (CONFIG.verbosity >= 3) {
         console.log("Sending Online Status message to bot owner and #code-shit")
     }
