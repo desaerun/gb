@@ -48,7 +48,7 @@ module.exports = {
             }
         }
     },
-    sendStatus: function(message) {
+    sendStatus: function(message,channel_ids) {
         for (let i=0;i<message.length;i+1024) {
             let response = new Discord.MessageEmbed()
                 .setAuthor(`${this.client.user.username}`, `${this.client.user.displayAvatarURL()}`)
