@@ -67,7 +67,7 @@ client.once('ready',() => {
             name: 'Bot status',
             value: 'Online'
         });
-        dev_output.sendTrace("Bot status: Online","success",CONFIG.channel_code_shit_id).setClient(client);
+        dev_output.sendTrace("Bot status: Online","success",CONFIG.channel_code_shit_id);
     if (CONFIG.verbosity >= 3) {
         console.log("Sending Online Status message to bot owner and #code-shit")
     }
@@ -77,7 +77,7 @@ client.once('ready',() => {
     //set initial bot status
     client.user.setActivity('with fire',{type: 'PLAYING'})
         .then(console.log())
-        .catch(dev_output.sendTrace("Bot failed to set status","err",CONFIG.channel_code_shit_id).setClient(client))
+        .catch(dev_output.sendTrace("Bot failed to set status","err",CONFIG.channel_code_shit_id))
     const mysql = require('mysql');
 
     const connection = mysql.createConnection({
