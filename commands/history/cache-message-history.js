@@ -10,7 +10,7 @@ module.exports = {
             let last = messages.last().id;
             messages = await message.channel.messages.fetch({limit:100, before: last});
         }
-        for (let historical_message of messages) {
+        for (let historical_message in messages) {
             let datetime = historical_message.id >> 22 + 1420070400000;
             console.log(`Message ID: ${historical_message.id}`);
             console.log(`Message Timestamp: ${datetime}`);
