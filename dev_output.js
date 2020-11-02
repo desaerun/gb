@@ -15,7 +15,7 @@ module.exports = {
         console.log(error_text);
 
         //Discord.MessageEmbed body cannot be longer than 1024 chars
-        for (let i=0;i<error_text.length;i+1024) {
+        for (let i=0;i<error_text.length;i+=1024) {
             let formatted_msg = new Discord.MessageEmbed()
                 .setAuthor(`${this.client.user.username}`, `${this.client.user.displayAvatarURL()}`)
                 .setColor('#a90d0d')
@@ -49,7 +49,7 @@ module.exports = {
         }
     },
     sendStatus: function(message,channel_ids) {
-        for (let i=0;i<message.length;i+1024) {
+        for (let i=0;i<message.length;i+=1024) {
             let response = new Discord.MessageEmbed()
                 .setAuthor(`${this.client.user.username}`, `${this.client.user.displayAvatarURL()}`)
                 .setColor('#a90d0d')
