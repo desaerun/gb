@@ -2,6 +2,7 @@ const CONFIG = require('./config/config');
 const Discord = require('discord.js');
 const client = new Discord.Client();
 const {token} = require('./config/token');
+const dev_output = require('./dev_output').setClient(client);
 
 const fs = require('fs');
 
@@ -55,32 +56,31 @@ getListenerSet("./listeners");
 client.once('ready',() => {
     console.log("bot online.");
     let guilds = client.guilds;
-    let guild_rageaholics = guilds.fetch('270271948527894541');
-    let user_desaerun = client.users.cache.get('187048556643876864');
-    let channel_code_shit = client.channels.cache.get('674824072126922753');
+    let guild_rageaholics = guilds.fetch(CONFIG.guild_rageaholics_id);
+    let user_desaerun = client.users.cache.get(CONFIG.user_desaerun_id);
+    let channel_code_shit = client.channels.cache.get(CONFIG.channel_code_shit_id);
 
     let online_status_message = new Discord.MessageEmbed()
-        .setColor('RANDOM')
+        .setColor('#0c1a70')
         .setAuthor(`${client.user.username}`,`${client.user.displayAvatarURL()}`)
         .addFields({
             name: 'Bot status',
             value: 'Online'
         });
-
-    console.log("Sending Online Status message to bot owner and #code-shit")
+        dev_output.sendTrace()
+    if (CONFIG.verbosity >= 3) {
+        console.log("Sending Online Status message to bot owner and #code-shit")
+    }
     user_desaerun.send(online_status_message);
     channel_code_shit.send(online_status_message);
-
 
     //set initial bot status
     client.user.setActivity('with fire',{type: 'PLAYING'})
         .then(console.log())
-        .catch(console.error);
-
-    /*
+        .catch(dev_output.sendTrace("Bot failed to set status","err",CONFIG.channel_code_shit_id).setClient(client))
     const mysql = require('mysql');
 
-    var connection = mysql.createConnection({
+    const connection = mysql.createConnection({
         host     : process.env.RDS_HOSTNAME,
         user     : process.env.RDS_USERNAME,
         password : process.env.RDS_PASSWORD,
@@ -93,11 +93,12 @@ client.once('ready',() => {
             console.error('Database connection failed: ' + err.stack);
             return;
         }
-
-        console.log('Connected to database.');
-        console.log(connection.query("SELECT DATABASE()"));
+        //log -- verbosity level 2
+        if(CONFIG.verbosity >= 2) {
+            console.log('Connected to database.');
+            console.log(connection.query("SELECT DATABASE()"));
+        }
     });
-     */
 });
 
 client.on('message',message => {
@@ -135,15 +136,7 @@ function runCommands(message) {
         try {
             client.commands.get(command).execute(client, message, args);
         } catch (err) {
-            console.log(err);
-            message.channel.send("There was an error executing that command:");
-            const response = new Discord.MessageEmbed()
-                .setColor('#DAF7A6')
-                .addFields({
-                    name: `Error`,
-                    value: err
-                })
-            message.channel.send(response);
+            dev_output.log(err,"err",'674824072126922753').setClient(client);
         }
     } else {
         message.channel.send(`_${command}_ is not a valid command`);

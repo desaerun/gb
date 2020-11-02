@@ -1,3 +1,4 @@
+const CONFIG = require('../config/config');
 module.exports = {
     name: 'josh-gym-shower-eat',
     description: 'Responds to Josh talking about the gym, showering, or eating.',
@@ -8,7 +9,7 @@ module.exports = {
         if (message.author.id !== joshID && message.author.id !== desID) return false;
 
         // let messageContent = message.content.split(' ');
-        const messageContent = message;
+        const messageContent = message.content;
         let response;
 
         if (messageContent.test('\bgym\n')) {
