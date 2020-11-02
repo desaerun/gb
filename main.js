@@ -71,18 +71,11 @@ client.once('ready',() => {
         .then(console.log())
         .catch(dev_output.sendTrace("Bot failed to set status","err",CONFIG.channel_code_shit_id));
 
-    const mysql = require('mysql');
-    const connection = mysql.createConnection({
-        host     : process.env.RDS_HOSTNAME,
-        user     : process.env.RDS_USERNAME,
-        password : process.env.RDS_PASSWORD,
-        port     : process.env.RDS_PORT,
-        database : process.env.RDS_DB_NAME
-    });
+    connection = connectToDB();
 
     connection.connect(function(err) {
         if (err) {
-            console.error('Database connection failed: ' + err.stack);
+            dev_output(err,CONFIG.channel_dev_id)
             return;
         }
         //log -- verbosity level 2
@@ -105,7 +98,17 @@ client.on('message',message => {
         parseWithListeners(message);
     }
 });
-
+function connectToDB() {
+    const mysql = require('mysql');
+    const connection = mysql.createConnection({
+        host     : process.env.RDS_HOSTNAME,
+        user     : process.env.RDS_USERNAME,
+        password : process.env.RDS_PASSWORD,
+        port     : process.env.RDS_PORT,
+        database : process.env.RDS_DB_NAME
+    });
+    return connection;
+}
 /**
  * Identifies 'command' messages which must begin with CONFIG.prefix
  * @param message
@@ -128,7 +131,7 @@ function runCommands(message) {
         try {
             client.commands.get(command).execute(client, message, args);
         } catch (err) {
-            dev_output.sendTrace(err,"err",'674824072126922753').setClient(client);
+            dev_output.sendTrace(err,CONFIG.channel_dev_id);
         }
     } else {
         message.channel.send(`_${command}_ is not a valid command`);
