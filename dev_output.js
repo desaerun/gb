@@ -31,7 +31,7 @@ module.exports = {
                 case "string": {
                     let channel = this.client.channels.cache.get(output_channel_ids);
                     console.log(`this.client.channels.get(${output_channel_ids}): ${channel}`);
-                    channel.send(formatted_msg.substr(i,i+1024));
+                    channel.send(formatted_msg);
                     break;
                 }
                 case "object": {
