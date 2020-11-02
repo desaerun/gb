@@ -69,7 +69,7 @@ client.once('ready',() => {
     //set initial bot status
     client.user.setActivity('with fire',{type: 'PLAYING'})
         .then(console.log())
-        .catch(dev_output.sendTrace("Bot failed to set status",CONFIG.channel_code_shit_id));
+        .catch(dev_output.sendTrace(`Bot failed to set status: ${err}`,CONFIG.channel_dev_id));
 
     connection = connectToDB();
 
