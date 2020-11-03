@@ -7,7 +7,9 @@ module.exports = {
         //todo: make this exclusive to devs
         let query = args.join(" ");
         mysqlQuery(query,(err,rows) => {
-            message.channel.send(`\`\`\`${rows}\`\`\``);
+            for (let row of rows) {
+                message.channel.send(`\`\`\`${row}\`\`\``);
+            }
         });
 
     }
