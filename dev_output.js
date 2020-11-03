@@ -17,16 +17,16 @@ module.exports = {
         switch (typeof (output_channel_ids)) {
             case "string": {
                 let channel = this.client.channels.cache.get(output_channel_ids);
-                channel.send(`Error Generated: \`${error_message}\``);
-                channel.send(`Stack Trace: \`${error_text}\``);
+                channel.send(`Error Generated: \`\`\`${error_message}\`\`\``);
+                channel.send(`Stack Trace: \`\`\`${error_text}\`\`\``);
                 break;
             }
             case "object": {
                 if (output_channel_ids.isArray()) {
                     for (let channel_id of output_channel_ids) {
                         let channel = this.client.channels.cache.get(channel_id);
-                        channel.send(`Error Generated: \`${error_message}\``);
-                        channel.send(`Stack Trace: \`${error_text}\``);
+                        channel.send(`Error Generated: \`\`\`${error_message}\`\`\``);
+                        channel.send(`Stack Trace: \`\`\`${error_text}\`\`\``);
                     }
                     break;
                 }
