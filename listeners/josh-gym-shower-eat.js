@@ -25,7 +25,7 @@ module.exports = {
     wordResponseMap: buildWordResponseMap(),
     listen(client, message) {
 
-        console.log("Word response map: " + WORD_RESPONSE_MAP);
+        console.log("Word response map: " + this.wordResponseMap);
 
         if (message.author.id !== CONFIG.user_josh_id && message.author.id !== CONFIG.user_charles_id) return false;
 
