@@ -23,9 +23,7 @@ module.exports = {
         let wordResponseMap = buildWordResponseMap();
 
         for (let key of wordResponseMap.keys()) {
-            console.log("Testing key: " + key);
             if (key.test(message.content)) {
-                console.log("Test for key: " + key + " successful, sending response msg");
                 let response = wordResponseMap.get(key);
                 message.channel.send(response);
                 return true;
