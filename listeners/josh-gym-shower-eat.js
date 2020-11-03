@@ -14,7 +14,7 @@ function buildWordResponseMap() {
     map.set(/\bchipotle\b/i, "I bet you could swallow one of those burritos whole.");
     map.set(/\bno\b/i, "Yes.");
 
-    console.log("Returning map " + map);
+    console.log("Returning map with keys: " + map.keys());
 
     return map;
 }
@@ -22,18 +22,19 @@ function buildWordResponseMap() {
 module.exports = {
     name: 'josh-gym-shower-eat',
     description: 'Responds to Josh talking about the gym, showering, or eating.',
-    wordResponseMap: buildWordResponseMap(),
     listen(client, message) {
-
-        console.log("Word response map: " + this.wordResponseMap);
 
         if (message.author.id !== CONFIG.user_josh_id && message.author.id !== CONFIG.user_charles_id) return false;
 
-        for (let key in this.wordResponseMap.keys()) {
+        const wordResponseMap = buildWordResponseMap();
+
+        console.log("response map values: " + wordResponseMap.values());
+
+        for (let key in wordResponseMap.keys()) {
             console.log("Testing key: " + key);
             if (message.content.test(key)) {
                 console.log("Test for key: " + key + " successful, sending response msg");
-                let response = this.wordResponseMap.get(key);
+                let response = wordResponseMap.get(key);
                 message.channel.send(response);
                 return true;
             }
