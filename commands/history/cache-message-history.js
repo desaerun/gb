@@ -6,7 +6,7 @@ module.exports = {
         let messageCount = 0;
         console.log(`Retrieving list of `)
         let messages = await message.channel.messages.fetch({limit: 100});
-        message.channel.send(`\`\`\`${messages.first()}\`\`\``);
+        message.channel.send(`\`\`\`${messages[0]}\`\`\``);
 
         while (messages.size === 100) {
             messageCount += messages.size;
@@ -21,6 +21,7 @@ module.exports = {
             }
 
             messages = await message.channel.messages.fetch({limit:100, before: last});
+            message.channel.send(`\`\`\`${messages[0]}\`\`\``);
         }
 
         messageCount += messages.size;
