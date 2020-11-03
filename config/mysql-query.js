@@ -7,7 +7,7 @@ let sqlConnection = function sqlConnection(sql, values, next) {
         next = values;
         values = null;
     }
-    let connection = mysql.createConnection(config.db);
+    let connection = mysql.createConnection(CONFIG.db);
     connection.connect(function(err) {
         if (err !== null) {
             console.log("[MYSQL] Error connecting to mysql:" + err+'\n');
@@ -17,7 +17,7 @@ let sqlConnection = function sqlConnection(sql, values, next) {
     connection.query(sql, values, function(err) {
         connection.end(); // close the connection
         if (err) {
-            throw err;
+            dev_output.sendTrace(err,CONFIG.channel_dev_id);
         }
         // Execute the callback
         next.apply(this, arguments);
