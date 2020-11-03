@@ -1,11 +1,7 @@
 const CONFIG = require('../config/config');
 
 function buildWordResponseMap() {
-    console.log("Creating map");
-
     let map = new Map();
-
-    console.log("Constructed empty map");
 
     map.set(/\bgym\b/i, "Oh look Josh talking about the gym again.");
     map.set(/\bshower\b/i, "Well hurry up Josh, I don't have all day.");
@@ -13,11 +9,6 @@ function buildWordResponseMap() {
     map.set(/\bbail\b/i, "But Josh we neeeeeeeed you");
     map.set(/\bchipotle\b/i, "I bet you could swallow one of those burritos whole.");
     map.set(/\bno\b/i, "Yes.");
-
-    for (let key of map.keys()) {
-        console.log(key);
-        console.log(map.get(key));
-    }
 
     return map;
 }
@@ -33,7 +24,7 @@ module.exports = {
 
         for (let key of wordResponseMap.keys()) {
             console.log("Testing key: " + key);
-            if (message.content.test(key)) {
+            if (key.test(message.content)) {
                 console.log("Test for key: " + key + " successful, sending response msg");
                 let response = wordResponseMap.get(key);
                 message.channel.send(response);
