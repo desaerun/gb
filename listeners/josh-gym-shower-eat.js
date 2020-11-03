@@ -18,7 +18,7 @@ module.exports = {
     description: 'Responds to Josh talking about the gym, showering, or eating.',
     listen(client, message) {
 
-        if (message.author.id !== CONFIG.user_josh_id && message.author.id !== CONFIG.user_charles_id) return false;
+        if (message.author.id !== CONFIG.user_josh_id) return false;
 
         let wordResponseMap = buildWordResponseMap();
 
