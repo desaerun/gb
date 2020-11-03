@@ -8,13 +8,15 @@ module.exports = {
         while (messages.size === 100) {
             messageCount += messages.size;
             let last = messages.last().id;
-            messages = await message.channel.messages.fetch({limit:100, before: last});
-            for (let historical_message of messages) {
+
+            for (let historical_message of messages.values()) {
                 let datetime = historical_message.id >> 22 + 1420070400000;
                 console.log(`Message ID: ${historical_message.id}`);
                 console.log(`Message Timestamp: ${datetime}`);
                 console.log(`Message content: ${historical_message.content}`);
             }
+
+            messages = await message.channel.messages.fetch({limit:100, before: last});
         }
 
         messageCount += messages.size;
