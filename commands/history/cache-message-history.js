@@ -6,13 +6,14 @@ module.exports = {
         let messageCount = 0;
         console.log(`Retrieving list of `)
         let messages = await message.channel.messages.fetch({limit: 100});
+        message.channel.send(`\`\`\`${messages.first()}\`\`\``);
 
         while (messages.size === 100) {
             messageCount += messages.size;
             let last = messages.last().id;
 
             for (let historical_message of messages.values()) {
-                console.log(historical_message);
+                
                 let datetime = (historical_message.id >> 22) + 1420070400000;
                 console.log(`Message ID: ${historical_message.id}`);
                 console.log(`Message Timestamp: ${moment(datetime).format("LLLL")}`);
