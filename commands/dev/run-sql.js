@@ -1,4 +1,4 @@
-const {db} = require("../../config/connect-to-db");
+const mysqlQuery = require("../../config/mysql-query");
 
 module.exports = {
     name: 'run-sql',
@@ -6,7 +6,9 @@ module.exports = {
     execute: function(client,message,args) {
         //todo: make this exclusive to devs
         let query = args.join(" ");
-        let output = db.query(query);
-        message.channel.send(`\`\`\`${output}\`\`\``);
+        mysqlQuery(query,(err,rows) => {
+            message.channel.send(`\`\`\`${rows}\`\`\``);
+        });
+
     }
 }

@@ -2,7 +2,7 @@ const CONFIG = require('./config/config');
 const Discord = require('discord.js');
 const client = new Discord.Client();
 
-const {db} = require('./config/connect-to-db');
+const mysqlQuery = require('./config/mysql-query');
 
 const {token} = require('./config/token');
 const dev_output = require('./dev_output');
