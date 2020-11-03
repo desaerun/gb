@@ -1,6 +1,9 @@
 const CONFIG = require('./config/config');
 const Discord = require('discord.js');
 const client = new Discord.Client();
+
+const {db} = require('./config/connect-to-db');
+
 const {token} = require('./config/token');
 const dev_output = require('./dev_output');
 dev_output.setClient(client);
@@ -72,19 +75,9 @@ client.once('ready',() => {
         .catch((err) => {
             dev_output.sendTrace(`Bot failed to set status: ${err}`,CONFIG.channel_dev_id)
         });
-
-    connection = connectToDB();
-
-    connection.connect((err) => {
-        if (err) {
-            dev_output.sendTrace(err,CONFIG.channel_dev_id)
-            return;
-        }
-        //log -- verbosity level 2
-        if(CONFIG.verbosity >= 2) {
-            console.log('Connected to database.');
-        }
-    });
+    if (db) {
+        dev_output.sendTrace("connected to DB");
+    }
 });
 
 client.on('message',message => {
@@ -99,16 +92,6 @@ client.on('message',message => {
         parseWithListeners(message);
     }
 });
-function connectToDB() {
-    const mysql = require('mysql');
-    return mysql.createConnection({
-        host: process.env.RDS_HOSTNAME,
-        user: process.env.RDS_USERNAME,
-        password: process.env.RDS_PASSWORD,
-        port: process.env.RDS_PORT,
-        database: process.env.RDS_DB_NAME
-    });
-}
 /**
  * Identifies 'command' messages which must begin with CONFIG.prefix
  * @param message
