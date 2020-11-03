@@ -14,7 +14,8 @@ function buildWordResponseMap() {
     map.set(/\bchipotle\b/i, "I bet you could swallow one of those burritos whole.");
     map.set(/\bno\b/i, "Yes.");
 
-    console.log("Returning map with keys: " + map.keys());
+    map.keys().forEach(key => console.log("Key: " + key));
+    map.values().forEach(val => console.log("Value: " + val));
 
     return map;
 }
@@ -26,9 +27,7 @@ module.exports = {
 
         if (message.author.id !== CONFIG.user_josh_id && message.author.id !== CONFIG.user_charles_id) return false;
 
-        const wordResponseMap = buildWordResponseMap();
-
-        console.log("response map values: " + wordResponseMap.values());
+        let wordResponseMap = buildWordResponseMap();
 
         for (let key in wordResponseMap.keys()) {
             console.log("Testing key: " + key);
