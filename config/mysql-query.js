@@ -11,6 +11,7 @@ let sqlConnection = function sqlConnection(sql, values, next) {
     connection.connect(function(err) {
         if (err !== null) {
             console.log("[MYSQL] Error connecting to mysql:" + err+'\n');
+            dev_output.sendTrace(`[MYSQL] Error connecting to mysql: ${err}`,CONFIG.channel_dev_id);
         }
     });
 
