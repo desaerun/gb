@@ -19,6 +19,9 @@ module.exports = {
     description: 'Responds to Josh talking about the gym, showering, or eating.',
     listen(client, message) {
 
+        console.log("Message author ID: " + message.author.id);
+        console.log("Acceptable response IDs: " + CONFIG.user_josh_id + ", " + CONFIG.user_charles_id);
+
         if (message.author.id !== CONFIG.user_josh_id && message.author.id !== CONFIG.user_charles_id) return false;
 
         for (let key in WORD_RESPONSE_MAP.keys()) {
