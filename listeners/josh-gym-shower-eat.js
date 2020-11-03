@@ -1,5 +1,4 @@
 const CONFIG = require('../config/config');
-const WORD_RESPONSE_MAP = buildWordResponseMap();
 
 function buildWordResponseMap() {
     console.log("Creating map");
@@ -23,17 +22,18 @@ function buildWordResponseMap() {
 module.exports = {
     name: 'josh-gym-shower-eat',
     description: 'Responds to Josh talking about the gym, showering, or eating.',
+    wordResponseMap: buildWordResponseMap(),
     listen(client, message) {
 
         console.log("Word response map: " + WORD_RESPONSE_MAP);
 
         if (message.author.id !== CONFIG.user_josh_id && message.author.id !== CONFIG.user_charles_id) return false;
 
-        for (let key in WORD_RESPONSE_MAP.keys()) {
+        for (let key in this.wordResponseMap.keys()) {
             console.log("Testing key: " + key);
             if (message.content.test(key)) {
                 console.log("Test for key: " + key + " successful, sending response msg");
-                let response = WORD_RESPONSE_MAP.get(key);
+                let response = this.wordResponseMap.get(key);
                 message.channel.send(response);
                 return true;
             }
