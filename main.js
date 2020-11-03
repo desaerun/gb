@@ -76,7 +76,7 @@ client.once('ready',() => {
             dev_output.sendTrace(`Bot failed to set status: ${err}`,CONFIG.channel_dev_id)
         });
     if (db) {
-        dev_output.sendTrace("connected to DB");
+        dev_output.sendTrace("connected to DB",CONFIG.channel_dev_id);
     }
 });
 
