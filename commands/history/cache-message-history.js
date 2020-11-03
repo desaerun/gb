@@ -1,8 +1,10 @@
+let moment = require("moment");
 module.exports = {
     name: 'cache-message-history',
     description: "Retrieves message history for the current channel and stores it to the DB",
     execute: async function (client, message, args) {
         let messageCount = 0;
+        console.log(`Retrieving list of `)
         let messages = await message.channel.messages.fetch({limit: 100});
 
         while (messages.size === 100) {
@@ -12,7 +14,7 @@ module.exports = {
             for (let historical_message of messages.values()) {
                 let datetime = (historical_message.id >> 22) + 1420070400000;
                 console.log(`Message ID: ${historical_message.id}`);
-                console.log(`Message Timestamp: ${datetime}`);
+                console.log(`Message Timestamp: ${moment(datetime).format("LLLL")}`);
                 console.log(`Message content: ${historical_message.content}`);
             }
 
