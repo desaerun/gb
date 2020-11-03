@@ -1,4 +1,5 @@
 const mysql = require('mysql');
+const CONFIG = require('./config');
 const dev_output = require('../dev_output');
 
 module.exports = {
