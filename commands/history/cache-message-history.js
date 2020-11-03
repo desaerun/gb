@@ -10,7 +10,7 @@ module.exports = {
             let last = messages.last().id;
 
             for (let historical_message of messages.values()) {
-                let datetime = historical_message.id >> 22 + 1420070400000;
+                let datetime = (historical_message.id >> 22) + 1420070400000;
                 console.log(`Message ID: ${historical_message.id}`);
                 console.log(`Message Timestamp: ${datetime}`);
                 console.log(`Message content: ${historical_message.content}`);
