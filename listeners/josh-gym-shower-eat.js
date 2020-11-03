@@ -19,10 +19,12 @@ module.exports = {
     description: 'Responds to Josh talking about the gym, showering, or eating.',
     listen(client, message) {
 
-        if (message.author.id !== CONFIG.user_josh_id && message.author.id !== CONFIG.user_desaerun_id) return false;
+        if (message.author.id !== CONFIG.user_josh_id && message.author.id !== CONFIG.user_charles_id) return false;
 
         for (let key in WORD_RESPONSE_MAP.keys()) {
-            if (message.content.match(key)) {
+            console.log("Testing key: " + key);
+            if (message.content.test(key)) {
+                console.log("Test for key: " + key + " successful, sending response msg");
                 let response = WORD_RESPONSE_MAP.get(key);
                 message.channel.send(response);
                 return true;
