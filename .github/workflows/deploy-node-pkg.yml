@@ -1,4 +1,4 @@
-name: Deploy Node Package
+name: Deploy Discord Bot - Development Build
 on:
   push:
     branches: [ dev ]

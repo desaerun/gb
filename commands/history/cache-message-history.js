@@ -1,4 +1,5 @@
 let moment = require("moment");
+
 module.exports = {
     name: 'cache-message-history',
     description: "Retrieves message history for the current channel and stores it to the DB",
@@ -13,7 +14,7 @@ module.exports = {
             let last = messages.last().id;
 
             for (let historical_message of messages.values()) {
-                
+                //todo: fix this datetime (it is like 4 years early?)
                 let datetime = (historical_message.id >> 22) + 1420070400000;
                 console.log(`Message ID: ${historical_message.id}`);
                 console.log(`Message Timestamp: ${moment(datetime).format("LLLL")}`);
