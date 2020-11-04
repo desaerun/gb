@@ -17,6 +17,7 @@ jobs:
           script: |
             mkdir -p /app
             cd /app
-            git clone https://github.com/desaerun/discordhistorybot.git discordbot
+            git clone https://${{ secrets.GIT_USER }}:${{ secrets.GIT_PASSWORD }}@github.com/desaerun/discordhistorybot.git discordbot
+            cd /discordbot
             npm install
             pm2 start main.js
