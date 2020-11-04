@@ -10,11 +10,12 @@ jobs:
       - name: Deploy NodeJS app
         uses: appleboy/ssh-action@latest
         with:
-          host: ${{secrets.SSH_HOST}}
+          host: ${{ secrets.SSH_HOST }}
+          port: ${{ secrets.SSH_PORT }}
           username: ${{ secrets.SSH_USERNAME }}
           key: ${{ secrets.SSH_KEY }}
           script: |
-            mkdir -p ~/discordbot/
+            mkdir -p /discordbot/
             cd ~/discordbot/
             git clone https://github.com/desaerun/discordhistorybot.git app
             npm install
