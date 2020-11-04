@@ -5,7 +5,7 @@ on:
 
 jobs:
   deploy:
-    runs-on: arch-latest
+    runs-on: ubuntu-latest
     steps:
       - name: Deploy NodeJS app
         uses: appleboy/ssh-action@latest
