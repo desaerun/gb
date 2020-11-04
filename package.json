@@ -1,6 +1,6 @@
 {
   "name": "discordhistorybot",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "private": true,
   "description": "",
   "main": "main.js",
@@ -11,10 +11,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@discordjs/opus": "^0.3.3",
+    "@discordjs/opus": "latest",
     "coffeescript": "^2.5.1",
     "discord.js": "^12.4.1",
-    "ffmpeg-static": "^4.2.7",
     "moment": "^2.29.1",
     "mysql": "latest",
     "stack-trace": "0.0.10",

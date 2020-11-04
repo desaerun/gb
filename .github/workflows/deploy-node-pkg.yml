@@ -1,0 +1,21 @@
+name: Deploy Node Package
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+  deploy:
+    runs-on: arch-latest
+    steps:
+      - name: Deploy NodeJS app
+        uses: appleboy/ssh-action@latest
+        with:
+          host: ${{secrets.SSH_HOST}}
+          username: ${{ secrets.SSH_USERNAME }}
+          password: ${{ secrets.SSH_PASSWORD }}
+          script: |
+            mkdir -p ~/discordbot/
+            cd ~/discordbot/
+            git clone https://github.com/desaerun/discordhistorybot.git app
+            npm install
+            pm2 start main.js
