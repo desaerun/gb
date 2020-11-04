@@ -16,7 +16,7 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           script: |
             cd /app/discordbot
-            git fetch origin main
+            git fetch origin dev
             git merge -s recursive -X theirs origin/main
             npm install
             pm2 kill
