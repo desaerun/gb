@@ -15,8 +15,8 @@ jobs:
           username: ${{ secrets.SSH_USERNAME }}
           key: ${{ secrets.SSH_KEY }}
           script: |
-            mkdir -p /discordbot/
-            cd ~/discordbot/
-            git clone https://github.com/desaerun/discordhistorybot.git app
+            mkdir -p /app
+            cd /app
+            git clone https://github.com/desaerun/discordhistorybot.git discordbot
             npm install
             pm2 start main.js
