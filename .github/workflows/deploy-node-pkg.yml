@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Deploy NodeJS app
-        uses: appleboy/ssh-action@latest
+        uses: appleboy/ssh-action@v0.1.3
         with:
           host: ${{ secrets.SSH_HOST }}
           port: ${{ secrets.SSH_PORT }}
