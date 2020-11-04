@@ -17,7 +17,7 @@ jobs:
           script: |
             mkdir /app/discordbot-dev 2>/dev/null
             cd /app
-            git clone --branch dev https://github.com/desaerun/discordhistorybot.git discordbot-dev 2>/dev/null
+            git clone --branch dev github-desaerun:desaerun/desaerun/discordhistorybot.git discordbot-dev 2>/dev/null
             cd /app/discordbot-dev
             git fetch origin dev
             git merge -s recursive -X theirs origin/dev
