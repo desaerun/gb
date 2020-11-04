@@ -15,9 +15,10 @@ jobs:
           username: ${{ secrets.SSH_USERNAME }}
           key: ${{ secrets.SSH_KEY }}
           script: |
-            cd /app/discordbot
+            mkdir /app/discordbot-dev
+            cd /app/discordbot-dev
             git fetch origin dev
-            git merge -s recursive -X theirs origin/main
+            git merge -s recursive -X theirs origin/dev
             npm install
             pm2 kill
             pm2 stop
