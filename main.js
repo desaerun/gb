@@ -60,9 +60,6 @@ getListenerSet("./listeners");
 client.once('ready',() => {
     console.log("bot online.");
     let guilds = client.guilds;
-    let guild_rageaholics = guilds.fetch(CONFIG.guild_rageaholics_id);
-    let user_desaerun = client.users.cache.get(CONFIG.user_desaerun_id);
-    let channel_code_shit = client.channels.cache.get(CONFIG.channel_code_shit_id);
 
     dev_output.sendStatus(`Bot status: Online.  Type: ${token.type}`,CONFIG.channel_dev_id);
     if (CONFIG.verbosity >= 3) {
