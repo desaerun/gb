@@ -15,10 +15,10 @@ jobs:
           username: ${{ secrets.SSH_USERNAME }}
           key: ${{ secrets.SSH_KEY }}
           script: |
-            mkdir ~/app 2>/dev/null
-            cd ~/app
-            git clone --branch main github-desaerun:desaerun/discordhistorybot.git discordbot-prod 2>/dev/null
-            cd ~/app/discordbot-prod
+            mkdir /opt/prod-discordbot 2>/dev/null
+            cd /opt
+            git clone --branch main github-desaerun:desaerun/discordhistorybot.git prod-discordbot 2>/dev/null
+            cd prod-discordbot
             git fetch origin main
             git merge -s recursive -X theirs origin/main
             npm install
