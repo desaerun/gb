@@ -15,7 +15,7 @@ jobs:
           username: ${{ secrets.SSH_USERNAME }}
           key: ${{ secrets.SSH_KEY }}
           script: |
-            mkdir /opt/discordbot 2>/dev/null
+            mkdir /opt/dev-discordbot 2>/dev/null
             cd /opt
             git clone --branch dev github-desaerun:desaerun/discordhistorybot.git dev-discordbot 2>/dev/null
             cd dev-discordbot
