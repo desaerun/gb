@@ -1,4 +1,4 @@
-name: Deploy Discord Bot - Production
+name: Deploy Discord Bot - Production Build
 on:
   push:
     branches: [ main ]
@@ -15,9 +15,12 @@ jobs:
           username: ${{ secrets.SSH_USERNAME }}
           key: ${{ secrets.SSH_KEY }}
           script: |
-            cd /app/discordbot
+            mkdir ~/app 2>/dev/null
+            cd ~/app
+            git clone --branch main github-desaerun:desaerun/discordhistorybot.git discordbot-prod 2>/dev/null
+            cd ~/app/discordbot-prod
             git fetch origin main
             git merge -s recursive -X theirs origin/main
             npm install
-            pm2 stop all
+            pm2 stop all 2>/dev/null
             pm2 start main.js
