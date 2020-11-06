@@ -1,6 +1,7 @@
+/.github/* export-ignore
 .gitattributes export-ignore
 .gitignore export-ignore
 README.md export-ignore
-package-lock.json export-ignore
 
-/config/token.js -diff
+config/token.js -diff
+/.github/workflows/* -diff
