@@ -8,7 +8,7 @@ function buildWordResponseMap() {
     map.set(/\b(eat|food)\b/i, "Josh, you're going to get fat.");
     map.set(/\bbail\b/i, "But Josh we neeeeeeeed you");
     map.set(/\bchipotle\b/i, "I bet you could swallow one of those burritos whole.");
-    map.set(/\bno\b/i, "Yes.");
+    map.set(/^\bno\b$/i, "Yes.");
 
     return map;
 }
