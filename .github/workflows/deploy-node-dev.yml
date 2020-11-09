@@ -24,8 +24,8 @@ jobs:
       - name: Deploy NodeJS app
         uses: appleboy/ssh-action@v0.1.3
         with:
-          host: ${{ ssh_port }}
-          port: ${{ ssh_port }}
+          host: ${{ env.ssh_port }}
+          port: ${{ env.ssh_port }}
           username: ${{ secrets.SSH_USERNAME }}
           key: ${{ secrets.SSH_KEY }}
           script: |
