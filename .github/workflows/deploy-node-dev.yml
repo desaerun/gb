@@ -15,12 +15,14 @@ jobs:
           username: ${{ secrets.SSH_USERNAME }}
           key: ${{ secrets.SSH_KEY }}
           script: |
-            mkdir /opt/dev-discordbot 2>/dev/null
+            mkdir /opt/${BUILD_ENV}-discordbot 2>/dev/null
             cd /opt
-            git clone --branch dev github-desaerun:desaerun/discordhistorybot.git dev-discordbot 2>/dev/null
-            cd dev-discordbot
-            git fetch origin dev
-            git merge -s recursive -X theirs origin/dev
+            git clone --branch ${BUILD_ENV} github-desaerun:desaerun/discordhistorybot.git ${BUILD_ENV}-discordbot 2>/dev/null
+            cd ${BUILD_ENV}-discordbot
+            cp ~/.env .env
+            git stash
+            git fetch origin ${BUILD_ENV}
+            git merge -s recursive -X theirs origin/${BUILD_ENV}
             npm install
             pm2 stop all 2>/dev/null
             pm2 start main.js
