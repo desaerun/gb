@@ -22,7 +22,6 @@ jobs:
       - name: output github env
         run: echo "$GITHUB_ENV"
       - name: Deploy NodeJS app
-        env:
         uses: appleboy/ssh-action@v0.1.3
         with:
           host: ${{ env.ssh_host }}
