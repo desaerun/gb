@@ -1,4 +1,4 @@
-name: Deploy Discord Bot - Development Build
+name: GroidBot - Development Build
 on:
   push:
     branches: [ dev ]
@@ -22,17 +22,18 @@ jobs:
       - name: output github env
         run: echo "$GITHUB_ENV"
       - name: Deploy NodeJS app
+        env:
         uses: appleboy/ssh-action@v0.1.3
         with:
-          host: ${{ env.ssh_port }}
+          host: ${{ env.ssh_host }}
           port: ${{ env.ssh_port }}
           username: ${{ secrets.SSH_USERNAME }}
           key: ${{ secrets.SSH_KEY }}
           script: |
-            mkdir /opt/${BUILD_ENV}-discordbot 2>/dev/null
+            mkdir /opt/${BUILD_ENV}-groidbot 2>/dev/null
             cd /opt
-            git clone --branch ${BUILD_ENV} github-desaerun:desaerun/discordhistorybot.git ${BUILD_ENV}-discordbot 2>/dev/null
-            cd ${BUILD_ENV}-discordbot
+            git clone --branch ${BUILD_ENV} github-desaerun:desaerun/groidbot.git ${BUILD_ENV}-groidbot 2>/dev/null
+            cd ${BUILD_ENV}-groidbot
             cp ~/.env .env
             git stash
             git fetch origin ${BUILD_ENV}

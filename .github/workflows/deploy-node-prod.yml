@@ -15,10 +15,10 @@ jobs:
           username: ${{ secrets.SSH_USERNAME }}
           key: ${{ secrets.SSH_KEY }}
           script: |
-            mkdir /opt/prod-discordbot 2>/dev/null
+            mkdir /opt/prod-groidbot 2>/dev/null
             cd /opt
-            git clone --branch mail github-desaerun:desaerun/discordhistorybot.git prod-discordbot 2>/dev/null
-            cd prod-discordbot
+            git clone --branch mail github-desaerun:desaerun/groidbot.git prod-groidbot 2>/dev/null
+            cd prod-groidbot
             git stash
             git fetch origin main
             git merge -s recursive -X theirs origin/main
