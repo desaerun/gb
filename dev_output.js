@@ -7,10 +7,10 @@
 const stackTrace = require('stack-trace');
 const Discord = require('discord.js');
 module.exports = {
-    setClient: function(client) {
+    setClient: function (client) {
         this.client = client;
     },
-    sendTrace: function(error_message,output_channel_ids) {
+    sendTrace: function (error_message, output_channel_ids, desired_verbosity = 3) {
         let error_text = stackTrace.get().toString();
         console.log(error_text);
 
@@ -32,15 +32,15 @@ module.exports = {
                 }
             }
             default: {
-                console.log('could not send stack trace to output channel. output_channels is not a string or array.')
+                console.log('could not send stack trace to output channel. output_channel_ids is not a string or array.')
             }
         }
     },
-    sendStatus: function(message,channel_ids) {
-        for (let i=0;i<message.length;i+=1024) {
+    sendStatus: function (message, channel_ids, color = "#0d23c8") {
+        for (let i = 0; i < message.length; i += 1024) {
             let response = new Discord.MessageEmbed()
                 .setAuthor(`${this.client.user.username}`, `${this.client.user.displayAvatarURL()}`)
-                .setColor('#0d23c8')
+                .setColor(color)
                 .addFields({
                     name: 'Bot Message:',
                     value: message
