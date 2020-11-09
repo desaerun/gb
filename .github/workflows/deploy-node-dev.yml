@@ -17,7 +17,7 @@ jobs:
         if: endsWith(github.ref, '/main')
         run: |
           echo "environment=prod" >> $GITHUB_ENV
-          echo "ssh_port=${{ secrets.SSH_HOST_PROD }}" >> $GITHUB_ENV
+          echo "ssh_host=${{ secrets.SSH_HOST_PROD }}" >> $GITHUB_ENV
           echo "ssh_port=${{ secrets.SSH_PORT_PROD }}" >> $GITHUB_ENV
       - name: output github env
         run: echo "$GITHUB_ENV"
