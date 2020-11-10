@@ -63,7 +63,7 @@ client.once('ready', () => {
     console.log("bot online.");
     let guilds = client.guilds;
 
-    dev_output.sendStatus(`Bot status: Online.  Type: ${process.env.BUILD_ENV}`, CONFIG.channel_dev_id);
+    dev_output.sendStatus(`Bot status: Online.  Type: ${process.env.BUILD_ENV}`, CONFIG.channel_code_shit_id);
     if (CONFIG.verbosity >= 3) {
         console.log("Sending Online Status message to bot owner and #code-shit")
     }
