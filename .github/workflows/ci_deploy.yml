@@ -31,9 +31,9 @@ jobs:
           username: ${{ secrets.SSH_USERNAME }}
           key: ${{ secrets.SSH_KEY }}
           script: |
-            mkdir /opt/groidbot 2>/dev/null
+            mkdir /opt/groidbot
             cd /opt
-            git clone --branch ${{ env.github_branch }} github-desaerun:desaerun/groidbot.git groidbot 2>/dev/null
+            git clone --branch ${{ env.github_branch }} github-desaerun:desaerun/groidbot.git groidbot
             cd groidbot
             cp ~/.env .env
             git stash
