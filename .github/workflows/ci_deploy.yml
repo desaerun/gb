@@ -11,12 +11,14 @@ jobs:
         if: endsWith(github.ref, '/dev')
         run: |
           echo "enviroment=dev" >> $GITHUB_ENV
+          echo "github_branch=dev" >> $GITHUB_ENV
           echo "ssh_host=${{ secrets.SSH_HOST_DEV }}" >> $GITHUB_ENV
           echo "ssh_port=${{ secrets.SSH_PORT_DEV }}" >> $GITHUB_ENV
       - name: Set env to production
         if: endsWith(github.ref, '/main')
         run: |
           echo "environment=prod" >> $GITHUB_ENV
+          echo "github_branch=main" >> $GITHUB_ENV
           echo "ssh_host=${{ secrets.SSH_HOST_PROD }}" >> $GITHUB_ENV
           echo "ssh_port=${{ secrets.SSH_PORT_PROD }}" >> $GITHUB_ENV
       - name: output github env
@@ -31,12 +33,12 @@ jobs:
           script: |
             mkdir /opt/groidbot 2>/dev/null
             cd /opt
-            git clone --branch ${BUILD_ENV} github-desaerun:desaerun/groidbot.git groidbot 2>/dev/null
+            git clone --branch ${{ env.github_branch }} github-desaerun:desaerun/groidbot.git groidbot 2>/dev/null
             cd groidbot
             cp ~/.env .env
             git stash
-            git fetch origin ${BUILD_ENV}
-            git merge -s recursive -X theirs origin/${BUILD_ENV}
+            git fetch origin ${{ env.github_branch }}
+            git merge -s recursive -X theirs origin/${{ env.github_branch }}
             npm install
             pm2 stop all 2>/dev/null
             pm2 start "npm start"
