@@ -1,0 +1,42 @@
+name: CI Deploy - GroidBot
+on:
+  push:
+    branches: [ dev, main ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set env to development
+        if: endsWith(github.ref, '/dev')
+        run: |
+          echo "enviroment=dev" >> $GITHUB_ENV
+          echo "ssh_host=${{ secrets.SSH_HOST_DEV }}" >> $GITHUB_ENV
+          echo "ssh_port=${{ secrets.SSH_PORT_DEV }}" >> $GITHUB_ENV
+      - name: Set env to production
+        if: endsWith(github.ref, '/main')
+        run: |
+          echo "environment=prod" >> $GITHUB_ENV
+          echo "ssh_host=${{ secrets.SSH_HOST_PROD }}" >> $GITHUB_ENV
+          echo "ssh_port=${{ secrets.SSH_PORT_PROD }}" >> $GITHUB_ENV
+      - name: output github env
+        run: echo "$GITHUB_ENV"
+      - name: Deploy NodeJS app
+        uses: appleboy/ssh-action@v0.1.3
+        with:
+          host: ${{ env.ssh_host }}
+          port: ${{ env.ssh_port }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            mkdir /opt/groidbot 2>/dev/null
+            cd /opt
+            git clone --branch ${BUILD_ENV} github-desaerun:desaerun/groidbot.git groidbot 2>/dev/null
+            cd groidbot
+            cp ~/.env .env
+            git stash
+            git fetch origin ${BUILD_ENV}
+            git merge -s recursive -X theirs origin/${BUILD_ENV}
+            npm install
+            pm2 stop all 2>/dev/null
+            pm2 start "npm start"

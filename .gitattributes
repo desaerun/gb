@@ -3,5 +3,4 @@
 .gitignore export-ignore
 README.md export-ignore
 
-config/token.js -diff
 /.github/workflows/* -diff

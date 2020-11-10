@@ -1,10 +1,10 @@
+require("dotenv").config();  // pull in ENV variables from .env file
 const CONFIG = require('./config/config');
 const Discord = require('discord.js');
 const client = new Discord.Client();
 
 const mysqlQuery = require('./config/mysql-query');
 
-const token = require('./config/token');
 const dev_output = require('./dev_output');
 dev_output.setClient(client);
 
@@ -18,21 +18,22 @@ client.listenerSet = new Discord.Collection();
  * @param dir
  * @param level
  */
-function getCommands(dir, level=0) {
+function getCommands(dir, level = 0) {
     const current_dir = `${dir}/`;
     const commandFiles = fs.readdirSync(current_dir);
 
     for (const file of commandFiles) {
-        if(fs.statSync(`${current_dir}${file}`).isDirectory()) {
-            getCommands(`${current_dir}${file}`,level+1);
+        if (fs.statSync(`${current_dir}${file}`).isDirectory()) {
+            getCommands(`${current_dir}${file}`, level + 1);
         } else {
             if (file.endsWith('.js')) {
                 const command = require(`${current_dir}${file}`);
-                client.commands.set(command.name,command);
+                client.commands.set(command.name, command);
             }
         }
     }
 }
+
 getCommands("./commands");
 
 /**
@@ -40,13 +41,13 @@ getCommands("./commands");
  * @param dir
  * @param level
  */
-function getListenerSet(dir, level=0) {
+function getListenerSet(dir, level = 0) {
     const current_dir = `${dir}/`;
     const listenerFiles = fs.readdirSync(current_dir);
 
     for (const file of listenerFiles) {
         if (fs.statSync(`${current_dir}${file}`).isDirectory()) {
-            getListenerSet(`${current_dir}${file}`, level+1);
+            getListenerSet(`${current_dir}${file}`, level + 1);
         } else {
             if (file.endsWith('.js')) {
                 const listener = require(`${current_dir}${file}`);
@@ -55,37 +56,39 @@ function getListenerSet(dir, level=0) {
         }
     }
 }
+
 getListenerSet("./listeners");
 
-client.once('ready',() => {
+client.once('ready', () => {
     console.log("bot online.");
     let guilds = client.guilds;
 
-    dev_output.sendStatus(`Bot status: Online.  Type: ${token.type}`,CONFIG.channel_dev_id);
+    dev_output.sendStatus(`Bot status: Online.  Type: ${process.env.BUILD_ENV}`, CONFIG.channel_dev_id);
     if (CONFIG.verbosity >= 3) {
         console.log("Sending Online Status message to bot owner and #code-shit")
     }
 
     //set initial bot status
-    client.user.setActivity('with fire',{type: 'PLAYING'})
+    client.user.setActivity('with fire', {type: 'PLAYING'})
         .then(() => console.log())
         .catch((err) => {
-            dev_output.sendTrace(`Bot failed to set status: ${err}`,CONFIG.channel_dev_id)
+            dev_output.sendTrace(`Bot failed to set status: ${err}`, CONFIG.channel_dev_id)
         });
 });
 
-client.on('message',message => {
+client.on('message', message => {
     // Ignore my own messages
     if (message.author.bot) return;
 
     // Attempt to parse commands
     if (isCommand(message)) {
         runCommands(message);
-    // Otherwise pass to listeners
+        // Otherwise pass to listeners
     } else {
         parseWithListeners(message);
     }
 });
+
 /**
  * Identifies 'command' messages which must begin with CONFIG.prefix
  * @param message
@@ -108,7 +111,7 @@ function runCommands(message) {
         try {
             client.commands.get(command).execute(client, message, args);
         } catch (err) {
-            dev_output.sendTrace(err,CONFIG.channel_dev_id);
+            dev_output.sendTrace(err, CONFIG.channel_dev_id);
         }
     } else {
         message.channel.send(`_${command}_ is not a valid command`);
@@ -125,8 +128,8 @@ function parseWithListeners(message) {
             if (listener.listen(client, message)) return;
         }
     } catch (err) {
-        dev_output.sendTrace(err,CONFIG.channel_dev_id);
+        dev_output.sendTrace(err, CONFIG.channel_dev_id);
     }
 }
 
-client.login(token.token);
+client.login(process.env.BOT_TOKEN);
