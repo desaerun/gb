@@ -31,8 +31,8 @@ jobs:
           script: |
             mkdir /opt/groidbot
             cd /opt
-            git clone --branch ${GITHUB_BRANCH} github-desaerun:desaerun/groidbot.git groidbot
-            cd groidbot
+            git clone --branch ${GITHUB_BRANCH} github-desaerun:desaerun/groidbot.git
+            cd /groidbot
             cp ~/.env .env
             git stash
             git fetch origin ${GITHUB_BRANCH}
