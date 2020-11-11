@@ -37,6 +37,7 @@ jobs:
             git stash
             git fetch origin ${GITHUB_BRANCH}
             git merge -s recursive -X theirs origin/${GITHUB_BRANCH}
+            echo "Changes made by: ${{ github.actor }} in ${{ github.sha }}" >> github_update.txt
             npm install
             pm2 stop all 2>/dev/null
             pm2 start "npm start"
