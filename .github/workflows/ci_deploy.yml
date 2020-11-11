@@ -37,7 +37,7 @@ jobs:
             git stash
             git fetch origin ${GITHUB_BRANCH}
             git merge -s recursive -X theirs origin/${GITHUB_BRANCH}
-            echo -e "$(date '+%d/%m/%Y %H:%M:%S'): Changes made by: ${{ github.actor }} in ${{ github.sha }}\n$(cat github_update.txt)" > github_update.txt
+            echo -e "$(date '+%d/%m/%Y %H:%M:%S%Z'): Changes made by: ${{ github.actor }} in ${{ github.sha }}\n$(cat github_update.txt)" > github_update.txt
             npm install
             pm2 stop all 2>/dev/null
             pm2 start "npm start"

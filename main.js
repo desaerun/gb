@@ -63,7 +63,16 @@ client.once('ready', () => {
     console.log("bot online.");
     let guilds = client.guilds;
 
-    dev_output.sendStatus(`Bot status: Online.  Type: ${process.env.BUILD_ENV}`, CONFIG.channel_dev_id);
+    let online_message  = `Bot status: Online.  Type: ${process.env.BUILD_ENV}\n`;
+
+    //todo: read in first line from github_update.txt and add it to the "online" message
+    //todo: make the linux server print a line about recovering to the github_update.txt file when it recovers or is started manually
+    /*
+    let lineReader = require('readline').createInterface({input: require('fs').createReadStream('github_update.txt')});
+    online_message += ``
+    */
+
+    dev_output.sendStatus(online_message, CONFIG.channel_dev_id);
     if (CONFIG.verbosity >= 3) {
         console.log("Sending Online Status message to bot owner and #code-shit")
     }
