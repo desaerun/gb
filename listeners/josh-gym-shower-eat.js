@@ -9,6 +9,7 @@ function buildWordResponseMap() {
     map.set(/\bbail\b/i, "But Josh we neeeeeeeed you");
     map.set(/\bchipotle\b/i, "I bet you could swallow one of those burritos whole.");
     map.set(/^\s*\bno\b\s*$/i, "Yes.");
+    map.set(/\bs2000\b/i, "Look at Josh talking about his car again.");
 
     return map;
 }
