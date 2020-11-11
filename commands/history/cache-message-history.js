@@ -21,7 +21,7 @@ module.exports = {
                 console.log(`Message content: ${historical_message.content}`);
             }
 
-            messages = await message.channel.messages.fetch({limit:100, before: last});
+            messages = await message.channel.messages.fetch({limit: 100, before: last});
             message.channel.send(`\`\`\`${messages[0]}\`\`\``);
         }
 

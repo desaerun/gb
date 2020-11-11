@@ -9,14 +9,16 @@ module.exports = {
         const response = new Discord.MessageEmbed()
             // .setColor('#DAF7A6')
             .setColor('RANDOM')
-            .setAuthor(`${user.user.tag}`,user.user.displayAvatarURL())
+            .setAuthor(`${user.user.tag}`, user.user.displayAvatarURL())
             .addFields({
-                name: `User ping`,
-                value: `<@${user.id}>`}
+                    name: `User ping`,
+                    value: `<@${user.id}>`
+                }
             )
             .addFields({
-                name: `User ID`,
-                value: `${user.id}`}
+                    name: `User ID`,
+                    value: `${user.id}`
+                }
             )
             .addFields({
                 name: `Joined server:`,
