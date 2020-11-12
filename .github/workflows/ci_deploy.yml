@@ -68,5 +68,5 @@ jobs:
             #stop any running bot processes
             pm2 delete groidbot 2> /dev/null || true
 
-            #start the bot
-            pm2 start "npm start" --name "groidbot"
+            #clear the logs + start the bot
+            pm2 flush && pm2 start "npm start" --name "groidbot"
