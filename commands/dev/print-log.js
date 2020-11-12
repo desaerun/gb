@@ -2,6 +2,7 @@ fs = require('fs');
 module.exports = {
     name: "print-log",
     description: "prints the logfile",
+    //todo: this errors out because logfile >2000 chars?
     execute: function (client, message, args) {
         fs.readFile('/var/log/groidbot.log','utf8',(err,data) => {
             if (err) {
