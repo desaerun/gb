@@ -44,7 +44,7 @@ jobs:
             cd groidbot
 
             #copy the .env file stored in ~/.env to the project directory
-            cp ~/.groidbot/.env .env
+            cp ~/groidbot/.env .env
 
             #stash any changes in case the server file has changed, to prevent merge conflict
             git stash
