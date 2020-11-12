@@ -1,7 +1,8 @@
 .idea/
-.github/.env_template
-.github/.env_values
-.github/gen_.env.sh
+
 node_modules/
 package-lock.json
 github_update.txt
+
+.gitignore
+.env
