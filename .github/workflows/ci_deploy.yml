@@ -37,8 +37,8 @@ jobs:
             git stash
             git fetch origin ${GITHUB_BRANCH}
             git merge -s recursive -X theirs origin/${GITHUB_BRANCH}
+            echo "Writing update log file"
             echo -e "$(date '+%d/%m/%Y %H:%M:%S%Z'): Changes made by: ${{ github.actor }} in $(echo \"${{ github.sha }}\" | cut -c 2-9)\n$(cat github_update.txt)" > github_update.txt
             npm install
             pm2 stop all 2>/dev/null
-            pm2 kill
-            pm2 start "npm start"
+            pm2 start "main.js"
