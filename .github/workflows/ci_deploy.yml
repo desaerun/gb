@@ -66,7 +66,7 @@ jobs:
             npm install
 
             #stop any running bot processes
-            pm2 stop groidbot
+            pm2 delete groidbot 2> /dev/null || true
 
             #start the bot
             pm2 start "npm start" --name "groidbot"
