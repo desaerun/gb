@@ -3,4 +3,5 @@
 .gitignore export-ignore
 README.md export-ignore
 
-/.github/workflows/* -diff
+/.github/workflows/* merge=ours
+.env filter=configtemplate
