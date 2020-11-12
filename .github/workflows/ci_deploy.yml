@@ -31,16 +31,42 @@ jobs:
           username: ${{ secrets.SSH_USERNAME }}
           key: ${{ secrets.SSH_KEY }}
           script: |
+            #make dir if it doesnt exist
             mkdir /opt/groidbot
+
+            #change working directory into /opt
             cd /opt
-            git clone --branch ${{ env.github_branch }} github-desaerun:desaerun/groidbot.git
+
+            #clone the branch, overriding any changes (only works if it doesnt already exist)
+            git clone --branch ${{ env.github_branch }} github-desaerun:desaerun/groidbot.git 2>/dev/null
+
+            #change working directory into /opt/groidbot
             cd groidbot
+
+            #copy the .env file stored in ~/.env to the project directory
             cp ~/.env .env
+
+            #stash any changes in case the server file has changed, to prevent merge conflict
             git stash
+
+            #fetch the latest branch and merge it into the project dir, always accept the server's version
             git fetch origin ${{ env.github_branch }}
             git merge -s recursive -X theirs origin/${{ env.github_branch }}
+
             echo "Writing update log file"
+
+            #create log if it doesnt exist
+            echo "" >> /var/groidbot.log
+
+            #print a line to the log file
             echo -e "$(date '+%d/%m/%Y %H:%M:%S%Z'): Changes made by: ${{ github.actor }} in $(echo \"${{ github.sha }}\" | cut -c 2-9)\n$(cat /var/log/groidbot.log)" > /var/log/groidbot.log
+
+            #install/update dependencies
             npm install
+
+            #stop any running bot processes
             pm2 stop all 2>/dev/null
+            pm2 kill
+
+            #start the bot
             pm2 start "npm start"
