@@ -7,25 +7,25 @@ module.exports = {
             if (err) {
                 return console.log(err)
             }
-            message.channel.send(`Contents of bot log file: \`\`\`${data.substr(0,1996)}\`\`\``);
+            message.channel.send(`Contents of bot log file: \`\`\`${data.substr(0,1900)}\`\`\``);
         })
         fs.readFile('/home/groidbot/.pm2/logs/groidbot-out.log','utf8',(err,data) => {
             if (err) {
                 return console.log(err)
             }
-            message.channel.send(`Contents of pm2 stdout log file: \`\`\`${data.substr(0,1996)}\`\`\``);
+            message.channel.send(`Contents of pm2 stdout log file: \`\`\`${data.substr(0,1900)}\`\`\``);
         })
         fs.readFile('/home/groidbot/.pm2/logs/groidbot-error.log','utf8',(err,data) => {
             if (err) {
                 return console.log(err)
             }
-            message.channel.send(`Contents of pm2 error log file: \`\`\`${data.substr(0,1996)}\`\`\``);
+            message.channel.send(`Contents of pm2 error log file: \`\`\`${data.substr(0,1900)}\`\`\``);
         })
         fs.readFile('/home/groidbot/.pm2/logs/groidbot-error.log','utf8',(err,data) => {
             if (err) {
                 return console.log(err)
             }
-            message.channel.send(`Contents of pm2 status log file: \`\`\`${data.substr(0,1996)}\`\`\``);
+            message.channel.send(`Contents of pm2 status log file: \`\`\`${data.substr(0,1900)}\`\`\``);
         })
     }
 }
