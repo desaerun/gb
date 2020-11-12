@@ -21,9 +21,7 @@ async function readLog(file,num_lines = 15) {
             lineReader.close();
         }
     });
-    lineReader.on('close',() => {
-        return (async () => {
-            await lines.join("\n");
-        });
+    lineReader.on('close',async () => {
+        await lines.join("\n");
     })
 }
