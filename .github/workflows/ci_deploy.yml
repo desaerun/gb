@@ -56,10 +56,10 @@ jobs:
             echo "Writing update log file"
 
             #create log if it doesnt exist
-            echo "" >> /var/log/groidbot.log
+            echo "" >> /opt/groidbot/logs/groidbot.log
 
             #print a line to the log file
-            echo -e "$(date '+%d/%m/%Y %H:%M:%S%Z'): Changes made by: ${{ github.actor }} in $(echo \"${{ github.sha }}\" | cut -c 2-9)\n$(cat /var/log/groidbot.log)" > /var/log/groidbot.log
+            echo -e "$(date '+%d/%m/%Y %H:%M:%S%Z'): Changes made by: ${{ github.actor }} in $(echo \"${{ github.sha }}\" | cut -c 2-9)\n$(cat /opt/groidbot/logs/groidbot.log)" > /opt/groidbot/logs/groidbot.log
 
             #install/update dependencies
             npm install
