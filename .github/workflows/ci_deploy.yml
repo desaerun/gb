@@ -32,7 +32,7 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           script: |
             #make dir if it doesnt exist
-            mkdir /opt/groidbot
+            mkdir -p /opt/groidbot
 
             #change working directory into /opt
             cd /opt
@@ -44,7 +44,7 @@ jobs:
             cd groidbot
 
             #copy the .env file stored in ~/.env to the project directory
-            cp ~/.env .env
+            cp ~/.groidbot/.env .env
 
             #stash any changes in case the server file has changed, to prevent merge conflict
             git stash
@@ -66,7 +66,6 @@ jobs:
 
             #stop any running bot processes
             pm2 stop all 2>/dev/null
-            pm2 kill
 
             #start the bot
             pm2 start "npm start"
