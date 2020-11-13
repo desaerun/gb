@@ -1,4 +1,4 @@
-readline = require('readline');
+readline = require('line-reader');
 fs = require('fs');
 module.exports = {
     name: "print-log",
@@ -22,6 +22,7 @@ async function readLog(file,num_lines = 15) {
     lineReader.on('line',(line) => {
         lineCounter++;
         lines.push(line);
+
         if(lineCounter === num_lines) {
             lineReader.close();
         }
