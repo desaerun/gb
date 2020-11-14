@@ -1,5 +1,5 @@
-readline = require('readline');
-fs = require('fs');
+const readline = require('readline');
+const fs = require('fs');
 module.exports = {
     name: "print-log",
     description: "prints the logfile",
@@ -11,28 +11,24 @@ module.exports = {
         message.channel.send(`Contents of pm2 error log file: \`\`\`${await readLog('/home/groidbot/.pm2/logs/groidbot-error.log')}\`\`\``);
     }
 }
-async function readLog(file,num_lines = 15) {
-    let lineReader = readline.createInterface({
-        input: fs.createReadStream(file),
+function readLog(file, num_lines = 15) {
+    return new Promise(function(resolve, reject) {
+        let lineReader = readline.createInterface({
+            input: fs.createReadStream(file),
+        });
+
+        let lines = [];
+
+        lineReader
+            .on('line', function (line) {
+                let length = lines.push(line);
+
+                if (length === num_lines) {
+                    lineReader.close();
+                }
+            })
+            .on('close', () => {
+                resolve(lines.join("\n"));
+            })
     });
-
-    let lineCounter = 0;
-    let lines = [];
-
-    lineReader.on('line',(line) => {
-        lineCounter++;
-        lines.push(line);
-
-        if(lineCounter === num_lines) {
-            lineReader.close();
-        }
-    });
-
-    let result = 'test';
-
-    await lineReader.on('close', () => {
-        result = lines.join("\n");
-    })
-
-    return result;
 }
