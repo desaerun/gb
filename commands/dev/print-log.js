@@ -1,4 +1,4 @@
-readline = require('line-reader');
+readline = require('readline');
 fs = require('fs');
 module.exports = {
     name: "print-log",
