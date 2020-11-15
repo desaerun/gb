@@ -48,9 +48,6 @@ jobs:
             #copy the .env file stored in ~/.env to the project directory
             cp ~/groidbot/.env .env
 
-            #checkout any local changes to prevent merge conflict
-            git checkout .
-
             #reset branch to have latest version from github
             echo "resetting branch"
             git fetch origin ${{ env.github_branch }}
