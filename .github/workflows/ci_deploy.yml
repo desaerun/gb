@@ -46,18 +46,16 @@ jobs:
             #copy the .env file stored in ~/.env to the project directory
             cp ~/groidbot/.env .env
 
-            #stash any changes in case the server file has changed, to prevent merge conflict
-            git stash
+            #checkout any local changes to prevent merge conflict
+            git checkout .
 
-            #fetch the latest branch and merge it into the project dir, always accept the server's version
-            git fetch origin ${{ env.github_branch }}
-            git merge -s recursive -X theirs origin/${{ env.github_branch }}
-
-            echo "Writing update log file"
+            #reset branch to have latest version from github
+            git reset --hard origin/dev
 
             #create log if it doesnt exist
             touch /var/log/groidbot.log
 
+            echo "Writing update log file"
             #print a line to the log file
             echo -e "$(date '+%d/%m/%Y %H:%M:%S%Z'): Changes made by: ${{ github.actor }} in $(echo \"${{ github.sha }}\" | cut -c 2-9)\n$(cat /var/log/groidbot.log)" > /var/log/groidbot.log
 
