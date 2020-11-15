@@ -53,7 +53,8 @@ jobs:
 
             #reset branch to have latest version from github
             echo "resetting branch"
-            git reset --hard origin/dev
+            git fetch origin ${{ env.github_branch }}
+            git reset --hard origin/${{ env.github_branch }}
 
             #create log if it doesnt exist
             touch /var/log/groidbot.log
