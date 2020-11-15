@@ -73,5 +73,5 @@ jobs:
 
             #clear the logs + start the bot
             pm2 flush && pm2 start "npm start" --name "groidbot"
-          env:
-            GITHUB_REF: ${{ github.ref }}
+        env:
+          GITHUB_REF: ${{ github.ref }}
