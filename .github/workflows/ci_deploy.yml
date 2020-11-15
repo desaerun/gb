@@ -31,10 +31,10 @@ jobs:
           script: |
             echo "Deploying branch ${github.ref##*/}..."
 
-            echo "github = ${ toJSON(github) }"
-            echo "github.sha = ${github.sha}"
-            echo "github.ref = ${github.ref}"
-            echo "branch = ${github.ref#refs/heads/}"
+            echo "github = ${{ toJSON(github) }}"
+            echo "github.sha = ${{ github.sha }}"
+            echo "github.ref = ${{ github.ref }}"
+            echo "branch = ${${{ github.ref }}#refs/heads/}}"
             #make dir if it doesnt exist
             mkdir -p /opt/groidbot
 
