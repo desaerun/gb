@@ -30,6 +30,9 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           script: |
             echo "Deploying branch ${GITHUB_REF##*/}..."
+            echo "GITHUB_SHA = ${GITHUB_SHA}";
+            echo "GITHUB_REF = ${GITHUB_REF}"
+            echo "BRANCH = ${GITHUB_REF#refs/heads/}"
             #make dir if it doesnt exist
             mkdir -p /opt/groidbot
 
