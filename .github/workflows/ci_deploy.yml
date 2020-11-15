@@ -11,14 +11,12 @@ jobs:
         if: endsWith(github.ref, '/dev')
         run: |
           echo "enviroment=dev" >> $GITHUB_ENV
-          echo "github_branch=dev" >> $GITHUB_ENV
           echo "ssh_host=${{ secrets.SSH_HOST_DEV }}" >> $GITHUB_ENV
           echo "ssh_port=${{ secrets.SSH_PORT_DEV }}" >> $GITHUB_ENV
       - name: Set env to production
         if: endsWith(github.ref, '/main')
         run: |
           echo "environment=prod" >> $GITHUB_ENV
-          echo "github_branch=main" >> $GITHUB_ENV
           echo "ssh_host=${{ secrets.SSH_HOST_PROD }}" >> $GITHUB_ENV
           echo "ssh_port=${{ secrets.SSH_PORT_PROD }}" >> $GITHUB_ENV
       - name: output github env
@@ -31,6 +29,7 @@ jobs:
           username: ${{ secrets.SSH_USERNAME }}
           key: ${{ secrets.SSH_KEY }}
           script: |
+            echo "Deploying branch ${GITHUB_REF##*/}..."
             #make dir if it doesnt exist
             mkdir -p /opt/groidbot
 
@@ -38,7 +37,7 @@ jobs:
             cd /opt
 
             #clone the branch, overriding any changes (only works if it doesnt already exist)
-            git clone --branch ${{ env.github_branch }} github-desaerun:desaerun/groidbot.git 2>/dev/null
+            git clone --branch ${GITHUB_REF##*/} github-desaerun:desaerun/groidbot.git 2>/dev/null
 
             #change working directory into /opt/groidbot
             cd groidbot
@@ -50,13 +49,12 @@ jobs:
             git stash
 
             #fetch the latest branch and merge it into the project dir, always accept the server's version
-            git fetch origin ${{ env.github_branch }}
-            git merge -s recursive -X theirs origin/${{ env.github_branch }}
+            git checkout .
+            git reset --hard origin/{$GITHUB_REF##*/}
 
             echo "Writing update log file"
 
             #create log if it doesnt exist
-            mkdir -p /opt/groidbot/logs
             touch /var/log/groidbot.log
 
             #print a line to the log file
