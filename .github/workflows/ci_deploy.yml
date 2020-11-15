@@ -37,7 +37,7 @@ jobs:
             cd /opt
 
             #clone the branch, overriding any changes (only works if it doesnt already exist)
-            git clone --branch ${GITHUB_REF##*/} github-desaerun:desaerun/groidbot.git 2>/dev/null
+            git clone --branch $(echo "${GITHUB_REF##*/}") github-desaerun:desaerun/groidbot.git 2>/dev/null
 
             #change working directory into /opt/groidbot
             cd groidbot
@@ -50,7 +50,7 @@ jobs:
 
             #fetch the latest branch and merge it into the project dir, always accept the server's version
             git checkout .
-            git reset --hard origin/{$GITHUB_REF##*/}
+            git reset --hard origin/(echo "${GITHUB_REF##*/}")
 
             echo "Writing update log file"
 
