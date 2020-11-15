@@ -31,14 +31,16 @@ jobs:
           username: ${{ secrets.SSH_USERNAME }}
           key: ${{ secrets.SSH_KEY }}
           script: |
+            echo "Deploying from branch \"${{ env.github_branch }}\""
+
             #make dir if it doesnt exist
             mkdir -p /opt/groidbot
 
             #change working directory into /opt
             cd /opt
 
-            #clone the branch, overriding any changes (only works if it doesnt already exist)
-            git clone --branch ${{ env.github_branch }} github-desaerun:desaerun/groidbot.git 2>/dev/null
+            #clone the branch, overriding any changes (only if it doesnt already exist)
+            git clone --branch ${{ env.github_branch }} git@github.com:desaerun/groidbot.git 2>/dev/null
 
             #change working directory into /opt/groidbot
             cd groidbot
@@ -50,20 +52,24 @@ jobs:
             git checkout .
 
             #reset branch to have latest version from github
+            echo "resetting branch"
             git reset --hard origin/dev
 
             #create log if it doesnt exist
             touch /var/log/groidbot.log
 
-            echo "Writing update log file"
             #print a line to the log file
+            echo "Writing update log file"
             echo -e "$(date '+%d/%m/%Y %H:%M:%S%Z'): Changes made by: ${{ github.actor }} in $(echo \"${{ github.sha }}\" | cut -c 2-9)\n$(cat /var/log/groidbot.log)" > /var/log/groidbot.log
 
             #install/update dependencies
+            echo "Verifying/installing npm dependencies"
             npm install
 
-            #stop any running bot processes
+            #stop any running bot processes. "|| true" is to prevent script from halting if there are no processes
+            echo "Stopping pm2 process"
             pm2 delete groidbot 2> /dev/null || true
 
             #clear the logs + start the bot
+            echo "Clearing logs and spawning new pm2 process"
             pm2 flush && pm2 start "npm start" --name "groidbot"
