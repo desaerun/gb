@@ -29,12 +29,12 @@ jobs:
           username: ${{ secrets.SSH_USERNAME }}
           key: ${{ secrets.SSH_KEY }}
           script: |
-            echo "Deploying branch ${github.ref##*/}..."
+            echo "Deploying branch ${GITHUB_REF#refs/heads/}..."
 
             echo "github = ${{ toJSON(github) }}"
             echo "github.sha = ${{ github.sha }}"
             echo "github.ref = ${{ github.ref }}"
-            echo "branch = ${${{ github.ref }}#refs/heads/}}"
+            echo "branch = ${GITHUB_REF#refs/heads/}}"
             #make dir if it doesnt exist
             mkdir -p /opt/groidbot
 
@@ -73,3 +73,5 @@ jobs:
 
             #clear the logs + start the bot
             pm2 flush && pm2 start "npm start" --name "groidbot"
+          env:
+            GITHUB_REF: ${{ github.ref }}
