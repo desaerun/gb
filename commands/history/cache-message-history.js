@@ -30,11 +30,20 @@ module.exports = {
                 //todo: fix this datetime (it is like 4 years early?)
                 let message_timestamp = (historical_message.id >> 22) + 1420070400000;
 
+
                 let message_id = historical_message.id;
                 let guild_id = historical_message.guild.id;
                 let author_id = historical_message.author.id;
                 let author_nickname = historical_message.author.nickname;
                 let message_content = historical_message.content;
+                let post = {
+                    id: message_id,
+                    author: author_id,
+                    guild: guild_id,
+                    channel: channel_id,
+                    content: message_content,
+                    timestamp: message_timestamp,
+                }
 
                 console.log(`Adding message to db: ${message_id}`);
                 console.log(`Message Timestamp: ${moment(message_timestamp).format("LLLL")}`);
@@ -43,7 +52,11 @@ module.exports = {
                 console.log(`Author Nick: ${author_nickname}`);
                 console.log(`Message content: ${message_content}`);
 
-                mysqlQuery(`INSERT INTO messages (id,author,guild,channel,content,timestamp) VALUES (?,?,?,?,?,?)`,[message_id,author_id,guild_id,channel_id,message_content,message_timestamp],() => {
+                mysqlQuery(`INSERT INTO messages (id,author,guild,channel,content,timestamp) VALUES (?,?,?,?,?,?)`,post,(error,results,fields) => {
+                    if (error) {
+                        console.log("mysql insert of message failed");
+                        throw error;
+                    }
                     console.log("inserted successfully");
                 });
                 //mysqlQuery(`INSERT INTO users (id,current_nickname) VALUES ("${author_id}","${author_nickname}")`);
