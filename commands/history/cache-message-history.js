@@ -6,18 +6,22 @@ module.exports = {
     description: "Retrieves message history for the current channel and stores it to the DB",
     execute: async function (client, message, args) {
 
-        let guild_id = message.guild.id;
-        let guild_name = message.guild.name;
-        let channel_id = message.channel.id;
-        let channel_name = message.channel.name;
+        let guild = {
+            id: message.guild.id,
+            name: message.guild.name,
+        }
+        let channel = {
+            id: message.channel.id,
+            name: message.channel.name,
+        }
         try {
-            mysqlQuery(`INSERT INTO guilds (id,name) VALUES (?,?)`,[guild_id,guild_name],(error,result,fields) => {
+            mysqlQuery(`INSERT INTO guilds SET ?`,guild,(error,result,fields) => {
                 if (error) throw error;
-                echo "successfully inserted guild";
+                console.log("successfully inserted guild");
             });
-            mysqlQuery(`INSERT INTO channels (id,guild,name) VALUES (?,?,?)`,[channel_id,guild_id,channel_name],(error,result,fields) => {
+            mysqlQuery(`INSERT INTO channels (id,guild,name) VALUES (?,?,?)`,[channel.id,guild.id,channel.name],(error,result,fields) => {
                 if (error) throw error;
-                echo "successfully inserted channel";
+                console.log("successfully inserted channel");
             });
         } catch (e) {
             console.log(`error while inserting query: ${e}`);
@@ -40,32 +44,41 @@ module.exports = {
                 let message_id = historical_message.id;
                 let guild_id = historical_message.guild.id;
                 let author_id = historical_message.author.id;
-                let author_nickname = historical_message.author.nickname;
                 let message_content = historical_message.content;
-                let post = {
-                    id: message_id,
-                    author: author_id,
-                    guild: guild_id,
-                    channel: channel_id,
-                    content: message_content,
-                    timestamp: message_timestamp,
+                let author = {
+                    id: historical_message.author.id,
+                    nickname: historical_message.author.nickname,
                 }
-
-                console.log(`Adding message to db: ${message_id}`);
-                console.log(`Message Timestamp: ${moment(message_timestamp).format("LLLL")}`);
-                console.log(`Guild ID: ${author_id}`);
-                console.log(`Author ID: ${author_id}`);
-                console.log(`Author Nick: ${author_nickname}`);
-                console.log(`Message content: ${message_content}`);
-
-                mysqlQuery(`INSERT INTO messages (id,author,guild,channel,content,timestamp) VALUES (?,?,?,?,?,?)`,post,(error,results,fields) => {
+                mysqlQuery(`INSERT INTO users SET ?`,author,(error,results,fields) => {
                     if (error) {
                         console.log("mysql insert of message failed");
                         throw error;
                     }
-                    console.log("inserted successfully");
+                    console.log("inserted message successfully");
                 });
-                //mysqlQuery(`INSERT INTO users (id,current_nickname) VALUES ("${author_id}","${author_nickname}")`);
+                let post = {
+                    id: historical_message.id,
+                    author: historical_message.author.id,
+                    guild: guild.id,
+                    channel: channel.id,
+                    content: historical_message.content,
+                    timestamp: message_timestamp,
+                }
+
+                console.log(`Adding message to db: ${post.id}`);
+                console.log(`Message Timestamp: ${moment(post.timestamp).format("LLLL")}`);
+                console.log(`Guild ID: ${guild.id}`);
+                console.log(`Author ID: ${author.id}`);
+                console.log(`Author Nick: ${author.nickname}`);
+                console.log(`Message content: ${message_content}`);
+
+                mysqlQuery(`INSERT INTO messages SET ?`,post,(error,results,fields) => {
+                    if (error) {
+                        console.log("mysql insert of message failed");
+                        throw error;
+                    }
+                    console.log("inserted message successfully");
+                });
             }
 
             messages = await message.channel.messages.fetch({limit: 100, before: last});
