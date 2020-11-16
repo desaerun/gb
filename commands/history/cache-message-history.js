@@ -43,8 +43,10 @@ module.exports = {
                 console.log(`Author Nick: ${author_nickname}`);
                 console.log(`Message content: ${message_content}`);
 
-                mysqlQuery(`INSERT INTO messages (id,author,guild,channel,content,timestamp) VALUES ("${message_id}","${author_id}","${guild_id}","${channel_id}","${message_content}","${message_timestamp}")`);
-                mysqlQuery(`INSERT INTO users (id,current_nickname) VALUES ("${author_id}","${author_nickname}")`);
+                mysqlQuery(`INSERT INTO messages (id,author,guild,channel,content,timestamp) VALUES (?,?,?,?,?,?)`,[message_id,author_id,guild_id,channel_id,message_content,message_timestamp],() => {
+                    console.log("inserted successfully");
+                });
+                //mysqlQuery(`INSERT INTO users (id,current_nickname) VALUES ("${author_id}","${author_nickname}")`);
             }
 
             messages = await message.channel.messages.fetch({limit: 100, before: last});
