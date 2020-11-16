@@ -70,7 +70,7 @@ module.exports = {
                 console.log(`Author ID: ${author.id}`);
                 console.log(`Author Nick: ${author.nickname}`);
 
-                await conn.query(`INSERT INTO essages SET ? ON DUPLICATE KEY UPDATE ?`, [post, post], (error, results, fields) => {
+                await conn.query(`INSERT INTO messages SET ? ON DUPLICATE KEY UPDATE ?`, [post, post], (error, results, fields) => {
                     if (error) {
                         console.log("mysql insert of message failed");
                         throw error;
