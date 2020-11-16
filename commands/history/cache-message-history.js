@@ -19,23 +19,18 @@ module.exports = {
             guild: guild.id,
             name: message.channel.name,
         }
-        try {
-            conn.query(`INSERT INTO guilds SET ? ON DUPLICATE KEY UPDATE ?`,[guild,guild],(error,result,fields) => {
-                if (error) throw error;
-                console.log("successfully inserted guild");
-            });
-            conn.query(`INSERT INTO channels SET ? ON DUPLICATE KEY UPDATE ?`,[channel,channel],(error,result,fields) => {
-                if (error) throw error;
-                console.log("successfully inserted channel");
-            });
-        } catch (e) {
-            console.log(`error while inserting query: ${e}`);
-        }
+        conn.query(`INSERT INTO guilds SET ? ON DUPLICATE KEY UPDATE ?`, [guild, guild], (error, result, fields) => {
+            if (error) throw error;
+            console.log("successfully inserted guild");
+        });
+        conn.query(`INSERT INTO channels SET ? ON DUPLICATE KEY UPDATE ?`, [channel, channel], (error, result, fields) => {
+            if (error) throw error;
+            console.log("successfully inserted channel");
+        });
         let messageCount = 0;
         console.log(`Retrieving list of messages...`);
 
         let messages = await message.channel.messages.fetch({limit: 100});
-        message.channel.send(`\`\`\`${messages[0]}\`\`\``);
 
         while (messages.size === 100) {
             messageCount += messages.size;
@@ -50,7 +45,7 @@ module.exports = {
                     id: historical_message.author.id,
                     nickname: historical_message.author.nickname,
                 }
-                await conn.query(`INSERT INTO users SET ? ON DUPLICATE KEY UPDATE ?`,[author,author],(error,results,fields) => {
+                await conn.query(`INSERT INTO users SET ? ON DUPLICATE KEY UPDATE ?`, [author, author], (error, results, fields) => {
                     if (error) {
                         console.log("mysql insert of message failed");
                         throw error;
@@ -75,7 +70,7 @@ module.exports = {
                 console.log(`Author ID: ${author.id}`);
                 console.log(`Author Nick: ${author.nickname}`);
 
-                await conn.query(`INSERT INTO messages SET ? ON DUPLICATE KEY UPDATE ?`,[post,post],(error,results,fields) => {
+                await conn.query(`INSERT INTO essages SET ? ON DUPLICATE KEY UPDATE ?`, [post, post], (error, results, fields) => {
                     if (error) {
                         console.log("mysql insert of message failed");
                         throw error;
@@ -83,13 +78,14 @@ module.exports = {
                     console.log("inserted message successfully");
                 });
             }
-
             messages = await message.channel.messages.fetch({limit: 100, before: last});
-            message.channel.send(`\`\`\`${messages[0]}\`\`\``);
         }
 
         messageCount += messages.size;
 
         message.channel.send(`There have been ${messageCount} messages sent in this channel.`);
+        conn.query("SELECT COUNT(*) FROM `messages`",(err,result,fields) => {
+            message.channel.send(`Updated mysql query successfully.  Rows: ${result}`);
+        });
     }
 }
