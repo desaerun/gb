@@ -9,6 +9,7 @@ const db = {
     password: process.env.DB_PASSWORD,
     port: process.env.DB_PORT,
     database: process.env.DB_DB_NAME,
+    charset: 'utf8mb4',
 }
 
 let sqlConnection = async function sqlConnection(sql, values, next) {
