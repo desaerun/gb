@@ -11,8 +11,14 @@ module.exports = {
         let channel_id = message.channel.id;
         let channel_name = message.channel.name;
         try {
-            mysqlQuery(`INSERT INTO guilds (id,name) VALUES ("${guild_id}","${guild_name}")`);
-            mysqlQuery(`INSERT INTO channels (id,name) VALUES ("${channel_id}","${channel_name}")`);
+            mysqlQuery(`INSERT INTO guilds (id,name) VALUES (?,?)`,[guild_id,guild_name],(error,result,fields) => {
+                if (error) throw error;
+                echo "successfully inserted guild";
+            });
+            mysqlQuery(`INSERT INTO channels (id,guild,name) VALUES (?,?,?)`,[channel_id,guild_id,channel_name],(error,result,fields) => {
+                if (error) throw error;
+                echo "successfully inserted channel";
+            });
         } catch (e) {
             console.log(`error while inserting query: ${e}`);
         }
