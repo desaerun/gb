@@ -12,6 +12,8 @@ const db = {
 }
 
 let sqlConnection = function sqlConnection(sql, values, next) {
+    console.log(sql);
+    console.log(values);
     if (arguments.length === 2) {
         next = values;
         values = null;

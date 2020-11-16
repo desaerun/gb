@@ -9,8 +9,12 @@ module.exports = {
         let guild_name = message.guild.name;
         let channel_id = message.channel.id;
         let channel_name = message.channel.name;
-        mysqlQuery(`INSERT INTO guilds (id,name) VALUES ("${guild_id}","${guild_name}")`);
-        mysqlQuery(`INSERT INTO channels (id,name) VALUES ("${channel_id}","${channel_name}")`);
+        try {
+            mysqlQuery(`INSERT INTO guilds (id,name) VALUES ("${guild_id}","${guild_name}")`);
+            mysqlQuery(`INSERT INTO channels (id,name) VALUES ("${channel_id}","${channel_name}")`);
+        } catch (e) {
+            console.log(e);
+        }
         let messageCount = 0;
         console.log(`Retrieving list of messages...`);
 
