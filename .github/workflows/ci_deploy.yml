@@ -7,18 +7,18 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
+      - name: set discord branch env var
+        run: echo "github_branch=${github.ref#ref/heads/}" >> $GITHUB_ENV
       - name: Set env to development
         if: endsWith(github.ref, '/dev')
         run: |
           echo "enviroment=dev" >> $GITHUB_ENV
-          echo "github_branch=dev" >> $GITHUB_ENV
           echo "ssh_host=${{ secrets.SSH_HOST_DEV }}" >> $GITHUB_ENV
           echo "ssh_port=${{ secrets.SSH_PORT_DEV }}" >> $GITHUB_ENV
       - name: Set env to production
         if: endsWith(github.ref, '/main')
         run: |
           echo "environment=prod" >> $GITHUB_ENV
-          echo "github_branch=main" >> $GITHUB_ENV
           echo "ssh_host=${{ secrets.SSH_HOST_PROD }}" >> $GITHUB_ENV
           echo "ssh_port=${{ secrets.SSH_PORT_PROD }}" >> $GITHUB_ENV
       - name: output github env
