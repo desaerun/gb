@@ -40,11 +40,7 @@ module.exports = {
                 //todo: fix this datetime (it is like 4 years early?)
                 let message_timestamp = (historical_message.id >> 22) + 1420070400000;
 
-
-                let message_id = historical_message.id;
-                let guild_id = historical_message.guild.id;
-                let author_id = historical_message.author.id;
-                let message_content = historical_message.content;
+                //insert into DB for author
                 let author = {
                     id: historical_message.author.id,
                     nickname: historical_message.author.nickname,
@@ -56,6 +52,8 @@ module.exports = {
                     }
                     console.log("inserted message successfully");
                 });
+
+                //insert into DB for message
                 let post = {
                     id: historical_message.id,
                     author: historical_message.author.id,
@@ -65,12 +63,13 @@ module.exports = {
                     timestamp: message_timestamp,
                 }
 
+                //debug
                 console.log(`Adding message to db: ${post.id}`);
                 console.log(`Message Timestamp: ${moment(post.timestamp).format("LLLL")}`);
                 console.log(`Guild ID: ${guild.id}`);
                 console.log(`Author ID: ${author.id}`);
                 console.log(`Author Nick: ${author.nickname}`);
-                console.log(`Message content: ${message_content}`);
+                console.log(`Message content: ${post.content}`);
 
                 mysqlQuery(`INSERT INTO messages SET ?`,post,(error,results,fields) => {
                     if (error) {
