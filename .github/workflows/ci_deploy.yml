@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: set discord branch env var
-        run: echo "github_branch=${${GITHUB_REF}#ref/heads/}" >> $GITHUB_ENV
+        run: echo "github_branch=${${{ github.ref }}#ref/heads/}" >> $GITHUB_ENV
         env: GITHUB_REF = ${{ github.ref }}
       - name: Set env to development
         if: endsWith(github.ref, '/dev')
