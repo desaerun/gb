@@ -36,4 +36,7 @@ let sqlConnection = async function sqlConnection(sql, values, next) {
     });
 }
 
-module.exports = sqlConnection;
+module.exports = {
+    db,
+    sqlConnection;
+}

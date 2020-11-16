@@ -1,5 +1,9 @@
 let moment = require("moment");
+let mysql = require('mysql');
 let mysqlQuery = require("../../config/mysql-query");
+let mysqlDB = mysqlQuery.db;
+let conn = mysql.createConnection(mysqlDB);
+conn.connect();
 
 module.exports = {
     name: 'cache-message-history',
@@ -16,11 +20,11 @@ module.exports = {
             name: message.channel.name,
         }
         try {
-            mysqlQuery(`INSERT INTO guilds SET ? ON DUPLICATE KEY UPDATE ?`,[guild,guild],(error,result,fields) => {
+            conn.query(`INSERT INTO guilds SET ? ON DUPLICATE KEY UPDATE ?`,[guild,guild],(error,result,fields) => {
                 if (error) throw error;
                 console.log("successfully inserted guild");
             });
-            mysqlQuery(`INSERT INTO channels SET ? ON DUPLICATE KEY UPDATE ?`,[channel,channel],(error,result,fields) => {
+            conn.query(`INSERT INTO channels SET ? ON DUPLICATE KEY UPDATE ?`,[channel,channel],(error,result,fields) => {
                 if (error) throw error;
                 console.log("successfully inserted channel");
             });
@@ -46,7 +50,7 @@ module.exports = {
                     id: historical_message.author.id,
                     nickname: historical_message.author.nickname,
                 }
-                await mysqlQuery(`INSERT INTO users SET ? ON DUPLICATE KEY UPDATE ?`,[author,author],(error,results,fields) => {
+                await conn.query(`INSERT INTO users SET ? ON DUPLICATE KEY UPDATE ?`,[author,author],(error,results,fields) => {
                     if (error) {
                         console.log("mysql insert of message failed");
                         throw error;
@@ -71,7 +75,7 @@ module.exports = {
                 console.log(`Author ID: ${author.id}`);
                 console.log(`Author Nick: ${author.nickname}`);
 
-                await mysqlQuery(`INSERT INTO messages SET ? ON DUPLICATE KEY UPDATE ?`,[post,post],(error,results,fields) => {
+                await conn.query(`INSERT INTO messages SET ? ON DUPLICATE KEY UPDATE ?`,[post,post],(error,results,fields) => {
                     if (error) {
                         console.log("mysql insert of message failed");
                         throw error;
