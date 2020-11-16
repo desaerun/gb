@@ -9,8 +9,8 @@ jobs:
     steps:
       - name: set discord branch env var
         run: |
-          echo "GITHUB_REF = ${{ github.ref }}"
-          echo "GITHUB_BRANCH = ${GITHUB_REF#ref/heads/}"
+          GITHUB_REF = ${{ github.ref }}
+          echo "${GITHUB_REF#refs/heads/}"
           echo "github_branch=$GITHUB_BRANCH" >> $GITHUB_ENV
       - name: Set env to development
         if: endsWith(github.ref, '/dev')
