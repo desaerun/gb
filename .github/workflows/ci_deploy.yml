@@ -11,7 +11,7 @@ jobs:
         run: |
           echo "GITHUB_REF = ${{ github.ref }}"
           echo "GITHUB_BRANCH = ${GITHUB_REF#ref/heads/}"
-          echo "github_branch=${GITHUB_BRANCH}" >> $GITHUB_ENV
+          echo "github_branch=$GITHUB_BRANCH" >> $GITHUB_ENV
       - name: Set env to development
         if: endsWith(github.ref, '/dev')
         run: |
