@@ -69,9 +69,8 @@ module.exports = {
                 console.log(`Guild ID: ${guild.id}`);
                 console.log(`Author ID: ${author.id}`);
                 console.log(`Author Nick: ${author.nickname}`);
-                console.log(`Message content: ${post.content}`);
 
-                mysqlQuery(`INSERT INTO messages SET ?`,post,(error,results,fields) => {
+                await mysqlQuery(`INSERT INTO messages SET ?`,post,(error,results,fields) => {
                     if (error) {
                         console.log("mysql insert of message failed");
                         throw error;
