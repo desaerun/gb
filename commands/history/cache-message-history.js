@@ -46,7 +46,7 @@ module.exports = {
                     id: historical_message.author.id,
                     nickname: historical_message.author.nickname,
                 }
-                mysqlQuery(`INSERT INTO users SET ? ON DUPLICATE KEY UPDATE ?`,[author,author],(error,results,fields) => {
+                await mysqlQuery(`INSERT INTO users SET ? ON DUPLICATE KEY UPDATE ?`,[author,author],(error,results,fields) => {
                     if (error) {
                         console.log("mysql insert of message failed");
                         throw error;

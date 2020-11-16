@@ -11,7 +11,7 @@ const db = {
     database: process.env.DB_DB_NAME,
 }
 
-let sqlConnection = function sqlConnection(sql, values, next) {
+let sqlConnection = async function sqlConnection(sql, values, next) {
     console.log(`SQL: ${sql}`);
     console.log(`Values: ${values}`);
     if (arguments.length === 2) {
@@ -26,7 +26,7 @@ let sqlConnection = function sqlConnection(sql, values, next) {
         }
     });
 
-    connection.query(sql, values, function (err) {
+    await connection.query(sql, values, function (err) {
         connection.end(); // close the connection
         if (err) {
             dev_output.sendTrace(err, CONFIG.channel_dev_id);
