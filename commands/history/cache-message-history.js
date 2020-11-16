@@ -15,11 +15,11 @@ module.exports = {
             name: message.channel.name,
         }
         try {
-            mysqlQuery(`INSERT INTO guilds SET ?`,guild,(error,result,fields) => {
+            mysqlQuery(`INSERT INTO guilds SET ? ON DUPLIATE KEY UPDATE ?`,guild,(error,result,fields) => {
                 if (error) throw error;
                 console.log("successfully inserted guild");
             });
-            mysqlQuery(`INSERT INTO channels (id,guild,name) VALUES (?,?,?)`,[channel.id,guild.id,channel.name],(error,result,fields) => {
+            mysqlQuery(`INSERT INTO channels (id,guild,name) VALUES (?,?,?) ON DUPLIATE KEY UPDATE ?`,[channel.id,guild.id,channel.name],(error,result,fields) => {
                 if (error) throw error;
                 console.log("successfully inserted channel");
             });
