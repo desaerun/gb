@@ -5,6 +5,7 @@ module.exports = {
     name: 'cache-message-history',
     description: "Retrieves message history for the current channel and stores it to the DB",
     execute: async function (client, message, args) {
+
         let guild_id = message.guild.id;
         let guild_name = message.guild.name;
         let channel_id = message.channel.id;
@@ -13,7 +14,7 @@ module.exports = {
             mysqlQuery(`INSERT INTO guilds (id,name) VALUES ("${guild_id}","${guild_name}")`);
             mysqlQuery(`INSERT INTO channels (id,name) VALUES ("${channel_id}","${channel_name}")`);
         } catch (e) {
-            console.log(e);
+            console.log(`error while inserting query: ${e}`);
         }
         let messageCount = 0;
         console.log(`Retrieving list of messages...`);
@@ -43,7 +44,7 @@ module.exports = {
                 console.log(`Message content: ${message_content}`);
 
                 mysqlQuery(`INSERT INTO messages (id,author,guild,channel,content,timestamp) VALUES ("${message_id}","${author_id}","${guild_id}","${channel_id}","${message_content}","${message_timestamp}")`);
-                mysqlQuery(`INSERT INTO "users" (id,current_nickname) VALUES ("${author_id}","${author_nickname}")`);
+                mysqlQuery(`INSERT INTO users (id,current_nickname) VALUES ("${author_id}","${author_nickname}")`);
             }
 
             messages = await message.channel.messages.fetch({limit: 100, before: last});
