@@ -20,7 +20,7 @@ module.exports = {
                 if (error) throw error;
                 console.log("successfully inserted guild");
             });
-            mysqlQuery(`INSERT INTO channels (id,guild,name) SET ? ON DUPLICATE KEY UPDATE ?`,[channel,channel],(error,result,fields) => {
+            mysqlQuery(`INSERT INTO channels SET ? ON DUPLICATE KEY UPDATE ?`,[channel,channel],(error,result,fields) => {
                 if (error) throw error;
                 console.log("successfully inserted channel");
             });
