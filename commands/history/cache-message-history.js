@@ -12,14 +12,15 @@ module.exports = {
         }
         let channel = {
             id: message.channel.id,
+            guild: guild.id,
             name: message.channel.name,
         }
         try {
-            mysqlQuery(`REPLACE INTO guilds SET ? ON DUPLIATE KEY UPDATE ?`,guild,(error,result,fields) => {
+            mysqlQuery(`INSERT INTO guilds SET ? ON DUPLICATE KEY UPDATE ?`,guild,(error,result,fields) => {
                 if (error) throw error;
                 console.log("successfully inserted guild");
             });
-            mysqlQuery(`REPLACE INTO channels (id,guild,name) VALUES (?,?,?) ON DUPLIATE KEY UPDATE ?`,[channel.id,guild.id,channel.name],(error,result,fields) => {
+            mysqlQuery(`INSERT INTO channels (id,guild,name) SET ? ON DUPLICATE KEY UPDATE ?`,channel,(error,result,fields) => {
                 if (error) throw error;
                 console.log("successfully inserted channel");
             });
@@ -45,7 +46,7 @@ module.exports = {
                     id: historical_message.author.id,
                     nickname: historical_message.author.nickname,
                 }
-                mysqlQuery(`REPLACE INTO users SET ?`,author,(error,results,fields) => {
+                mysqlQuery(`INSERT INTO users SET ? ON DUPLICATE KEY UPDATE ?`,author,(error,results,fields) => {
                     if (error) {
                         console.log("mysql insert of message failed");
                         throw error;
@@ -70,7 +71,7 @@ module.exports = {
                 console.log(`Author ID: ${author.id}`);
                 console.log(`Author Nick: ${author.nickname}`);
 
-                await mysqlQuery(`REPLACE INTO messages SET ?`,post,(error,results,fields) => {
+                await mysqlQuery(`INSERT INTO messages SET ? ON DUPLICATE KEY UPDATE ?`,post,(error,results,fields) => {
                     if (error) {
                         console.log("mysql insert of message failed");
                         throw error;
