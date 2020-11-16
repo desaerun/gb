@@ -85,7 +85,7 @@ module.exports = {
 
         message.channel.send(`There have been ${messageCount} messages sent in this channel.`);
         conn.query("SELECT COUNT(*) FROM `messages`",(err,result,fields) => {
-            message.channel.send(`Updated mysql query successfully.  Rows: ${result}`);
+            message.channel.send(`Updated mysql query successfully.  Rows: ${JSON.stringify(result)}`);
         });
     }
 }
