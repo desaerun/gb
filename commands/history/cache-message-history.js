@@ -41,7 +41,8 @@ module.exports = {
             for (let historical_message of messages.values()) {
                 //todo: fix this datetime (it is like 4 years early?)
                 const timestamp_64 = BigInt.asUintN(64,historical_message.id);
-                let message_timestamp = (timestamp_64 >> 22n) + 1420070400000;
+                const discord_epoch = 1420070400000
+                let message_timestamp = (timestamp_64 >> 22n) + discord_epoch;
                 //insert into DB for author
                 let author_nickname = client.guilds.cache.get(guild_values.id).member(historical_message.author.id) ? client.guilds.cache.get(guild_values.id).member(historical_message.author.id).displayName : "NULL";
                 let author_values = {
