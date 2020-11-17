@@ -46,7 +46,8 @@ module.exports = {
                 let message_timestamp = message_timestamp_bits + discord_epoch;
 
                 //insert into DB for author
-                let author_nickname = client.guilds.cache.get(guild_values.id).member(historical_message.author.id) ? client.guilds.cache.get(guild_values.id).member(historical_message.author.id).displayName : "NULL";
+                let author = client.guilds.cache.get(guild_values.id).member(historical_message.author.id);
+                let author_nickname = author ? author.displayName : "NULL";
                 let author_values = {
                     id: historical_message.author.id,
                     nickname: author_nickname,
