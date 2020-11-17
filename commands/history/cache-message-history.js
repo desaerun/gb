@@ -43,7 +43,7 @@ module.exports = {
                 //insert into DB for author
                 let author = {
                     id: historical_message.author.id,
-                    nickname: client.guilds.cache.get(historical_message.guild.id).member(historical_message.author.id) || "NULL",
+                    nickname: client.guilds.cache.get(historical_message.guild.id).member(historical_message.author.id).displayName || "NULL",
                 }
                 await conn.query(`INSERT INTO users SET ? ON DUPLICATE KEY UPDATE ?`, [author, author], (error, results, fields) => {
                     if (error) {
