@@ -1,7 +1,7 @@
 const Client = require('coinbase').Client;
 
 module.exports = {
-    name: 'coinbase',
+    name: 'crypto-price',
     description: "Retrieves crypto prices from Coinbase API (in USD)",
     execute(client, message, args) {
         if (!args) {
@@ -15,7 +15,8 @@ module.exports = {
         }
 
         let currency = args[0];
-        let coinbaseClient = new Client();
+        let coinbaseClient = new Client({'apiKey': null,
+                                              'apiSecret': null});
 
         coinbaseClient.getExchangeRates({'currency': currency}, (err, rates) => {
             if (err) {
