@@ -19,7 +19,9 @@ module.exports = {
        request(`https://api.coinbase.com/v2/exchange-rates?currency=${crypto}`, function (err, response, body) {
           if (!err && response.statusCode == 200) {
               let coinbaseData = JSON.parse(body);
-              message.channel.send(`1 ${crypto} = \$${coinbaseData.data.rates.USD}`);
+              let usdVal = new Intl.NumberFormat('en-US', {style: 'currency', currency: 'USD' })
+                  .format(coinbaseData.data.rates.USD);
+              message.channel.send(`1 ${crypto} = ${usdVal}`);
           } else {
               message.channel.send(err);
           }
