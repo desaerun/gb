@@ -5,7 +5,7 @@
   "description": "",
   "main": "main.js",
   "scripts": {
-    "start": "echo -e \"$(date '+%d/%m/%Y %H:%M:%S%Z'): Starting groidbot...\n$(cat /var/log/groidbot.log)\" > /var/log/groidbot.log & node ."
+    "start": "echo -e \"$(date '+%d/%m/%Y %H:%M:%S%Z'): Starting groidbot...\n$(cat /var/log/groidbot.log)\" > /var/log/groidbot.log & pm2 start main.js --name\"groidbot\""
   },
   "keywords": [],
   "author": "",
