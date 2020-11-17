@@ -21,5 +21,8 @@
     "stack-trace": "0.0.10",
     "superagent": "^6.1.0",
     "ytdl-core": "^4.0.0"
+  },
+  "devDependencies": {
+    "request": "^2.85.0"
   }
 }

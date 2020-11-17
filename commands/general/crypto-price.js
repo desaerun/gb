@@ -1,4 +1,4 @@
-const Client = require('coinbase').Client;
+const request = require('request');
 
 module.exports = {
     name: 'crypto-price',
@@ -14,17 +14,15 @@ module.exports = {
             return;
         }
 
-        let currency = args[0];
-        let coinbaseClient = new Client({'apiKey': null,
-                                              'apiSecret': null});
+        let crypto = args[0];
 
-        coinbaseClient.getExchangeRates({'currency': currency}, (err, rates) => {
-            if (err) {
-                message.channel.send(err);
-            } else {
-                let response = JSON.parse(rates);
-                message.channel.send(`1 ${currency} = \$${response.data.rates.USD}`);
-            }
-        });
+       request(`https://api.coinbase.com/v2/exchange-rates?currency=${crypto}`, function (err, response, body) {
+          if (!err && response.statusCode == 200) {
+              let coinbaseData = JSON.parse(body);
+              message.channel.send(`1 ${crypto} = \$${coinbaseData.data.rates.USD}`);
+          } else {
+              message.channel.send(err);
+          }
+       });
     }
 }
