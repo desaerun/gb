@@ -74,7 +74,7 @@ client.once('ready', () => {
 
     dev_output.sendStatus(online_message, CONFIG.channel_dev_id,"#21a721");
     if (CONFIG.verbosity >= 3) {
-        console.log(`Sending Online Status message to ${client.guilds.cache.get(CONFIG.guild_bot_sandbox_id).channels.get(CONFIG.channel_dev_id).name}(${CONFIG.channel_dev_id}).`)
+        console.log(`Sending Online Status message to ${client.guilds.cache.get(CONFIG.guild_bot_sandbox_id).channels.cache.get(CONFIG.channel_dev_id).name}(${CONFIG.channel_dev_id}).`)
     }
 
     //set initial bot status
