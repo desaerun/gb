@@ -42,17 +42,17 @@ module.exports = {
                 //todo: fix this datetime (it is like 4 years early?)
                 let message_timestamp = (historical_message.id >> 22) + 1420070400000;
                 //insert into DB for author
-                let author_nickname = client.guilds.cache.get(guild.id).member ? client.guilds.cache.get(guild.id).member.displayName : "NULL";
+                let author_nickname = client.guilds.cache.get(guild_values.id).member(historical_message.author.id) ? client.guilds.cache.get(guild_values.id).member(historical_message.author.id).displayName : "NULL";
                 let author_values = {
                     id: historical_message.author.id,
                     nickname: author_nickname,
                 }
                 conn.query(`INSERT INTO users SET ? ON DUPLICATE KEY UPDATE ?`, [author_values, author_values], (error, results, fields) => {
                     if (error) {
-                        console.log("mysql insert of message failed");
+                        console.log("mysql insert of user failed");
                         throw error;
                     }
-                    console.log("inserted message successfully");
+                    console.log(`inserted user ${author.nickname}(${author_values.id}) successfully`);
                 });
 
                 //insert into DB for message
@@ -66,17 +66,18 @@ module.exports = {
                 }
 
                 //debug
-                console.log(`Adding message to db: ${post.id}`);
-                console.log(`Message Timestamp: ${moment(post.timestamp).format("LLLL")}`);
-                console.log(`Guild ID: ${guild_values.id}`);
-                console.log(`Author ID: ${author_values.id}`);
-                console.log(`Author Nick: ${author_values.nickname}`);
+
 
                 conn.query(`INSERT INTO messages SET ? ON DUPLICATE KEY UPDATE ?`, [post, post], (error, results, fields) => {
                     if (error) {
                         console.log("mysql insert of message failed");
                         throw error;
                     }
+                    console.log(`Adding message to db: ${post.id}`);
+                    console.log(`Message Timestamp: ${moment(post.timestamp).format("LLLL")}`);
+                    console.log(`Guild ID: ${guild_values.id}`);
+                    console.log(`Author ID: ${author_values.id}`);
+                    console.log(`Author Nick: ${author_values.nickname}`);
                     console.log(`inserted message ${post.id} successfully`);
                 });
             }
