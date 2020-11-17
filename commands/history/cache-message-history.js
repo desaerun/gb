@@ -52,7 +52,7 @@ module.exports = {
                         console.log("mysql insert of user failed");
                         throw error;
                     }
-                    console.log(`inserted user ${author.nickname}(${author_values.id}) successfully`);
+                    console.log(`inserted user ${author_values.nickname}(${author_values.id}) successfully`);
                 });
 
                 //insert into DB for message
