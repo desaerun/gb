@@ -9,9 +9,12 @@ const db = {
     password: process.env.DB_PASSWORD,
     port: process.env.DB_PORT,
     database: process.env.DB_DB_NAME,
+    charset: 'utf8mb4',
 }
 
-let sqlConnection = function sqlConnection(sql, values, next) {
+let sqlConnection = async function sqlConnection(sql, values, next) {
+    console.log(`SQL: ${sql}`);
+    console.log(`Values: ${values}`);
     if (arguments.length === 2) {
         next = values;
         values = null;
@@ -24,7 +27,7 @@ let sqlConnection = function sqlConnection(sql, values, next) {
         }
     });
 
-    connection.query(sql, values, function (err) {
+    await connection.query(sql, values, function (err) {
         connection.end(); // close the connection
         if (err) {
             dev_output.sendTrace(err, CONFIG.channel_dev_id);
@@ -34,4 +37,7 @@ let sqlConnection = function sqlConnection(sql, values, next) {
     });
 }
 
-module.exports = sqlConnection;
+module.exports = {
+    db,
+    sqlConnection,
+}

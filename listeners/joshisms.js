@@ -15,8 +15,8 @@ function buildWordResponseMap() {
 }
 
 module.exports = {
-    name: 'josh-gym-shower-eat',
-    description: 'Responds to Josh talking about the gym, showering, or eating.',
+    name: 'joshisms',
+    description: 'Responds to Josh talking about the things he talks about frequently.',
     listen(client, message) {
 
         if (message.author.id !== CONFIG.user_josh_id) return false;
