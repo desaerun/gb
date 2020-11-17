@@ -10,42 +10,44 @@ module.exports = {
     description: "Retrieves message history for the current channel and stores it to the DB",
     execute: async function (client, message, args) {
 
-        let guild = {
+        let guild = message.guild;
+        let channel = message.channel;
+        let guild_values = {
             id: message.guild.id,
             name: message.guild.name,
         }
-        let channel = {
-            id: message.channel.id,
-            guild: guild.id,
-            name: message.channel.name,
+        let channel_values = {
+            id: channel.id,
+            guild: guild_values.id,
+            name: channel.name,
         }
-        conn.query(`INSERT INTO guilds SET ? ON DUPLICATE KEY UPDATE ?`, [guild, guild], (error, result, fields) => {
+        conn.query(`INSERT INTO guilds SET ? ON DUPLICATE KEY UPDATE ?`, [guild_values, guild_values], (error, result, fields) => {
             if (error) throw error;
             console.log("successfully inserted guild");
         });
-        conn.query(`INSERT INTO channels SET ? ON DUPLICATE KEY UPDATE ?`, [channel, channel], (error, result, fields) => {
+        conn.query(`INSERT INTO channels SET ? ON DUPLICATE KEY UPDATE ?`, [channel_values, channel_values], (error, result, fields) => {
             if (error) throw error;
             console.log("successfully inserted channel");
         });
         let messageCount = 0;
         console.log(`Retrieving list of messages...`);
 
-        let messages = await message.channel.messages.fetch({limit: 100});
+        let messages = await channel.messages.fetch({limit: 100});
 
-        while (messages.size === 100) {
+        while (messages.size > 0) {
             messageCount += messages.size;
             let last = messages.last().id;
 
             for (let historical_message of messages.values()) {
                 //todo: fix this datetime (it is like 4 years early?)
                 let message_timestamp = (historical_message.id >> 22) + 1420070400000;
-
                 //insert into DB for author
-                let author = {
+                let author_nickname = client.guilds.cache.get(guild.id).member ? client.guilds.cache.get(guild.id).member.displayName : "NULL";
+                let author_values = {
                     id: historical_message.author.id,
-                    nickname: client.guilds.cache.get(historical_message.guild.id).member(historical_message.author.id).displayName || "NULL",
+                    nickname: author_nickname,
                 }
-                await conn.query(`INSERT INTO users SET ? ON DUPLICATE KEY UPDATE ?`, [author, author], (error, results, fields) => {
+                conn.query(`INSERT INTO users SET ? ON DUPLICATE KEY UPDATE ?`, [author_values, author_values], (error, results, fields) => {
                     if (error) {
                         console.log("mysql insert of message failed");
                         throw error;
@@ -66,24 +68,24 @@ module.exports = {
                 //debug
                 console.log(`Adding message to db: ${post.id}`);
                 console.log(`Message Timestamp: ${moment(post.timestamp).format("LLLL")}`);
-                console.log(`Guild ID: ${guild.id}`);
-                console.log(`Author ID: ${author.id}`);
-                console.log(`Author Nick: ${author.nickname}`);
+                console.log(`Guild ID: ${guild_values.id}`);
+                console.log(`Author ID: ${author_values.id}`);
+                console.log(`Author Nick: ${author_values.nickname}`);
 
-                await conn.query(`INSERT INTO messages SET ? ON DUPLICATE KEY UPDATE ?`, [post, post], (error, results, fields) => {
+                conn.query(`INSERT INTO messages SET ? ON DUPLICATE KEY UPDATE ?`, [post, post], (error, results, fields) => {
                     if (error) {
                         console.log("mysql insert of message failed");
                         throw error;
                     }
-                    console.log("inserted message successfully");
+                    console.log(`inserted message ${post.id} successfully`);
                 });
             }
-            messages = await message.channel.messages.fetch({limit: 100, before: last});
+            messages = await channel.messages.fetch({limit: 100, before: last});
         }
 
         messageCount += messages.size;
 
-        message.channel.send(`There have been ${messageCount} messages sent in this channel.`);
+        message.reply(`There have been ${messageCount} messages sent in this channel.`);
         conn.query("SELECT COUNT(*) FROM `messages`",(err,result,fields) => {
             message.reply(`Updated mysql query successfully.  Rows: ${JSON.stringify(result)}`);
         });
