@@ -13,6 +13,7 @@
   "dependencies": {
     "@discordjs/opus": "latest",
     "coffeescript": "^2.5.1",
+    "coinbase": "^2.0.8",
     "discord.js": "^12.4.1",
     "dotenv": "^8.2.0",
     "moment": "^2.29.1",
@@ -20,5 +21,8 @@
     "stack-trace": "0.0.10",
     "superagent": "^6.1.0",
     "ytdl-core": "^4.0.0"
+  },
+  "devDependencies": {
+    "request": "^2.85.0"
   }
 }
