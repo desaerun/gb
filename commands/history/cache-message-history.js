@@ -40,7 +40,8 @@ module.exports = {
 
             for (let historical_message of messages.values()) {
                 //todo: fix this datetime (it is like 4 years early?)
-                let message_timestamp = (historical_message.id >> 22) + 1420070400000;
+                const timestamp_64 = BigInt.asUintN(64,historical_message.id);
+                let message_timestamp = (timestamp_64 >> 22n) + 1420070400000;
                 //insert into DB for author
                 let author_nickname = client.guilds.cache.get(guild_values.id).member(historical_message.author.id) ? client.guilds.cache.get(guild_values.id).member(historical_message.author.id).displayName : "NULL";
                 let author_values = {
@@ -74,7 +75,7 @@ module.exports = {
                         throw error;
                     }
                     console.log(`Adding message to db: ${post.id}`);
-                    console.log(`Message Timestamp: ${moment(post.timestamp).format("LLLL")}`);
+                    console.log(`Message Timestamp: ${moment.utc(post.timestamp).format("MMMM Do YYYY, h:mm:ss a")}`);
                     console.log(`Guild ID: ${guild_values.id}`);
                     console.log(`Author ID: ${author_values.id}`);
                     console.log(`Author Nick: ${author_values.nickname}`);
