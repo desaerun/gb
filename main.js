@@ -72,16 +72,16 @@ client.once('ready', () => {
     online_message += ``
     */
 
-    dev_output.sendStatus(online_message, CONFIG.channel_dev_id,"#21a721");
+    dev_output.sendStatus(online_message, process.env.ONLINE_STATUS_CHANNEL_ID,"#21a721");
     if (CONFIG.verbosity >= 3) {
-        console.log(`Sending Online Status message to ${client.guilds.cache.get(process.env.ONLINE_STATUS_GUILD_ID).channels.cache.get(process.env.ONLINE_STATUS_CHANNEL_ID).name}(${process.env.ONLINE_STATUS_CHANNEL_ID}).`)
+        console.log(`Sending Online Status message to ${client.channels.cache.get(process.env.ONLINE_STATUS_CHANNEL_ID).name}(${process.env.ONLINE_STATUS_CHANNEL_ID}).`)
     }
 
     //set initial bot status
     client.user.setActivity('with fire', {type: 'PLAYING'})
         .then(() => console.log())
         .catch((err) => {
-            dev_output.sendTrace(`Bot failed to set status: ${err}`, CONFIG.channel_dev_id)
+            dev_output.sendTrace(`Bot failed to set status: ${err}`, process.env.ONLINE_STATUS_CHANNEL_ID)
         });
 });
 
