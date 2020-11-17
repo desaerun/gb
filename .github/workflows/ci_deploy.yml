@@ -7,6 +7,11 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
+      - name: set discord branch env var
+        run: |
+          GITHUB_REF=${{ github.ref }}
+          GITHUB_BRANCH=${GITHUB_REF#refs/heads/}
+          echo "github_branch=$GITHUB_BRANCH" >> $GITHUB_ENV
       - name: Set env to development
         if: endsWith(github.ref, '/dev')
         run: |
@@ -29,14 +34,44 @@ jobs:
           username: ${{ secrets.SSH_USERNAME }}
           key: ${{ secrets.SSH_KEY }}
           script: |
-            mkdir /opt/groidbot
+            echo "Deploying from branch \"${{ env.github_branch }}\""
+
+            #make dir if it doesnt exist
+            mkdir -p /opt/groidbot
+
+            #change working directory into /opt
             cd /opt
-            git clone --branch ${GITHUB_BRANCH} github-desaerun:desaerun/groidbot.git
+
+            #clone the branch, overriding any changes (only if it doesnt already exist)
+            git clone --branch ${{ env.github_branch }} git@github.com:desaerun/groidbot.git 2>/dev/null
+
+            #change working directory into /opt/groidbot
             cd groidbot
-            cp ~/.env .env
-            git stash
-            git fetch origin ${GITHUB_BRANCH}
-            git merge -s recursive -X theirs origin/${GITHUB_BRANCH}
+
+            #copy the .env file stored in ~/.env to the project directory
+            cp ~/groidbot/.env .env
+
+            #reset branch to have latest version from github
+            echo "resetting branch"
+            git fetch origin ${{ env.github_branch }}
+            git reset --hard origin/${{ env.github_branch }}
+
+            #create log if it doesnt exist
+            touch /var/log/groidbot.log
+
+            #print a line to the log file
+            echo "Writing update log file"
+            echo -e "$(date '+%d/%m/%Y %H:%M:%S%Z'): Changes made by: ${{ github.actor }} in $(echo \"${{ github.sha }}\" | cut -c 2-9)\n$(cat /var/log/groidbot.log)" > /var/log/groidbot.log
+
+            #install/update dependencies
+            echo "Verifying/installing npm dependencies"
             npm install
-            pm2 stop all 2>/dev/null
-            pm2 start "npm start"
+
+            #stop any running bot processes. "|| true" is to prevent script from halting if there are no processes
+            echo "Stopping pm2 process"
+            pm2 delete groidbot 2> /dev/null || true
+
+            #clear the logs + start the bot
+            echo "Clearing logs and spawning new pm2 process"
+            pm2 flush
+            npm start

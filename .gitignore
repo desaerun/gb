@@ -1,5 +1,9 @@
 .idea/
+
 node_modules/
 package-lock.json
+github_update.txt
 
+.gitattributes
+.gitignore
 .env

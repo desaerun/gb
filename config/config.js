@@ -6,6 +6,7 @@ module.exports = {
 
     //just hardcoding some channel/guild/user IDs for easier reference
     guild_rageaholics_id: '270271948527894541',
+    guild_bot_sandbox_id: '576960974825979920',
     user_desaerun_id: '187048556643876864',
     user_josh_id: '95693092430020608',
     user_charles_id: '97388794692505600',
