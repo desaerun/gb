@@ -43,7 +43,7 @@ module.exports = {
                 //insert into DB for author
                 let author = {
                     id: historical_message.author.id,
-                    nickname: historical_message.author.nickname,
+                    nickname: client.guilds.get(historical_message.guild.id).member(historical_message.author.id) || "NULL",
                 }
                 await conn.query(`INSERT INTO users SET ? ON DUPLICATE KEY UPDATE ?`, [author, author], (error, results, fields) => {
                     if (error) {
@@ -85,7 +85,7 @@ module.exports = {
 
         message.channel.send(`There have been ${messageCount} messages sent in this channel.`);
         conn.query("SELECT COUNT(*) FROM `messages`",(err,result,fields) => {
-            message.channel.send(`Updated mysql query successfully.  Rows: ${JSON.stringify(result)}`);
+            message.reply(`Updated mysql query successfully.  Rows: ${JSON.stringify(result)}`);
         });
     }
 }
