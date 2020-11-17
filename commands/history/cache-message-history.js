@@ -47,17 +47,17 @@ module.exports = {
 
                 //insert into DB for author
                 let author = client.guilds.cache.get(guild_values.id).member(historical_message.author.id);
-                let author_nickname = author ? author.displayName : "NULL";
+                let author_displayName = author ? author.displayName : "NULL";
                 let author_values = {
                     id: historical_message.author.id,
-                    nickname: author_nickname,
+                    displayName: author_displayName,
                 }
                 conn.query(`INSERT INTO users SET ? ON DUPLICATE KEY UPDATE ?`, [author_values, author_values], (error, results, fields) => {
                     if (error) {
                         console.log("mysql insert of user failed");
                         throw error;
                     }
-                    console.log(`inserted user ${author_values.nickname}(${author_values.id}) successfully`);
+                    console.log(`inserted user ${author_values.displayName}(${author_values.id}) successfully`);
                 });
 
                 //insert into DB for message
@@ -82,7 +82,7 @@ module.exports = {
                     console.log(`Message Timestamp: ${moment.utc(post.timestamp).format("MMMM Do YYYY, h:mm:ss a")}`);
                     console.log(`Guild ID: ${guild_values.id}`);
                     console.log(`Author ID: ${author_values.id}`);
-                    console.log(`Author Nick: ${author_values.nickname}`);
+                    console.log(`Author Display Name: ${author_values.displayName}`);
                     console.log(`inserted message ${post.id} successfully`);
                 });
             }
