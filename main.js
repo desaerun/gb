@@ -72,7 +72,7 @@ client.once('ready', () => {
     online_message += ``
     */
 
-    dev_output.sendStatus(online_message, CONFIG.channel_dev_id);
+    dev_output.sendStatus(online_message, CONFIG.channel_dev_id,"#21a721");
     if (CONFIG.verbosity >= 3) {
         console.log("Sending Online Status message to bot owner and #code-shit")
     }
