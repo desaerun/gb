@@ -73,4 +73,4 @@ jobs:
 
             #clear the logs + start the bot
             echo "Clearing logs and spawning new pm2 process"
-            pm2 flush && pm2 start "npm start" --name "groidbot"
+            pm2 flush && pm2 start "main.js" --name "groidbot" --watch
