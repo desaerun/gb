@@ -13,7 +13,6 @@
   "dependencies": {
     "@discordjs/opus": "latest",
     "coffeescript": "^2.5.1",
-    "coinbase": "^2.0.8",
     "discord.js": "^12.4.1",
     "dotenv": "^8.2.0",
     "moment": "^2.29.1",
