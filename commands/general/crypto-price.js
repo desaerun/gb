@@ -33,8 +33,8 @@ module.exports = {
               let percDiff = priceDiff / coinbaseData.open;
 
               let curPriceFormatted = currencyFormat.format(coinbaseData.last);
-              let priceDiffFormatted = (priceDiff > 0 ? '+' : '') + currencyFormat.format(priceDiff);
-              let percDiffFormatted = (priceDiff > 0 ? '+' : '-') + percentFormat.format(percDiff);
+              let priceDiffFormatted = (priceDiff < 0 ? '' : '+') + currencyFormat.format(priceDiff);
+              let percDiffFormatted = (priceDiff < 0 ? '' : '+') + percentFormat.format(percDiff);
 
               message.channel.send(`1 ${crypto} = ${curPriceFormatted} ( ${priceDiffFormatted} / ${percDiffFormatted} )`);
           } else {
