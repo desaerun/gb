@@ -38,6 +38,7 @@ module.exports = {
 
               message.channel.send(`1 ${crypto} = ${curPriceFormatted} ( ${priceDiffFormatted} / ${percDiffFormatted} )`);
           } else {
+              console.log(`error fetching crypto price: ${err}`);
               message.channel.send(err);
           }
        });
