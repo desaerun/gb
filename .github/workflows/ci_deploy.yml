@@ -13,13 +13,13 @@ jobs:
           GITHUB_BRANCH=${GITHUB_REF#refs/heads/}
           echo "github_branch=$GITHUB_BRANCH" >> $GITHUB_ENV
       - name: Set env to production
-        if: endsWith(github.ref, '/main')
+        if: "endsWith(github.ref, '/main')"
         run: |
           echo "environment=prod" >> $GITHUB_ENV
           echo "ssh_host=${{ secrets.SSH_HOST_PROD }}" >> $GITHUB_ENV
           echo "ssh_port=${{ secrets.SSH_PORT_PROD }}" >> $GITHUB_ENV
       - name: Set env to development
-        if: !endsWith(github.ref, '/main')
+        if: "!endsWith(github.ref, '/main')"
         run: |
           echo "enviroment=dev" >> $GITHUB_ENV
           echo "ssh_host=${{ secrets.SSH_HOST_DEV }}" >> $GITHUB_ENV
