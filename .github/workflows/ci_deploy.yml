@@ -67,7 +67,7 @@ jobs:
 
             #print a line to the log file
             echo "Writing update log file"
-            echo -e "$(date '+%d/%m/%Y %H:%M:%S%Z'): Changes made by: ${{ github.actor }} in $(echo \"${{ github.sha }}\" | cut -c 2-9)\n$(cat /var/log/groidbot.log)" > /var/log/groidbot.log
+            echo -e "$(date '+%d/%m/%Y %H:%M:%S%Z'): Changes made by: ${{ github.actor }} in ${{ env.github_branch }}-$(echo \"${{ github.sha }}\" | cut -c 2-9)\n$(cat /var/log/groidbot.log)" > /var/log/groidbot.log
 
             #install/update dependencies
             echo "Verifying/installing npm dependencies"
