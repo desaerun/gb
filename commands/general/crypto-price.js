@@ -32,7 +32,6 @@ module.exports = {
         try {
             const response = await axios.get(`https://api.pro.coinbase.com/products/${crypto}-USD/stats`);
             if (response.status === 200) {
-                console.log (response.data);
                 let coinbaseData = response.data;
 
                 let priceDiff = coinbaseData.last - coinbaseData.open;
@@ -44,10 +43,9 @@ module.exports = {
 
                 message.channel.send(`1 ${crypto} = ${curPriceFormatted} ( ${priceDiffFormatted} / ${percDiffFormatted} )`);
             } else {
-                throw new Error('HTTP status not 200');
+                throw new Error(`Request returned status code ${response.status}`);
             }
         } catch (err) {
-            console.log(`error fetching crypto price: ${err}`);
             message.channel.send(`error fetching crypto price: ${err}`);
         }
     }
