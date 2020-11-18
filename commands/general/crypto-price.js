@@ -32,8 +32,7 @@ module.exports = {
         try {
             const response = await axios.get(`https://api.pro.coinbase.com/products/${crypto}-USD/stats`);
             if (response.status === 200) {
-                const body = JSON.parse(response.data);
-                let coinbaseData = JSON.parse(body);
+                let coinbaseData = JSON.parse(response.data);
 
                 let priceDiff = coinbaseData.last - coinbaseData.open;
                 let percDiff = priceDiff / coinbaseData.open;
