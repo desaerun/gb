@@ -23,7 +23,7 @@ module.exports = {
             return;
         }
 
-        let crypto = args[0];
+        let crypto = args[0].toUpperCase();
 
        request(`https://api.pro.coinbase.com/products/${crypto}-USD/stats`, function (err, response, body) {
           if (!err && response.statusCode == 200) {
