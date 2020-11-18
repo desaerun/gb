@@ -41,7 +41,7 @@ module.exports = {
                 let priceDiffFormatted = (priceDiff < 0 ? '' : '+') + currencyFormat.format(priceDiff);
                 let percDiffFormatted = (priceDiff < 0 ? '' : '+') + percentFormat.format(percDiff);
 
-                message.channel.send(`1 ${crypto} = ${curPriceFormatted} ( ${priceDiffFormatted} / ${percDiffFormatted} )`);
+                message.channel.send(`1 ${crypto} = **${curPriceFormatted}** (**${priceDiffFormatted}**[**${percDiffFormatted}**] last 24hrs)`);
             } else {
                 throw new Error(`Request returned status code ${response.status}`);
             }
