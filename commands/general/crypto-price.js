@@ -30,13 +30,13 @@ module.exports = {
               let coinbaseData = JSON.parse(body);
 
               let priceDiff = coinbaseData.last - coinbaseData.open;
-              let percDiff = (priceDiff / coinbaseData.open) * 100;
+              let percDiff = priceDiff / coinbaseData.open;
 
               let curPriceFormatted = currencyFormat.format(coinbaseData.last);
-              let priceDiffFormatted = currencyFormat.format(priceDiff);
-              let percDiffFormatted = (priceDiff > 0 ? '' : '-') + percentFormat.format(percDiff);
+              let priceDiffFormatted = (priceDiff > 0 ? '+' : '') + currencyFormat.format(priceDiff);
+              let percDiffFormatted = (priceDiff > 0 ? '+' : '-') + percentFormat.format(percDiff);
 
-              message.channel.send(`1 ${crypto} = ${curPriceFormatted} (${priceDiffFormatted} / ${percDiffFormatted}`);
+              message.channel.send(`1 ${crypto} = ${curPriceFormatted} ( ${priceDiffFormatted} / ${percDiffFormatted} )`);
           } else {
               message.channel.send(err);
           }
