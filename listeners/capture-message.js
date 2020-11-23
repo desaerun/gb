@@ -39,7 +39,7 @@ module.exports = {
             if (error) throw error;
             console.log("Successfully inserted Channel");
         })
-        conn.query("INSERT INTO messages SET ? ON DUPLICATE KEY UPDATE ?",[author_values, author_values], (error, result, fields) => {
+        conn.query("INSERT INTO users SET ? ON DUPLICATE KEY UPDATE ?",[author_values, author_values], (error, result, fields) => {
             if (error) throw error;
             console.log("Successfully inserted author");
         })
