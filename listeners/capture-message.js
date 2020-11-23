@@ -31,7 +31,10 @@ module.exports = {
             content: message.content,
             timestamp: snowflakeToTimestamp(message.id),
         }
-        console.log(message.author);
+        console.log(message.guild + "..." + guild_values);
+        console.log(message.channel + "..." + channel_values);
+        console.log(message.author + "..." + author_values);
+        console.log(message + "..." + message_values);
         conn.query("INSERT INTO guilds SET ? ON DUPLICATE KEY UPDATE ?", [guild_values, guild_values], (error,result,fields) => {
             if (error) throw error;
             console.log("Successfully inserted Guild");
