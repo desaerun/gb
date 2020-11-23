@@ -30,20 +30,20 @@ module.exports = {
             content: message.content,
             timestamp: snowflakeToTimestamp(message.id),
         }
-        conn.query("INSERT INTO guilds SET ? ON DUPLICATE UPDATE ?", [guild_values, guild_values], (error,result,fields) => {
+        conn.query("INSERT INTO guilds SET ? ON DUPLICATE KEY UPDATE ?", [guild_values, guild_values], (error,result,fields) => {
             if (error) throw error;
             console.log("Successfully inserted Guild");
         })
 
-        conn.query("INSERT INTO channels SET ? ON DUPLICATE UPDATE ?",[channel_values, channel_values], (error, result, fields) => {
+        conn.query("INSERT INTO channels SET ? ON DUPLICATE KEY UPDATE ?",[channel_values, channel_values], (error, result, fields) => {
             if (error) throw error;
             console.log("Successfully inserted Channel");
         })
-        conn.query("INSERT INTO messages SET ? ON DUPLICATE UPDATE ?",[author_values, author_values], (error, result, fields) => {
+        conn.query("INSERT INTO messages SET ? ON DUPLICATE KEY UPDATE ?",[author_values, author_values], (error, result, fields) => {
             if (error) throw error;
             console.log("Successfully inserted author");
         })
-        conn.query("INSERT INTO messages SET ? ON DUPLICATE UPDATE ?",[message_values, message_values], (error, result, fields) => {
+        conn.query("INSERT INTO messages SET ? ON DUPLICATE KEY UPDATE ?",[message_values, message_values], (error, result, fields) => {
             if (error) throw error;
             console.log("Successfully inserted message");
         })
