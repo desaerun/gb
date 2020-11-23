@@ -1,8 +1,9 @@
-let moment = require("moment");
 let mysql = require('mysql');
 let mysqlQuery = require("../../config/mysql-query");
 let mysqlDB = mysqlQuery.db;
 let conn = mysql.createConnection(mysqlDB);
+import snowflakeToTimestamp from "../../config/snowflakeToTimestamp";
+
 conn.connect();
 
 module.exports = {
@@ -40,10 +41,7 @@ module.exports = {
 
             for (let historical_message of messages.values()) {
                 //todo: fix this datetime (it is like 4 years early?)
-                const discord_epoch = 1420070400000
-                const timestamp_64 = BigInt.asUintN(64,historical_message.id);
-                let message_timestamp_bits = Number(timestamp_64 >> 22n);
-                let message_timestamp = message_timestamp_bits + discord_epoch;
+                let message_timestamp = snowflakeToTimestamp(historical_message.id);
 
                 //insert into DB for author
                 let author = client.guilds.cache.get(guild_values.id).member(historical_message.author.id);
