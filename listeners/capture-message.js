@@ -34,7 +34,7 @@ module.exports = {
         console.log("Guild: " + JSON.stringify(message.guild) + "..." + JSON.stringify(guild_values));
         console.log("Channel: " +JSON.stringify(message.channel) + "..." + JSON.stringify(channel_values));
         console.log("Author: " +JSON.stringify(message.author) + "..." + JSON.stringify(author_values));
-        console.log("Cached Author:" + JSON.stringify(message.guild.users.cache.get(author_values.id)));
+        console.log("Cached Author:" + JSON.stringify(message.guild.members.cache.get(author_values.id)));
         console.log("Message: " +JSON.stringify(message) + "..." + JSON.stringify(message_values));
         conn.query("INSERT INTO guilds SET ? ON DUPLICATE KEY UPDATE ?", [guild_values, guild_values], (error,result,fields) => {
             if (error) throw error;
