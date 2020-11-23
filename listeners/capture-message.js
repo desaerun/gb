@@ -1,4 +1,4 @@
-import snowflakeToTimestamp from "../config/snowflakeToTimestamp";
+const snowflakeToTimestamp = require("../config/snowflakeToTimestamp");
 
 const mysql = require("mysql");
 let mysqlQuery = require("../config/mysql-query");
