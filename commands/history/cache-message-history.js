@@ -18,6 +18,7 @@ module.exports = {
         let messages = await message.channel.messages.fetch({limit: 100});
 
         while (messages.size > 0) {
+            console.log(`*************Start of batch, messages.size=${messages.size}**************`);
             messageCount += messages.size;
             let last = messages.last().id;
 
@@ -25,9 +26,8 @@ module.exports = {
                 captureMessage(historical_message);
             }
             messages = await message.channel.messages.fetch({limit: 100, before: last});
-            console.log(`End of batch, messages.size=${messages.size}`);
+            console.log(`*************End of batch, messages.size=${messages.size}*************`);
         }
-
         messageCount += messages.size;
 
         message.reply(`There have been ${messageCount} messages sent in this channel.`);
