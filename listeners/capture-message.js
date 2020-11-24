@@ -65,7 +65,7 @@ module.exports = {
                 message_id: message.id,
                 name: attachment[1].name,
                 url: attachment[1].url,
-                proxy_url: attachment[1].proxy_url,
+                proxyURL: attachment[1].proxyURL,
                 size: attachment[1].size,
                 height: attachment[1].height,
                 width: attachment[1].width,
