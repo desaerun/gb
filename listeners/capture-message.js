@@ -61,14 +61,14 @@ module.exports = {
         for (let attachment of message.attachments) {
             console.log(`    Attachment ${i}: ${JSON.stringify(attachment)}`);
             let attachment_values = {
-                id: attachment.id,
+                id: attachment[1].id,
                 message_id: message.id,
-                name: attachment.name,
-                url: attachment.url,
-                proxy_url: attachment.proxy_url,
-                size: attachment.size,
-                height: attachment.height,
-                width: attachment.width,
+                name: attachment[1].name,
+                url: attachment[1].url,
+                proxy_url: attachment[1].proxy_url,
+                size: attachment[1].size,
+                height: attachment[1].height,
+                width: attachment[1].width,
             }
             conn.query("INSERT INTO attachments SET ? ON DUPLICATE KEY UPDATE ?",[attachment_values,attachment_values], (error, result, fields) => {
                 if (error) throw error;
