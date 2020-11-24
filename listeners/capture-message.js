@@ -57,6 +57,7 @@ module.exports = {
             console.log(`Successfully inserted message ${message_values.id}`);
         })
         console.log("Attachments: " + JSON.stringify(message.attachments));
+        let i = 1;
         for (let attachment of message.attachments) {
             let attachment_values = {
                 id: attachment.id,
@@ -72,6 +73,7 @@ module.exports = {
                 if (error) throw error;
                 console.log(`Successfully inserted message ${message_values.id} (${i} of ${message.attachments.size})`);
             })
+            i++;
         }
         return false;
     }
