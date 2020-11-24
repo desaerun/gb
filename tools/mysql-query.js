@@ -1,16 +1,8 @@
 const mysql = require('mysql');
-const CONFIG = require('./config');
+const CONFIG = require('../config/config');
 const dev_output = require('../dev_output');
 
-//pull db info from .env file
-const db = {
-    host: process.env.DB_HOSTNAME,
-    user: process.env.DB_USERNAME,
-    password: process.env.DB_PASSWORD,
-    port: process.env.DB_PORT,
-    database: process.env.DB_DB_NAME,
-    charset: 'utf8mb4',
-}
+const db = require('../config/db');
 
 let sqlConnection = async function sqlConnection(sql, values, next) {
     console.log(`SQL: ${sql}`);
