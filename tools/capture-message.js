@@ -18,7 +18,7 @@ captureMessage = function (message) {
         name: message.channel.name,
     }
     const author = message.guild.members.cache.get(message.author.id);
-    const author_displayName = author ? author.displayName || null;
+    const author_displayName = author ? author.displayName : null;
     let author_values = {
         id: message.author.id,
         guild: guild_values.id,
