@@ -1,4 +1,4 @@
-captureMessage = require("../tools/capture-message");
+captureMessage = require("../tools/captureMessage");
 module.exports = {
     name: "capture-message",
     description: "Listens for a message, captures and stores it to the db",

@@ -1,4 +1,4 @@
-const mysqlQuery = require("../../tools/mysql-query");
+const mysqlQuery = require("../../tools/mysqlQuery");
 
 module.exports = {
     name: 'run-sql',
