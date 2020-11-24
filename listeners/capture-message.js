@@ -34,7 +34,6 @@ module.exports = {
             timestamp: snowflakeToTimestamp(message.id),
         }
 
-
         console.log("Guild: " + JSON.stringify(message.guild) + "..." + JSON.stringify(guild_values));
         console.log("Channel: " +JSON.stringify(message.channel) + "..." + JSON.stringify(channel_values));
         console.log("Author: " +JSON.stringify(message.author) + "..." + JSON.stringify(author_values));
@@ -42,30 +41,38 @@ module.exports = {
         console.log("Message: " +JSON.stringify(message) + "..." + JSON.stringify(message_values));
         conn.query("INSERT INTO guilds SET ? ON DUPLICATE KEY UPDATE ?", [guild_values, guild_values], (error,result,fields) => {
             if (error) throw error;
-            console.log("Successfully inserted Guild");
+            console.log(`Successfully inserted guild ${guild_values.id}`);
         })
 
         conn.query("INSERT INTO channels SET ? ON DUPLICATE KEY UPDATE ?",[channel_values, channel_values], (error, result, fields) => {
             if (error) throw error;
-            console.log("Successfully inserted Channel");
+            console.log(`Successfully inserted channel ${channel_values.id}`);
         })
         conn.query("INSERT INTO users SET ? ON DUPLICATE KEY UPDATE ?",[author_values, author_values], (error, result, fields) => {
             if (error) throw error;
-            console.log("Successfully inserted author");
+            console.log(`Successfully inserted author ${author_values.id}`);
         })
         conn.query("INSERT INTO messages SET ? ON DUPLICATE KEY UPDATE ?",[message_values, message_values], (error, result, fields) => {
             if (error) throw error;
-            console.log("Successfully inserted message");
+            console.log(`Successfully inserted message ${message_values.id}`);
         })
         console.log("Attachments: " + JSON.stringify(message.attachments));
-        /*
-        for (let attachment in message.attachments) {
+        for (let attachment of message.attachments) {
             let attachment_values = {
                 id: attachment.id,
-                url: attachment.
+                message_id: message.id,
+                name: attachment.name,
+                url: attachment.url,
+                proxy_url: attachment.proxy_url,
+                size: attachment.size,
+                height: attachment.height,
+                width: attachment.width,
             }
+            conn.query("INSERT INTO attachments SET ? ON DUPLICATE KEY UPDATE ?",[attachment_values,attachment_values], (error, result, fields) => {
+                if (error) throw error;
+                console.log(`Successfully inserted message ${message_values.id} (${i} of ${message.attachments.size})`);
+            })
         }
-        */
         return false;
     }
 }
