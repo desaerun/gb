@@ -32,12 +32,15 @@ captureMessage = function (message) {
         content: message.content,
         timestamp: snowflakeToTimestamp(message.id),
     }
-
+    /*
+    todo: make this log on high verbosity
     console.log("Guild: " + JSON.stringify(message.guild) + "..." + JSON.stringify(guild_values));
     console.log("Channel: " + JSON.stringify(message.channel) + "..." + JSON.stringify(channel_values));
     console.log("Author: " + JSON.stringify(message.author) + "..." + JSON.stringify(author_values));
     console.log("Cached Author:" + JSON.stringify(message.guild.members.cache.get(author_values.id)));
     console.log("Message: " + JSON.stringify(message) + "..." + JSON.stringify(message_values));
+    console.log("Attachments: " + JSON.stringify(message.attachments));
+    */
     conn.query("INSERT INTO guilds SET ? ON DUPLICATE KEY UPDATE ?", [guild_values, guild_values], (error, result, fields) => {
         if (error) throw error;
         console.log(`Successfully inserted guild ${guild_values.id}`);
@@ -55,10 +58,9 @@ captureMessage = function (message) {
         if (error) throw error;
         console.log(`Successfully inserted message ${message_values.id}`);
     })
-    console.log("Attachments: " + JSON.stringify(message.attachments));
     let i = 1;
     for (let attachment of message.attachments) {
-        console.log(`    Attachment ${i}: ${JSON.stringify(attachment)}`);
+        // console.log(`    Attachment ${i}: ${JSON.stringify(attachment)}`);
         const attachment_data = attachment[1];
         let attachment_values = {
             id: attachment_data.id,

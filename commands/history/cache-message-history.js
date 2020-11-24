@@ -5,7 +5,7 @@ const db = require("../../config/db");
 const conn = mysql.createConnection(db);
 conn.connect();
 
-captureMessage = require("../../tools/capture-message");
+captureMessage = require("../../tools/captureMessage");
 
 module.exports = {
     name: 'cache-message-history',
@@ -31,7 +31,7 @@ module.exports = {
         messageCount += messages.size;
 
         message.reply(`There have been ${messageCount} messages sent in this channel.`);
-        conn.query("SELECT COUNT(*) FROM `messages`",(err,result,fields) => {
+        conn.query(`SELECT COUNT(*) FROM messages WHERE channel_id = ${message.channel.id}`,(err,result,fields) => {
             message.reply(`Updated mysql query successfully.  Rows: ${JSON.stringify(result)}`);
         });
     }
