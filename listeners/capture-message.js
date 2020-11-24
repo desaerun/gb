@@ -72,9 +72,9 @@ module.exports = {
             }
             conn.query("INSERT INTO attachments SET ? ON DUPLICATE KEY UPDATE ?",[attachment_values,attachment_values], (error, result, fields) => {
                 if (error) throw error;
-                console.log(`Successfully inserted message ${message_values.id} (${i} of ${message.attachments.size})`);
+                console.log(`Successfully inserted attachment ${attachment_values.id} (${i} of ${message.attachments.size})`);
+                i++;
             })
-            i++;
         }
         return false;
     }
