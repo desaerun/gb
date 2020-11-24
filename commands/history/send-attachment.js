@@ -12,10 +12,12 @@ module.exports = {
             if (error) throw error;
             console.log(result);
             console.log(fields);
-            const attachmentURL = result[0].url;
-            console.log(`Attachment URL: ${attachmentURL}`);
-            const attachment = new MessageAttachment(attachmentURL);
-            message.channel.send(`Test attachment`,attachment);
+            for (const attachmentRow of result) {
+                const attachmentURL = attachmentRow.url;
+                console.log(`Attachment URL: ${attachmentURL}`);
+                let attachment = new MessageAttachment(attachmentURL);
+                message.channel.send(`Test attachment`, attachment);
+            }
         })
     }
 }
