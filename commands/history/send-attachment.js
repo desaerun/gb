@@ -29,7 +29,7 @@ module.exports = {
             timestamp -= timestamp % (24 * 60 * 60 * 1000); //subtract minutes since midnight
             let end_timestamp = timestamp + (24 *60 * 60 * 1000);
             console.log(`${timestamp} :: ${end_timestamp}`);
-            conn.query("SELECT * FROM attachments WHERE timestamp < ? AND timestamp > ? ORDER BY timestamp DESC",[timestamp,end_timestamp], async (error, result, fields) => {
+            conn.query("SELECT * FROM attachments WHERE timestamp >= ? AND timestamp <= ? ORDER BY timestamp DESC",[timestamp,end_timestamp], async (error, result, fields) => {
                 if (error) throw error;
                 console.log(result);
                 for (const attachmentRow of result) {
