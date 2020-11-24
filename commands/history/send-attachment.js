@@ -23,7 +23,8 @@ module.exports = {
             })
         }
         else {
-            let timestamp = locutus.php.datetime.strtotime(args); //convert string to timestamp
+            let arg_str = args.join(" ");
+            let timestamp = locutus.php.datetime.strtotime(arg_str); //convert string to timestamp
             timestamp -= timestamp % (24 * 60 * 60 * 1000); //subtract minutes since midnight
             let end_timestamp = timestamp + (24 *60 * 60 * 1000);
             conn.query("SELECT * FROM attachments WHERE timestamp < ? AND timestamp > ? ORDER BY timestamp DESC", async (error, result, fields) => {
