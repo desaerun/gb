@@ -24,7 +24,7 @@ module.exports = {
         }
         else {
             let arg_str = args.join(" ");
-            let timestamp = locutus.php.datetime.strtotime(arg_str); //convert string to timestamp
+            let timestamp = locutus.php.datetime.strtotime(arg_str) * 1000; //convert string to timestamp
             console.log(`Locutus timestamp: ${timestamp}`);
             timestamp -= timestamp % (24 * 60 * 60 * 1000); //subtract minutes since midnight
             let end_timestamp = timestamp + (24 *60 * 60 * 1000);
