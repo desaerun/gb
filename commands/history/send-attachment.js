@@ -27,7 +27,7 @@ module.exports = {
             let timestamp = locutus.php.datetime.strtotime(arg_str); //convert string to timestamp
             timestamp -= timestamp % (24 * 60 * 60 * 1000); //subtract minutes since midnight
             let end_timestamp = timestamp + (24 *60 * 60 * 1000);
-            conn.query("SELECT * FROM attachments WHERE timestamp < ? AND timestamp > ? ORDER BY timestamp DESC", async (error, result, fields) => {
+            conn.query("SELECT * FROM attachments WHERE timestamp < ? AND timestamp > ? ORDER BY timestamp DESC",[timestamp,end_timestamp], async (error, result, fields) => {
                 if (error) throw error;
                 console.log(result);
                 for (const attachmentRow of result) {
