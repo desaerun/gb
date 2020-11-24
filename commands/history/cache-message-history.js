@@ -1,8 +1,8 @@
-let mysql = require('mysql');
-let mysqlQuery = require("../../config/mysql-query");
-let mysqlDB = mysqlQuery.db;
-let conn = mysql.createConnection(mysqlDB);
-const snowflakeToTimestamp = require("../../config/snowflakeToTimestamp");
+const snowflakeToTimestamp = require("../../tools/snowflakeToTimestamp");
+
+const mysql = require('mysql');
+const db = require("../../config/db");
+const conn = mysql.createConnection(db);
 
 conn.connect();
 

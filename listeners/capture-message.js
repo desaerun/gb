@@ -1,9 +1,10 @@
-const snowflakeToTimestamp = require("../config/snowflakeToTimestamp");
+const snowflakeToTimestamp = require("../tools/snowflakeToTimestamp");
 
+//mysql
 const mysql = require("mysql");
-let mysqlQuery = require("../config/mysql-query");
-let mysqlDB = mysqlQuery.db;
-const conn = mysql.createConnection(mysqlDB);
+const db = require("../config/db");
+const conn = mysql.createConnection(db);
+conn.connect();
 
 module.exports = {
     name: 'capture-message',
@@ -18,10 +19,11 @@ module.exports = {
             guild: guild_values.id,
             name: message.channel.name,
         }
+        const author_displayName = message.guild.members.cache.get(author_values.id).displayName;
         let author_values = {
             id: message.author.id,
             guild: guild_values.id,
-            displayName: message.author.username,
+            displayName: author_displayName,
         }
         let message_values = {
             id: message.id,
@@ -31,6 +33,8 @@ module.exports = {
             content: message.content,
             timestamp: snowflakeToTimestamp(message.id),
         }
+
+
         console.log("Guild: " + JSON.stringify(message.guild) + "..." + JSON.stringify(guild_values));
         console.log("Channel: " +JSON.stringify(message.channel) + "..." + JSON.stringify(channel_values));
         console.log("Author: " +JSON.stringify(message.author) + "..." + JSON.stringify(author_values));
@@ -53,6 +57,15 @@ module.exports = {
             if (error) throw error;
             console.log("Successfully inserted message");
         })
+        console.log("Attachments: " + JSON.stringify(message.attachments));
+        /*
+        for (let attachment in message.attachments) {
+            let attachment_values = {
+                id: attachment.id,
+                url: attachment.
+            }
+        }
+        */
         return false;
     }
 }

@@ -3,7 +3,7 @@ const CONFIG = require('./config/config');
 const Discord = require('discord.js');
 const client = new Discord.Client();
 
-const mysqlQuery = require('./config/mysql-query');
+const mysqlQuery = require('./tools/mysql-query');
 
 const dev_output = require('./dev_output');
 dev_output.setClient(client);

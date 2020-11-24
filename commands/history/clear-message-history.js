@@ -1,4 +1,4 @@
-const mysqlQuery = require('../../config/mysql-query');
+const mysqlQuery = require('../../tools/mysql-query');
 module.exports = {
     name: 'clear-message-history',
     description: "Clears all message history from db",
