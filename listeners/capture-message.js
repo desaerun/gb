@@ -19,7 +19,7 @@ module.exports = {
             guild: guild_values.id,
             name: message.channel.name,
         }
-        const author_displayName = message.guild.members.cache.get(author_values.id).displayName;
+        const author_displayName = message.guild.members.cache.get(message.author.id).displayName;
         let author_values = {
             id: message.author.id,
             guild: guild_values.id,
