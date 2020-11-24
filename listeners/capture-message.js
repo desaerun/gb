@@ -59,6 +59,7 @@ module.exports = {
         console.log("Attachments: " + JSON.stringify(message.attachments));
         let i = 1;
         for (let attachment of message.attachments) {
+            console.log(`    Attachment ${i}: ${attachment}`);
             let attachment_values = {
                 id: attachment.id,
                 message_id: message.id,
