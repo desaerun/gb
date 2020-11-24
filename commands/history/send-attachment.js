@@ -1,3 +1,4 @@
+const { MessageAttachment } = require("discord.js");
 const mysql = require('mysql');
 const db = require("../../config/db");
 const conn = mysql.createConnection(db);
@@ -11,7 +12,10 @@ module.exports = {
             if (error) throw error;
             console.log(result);
             console.log(fields);
-            console.log(`Attachment URL: ${result[0].url}`);
+            const attachmentURL = result[0].url;
+            console.log(`Attachment URL: ${attachmentURL}`);
+            const attachment = new MessageAttachment(attachmentURL);
+            message.channel.send(`Test attachment`,attachment);
         })
     }
 }
