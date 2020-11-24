@@ -11,6 +11,7 @@ module.exports = {
             if (error) throw error;
             console.log(result);
             console.log(fields);
+            console.log(`Attachment URL: ${result[0].url}`);
         })
     }
 }
