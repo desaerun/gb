@@ -8,7 +8,7 @@ module.exports = {
     name: 'send-attachment',
     description: "Sends a message with an attachment from the DB",
     execute: async function (client, message, args) {
-        await conn.query("SELECT * FROM attachments WHERE 1 LIMIT 1 ORDER BY timestamp DESC", (error, result, fields) => {
+        await conn.query("SELECT * FROM attachments WHERE 1 ORDER BY timestamp DESC LIMIT 5 ", (error, result, fields) => {
             if (error) throw error;
             console.log(result);
             console.log(fields);
