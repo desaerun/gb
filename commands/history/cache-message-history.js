@@ -3,8 +3,9 @@ const snowflakeToTimestamp = require("../../tools/snowflakeToTimestamp");
 const mysql = require('mysql');
 const db = require("../../config/db");
 const conn = mysql.createConnection(db);
-
 conn.connect();
+
+captureMessage = require("../../tools/capture-message");
 
 module.exports = {
     name: 'cache-message-history',
@@ -40,8 +41,8 @@ module.exports = {
             let last = messages.last().id;
 
             for (let historical_message of messages.values()) {
-                //todo: fix this datetime (it is like 4 years early?)
-                let message_timestamp = snowflakeToTimestamp(historical_message.id);
+                captureMessage(historical_message);
+                /*let message_timestamp = snowflakeToTimestamp(historical_message.id);
 
                 //insert into DB for author
                 let author = client.guilds.cache.get(guild_values.id).member(historical_message.author.id);
@@ -82,7 +83,7 @@ module.exports = {
                     console.log(`Author ID: ${author_values.id}`);
                     console.log(`Author Display Name: ${author_values.displayName}`);
                     console.log(`inserted message ${post.id} successfully`);
-                });
+                });*/
             }
             messages = await channel.messages.fetch({limit: 100, before: last});
         }

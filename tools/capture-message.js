@@ -6,7 +6,8 @@ const db = require("../config/db");
 const conn = mysql.createConnection(db);
 conn.connect();
 
-module.exports = function (message) {
+
+captureMessage = function (message) {
     let guild_values = {
         id: message.guild.id,
         name: message.guild.name,
@@ -76,3 +77,5 @@ module.exports = function (message) {
     }
     return false;
 }
+
+module.exports = captureMessage;
