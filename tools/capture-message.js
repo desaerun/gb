@@ -69,6 +69,7 @@ captureMessage = function (message) {
             size: attachment_data.size,
             height: attachment_data.height,
             width: attachment_data.width,
+            timestamp: snowflakeToTimestamp(attachment_data.id),
         };
         conn.query("INSERT INTO attachments SET ? ON DUPLICATE KEY UPDATE ?", [attachment_values, attachment_values], (error, result, fields) => {
             if (error) throw error;
