@@ -140,5 +140,8 @@ function parseWithListeners(message) {
         dev_output.sendTrace(err, CONFIG.channel_dev_id);
     }
 }
+client.on('shardError', error => {
+    console.error("possible shard error was caught: ", error);
+});
 
 client.login(process.env.BOT_TOKEN);
