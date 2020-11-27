@@ -7,7 +7,11 @@ const conn = mysql.createConnection(db);
 conn.connect();
 
 
-captureMessage = function (message) {
+captureMessage = function (message,includeBotMessages = false) {
+    const author = message.guild.members.cache.get(message.author.id);
+    if (author.bot && !includeBotMessages) {
+        return;
+    }
     let guild_values = {
         id: message.guild.id,
         name: message.guild.name,
@@ -17,7 +21,6 @@ captureMessage = function (message) {
         guild: guild_values.id,
         name: message.channel.name,
     }
-    const author = message.guild.members.cache.get(message.author.id);
     const author_displayName = author ? author.displayName : null;
     let author_values = {
         id: message.author.id,
