@@ -33,16 +33,15 @@ module.exports = {
             conn.query("SELECT `m`.`content`,`a`.`url` AS `attachmentURL` FROM `messages` `m` LEFT JOIN `attachments` `a` ON `m`.`id`=`a`.`message_id` WHERE `m`.`channel` = ? AND `m`.`timestamp` >= ? AND `m`.`timestamp` <= ? ORDER BY `m`.`timestamp` DESC LIMIT 2", [message.channel.id, timestamp, end_timestamp], async (error, result, fields) => {
                 if (error) throw error;
                 for (const messageRow of result) {
-                    const attachmentURL = messageRow.url;
                     conn.query("SELECT * FROM `users` WHERE `id` = ? LIMIT 1", messageRow.author, async (error, authors, fields) => {
                         let author = authors[0];
                         //let attachment = new MessageAttachment(attachmentURL);
                         let embedMessage = new Discord.MessageEmbed()
                             .setAuthor(author.displayName, author.avatarURL)
-                            .addField('', messageRow.content)
+                            .addField('\u200b', messageRow.content)
                             .setTimestamp(messageRow.timestamp);
-                        if (attachmentURL) {
-                            embedMessage.setImage(attachmentURL);
+                        if (messageRow.attachmentURL) {
+                            embedMessage.setImage(messageRow.attachmentURL);
                         }
                         try {
                             await message.channel.send(embedMessage);
