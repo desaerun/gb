@@ -35,6 +35,7 @@ module.exports = {
                 console.log(result);
                 for (const messageRow of result) {
                     conn.query("SELECT * FROM `users` WHERE `id` = ? LIMIT 1", messageRow.author, async (error, authors, fields) => {
+                        console.log(authors);
                         let author = authors[0];
                         //let attachment = new MessageAttachment(attachmentURL);
                         let embedMessage = new Discord.MessageEmbed()
