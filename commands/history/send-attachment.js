@@ -28,7 +28,7 @@ module.exports = {
             console.log(`Locutus timestamp: ${timestamp}`);
             timestamp -= timestamp % (24 * 60 * 60 * 1000); //subtract minutes since midnight
             let end_timestamp = timestamp + (24 * 60 * 60 * 1000);
-            let timestamp_now = new Date().now();
+            // let timestamp_now = new Date().now();
             console.log(`${timestamp} :: ${end_timestamp}`);
             conn.query("SELECT `m`.`content`,`a`.`url` AS `attachmentURL` FROM `messages` `m` LEFT JOIN `attachments` `a` ON `m`.`id`=`a`.`message_id` WHERE `m`.`channel` = ? AND `m`.`timestamp` >= ? AND `m`.`timestamp` <= ? ORDER BY `m`.`timestamp` DESC LIMIT 2", [message.channel.id, timestamp, end_timestamp], async (error, result, fields) => {
                 if (error) throw error;
