@@ -32,6 +32,7 @@ module.exports = {
             console.log(`${timestamp} :: ${end_timestamp}`);
             conn.query("SELECT `m`.`content`,`a`.`url` AS `attachmentURL` FROM `messages` `m` LEFT JOIN `attachments` `a` ON `m`.`id`=`a`.`message_id` WHERE `m`.`channel` = ? AND `m`.`timestamp` >= ? AND `m`.`timestamp` <= ? ORDER BY `m`.`timestamp` DESC LIMIT 2", [message.channel.id, timestamp, end_timestamp], async (error, result, fields) => {
                 if (error) throw error;
+                console.log(result);
                 for (const messageRow of result) {
                     conn.query("SELECT * FROM `users` WHERE `id` = ? LIMIT 1", messageRow.author, async (error, authors, fields) => {
                         let author = authors[0];
