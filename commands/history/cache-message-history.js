@@ -12,6 +12,7 @@ module.exports = {
     description: "Retrieves message history for the current channel and stores it to the DB",
     execute: async function (client, message, args) {
 
+        if (args.length)
         let messageCount = 0;
         console.log(`Retrieving list of messages...`);
 
