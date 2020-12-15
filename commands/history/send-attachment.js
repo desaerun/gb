@@ -38,7 +38,7 @@ module.exports = {
                         let author = authors[0];
                         //let attachment = new MessageAttachment(attachmentURL);
                         let timestamp = messageRow.timestamp;
-                        let ms = messageRow.timestamp * 1000;
+                        let ms = messageRow.timestamp;
                         let messageTimestamp = new Date(ms);
                         console.log(`Message Timestamp: ${timestamp}`);
                         console.log(`Message Timestamp (ms): ${ms}`);
