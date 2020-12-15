@@ -38,9 +38,10 @@ module.exports = {
                         console.log(authors);
                         let author = authors[0];
                         //let attachment = new MessageAttachment(attachmentURL);
+                        let messageTimestamp = new Date(messageRow.timestamp);
                         let embedMessage = new Discord.MessageEmbed()
                             .setAuthor(author.displayName, author.avatarURL)
-                            .setTimestamp(new Date(messageRow.timestamp));
+                            .setTimestamp(messageTimestamp);
                         if (messageRow.content) {
                             embedMessage.addField('\u200b', messageRow.content)
                         }
