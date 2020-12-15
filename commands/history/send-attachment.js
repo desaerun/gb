@@ -39,6 +39,7 @@ module.exports = {
                         let author = authors[0];
                         //let attachment = new MessageAttachment(attachmentURL);
                         let messageTimestamp = new Date(messageRow.timestamp);
+                        console.log(`Message ISO date: ${messageTimestamp.toISOString()}`);
                         let embedMessage = new Discord.MessageEmbed()
                             .setAuthor(author.displayName, author.avatarURL)
                             .setTimestamp(messageTimestamp.toISOString());
