@@ -41,7 +41,7 @@ module.exports = {
                         let messageTimestamp = new Date(messageRow.timestamp);
                         let embedMessage = new Discord.MessageEmbed()
                             .setAuthor(author.displayName, author.avatarURL)
-                            .setTimestamp(messageTimestamp);
+                            .setTimestamp(messageTimestamp.toISOString());
                         if (messageRow.content) {
                             embedMessage.addField('\u200b', messageRow.content)
                         }
