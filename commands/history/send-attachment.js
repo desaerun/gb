@@ -32,13 +32,12 @@ module.exports = {
             console.log(`${timestamp} :: ${end_timestamp}`);
             conn.query("SELECT `m`.`id`,`m`.`content`,`m`.`author`,`a`.`url` AS `attachmentURL` FROM `messages` `m` LEFT JOIN `attachments` `a` ON `m`.`id`=`a`.`message_id` WHERE `m`.`channel` = ? AND `m`.`timestamp` >= ? AND `m`.`timestamp` <= ? ORDER BY `m`.`timestamp` DESC LIMIT 2", [message.channel.id, timestamp, end_timestamp], async (error, result, fields) => {
                 if (error) throw error;
-                console.log(result);
                 for (const messageRow of result) {
                     conn.query("SELECT * FROM `users` WHERE `id` = ? LIMIT 1", messageRow.author, async (error, authors, fields) => {
-                        console.log(authors);
                         let author = authors[0];
                         //let attachment = new MessageAttachment(attachmentURL);
                         let messageTimestamp = new Date(messageRow.timestamp);
+                        console.log(`Message Timestamp object: ${messageTimestamp}`);
                         console.log(`Message ISO date: ${messageTimestamp.toISOString()}`);
                         let embedMessage = new Discord.MessageEmbed()
                             .setAuthor(author.displayName, author.avatarURL)
