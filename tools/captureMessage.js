@@ -27,7 +27,7 @@ captureMessage = function (message, includeBotMessages = false) {
                     }
                     const author_displayName = author ? author.displayName : null;
                     const author_avatarURL = author ? author.displayAvatarURL : null;
-                    console.log(`Author: ${author}`);
+                    console.log(`Author: ${JSON.stringify(author)}`);
                     let author_values = {
                         id: message.author.id,
                         guild: guild_values.id,
