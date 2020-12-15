@@ -11,11 +11,12 @@ captureMessage = function (client,message,includeBotMessages = false) {
     conn.query("SELECT * FROM messages WHERE id = ?", message.id, (error, result, fields) => {
         if (result.length === 0) { // if message doesn't already exist in DB
             const author = message.guild.members.cache.get(message.author.id);
-            console.log(`Author: ${JSON.stringify(author)}`);
             if (!author) {
                 console.log(`Author was not able to be fetched for message ${message.id}`);
                 console.log(message);
             } else {
+                console.log(`Author: ${JSON.stringify(author)}`);
+                console.log(`Author Avatar URL: ${author.user.displayAvatarURL()}`);
                 if (!author.bot || includeBotMessages) {
                     let guild_values = {
                         id: message.guild.id,
