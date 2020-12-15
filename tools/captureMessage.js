@@ -26,7 +26,7 @@ captureMessage = function (message, includeBotMessages = false) {
                         name: message.channel.name,
                     }
                     const author_displayName = author ? author.displayName : null;
-                    const author_avatarURL = author ? author.avatarURL() : null;
+                    const author_avatarURL = author ? author.displayAvatarURL() : null;
                     console.log(`Author: ${author}`);
                     let author_values = {
                         id: message.author.id,
