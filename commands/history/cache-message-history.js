@@ -26,7 +26,7 @@ module.exports = {
             let last = messages.last().id;
 
             for (let historical_message of messages.values()) {
-                captureMessage(historical_message);
+                captureMessage(client,historical_message);
             }
             messages = await message.channel.messages.fetch({limit: 100, before: last});
             console.log(`*************End of batch, messages.size=${messages.size}*************`);
