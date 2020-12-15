@@ -36,7 +36,7 @@ module.exports = {
                     conn.query("SELECT * FROM `users` WHERE `id` = ? LIMIT 1", messageRow.author, async (error, authors, fields) => {
                         let author = authors[0];
                         //let attachment = new MessageAttachment(attachmentURL);
-                        let messageTimestamp = new Date(messageRow.timestamp);
+                        let messageTimestamp = new Date(messageRow.timestamp * 1000);
                         console.log(`Message Timestamp object: ${messageTimestamp}`);
                         console.log(`Message ISO date: ${messageTimestamp.toISOString()}`);
                         let embedMessage = new Discord.MessageEmbed()
