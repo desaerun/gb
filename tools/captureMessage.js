@@ -16,7 +16,6 @@ captureMessage = function (client,message,includeBotMessages = false) {
                 console.log(message);
             } else {
                 console.log(`Author: ${JSON.stringify(author)}`);
-                console.log(`Author Avatar URL: ${author.user.displayAvatarURL()}`);
                 if (!author.bot || includeBotMessages) {
                     let guild_values = {
                         id: message.guild.id,
@@ -28,7 +27,7 @@ captureMessage = function (client,message,includeBotMessages = false) {
                         name: message.channel.name,
                     }
                     const author_displayName = author ? author.displayName : null;
-                    const author_avatarURL = author ? author.displayAvatarURL : null;
+                    const author_avatarURL = author ? author.user.displayAvatarURL() : null;
                     let author_values = {
                         id: message.author.id,
                         guild: guild_values.id,
