@@ -20,10 +20,12 @@ captureMessage = function (message,includeBotMessages = false) {
             name: message.channel.name,
         }
         const author_displayName = author ? author.displayName : null;
+        const author_avatarURL = author ? author.avatarURL : null;
         let author_values = {
             id: message.author.id,
             guild: guild_values.id,
             displayName: author_displayName,
+            avatarURL: author_avatarURL,
         }
         let message_values = {
             id: message.id,
