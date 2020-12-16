@@ -40,7 +40,8 @@ module.exports = {
         messageCount += messages.size;
 
         message.channel.send(`There have been ${messageCount} messages sent in channel #${targetChannel.name}.`);
-        conn.query(`SELECT COUNT(*) FROM messages WHERE channel_id = ${targetChannel.id}`,(err,result,fields) => {
+        conn.query(`SELECT COUNT(*) FROM messages WHERE channel = ${targetChannel.id}`,(error,result,fields) => {
+            if (error) throw error;
             message.channel.send(`Updated mysql query successfully.  Rows: ${JSON.stringify(result)}`);
         });
     }

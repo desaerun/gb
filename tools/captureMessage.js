@@ -26,8 +26,8 @@ captureMessage = function (client,message,includeBotMessages = false) {
                         guild: guild_values.id,
                         name: message.channel.name,
                     }
-                    const author_displayName = author ? author.displayName : null;
-                    const author_avatarURL = author ? author.user.displayAvatarURL() : null;
+                    const author_displayName = author.displayName;
+                    const author_avatarURL = author.user.displayAvatarURL();
                     let author_values = {
                         id: message.author.id,
                         guild: guild_values.id,
@@ -93,6 +93,7 @@ captureMessage = function (client,message,includeBotMessages = false) {
                 }
             }
         } else {
+            //todo: add case to add "edits" to show changes
             console.log(`Message ${message.id} already exists in DB, skipping...`);
         }
     });
