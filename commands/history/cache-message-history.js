@@ -39,6 +39,7 @@ module.exports = {
             console.log(`*************Start of batch, messages.size=${messages.size}**************`);
             let last = messages.last().id;
 
+            let messageResult = 0;
             for (let historical_message of messages.values()) {
                 messageResult = await captureMessage(client,historical_message);
                 switch (messageResult) {
