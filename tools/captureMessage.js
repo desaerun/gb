@@ -70,7 +70,6 @@ captureMessage = function (client,message,includeBotMessages = false) {
                     })
                     let i = 1;
                     for (let attachment of message.attachments) {
-                        // console.log(`    Attachment ${i}: ${JSON.stringify(attachment)}`);
                         const attachment_data = attachment[1];
                         let attachment_values = {
                             id: attachment_data.id,
