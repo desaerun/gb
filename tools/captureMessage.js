@@ -102,7 +102,6 @@ captureMessage = function (client,message,includeBotMessages = false) {
             return 2; // skipped
         }
     });
-    return 0; //error
 }
 
 module.exports = captureMessage;

@@ -40,7 +40,7 @@ module.exports = {
             let last = messages.last().id;
 
             for (let historical_message of messages.values()) {
-                messageResult = captureMessage(client,historical_message);
+                messageResult = await captureMessage(client,historical_message);
                 switch (messageResult) {
                     case 1:
                         counts.added++;
