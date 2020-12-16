@@ -27,7 +27,6 @@ module.exports = {
         console.log(`Retrieving list of messages...`);
 
         let messages = await targetChannel.messages.fetch({limit: 100});
-        let messageCount = 0;
         let counts = {
             error: 0,
             added: 0,
@@ -38,9 +37,7 @@ module.exports = {
         }
         while (messages.size > 0) {
             console.log(`*************Start of batch, messages.size=${messages.size}**************`);
-            messageCount += messages.size;
             let last = messages.last().id;
-
 
             for (let historical_message of messages.values()) {
                 messageResult = captureMessage(client,historical_message);
@@ -66,9 +63,8 @@ module.exports = {
             messages = await targetChannel.messages.fetch({limit: 100, before: last});
             console.log(`*************End of batch, messages.size=${messages.size}*************`);
         }
-        messageCount += messages.size;
 
-        message.channel.send(`There have been ${messageCount} messages sent in channel #${targetChannel.name}.`);
+        message.channel.send(`There have been ${counts.total} messages sent in channel #${targetChannel.name}.`);
         conn.query(`SELECT COUNT(*) FROM messages WHERE channel = ?`,targetChannel.id,(error,result,fields) => {
             if (error) throw error;
             message.channel.send(`Updated mysql query successfully.  Rows: ${JSON.stringify(result)}`);
