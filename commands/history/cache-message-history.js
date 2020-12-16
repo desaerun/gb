@@ -15,7 +15,7 @@ module.exports = {
         let targetChannel = message.channel;
         //if command is called with arg, check if it's a channel ID;
         if (args.length === 1) {
-            if (message.channels.cache.get(args[0])) {
+            if (message.guild.channels.cache.get(args[0])) {
                 targetChannel = message.guild.channels.get(args[0]);
             } else {
                 message.channel.send("The specified channel ID was not found.");
