@@ -7,7 +7,7 @@ const conn = mysql.createConnection(db);
 conn.connect();
 
 
-captureMessage = function (client,message,includeBotMessages = false) {
+captureMessage = async function (client,message,includeBotMessages = false) {
     conn.query("SELECT * FROM messages WHERE id = ?", message.id, (err, result, fields) => {
         if (err) throw err;
         if (result.length === 0) { // if message doesn't already exist in DB
