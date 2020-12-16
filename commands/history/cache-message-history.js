@@ -14,7 +14,7 @@ module.exports = {
 
         let targetChannel = message.channel;
         //if command is called with arg, check if it's a channel ID;
-        if (args.length === 0) {
+        if (args.length === 1) {
             if (message.channels.cache.get(args[0])) {
                 targetChannel = message.guild.channels.get(args[0]);
             } else {
@@ -39,7 +39,7 @@ module.exports = {
         }
         messageCount += messages.size;
 
-        message.channel.send(`There have been ${messageCount} messages sent in this channel.`);
+        message.channel.send(`There have been ${messageCount} messages sent in channel ${targetChannel.id}.`);
         conn.query(`SELECT COUNT(*) FROM messages WHERE channel_id = ${targetChannel.id}`,(err,result,fields) => {
             message.channel.send(`Updated mysql query successfully.  Rows: ${JSON.stringify(result)}`);
         });
