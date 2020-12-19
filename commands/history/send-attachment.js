@@ -60,8 +60,9 @@ module.exports = {
             }
 
             for (const messageRow of selectedMessages) {
-                conn.query("SELECT * FROM `users` WHERE `id` = ? LIMIT 1", messageRow.author, async (error, authors, fields) => {
-                    let author = authors[0];
+                conn.query("SELECT * FROM `users` WHERE `id` = ? LIMIT 1", messageRow.author, async (error, authors_result, fields) => {
+                    console.log(authors_result);
+                    let author = authors_result[0];
                     //let attachment = new MessageAttachment(attachmentURL);
                     let messageTimestamp = new Date(messageRow.timestamp);
                     let embedMessage = new Discord.MessageEmbed()
