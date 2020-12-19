@@ -88,15 +88,15 @@ module.exports = {
                 let messageTimestamp = new Date(messageRow.timestamp);
                 let embedMessage = new Discord.MessageEmbed()
                     .setAuthor(messageRow.author_displayName, messageRow.author_avatarURL)
-                    .setThumbnail(messageRow.author_avatarURL);
+                    .setThumbnail(messageRow.author_avatarURL)
+                    .setTitle(moment(messageTimestamp).format("dddd, MMMM Do YYYY @ hh:mm:ss a"))
+                    .setDescription(`[**Jump to Message**](https://discord.com/channels/${messageRow.guild}/${messageRow.channel}/${messageRow.id})`);
                 if (messageRow.content) {
                     embedMessage.addField('\u200b', messageRow.content)
                 }
                 if (messageRow.attachmentURL) {
                     embedMessage.setImage(messageRow.attachmentURL);
                 }
-                embedMessage.addField("\u200b",moment(messageTimestamp).format("dddd, MMMM Do YYYY @ hh:mm:ss a"),true)
-                embedMessage.addField('\u200b',`[**Jump to Message**](https://discord.com/channels/${messageRow.guild}/${messageRow.channel}/${messageRow.id})`,true);
                 try {
                     await message.channel.send(embedMessage);
                 } catch (err) {
