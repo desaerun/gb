@@ -60,7 +60,6 @@ module.exports = {
             " DESC";
         conn.query(message_sql, [message.channel.id, timestamp, end_timestamp], async (error, result, fields) => {
             if (error) throw error;
-            console.log(result);
 
             //select a random message from the DB
             let selectedMessages = [];
@@ -81,9 +80,9 @@ module.exports = {
                 }
 
                 //add the selected messages to the array
-                selectedMessages.push(result[randomMessageIndex - 1]);
-                selectedMessages.push(result[randomMessageIndex]);
                 selectedMessages.push(result[randomMessageIndex + 1]);
+                selectedMessages.push(result[randomMessageIndex]);
+                selectedMessages.push(result[randomMessageIndex - 1]);
             }
             console.log(`Selected messages: ${JSON.stringify(selectedMessages)}`);
 
