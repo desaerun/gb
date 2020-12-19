@@ -58,15 +58,15 @@ captureMessage = async function (client,message,includeBotMessages = false) {
                         console.log(`Successfully inserted guild ${guild_values.id}`);
                     })
 
-                    await conn.query("INSERT INTO channels SET ? ON DUPLICATE KEY UPDATE ?", [channel_values, channel_values], async (error, result, fields) => {
+                    await conn.query("INSERT INTO channels SET ? ON DUPLICATE KEY UPDATE ?", [channel_values, channel_values], (error, result, fields) => {
                         if (error) throw error;
                         console.log(`Successfully inserted channel ${channel_values.id}`);
                     })
-                    await conn.query("INSERT INTO users SET ? ON DUPLICATE KEY UPDATE ?", [author_values, author_values], async (error, result, fields) => {
+                    await conn.query("INSERT INTO users SET ? ON DUPLICATE KEY UPDATE ?", [author_values, author_values], (error, result, fields) => {
                         if (error) throw error;
                         console.log(`Successfully inserted author ${author_values.id}`);
                     })
-                    await conn.query("INSERT INTO messages SET ? ON DUPLICATE KEY UPDATE ?", [message_values, message_values], async (error, result, fields) => {
+                    await conn.query("INSERT INTO messages SET ? ON DUPLICATE KEY UPDATE ?", [message_values, message_values], (error, result, fields) => {
                         if (error) throw error;
                         console.log(`Successfully inserted message ${message_values.id}`);
                     })
@@ -84,7 +84,7 @@ captureMessage = async function (client,message,includeBotMessages = false) {
                             width: attachment_data.width,
                             timestamp: snowflakeToTimestamp(attachment_data.id),
                         };
-                        await conn.query("INSERT INTO attachments SET ? ON DUPLICATE KEY UPDATE ?", [attachment_values, attachment_values], async (error, result, fields) => {
+                        await conn.query("INSERT INTO attachments SET ? ON DUPLICATE KEY UPDATE ?", [attachment_values, attachment_values], (error, result, fields) => {
                             if (error) throw error;
                             console.log(`Successfully inserted attachment ${attachment_values.id} (${i} of ${message.attachments.size})`);
                             i++;
