@@ -58,6 +58,7 @@ module.exports = {
                 selectedMessages.push(randomMessageIndex);
                 selectedMessages.push(randomMessageIndex + 1);
             }
+
             for (const messageRow of selectedMessages) {
                 conn.query("SELECT * FROM `users` WHERE `id` = ? LIMIT 1", messageRow.author, async (error, authors, fields) => {
                     let author = authors[0];
