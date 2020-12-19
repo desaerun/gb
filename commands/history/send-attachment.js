@@ -87,14 +87,14 @@ module.exports = {
                 let messageTimestamp = new Date(messageRow.timestamp);
                 let embedMessage = new Discord.MessageEmbed()
                     .setAuthor(messageRow.author_displayName, messageRow.author_avatarURL)
-                    .setTimestamp(messageTimestamp.toISOString())
-                    .setFooter('[Permalink](http://google.com)',`https://discord.com/channels/${messageRow.guild}/${messageRow.channel}/${messageRow.id}`);
+                    .setTimestamp(messageTimestamp.toISOString());
                 if (messageRow.content) {
                     embedMessage.addField('\u200b', messageRow.content)
                 }
                 if (messageRow.attachmentURL) {
                     embedMessage.setImage(messageRow.attachmentURL);
                 }
+                embedMessage.addField('\200b',`[**Jump to Message**](https://discord.com/channels/${messageRow.guild}/${messageRow.channel}/${messageRow.id})`);
                 try {
                     await message.channel.send(embedMessage);
                 } catch (err) {
