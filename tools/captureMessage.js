@@ -8,10 +8,10 @@ conn.connect();
 
 
 captureMessage = async function (client,message,includeBotMessages = false) {
-    await conn.query("SELECT * FROM messages WHERE id = ?", message.id, async (err, result, fields) => {
+    conn.query("SELECT * FROM messages WHERE id = ?", message.id, async (err, result, fields) => {
         if (err) throw err;
         if (result.length === 0) { // if message doesn't already exist in DB
-            const author = message.guild.members.cache.get(message.author.id);
+            const author = await message.guild.members.cache.get(message.author.id);
             if (!author) {
                 console.log(`Author was not able to be fetched for message ${message.id}`);
                 console.log(message);
@@ -53,20 +53,20 @@ captureMessage = async function (client,message,includeBotMessages = false) {
                     console.log("Message: " + JSON.stringify(message) + "..." + JSON.stringify(message_values));
                     console.log("Attachments: " + JSON.stringify(message.attachments));
                     */
-                    conn.query("INSERT INTO guilds SET ? ON DUPLICATE KEY UPDATE ?", [guild_values, guild_values], (error, result, fields) => {
+                    conn.query("INSERT INTO guilds SET ? ON DUPLICATE KEY UPDATE ?", [guild_values, guild_values], (error) => {
                         if (error) throw error;
                         console.log(`Successfully inserted guild ${guild_values.id}`);
                     })
 
-                    await conn.query("INSERT INTO channels SET ? ON DUPLICATE KEY UPDATE ?", [channel_values, channel_values], (error, result, fields) => {
+                    conn.query("INSERT INTO channels SET ? ON DUPLICATE KEY UPDATE ?", [channel_values, channel_values], (error) => {
                         if (error) throw error;
                         console.log(`Successfully inserted channel ${channel_values.id}`);
                     })
-                    await conn.query("INSERT INTO users SET ? ON DUPLICATE KEY UPDATE ?", [author_values, author_values], (error, result, fields) => {
+                    conn.query("INSERT INTO users SET ? ON DUPLICATE KEY UPDATE ?", [author_values, author_values], (error) => {
                         if (error) throw error;
                         console.log(`Successfully inserted author ${author_values.id}`);
                     })
-                    await conn.query("INSERT INTO messages SET ? ON DUPLICATE KEY UPDATE ?", [message_values, message_values], (error, result, fields) => {
+                    conn.query("INSERT INTO messages SET ? ON DUPLICATE KEY UPDATE ?", [message_values, message_values], (error) => {
                         if (error) throw error;
                         console.log(`Successfully inserted message ${message_values.id}`);
                     })
@@ -84,7 +84,7 @@ captureMessage = async function (client,message,includeBotMessages = false) {
                             width: attachment_data.width,
                             timestamp: snowflakeToTimestamp(attachment_data.id),
                         };
-                        await conn.query("INSERT INTO attachments SET ? ON DUPLICATE KEY UPDATE ?", [attachment_values, attachment_values], (error, result, fields) => {
+                        conn.query("INSERT INTO attachments SET ? ON DUPLICATE KEY UPDATE ?", [attachment_values, attachment_values], (error, result, fields) => {
                             if (error) throw error;
                             console.log(`Successfully inserted attachment ${attachment_values.id} (${i} of ${message.attachments.size})`);
                             i++;
@@ -102,6 +102,7 @@ captureMessage = async function (client,message,includeBotMessages = false) {
             return 2; // skipped
         }
     });
+
 }
 
 module.exports = captureMessage;

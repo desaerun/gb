@@ -3,6 +3,8 @@ const CONFIG = require('./config/config');
 const Discord = require('discord.js');
 const client = new Discord.Client();
 
+const captureMessage = require("./tools/captureMessage");
+
 const mysqlQuery = require('./tools/mysqlQuery');
 
 const dev_output = require('./dev_output');
@@ -86,12 +88,16 @@ client.once('ready', () => {
 });
 
 client.on('message', message => {
+    captureMessage(client,message);
+
+    const args = message.content.slice(CONFIG.prefix.length).split(/ +/);
+
     // Ignore my own messages
     if (message.author.bot) return;
 
     // Attempt to parse commands
     if (isCommand(message)) {
-        runCommands(message);
+        runCommands(message,args);
         // Otherwise pass to listeners
     } else {
         parseWithListeners(message);
@@ -111,8 +117,7 @@ function isCommand(message) {
  * Searches client.commands for the parsed command, and executes if the command is valid
  * @param message
  */
-function runCommands(message) {
-    const args = message.content.slice(CONFIG.prefix.length).split(/ +/);
+function runCommands(message,args) {
     const command = args.shift().toLowerCase();
     const guild = client.guilds.fetch(message.guild.id);
 

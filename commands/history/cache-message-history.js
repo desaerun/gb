@@ -56,8 +56,8 @@ module.exports = {
                         counts.noAuthor++;
                         break;
                     case 0:
-                    default:
                         counts.error++;
+                        break;
                 }
                 counts.total++;
             }
