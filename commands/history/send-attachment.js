@@ -95,7 +95,7 @@ module.exports = {
                 if (messageRow.attachmentURL) {
                     embedMessage.setImage(messageRow.attachmentURL);
                 }
-                embedMessage.addField('\200b',`[**Jump to Message**](https://discord.com/channels/${messageRow.guild}/${messageRow.channel}/${messageRow.id})`);
+                embedMessage.addField('\u200b',`[**Jump to Message**](https://discord.com/channels/${messageRow.guild}/${messageRow.channel}/${messageRow.id})`);
                 try {
                     await message.channel.send(embedMessage);
                 } catch (err) {
