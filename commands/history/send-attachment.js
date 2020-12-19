@@ -45,13 +45,13 @@ module.exports = {
             "    m.timestamp," +
             "    a.url AS attachmentURL," +
             "    author.displayName as author_displayName," +
-            "    author.avatarURL as author_avatarURL" +
+            "    author.avatarURL as author_avatarURL," +
             "    author.isBot as author_isBot" +
             " FROM" +
             "    messages m" +
             " LEFT JOIN attachments a ON" +
             "    m.id = a.message_id" +
-            "    LEFT JOIN users author ON" +
+            " LEFT JOIN users author ON" +
             "    m.author=author.id" +
             " WHERE" +
             "    m.channel = ? AND m.timestamp BETWEEN ? AND ?" +
