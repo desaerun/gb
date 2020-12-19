@@ -88,7 +88,7 @@ module.exports = {
                 let embedMessage = new Discord.MessageEmbed()
                     .setAuthor(messageRow.author_displayName, messageRow.author_avatarURL)
                     .setTimestamp(messageTimestamp.toISOString())
-                    .setFooter(`[Permalink](https://discord.com/channels/${messageRow.guild}/${messageRow.channel}/${messageRow.id})`);
+                    .setFooter('Permalink',`https://discord.com/channels/${messageRow.guild}/${messageRow.channel}/${messageRow.id}`);
                 if (messageRow.content) {
                     embedMessage.addField('\u200b', messageRow.content)
                 }
