@@ -54,9 +54,9 @@ module.exports = {
                 }
 
                 //add the selected messages to the array
-                selectedMessages.push(randomMessageIndex - 1);
-                selectedMessages.push(randomMessageIndex);
-                selectedMessages.push(randomMessageIndex + 1);
+                selectedMessages.push(result[randomMessageIndex - 1]);
+                selectedMessages.push(result[randomMessageIndex]);
+                selectedMessages.push(result[randomMessageIndex + 1]);
             }
             console.log(`Selected messages: ${JSON.stringify(selectedMessages)}`);
 
