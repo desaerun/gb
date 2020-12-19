@@ -58,8 +58,10 @@ module.exports = {
                 selectedMessages.push(randomMessageIndex);
                 selectedMessages.push(randomMessageIndex + 1);
             }
+            console.log(`Selected messages: ${JSON.stringify(selectedMessages)}`);
 
             for (const messageRow of selectedMessages) {
+                console.log(`Current message: ${JSON.stringify(messageRow)}`);
                 conn.query(`SELECT * FROM users WHERE id='${messageRow.author}' LIMIT 1`, async (authors_error, authors_result, fields) => {
                     if (authors_error) throw authors_error;
                     console.log(authors_result);
