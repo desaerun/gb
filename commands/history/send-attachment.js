@@ -60,7 +60,8 @@ module.exports = {
             }
 
             for (const messageRow of selectedMessages) {
-                conn.query("SELECT * FROM `users` WHERE `id` = ? LIMIT 1", messageRow.author, async (error, authors_result, fields) => {
+                conn.query("SELECT * FROM `users` WHERE `id` = ? LIMIT 1", messageRow.author, async (authors_error, authors_result, fields) => {
+                    if (authors_error) throw authors_error;
                     console.log(authors_result);
                     let author = authors_result[0];
                     //let attachment = new MessageAttachment(attachmentURL);
