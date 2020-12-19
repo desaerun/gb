@@ -35,7 +35,28 @@ module.exports = {
         console.log(`${timestamp} :: ${end_timestamp}`);
 
         //select messages from the DB that are between the two timestamps retrieved previously
-        conn.query("SELECT `m`.`id`,`m`.`content`,`m`.`author`,`m`.`timestamp`,`a`.`url` AS `attachmentURL` FROM `messages` `m` LEFT JOIN `attachments` `a` ON `m`.`id`=`a`.`message_id` WHERE `m`.`channel` = ? AND `m`.`timestamp` >= ? AND `m`.`timestamp` <= ? ORDER BY `m`.`timestamp` DESC", [message.channel.id, timestamp, end_timestamp], async (error, result, fields) => {
+        const message_sql = "SELECT" +
+            "    m.id," +
+            "    m.content," +
+            "    m.guild," +
+            "    m.channel," +
+            "    m.author," +
+            "    m.timestamp," +
+            "    a.url AS attachmentURL," +
+            "    author.displayName as author_displayName," +
+            "    author.avatarURL as author_avatarURL" +
+            " FROM" +
+            "    messages m" +
+            " LEFT JOIN attachments a ON" +
+            "    m.id = a.message_id" +
+            "    LEFT JOIN users author ON" +
+            "    m.author=author.id" +
+            " WHERE" +
+            "    m.channel = ? AND m.timestamp BETWEEN ? AND ?" +
+            " ORDER BY" +
+            "    m.timestamp" +
+            " DESC";
+        conn.query(message_sql, [message.channel.id, timestamp, end_timestamp], async (error, result, fields) => {
             if (error) throw error;
             console.log(result);
 
@@ -62,27 +83,23 @@ module.exports = {
 
             for (const messageRow of selectedMessages) {
                 console.log(`Current message: ${JSON.stringify(messageRow)}`);
-                conn.query(`SELECT * FROM users WHERE id='${messageRow.author}' LIMIT 1`, async (authors_error, authors_result, fields) => {
-                    if (authors_error) throw authors_error;
-                    console.log(authors_result);
-                    let author = authors_result[0];
-                    //let attachment = new MessageAttachment(attachmentURL);
-                    let messageTimestamp = new Date(messageRow.timestamp);
-                    let embedMessage = new Discord.MessageEmbed()
-                        .setAuthor(author.displayName, author.avatarURL)
-                        .setTimestamp(messageTimestamp.toISOString());
-                    if (messageRow.content) {
-                        embedMessage.addField('\u200b', messageRow.content)
-                    }
-                    if (messageRow.attachmentURL) {
-                        embedMessage.setImage(messageRow.attachmentURL);
-                    }
-                    try {
-                        await message.channel.send(embedMessage);
-                    } catch (err) {
-                        console.error("There was an error sending the embed message:", err);
-                    }
-                });
+                //let attachment = new MessageAttachment(attachmentURL);
+                let messageTimestamp = new Date(messageRow.timestamp);
+                let embedMessage = new Discord.MessageEmbed()
+                    .setAuthor(messageRow.author_displayName, messageRow.author_avatarURL)
+                    .setTimestamp(messageTimestamp.toISOString())
+                    .setFooter(`[Permalink](https://discord.com/channels/${messageRow.guild}/${messageRow.channel}/${messageRow.id})`);
+                if (messageRow.content) {
+                    embedMessage.addField('\u200b', messageRow.content)
+                }
+                if (messageRow.attachmentURL) {
+                    embedMessage.setImage(messageRow.attachmentURL);
+                }
+                try {
+                    await message.channel.send(embedMessage);
+                } catch (err) {
+                    console.error("There was an error sending the embed message:", err);
+                }
             }
         });
     }
