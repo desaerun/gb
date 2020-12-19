@@ -42,7 +42,7 @@ module.exports = {
             //select a random message from the DB
             let selectedMessages = [];
             if (result.length < 3) {
-                selectedMessages = result.length;
+                selectedMessages = result;
             } else {
                 let randomMessageIndex = Math.floor(Math.random() * result.length);
 
