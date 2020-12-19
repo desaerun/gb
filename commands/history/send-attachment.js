@@ -1,5 +1,6 @@
 const {MessageAttachment} = require("discord.js");
 const locutus = require("locutus");
+const moment = require("moment");
 const mysql = require('mysql');
 const db = require("../../config/db");
 const conn = mysql.createConnection(db);
@@ -87,7 +88,6 @@ module.exports = {
                 let messageTimestamp = new Date(messageRow.timestamp);
                 let embedMessage = new Discord.MessageEmbed()
                     .setAuthor(messageRow.author_displayName, messageRow.author_avatarURL)
-                    .setTimestamp(messageTimestamp.toISOString())
                     .setThumbnail(messageRow.author_avatarURL);
                 if (messageRow.content) {
                     embedMessage.addField('\u200b', messageRow.content)
@@ -95,7 +95,8 @@ module.exports = {
                 if (messageRow.attachmentURL) {
                     embedMessage.setImage(messageRow.attachmentURL);
                 }
-                embedMessage.addField('\u200b',`[**Jump to Message**](https://discord.com/channels/${messageRow.guild}/${messageRow.channel}/${messageRow.id})`);
+                embedMessage.addField("\u200b",moment(messageTimestamp).format("dddd, MMMM Do YYYY @ hh:mm:ss a"),true)
+                embedMessage.addField('\u200b',`[**Jump to Message**](https://discord.com/channels/${messageRow.guild}/${messageRow.channel}/${messageRow.id})`,true);
                 try {
                     await message.channel.send(embedMessage);
                 } catch (err) {
