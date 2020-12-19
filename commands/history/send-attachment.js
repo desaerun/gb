@@ -46,6 +46,7 @@ module.exports = {
             "    a.url AS attachmentURL," +
             "    author.displayName as author_displayName," +
             "    author.avatarURL as author_avatarURL" +
+            "    author.isBot as author_isBot" +
             " FROM" +
             "    messages m" +
             " LEFT JOIN attachments a ON" +
@@ -66,7 +67,11 @@ module.exports = {
             if (result.length < 3) {
                 selectedMessages = result;
             } else {
-                let randomMessageIndex = Math.floor(Math.random() * result.length);
+
+                //try to select a non-bot message
+                for (var randomMessageIndex = Math.floor(Math.random() * result.length),i = 1;result[randomMessageIndex].author_isBot && i < result.length;i++) {
+                    randomMessageIndex = Math.floor(Math.random() * result.length);
+                }
 
                 //if the first or last message of the day, choose the 2nd from first or last instead
                 if (randomMessageIndex === 0) {
