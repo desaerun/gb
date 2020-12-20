@@ -71,45 +71,47 @@ module.exports = {
                 if (humanMessageResults.length === 0) {
                     var noHumanMessages = true;
                 } else {
-                    let randomMessageIndex = Math.floor(Math.random() * humanMessageResults.length);
+                    const randomHumanMessage = humanMessageResults[Math.floor(Math.random() * humanMessageResults.length)];
 
+                    let randomHumanMessageIndex = result.findIndex(message => message.id = randomHumanMessage.id);
                     //if the first or last message of the day, choose the 2nd from first or last instead
-                    if (randomMessageIndex === 0) {
-                        randomMessageIndex++;
-                    } else if (randomMessageIndex === result.length) {
-                        randomMessageIndex--;
+                    if (randomHumanMessageIndex === 0) {
+                        randomHumanMessageIndex++;
+                    } else if (randomHumanMessageIndex === result.length) {
+                        randomHumanMessageIndex--;
                     }
 
                     //add the selected messages to the array
-                    selectedMessages.push(humanMessageResults[randomMessageIndex + 1]);
-                    selectedMessages.push(humanMessageResults[randomMessageIndex]);
-                    selectedMessages.push(humanMessageResults[randomMessageIndex - 1]);
+                    selectedMessages.push(result[randomHumanMessageIndex + 1]);
+                    selectedMessages.push(result[randomHumanMessageIndex]);
+                    selectedMessages.push(result[randomHumanMessageIndex - 1]);
                 }
             }
             if (noHumanMessages) {
-                message.chanel.send(`There were no messages on ${moment(timestamp).format('dddd MMMM Do YYYY')}`);
-            }
-            console.log(`Selected messages: ${JSON.stringify(selectedMessages)}`);
+                message.channel.send(`There were no messages on ${moment(timestamp).format('dddd MMMM Do YYYY')}`);
+            } else {
+                console.log(`Selected messages: ${JSON.stringify(selectedMessages)}`);
 
-            for (const messageRow of selectedMessages) {
-                console.log(`Current message: ${JSON.stringify(messageRow)}`);
-                let messageTimestamp = new Date(messageRow.timestamp);
-                let humanTimedate = moment(messageTimestamp).format("dddd, MMMM Do YYYY @ hh:mm:ss a");
-                let embedMessage = new Discord.MessageEmbed()
-                    .setAuthor(messageRow.author_displayName, messageRow.author_avatarURL)
-                    .setThumbnail(messageRow.author_avatarURL)
-                    .setTitle(humanTimedate)
-                    .setDescription(`[**Jump to Message**](https://discord.com/channels/${messageRow.guild}/${messageRow.channel}/${messageRow.id})`);
-                if (messageRow.content) {
-                    embedMessage.addField('\u200b', messageRow.content)
-                }
-                if (messageRow.attachmentURL) {
-                    embedMessage.setImage(messageRow.attachmentURL);
-                }
-                try {
-                    await message.channel.send(embedMessage);
-                } catch (err) {
-                    console.error("There was an error sending the embed message:", err);
+                for (const messageRow of selectedMessages) {
+                    console.log(`Current message: ${JSON.stringify(messageRow)}`);
+                    let messageTimestamp = new Date(messageRow.timestamp);
+                    let humanTimedate = moment(messageTimestamp).format("dddd, MMMM Do YYYY @ hh:mm:ss a");
+                    let embedMessage = new Discord.MessageEmbed()
+                        .setAuthor(messageRow.author_displayName, messageRow.author_avatarURL)
+                        .setThumbnail(messageRow.author_avatarURL)
+                        .setTitle(humanTimedate)
+                        .setDescription(`[**Jump to Message**](https://discord.com/channels/${messageRow.guild}/${messageRow.channel}/${messageRow.id})`);
+                    if (messageRow.content) {
+                        embedMessage.addField('\u200b', messageRow.content)
+                    }
+                    if (messageRow.attachmentURL) {
+                        embedMessage.setImage(messageRow.attachmentURL);
+                    }
+                    try {
+                        await message.channel.send(embedMessage);
+                    } catch (err) {
+                        console.error("There was an error sending the embed message:", err);
+                    }
                 }
             }
         });
