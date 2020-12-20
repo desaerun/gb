@@ -2,12 +2,18 @@ require("dotenv").config();  // pull in ENV variables from .env file
 const CONFIG = require('./config/config');
 const Discord = require('discord.js');
 const client = new Discord.Client();
+const snowflakeToTimestamp = require("./tools/snowflakeToTimestamp");
 
 const cron = require("node-cron");
 
 const captureMessage = require("./tools/captureMessage");
 
-const mysqlQuery = require('./tools/mysqlQuery');
+const mysql = require("mysql");
+const db = require("../config/db");
+const conn = mysql.createConnection(db);
+conn.connect();
+//const mysqlQuery = require('./tools/mysqlQuery');
+
 
 const dev_output = require('./dev_output');
 dev_output.setClient(client);
@@ -108,6 +114,28 @@ client.on('message', message => {
     } else {
         parseWithListeners(message);
     }
+});
+client.on('messageUpdate',(newMessage,oldMessage) => {
+    const currentTimestamp = Date.now();
+    const newMessageParams = {
+        id: newMessage.id,
+        content: newMessage.content,
+        lastEditTimestamp: currentTimestamp,
+    };
+    conn.query("INSERT INTO messages SET ? ON DUPLICATE KEY UPDATE ?",[newMessageParams,newMessageParams],(error) => {
+        if (error) throw error;
+        console.log(`Inserted edited message ${newMessage.id}`);
+    });
+    const oldMessageParams = {
+        messageId: oldMessage.id,
+        newContent: newMessage.content,
+        oldContent: oldMessage.content,
+        editTime: currentTimestamp,
+    }
+    conn.query("INSERT INTO messageEdits SET ?",oldMessageParams,(error) => {
+        if (error) throw error;
+        console.log(`Added edit history for message ${oldMessage.id}`);
+    });
 });
 
 /**

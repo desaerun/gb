@@ -17,7 +17,7 @@ captureMessage = async function (client,message,includeBotMessages = false) {
                 console.log(message);
                 return 4; // no author
             } else {
-                //todo: save embedded messages
+                //todo: save embedded messages11111111111111111
                 // console.log(`Author: ${JSON.stringify(author)}`);
                 if (!author.bot || includeBotMessages) {
                     let guild_values = {
@@ -56,20 +56,20 @@ captureMessage = async function (client,message,includeBotMessages = false) {
                     conn.query("INSERT INTO guilds SET ? ON DUPLICATE KEY UPDATE ?", [guild_values, guild_values], (error) => {
                         if (error) throw error;
                         console.log(`Successfully inserted guild ${guild_values.id}`);
-                    })
+                    });
 
                     conn.query("INSERT INTO channels SET ? ON DUPLICATE KEY UPDATE ?", [channel_values, channel_values], (error) => {
                         if (error) throw error;
                         console.log(`Successfully inserted channel ${channel_values.id}`);
-                    })
+                    });
                     conn.query("INSERT INTO users SET ? ON DUPLICATE KEY UPDATE ?", [author_values, author_values], (error) => {
                         if (error) throw error;
                         console.log(`Successfully inserted author ${author_values.id}`);
-                    })
+                    });
                     conn.query("INSERT INTO messages SET ? ON DUPLICATE KEY UPDATE ?", [message_values, message_values], (error) => {
                         if (error) throw error;
                         console.log(`Successfully inserted message ${message_values.id}`);
-                    })
+                    });
                     let i = 1;
                     for (let attachment of message.attachments) {
                         const attachment_data = attachment[1];
