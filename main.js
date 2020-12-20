@@ -9,7 +9,7 @@ const cron = require("node-cron");
 const captureMessage = require("./tools/captureMessage");
 
 const mysql = require("mysql");
-const db = require("../config/db");
+const db = require("./config/db");
 const conn = mysql.createConnection(db);
 conn.connect();
 //const mysqlQuery = require('./tools/mysqlQuery');
@@ -130,7 +130,7 @@ client.on('messageUpdate',(newMessage,oldMessage) => {
         messageId: oldMessage.id,
         newContent: newMessage.content,
         oldContent: oldMessage.content,
-        editTime: currentTimestamp,
+        editTimestamp: currentTimestamp,
     }
     conn.query("INSERT INTO messageEdits SET ?",oldMessageParams,(error) => {
         if (error) throw error;
