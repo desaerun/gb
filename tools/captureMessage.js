@@ -17,6 +17,7 @@ captureMessage = async function (client,message,includeBotMessages = false) {
                 console.log(message);
                 return 4; // no author
             } else {
+                //todo: save embedded messages
                 // console.log(`Author: ${JSON.stringify(author)}`);
                 if (!author.bot || includeBotMessages) {
                     let guild_values = {
