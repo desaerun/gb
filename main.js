@@ -115,7 +115,7 @@ client.on('message', message => {
         parseWithListeners(message);
     }
 });
-client.on('messageUpdate',(newMessage,oldMessage) => {
+client.on('messageUpdate',(oldMessage,newMessage) => {
     const currentTimestamp = Date.now();
     const newMessageParams = {
         content: newMessage.content,
