@@ -18,7 +18,8 @@ module.exports = {
             default: 'now',
         },
     ],
-    execute: function (client, message, args) {
+    execute: function (client, message, args, forceGuildID = false, forceChannelID = false) {
+        const channel = forceChannelID ? client.guilds.cache.get(forceGuildID).channels.cache.get(forceChannelID) : message.channel;
         //if no argument is given, default day string to "now";
         let arg_str = "now";
         if (args.length > 0) {
@@ -58,7 +59,7 @@ module.exports = {
             " ORDER BY" +
             "    m.timestamp" +
             " DESC";
-        conn.query(message_sql, [message.channel.id, timestamp, end_timestamp], async (error, result, fields) => {
+        conn.query(message_sql, [channel.id, timestamp, end_timestamp], async (error, result, fields) => {
             if (error) throw error;
 
             //select a random message from the DB
@@ -88,7 +89,7 @@ module.exports = {
                 }
             }
             if (noHumanMessages) {
-                message.channel.send(`There were no messages on ${moment(timestamp).format('dddd MMMM Do YYYY')}`);
+                channel.send(`There were no messages on ${moment(timestamp).format('dddd MMMM Do YYYY')}`);
             } else {
                 console.log(`Selected messages: ${JSON.stringify(selectedMessages)}`);
 
@@ -108,7 +109,7 @@ module.exports = {
                         embedMessage.setImage(messageRow.attachmentURL);
                     }
                     try {
-                        await message.channel.send(embedMessage);
+                        channel.send(embedMessage);
                     } catch (err) {
                         console.error("There was an error sending the embed message:", err);
                     }

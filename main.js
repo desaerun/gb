@@ -3,6 +3,8 @@ const CONFIG = require('./config/config');
 const Discord = require('discord.js');
 const client = new Discord.Client();
 
+const cron = require("node-cron");
+
 const captureMessage = require("./tools/captureMessage");
 
 const mysqlQuery = require('./tools/mysqlQuery');
@@ -80,11 +82,15 @@ client.once('ready', () => {
     }
 
     //set initial bot status
-    client.user.setActivity('with fire', {type: 'PLAYING'})
+    client.user.setActivity('eating chicken and grape drank', {type: 'PLAYING'})
         .then(() => console.log())
         .catch((err) => {
             dev_output.sendTrace(`Bot failed to set status: ${err}`, process.env.ONLINE_STATUS_CHANNEL_ID)
         });
+    cron.schedule("* * * * *",() => {
+        //todo: make command to add/remove guild/channel combos to historical messages cron
+        //client.commands.get("random-message").execute(client,"","1 year ago",CONFIG.channel_primularies_id);
+    })
 });
 
 client.on('message', message => {
