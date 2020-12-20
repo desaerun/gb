@@ -118,13 +118,12 @@ client.on('message', message => {
 client.on('messageUpdate',(newMessage,oldMessage) => {
     const currentTimestamp = Date.now();
     const newMessageParams = {
-        id: newMessage.id,
         content: newMessage.content,
         lastEditTimestamp: currentTimestamp,
     };
-    conn.query("INSERT INTO messages SET ? ON DUPLICATE KEY UPDATE ?",[newMessageParams,newMessageParams],(error) => {
+    conn.query("UPDATE messages SET ? WHERE id = ?",[newMessageParams,newMessage.id],(error) => {
         if (error) throw error;
-        console.log(`Inserted edited message ${newMessage.id}`);
+        console.log(`Updated message ${newMessage.id} with edits.`);
     });
     const oldMessageParams = {
         messageId: oldMessage.id,
