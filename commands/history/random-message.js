@@ -67,7 +67,7 @@ module.exports = {
                 selectedMessages = result;
             } else {
                 //try to select a non-bot message
-                const humanMessageResults = result.filter(element => !element.author_isBot);
+                const humanMessageResults = result.filter(element => element.author_isBot);
                 if (humanMessageResults.length === 0) {
                     var noHumanMessages = true;
                 } else {
