@@ -17,7 +17,7 @@ captureMessage = async function (client,message,includeBotMessages = false) {
                 console.log(message);
                 return 4; // no author
             } else {
-                console.log(`Author: ${JSON.stringify(author)}`);
+                // console.log(`Author: ${JSON.stringify(author)}`);
                 if (!author.bot || includeBotMessages) {
                     let guild_values = {
                         id: message.guild.id,
@@ -28,13 +28,12 @@ captureMessage = async function (client,message,includeBotMessages = false) {
                         guild: guild_values.id,
                         name: message.channel.name,
                     }
-                    const author_displayName = author.displayName;
-                    const author_avatarURL = author.user.displayAvatarURL();
                     let author_values = {
                         id: message.author.id,
                         guild: guild_values.id,
-                        displayName: author_displayName,
-                        avatarURL: author_avatarURL,
+                        displayName: author.displayName,
+                        avatarURL: author.user.displayAvatarURL(),
+                        isBot: author.user.bot,
                     }
                     let message_values = {
                         id: message.id,

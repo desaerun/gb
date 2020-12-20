@@ -66,34 +66,39 @@ module.exports = {
             if (result.length < 3) {
                 selectedMessages = result;
             } else {
-
                 //try to select a non-bot message
-                for (var randomMessageIndex = Math.floor(Math.random() * result.length),i = 1;result[randomMessageIndex].author_isBot && i < result.length;i++) {
-                    randomMessageIndex = Math.floor(Math.random() * result.length);
-                }
+                const humanMessageResults = result.filter(element => !element.author_isBot);
+                if (humanMessageResults.length === 0) {
+                    var noHumanMessages = true;
+                } else {
+                    let randomMessageIndex = Math.floor(Math.random() * humanMessageResults.length);
 
-                //if the first or last message of the day, choose the 2nd from first or last instead
-                if (randomMessageIndex === 0) {
-                    randomMessageIndex++;
-                } else if (randomMessageIndex === result.length) {
-                    randomMessageIndex--;
-                }
+                    //if the first or last message of the day, choose the 2nd from first or last instead
+                    if (randomMessageIndex === 0) {
+                        randomMessageIndex++;
+                    } else if (randomMessageIndex === result.length) {
+                        randomMessageIndex--;
+                    }
 
-                //add the selected messages to the array
-                selectedMessages.push(result[randomMessageIndex + 1]);
-                selectedMessages.push(result[randomMessageIndex]);
-                selectedMessages.push(result[randomMessageIndex - 1]);
+                    //add the selected messages to the array
+                    selectedMessages.push(humanMessageResults[randomMessageIndex + 1]);
+                    selectedMessages.push(humanMessageResults[randomMessageIndex]);
+                    selectedMessages.push(humanMessageResults[randomMessageIndex - 1]);
+                }
+            }
+            if (noHumanMessages) {
+                message.chanel.send(`There were no messages on ${moment(timestamp).format('dddd MMMM Do YYYY')}`);
             }
             console.log(`Selected messages: ${JSON.stringify(selectedMessages)}`);
 
             for (const messageRow of selectedMessages) {
                 console.log(`Current message: ${JSON.stringify(messageRow)}`);
-                //let attachment = new MessageAttachment(attachmentURL);
                 let messageTimestamp = new Date(messageRow.timestamp);
+                let humanTimedate = moment(messageTimestamp).format("dddd, MMMM Do YYYY @ hh:mm:ss a");
                 let embedMessage = new Discord.MessageEmbed()
                     .setAuthor(messageRow.author_displayName, messageRow.author_avatarURL)
                     .setThumbnail(messageRow.author_avatarURL)
-                    .setTitle(moment(messageTimestamp).format("dddd, MMMM Do YYYY @ hh:mm:ss a"))
+                    .setTitle(humanTimedate)
                     .setDescription(`[**Jump to Message**](https://discord.com/channels/${messageRow.guild}/${messageRow.channel}/${messageRow.id})`);
                 if (messageRow.content) {
                     embedMessage.addField('\u200b', messageRow.content)
