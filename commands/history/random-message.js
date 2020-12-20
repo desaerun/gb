@@ -51,7 +51,7 @@ module.exports = {
             " FROM" +
             "    messages m" +
             " LEFT JOIN attachments a ON" +
-            "    m.id = a.message_id" +
+            "    m.id = a.messageId" +
             " LEFT JOIN users author ON" +
             "    m.author=author.id" +
             " WHERE" +

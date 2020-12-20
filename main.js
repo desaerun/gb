@@ -116,6 +116,9 @@ client.on('message', message => {
     }
 });
 client.on('messageUpdate',(oldMessage,newMessage) => {
+    if(newMessage.author.user.bot) {
+        return;
+    }
     const currentTimestamp = Date.now();
     const newMessageParams = {
         content: newMessage.content,
