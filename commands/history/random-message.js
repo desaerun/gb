@@ -67,13 +67,13 @@ module.exports = {
                 selectedMessages = result;
             } else {
                 //try to select a non-bot message
-                const humanMessageResults = result.filter(element => element.author_isBot);
+                const humanMessageResults = result.filter(element => !element.author_isBot);
                 if (humanMessageResults.length === 0) {
                     var noHumanMessages = true;
                 } else {
                     const randomHumanMessage = humanMessageResults[Math.floor(Math.random() * humanMessageResults.length)];
 
-                    let randomHumanMessageIndex = result.findIndex(message => message.id = randomHumanMessage.id);
+                    let randomHumanMessageIndex = result.findIndex(message => message.id === randomHumanMessage.id);
                     //if the first or last message of the day, choose the 2nd from first or last instead
                     if (randomHumanMessageIndex === 0) {
                         randomHumanMessageIndex++;
