@@ -8,7 +8,7 @@ const Discord = require("discord.js");
 conn.connect();
 
 module.exports = {
-    name: 'send-attachment',
+    name: 'random-message',
     description: "Chooses a random message from the DB from the day that is specified as an argument.",
     args: [
         {
