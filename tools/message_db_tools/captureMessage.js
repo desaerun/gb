@@ -10,10 +10,10 @@ conn.connect();
 
 
 captureMessage = function (client,message,includeBotMessages = false) {
-    conn.query("SELECT * FROM messages WHERE id = ?", message.id, async (err, result, fields) => {
+    conn.query("SELECT * FROM messages WHERE id = ?", message.id, (err, result, fields) => {
         if (err) throw err;
         if (result.length === 0) { // if message doesn't already exist in DB
-            const author = await message.guild.members.cache.get(message.author.id);
+            const author = message.guild.members.cache.get(message.author.id);
             if (!author) {
                 console.log(`Author was not able to be fetched for message ${message.id}`);
                 console.log(message);
