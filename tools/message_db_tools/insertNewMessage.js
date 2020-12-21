@@ -6,8 +6,8 @@ const db = require("../../config/db");
 const conn = mysql.createConnection(db);
 conn.connect();
 
-module.exports = async function insertNewMessage(message,lastEditTimestamp = null) {
-    const author = await message.guild.members.cache.get(message.author.id);
+module.exports = function insertNewMessage(message,lastEditTimestamp = null) {
+    const author = message.guild.members.cache.get(message.author.id);
     let guild_values = {
         id: message.guild.id,
         name: message.guild.name,
