@@ -59,33 +59,32 @@ module.exports = {
             " ORDER BY" +
             "    m.timestamp" +
             " DESC";
-        conn.query(message_sql, [channel.id, timestamp, end_timestamp], async (error, result, fields) => {
+        conn.query(message_sql, [channel.id, timestamp, end_timestamp], async (error, allMessages, fields) => {
             if (error) throw error;
 
             //select a random message from the DB
             let selectedMessages = [];
-            if (result.length < 3) {
-                selectedMessages = result;
+            let noHumanMessages = false;
+            if (allMessages.length < 3) {
+                selectedMessages = allMessages;
             } else {
                 //try to select a non-bot message
-                const humanMessageResults = result.filter(element => !element.author_isBot);
+                const humanMessageResults = allMessages.filter(element => !element.author_isBot);
                 if (humanMessageResults.length === 0) {
-                    var noHumanMessages = true;
+                    noHumanMessages = true;
                 } else {
                     const randomHumanMessage = humanMessageResults[Math.floor(Math.random() * humanMessageResults.length)];
 
-                    let randomHumanMessageIndex = result.findIndex(message => message.id === randomHumanMessage.id);
+                    let randomHumanMessageIndex = allMessages.findIndex(message => message.id === randomHumanMessage.id);
                     //if the first or last message of the day, choose the 2nd from first or last instead
                     if (randomHumanMessageIndex === 0) {
                         randomHumanMessageIndex++;
-                    } else if (randomHumanMessageIndex === result.length) {
+                    } else if (randomHumanMessageIndex === allMessages.length) {
                         randomHumanMessageIndex--;
                     }
 
                     //add the selected messages to the array
-                    selectedMessages.push(result[randomHumanMessageIndex + 1]);
-                    selectedMessages.push(result[randomHumanMessageIndex]);
-                    selectedMessages.push(result[randomHumanMessageIndex - 1]);
+                    selectedMessages=allMessages.slice(randomHumanMessageIndex-1,randomHumanMessageIndex+1).reverse();
                 }
             }
             if (noHumanMessages) {
