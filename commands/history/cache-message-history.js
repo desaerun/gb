@@ -31,7 +31,10 @@ module.exports = {
         let includeBotMessages = false;
         //if command is called with arg, check if it's a channel ID;
         if (args.length > 0) {
-            if (message.guild.channels.cache.get(args[0])) {
+            if (args[0] === "self" || args[0] === "this" || args[0] === "") {
+                targetChannel = message.channel;
+            }
+            else if (message.guild.channels.cache.get(args[0])) {
                 targetChannel = message.guild.channels.cache.get(args[0]);
             } else {
                 message.channel.send("The specified channel ID was not found.");
