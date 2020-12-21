@@ -84,6 +84,7 @@ module.exports = {
             }
             messages = await targetChannel.messages.fetch({limit: 100, before: last});
             console.log(`*************End of batch, messages.size=${messages.size}*************`);
+            console.log(`(Error:  ${counts.error}|Success: ${counts.added}|Skipped: ${counts.skipped}|Bot: ${counts.bot}|No Author: ${counts.noAuthor})`);
         }
 
         message.channel.send(`There have been ${counts.total} messages sent in channel #${targetChannel.name}.`);
@@ -91,7 +92,7 @@ module.exports = {
             if (error) throw error;
             console.log(`Result when re-selecting rows: ${JSON.stringify(result)}`);
             message.channel.send(`Updated DB successfully.  Rows: ${result[0].messageCount}`);
-            message.channel.send(`(Error:  ${counts.error}|Success: ${counts.added}|Skipped: ${counts.skipped}|Bot: ${counts.bot}|No Author: ${counts.noAuthor})`)
+            message.channel.send(`(Error:  ${counts.error}|Success: ${counts.added}|Skipped: ${counts.skipped}|Bot: ${counts.bot}|No Author: ${counts.noAuthor})`);
         });
     }
 }
