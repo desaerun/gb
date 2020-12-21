@@ -1,8 +1,8 @@
-const snowflakeToTimestamp = require("./snowflakeToTimestamp");
+const snowflakeToTimestamp = require("../snowflakeToTimestamp");
 
 //mysql
 const mysql = require("mysql");
-const db = require("../config/db");
+const db = require("../../config/db");
 const conn = mysql.createConnection(db);
 conn.connect();
 
@@ -25,7 +25,7 @@ module.exports = async function insertNewMessage(message,lastEditTimestamp = nul
         isBot: author.user.bot,
     }
     let messageContent = message.content;
-    if (message.embeds) {
+    if (message.embeds.length > 0) {
         messageContent += "\n[Embedded Content Not Displayed]";
     }
     let message_values = {

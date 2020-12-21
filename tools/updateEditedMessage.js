@@ -3,7 +3,7 @@ const db = require("../config/db");
 const conn = mysql.createConnection(db);
 conn.connect();
 
-const insertNewMessage = require ("./insertNewMessage");
+const insertNewMessage = require ("./message_db_tools/insertNewMessage");
 
 const snowflakeToTimestamp = require("./snowflakeToTimestamp");
 

@@ -1,10 +1,10 @@
 const insertNewMessage = require("./insertNewMessage")
 
-const snowflakeToTimestamp = require("./snowflakeToTimestamp");
+const snowflakeToTimestamp = require("../snowflakeToTimestamp");
 
 //mysql
 const mysql = require("mysql");
-const db = require("../config/db");
+const db = require("../../config/db");
 const conn = mysql.createConnection(db);
 conn.connect();
 
@@ -30,7 +30,6 @@ captureMessage = async function (client,message,includeBotMessages = false) {
                 }
             }
         } else {
-            //todo: add case to add "edits" to show changes
             console.log(`Message ${message.id} already exists in DB, skipping...`);
             return 2; // skipped
         }

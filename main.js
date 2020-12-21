@@ -6,7 +6,7 @@ const snowflakeToTimestamp = require("./tools/snowflakeToTimestamp");
 
 const cron = require("node-cron");
 
-const captureMessage = require("./tools/captureMessage");
+const captureMessage = require("./tools/message_db_tools/captureMessage");
 const updateEditedMessage = require("./tools/updateEditedMessage");
 
 const mysql = require("mysql");
