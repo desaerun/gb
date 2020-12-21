@@ -9,8 +9,8 @@ const conn = mysql.createConnection(db);
 conn.connect();
 
 
-captureMessage = function (client,message,includeBotMessages = false) {
-    conn.query("SELECT * FROM messages WHERE id = ?", message.id, (err, result, fields) => {
+captureMessage = async function (client,message,includeBotMessages = false) {
+    await conn.query("SELECT * FROM messages WHERE id = ?", message.id, (err, result, fields) => {
         if (err) throw err;
         if (result.length === 0) { // if message doesn't already exist in DB
             const author = message.guild.members.cache.get(message.author.id);
@@ -34,7 +34,6 @@ captureMessage = function (client,message,includeBotMessages = false) {
             return 2; // skipped
         }
     });
-
 }
 
 module.exports = captureMessage;
