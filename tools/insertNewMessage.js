@@ -6,7 +6,8 @@ const db = require("../config/db");
 const conn = mysql.createConnection(db);
 conn.connect();
 
-module.exports = function insertNewMessage(message,lastEditTimestamp = null) {
+module.exports = async function insertNewMessage(message,lastEditTimestamp = null) {
+    const author = await message.guild.members.cache.get(message.author.id);
     let guild_values = {
         id: message.guild.id,
         name: message.guild.name,
@@ -30,7 +31,7 @@ module.exports = function insertNewMessage(message,lastEditTimestamp = null) {
         channel: channel_values.id,
         content: message.content,
         timestamp: snowflakeToTimestamp(message.id),
-        lastEditTimestamp: editTimestamp,
+        lastEditTimestamp: lastEditTimestamp,
     }
     /*
     todo: make this log on high verbosity
