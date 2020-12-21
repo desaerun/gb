@@ -63,6 +63,7 @@ module.exports = {
             let messageResult = 0;
             for (let historical_message of messages.values()) {
                 messageResult = await captureMessage(client,historical_message,includeBotMessages);
+                console.log(`messageResult: ${messageResult}`);
                 switch (messageResult) {
                     case 1:
                         counts.added++;
