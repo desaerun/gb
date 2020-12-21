@@ -117,7 +117,7 @@ client.on('message', message => {
     }
 });
 client.on('messageUpdate',(oldMessage,newMessage) => {
-    updateEditedMessage(oldMessage,newMessage);
+    // updateEditedMessage(oldMessage,newMessage);
 });
 
 /**
