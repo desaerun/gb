@@ -3,16 +3,15 @@ const insertNewMessage = require("./insertNewMessage")
 const snowflakeToTimestamp = require("../snowflakeToTimestamp");
 
 //mysql
-const mysql = require("mysql");
+const mysql = require("mysql2/promise");
 const db = require("../../config/db");
-const conn = mysql.createConnection(db);
-conn.connect();
+const conn = await mysql.createConnection(db);
 
 
 captureMessage = async function (client,message,includeBotMessages = false) {
-    let e_result = await conn.query("SELECT * FROM messages WHERE id = ?", message.id);
-    Object.entries(e_result).forEach(keyValuePair => {console.log("  ",...keyValuePair)});
-    if (e_result.length === 0) { // if message doesn't already exist in DB
+    const [rows,fields] = await conn.execute("SELECT * FROM messages WHERE id = ?", message.id);
+
+    if (rows.length === 0) { // if message doesn't already exist in DB
         const author = message.guild.members.cache.get(message.author.id);
         if (!author) {
             console.log(`Author was not able to be fetched for message ${message.id}`);
