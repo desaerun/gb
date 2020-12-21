@@ -44,7 +44,7 @@ module.exports = {
         if (args.length === 2) {
             includeBotMessages = args[1];
         }
-        message.channel.send(`Caching messages from #${targetChannel.name} to DB...`);
+        message.channel.send(`Caching messages from ${message.guild.name}.#${targetChannel.name} to DB...`);
         console.log(`Retrieving list of messages...`);
 
         let messages = await targetChannel.messages.fetch({limit: 100});
@@ -87,8 +87,9 @@ module.exports = {
         }
 
         message.channel.send(`There have been ${counts.total} messages sent in channel #${targetChannel.name}.`);
-        conn.query(`SELECT COUNT(*) AS messageCount FROM messages WHERE channel = ?`,targetChannel.id,(error,result,fields) => {
+        conn.query(`SELECT COUNT(*) AS messageCount FROM messages WHERE channel = ?`,targetChannel.id,(error,result) => {
             if (error) throw error;
+            console.log(`Result when re-selecting rows: ${result}`);
             message.channel.send(`Updated DB successfully.  Rows: ${result.messageCount}`);
             message.channel.send(`(Error:  ${counts.error}|Success: ${counts.added}|Skipped: ${counts.skipped}|Bot: ${counts.bot}|No Author: ${counts.noAuthor})`)
         });
