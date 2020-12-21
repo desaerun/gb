@@ -14,14 +14,18 @@ module.exports = {
 
 
         let targetChannel = message.channel;
+        let includeBotMessages = false;
         //if command is called with arg, check if it's a channel ID;
-        if (args.length === 1) {
+        if (args.length > 0) {
             if (message.guild.channels.cache.get(args[0])) {
                 targetChannel = message.guild.channels.cache.get(args[0]);
             } else {
                 message.channel.send("The specified channel ID was not found.");
                 return false;
             }
+        }
+        if (args.length === 2) {
+            includeBotMessages = args[1];
         }
         message.channel.send(`Caching messages from #${targetChannel.name} to DB...`);
         console.log(`Retrieving list of messages...`);
@@ -41,7 +45,7 @@ module.exports = {
 
             let messageResult = 0;
             for (let historical_message of messages.values()) {
-                messageResult = await captureMessage(client,historical_message);
+                messageResult = await captureMessage(client,historical_message,includeBotMessages);
                 switch (messageResult) {
                     case 1:
                         counts.added++;
