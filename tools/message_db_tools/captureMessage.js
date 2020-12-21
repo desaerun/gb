@@ -5,10 +5,10 @@ const snowflakeToTimestamp = require("../snowflakeToTimestamp");
 //mysql
 const mysql = require("mysql2/promise");
 const db = require("../../config/db");
-const conn = await mysql.createConnection(db);
-
 
 captureMessage = async function (client,message,includeBotMessages = false) {
+    const conn = await mysql.createConnection(db);
+
     const [rows,fields] = await conn.execute("SELECT * FROM messages WHERE id = ?", message.id);
 
     if (rows.length === 0) { // if message doesn't already exist in DB
