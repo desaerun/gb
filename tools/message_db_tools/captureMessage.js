@@ -9,8 +9,9 @@ const db = require("../../config/db");
 captureMessage = async function (client,message,includeBotMessages = false) {
     const conn = await mysql.createConnection(db);
 
-    const [rows,fields] = await conn.execute("SELECT * FROM messages WHERE id = ?", message.id);
+    const [rows,fields] = await conn.execute("SELECT * FROM messages WHERE id = ?",[message.id]);
 
+    console.log(`Rows:  ${JSON.stringify(rows)}`);
     if (rows.length === 0) { // if message doesn't already exist in DB
         const author = message.guild.members.cache.get(message.author.id);
         if (!author) {
