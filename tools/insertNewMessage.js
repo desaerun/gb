@@ -24,12 +24,16 @@ module.exports = async function insertNewMessage(message,lastEditTimestamp = nul
         avatarURL: author.user.displayAvatarURL(),
         isBot: author.user.bot,
     }
+    let messageContent = message.content;
+    if (message.embeds) {
+        messageContent += "\n[Embedded Content Not Displayed]";
+    }
     let message_values = {
         id: message.id,
         author: author_values.id,
         guild: guild_values.id,
         channel: channel_values.id,
-        content: message.content,
+        content: messageContent,
         timestamp: snowflakeToTimestamp(message.id),
         lastEditTimestamp: lastEditTimestamp,
     }
