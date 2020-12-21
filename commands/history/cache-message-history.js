@@ -90,7 +90,7 @@ module.exports = {
         conn.query(`SELECT COUNT(*) AS messageCount FROM messages WHERE channel = ?`,targetChannel.id,(error,result) => {
             if (error) throw error;
             console.log(`Result when re-selecting rows: ${JSON.stringify(result)}`);
-            message.channel.send(`Updated DB successfully.  Rows: ${result.messageCount}`);
+            message.channel.send(`Updated DB successfully.  Rows: ${result[0].messageCount}`);
             message.channel.send(`(Error:  ${counts.error}|Success: ${counts.added}|Skipped: ${counts.skipped}|Bot: ${counts.bot}|No Author: ${counts.noAuthor})`)
         });
     }
