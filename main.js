@@ -101,7 +101,7 @@ client.once('ready', () => {
 });
 
 client.on('message', message => {
-    captureMessage(client,message);
+    captureMessage(client,message,true);
 
     const args = message.content.slice(CONFIG.prefix.length).split(/ +/);
 
