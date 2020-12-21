@@ -12,14 +12,22 @@ module.exports = {
     description: "Chooses a random message from the DB from the day that is specified as an argument.",
     args: [
         {
-            param: 'date',
+            param: '[date]',
             type: 'String',
             description: 'A string representing from when the historical message should be retrieved',
             default: 'now',
         },
     ],
-    execute: function (client, message, args, forceGuildID = false, forceChannelID = false) {
-        const channel = forceChannelID ? client.guilds.cache.get(forceGuildID).channels.cache.get(forceChannelID) : message.channel;
+    execute: async function (client, message, args, forceGuildID = null, forceChannelID = null) {
+        let channel = null;
+        if ((forceGuildID || forceChannelID) && (forceGuildID ^ forceChannelID)) {
+            console.log("forceGuildID or forceChannelID was defined, but not both.");
+            return false;
+        } else if (forceGuildID && forceChannelID) {
+            channel = client.guilds.cache.get(forceGuildID).channels.cache.get(forceChannelID);
+        } else {
+            channel = message.channel;
+        }
         //if no argument is given, default day string to "now";
         let arg_str = "now";
         if (args.length > 0) {
@@ -52,7 +60,7 @@ module.exports = {
             "    messages m" +
             " LEFT JOIN attachments a ON" +
             "    m.id = a.messageId" +
-            " LEFT JOIN users author ON" +
+            " LEFT JOIN authors author ON" +
             "    m.author=author.id" +
             " WHERE" +
             "    m.channel = ? AND m.timestamp BETWEEN ? AND ?" +
@@ -89,6 +97,7 @@ module.exports = {
             }
             if (noHumanMessages) {
                 channel.send(`There were no messages on ${moment(timestamp).format('dddd MMMM Do YYYY')}`);
+                return false;
             } else {
                 console.log(`Selected messages: ${JSON.stringify(selectedMessages)}`);
 
@@ -109,8 +118,10 @@ module.exports = {
                     }
                     try {
                         channel.send(embedMessage);
+                        return true;
                     } catch (err) {
                         console.error("There was an error sending the embed message:", err);
+                        return false;
                     }
                 }
             }

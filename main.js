@@ -7,6 +7,7 @@ const snowflakeToTimestamp = require("./tools/snowflakeToTimestamp");
 const cron = require("node-cron");
 
 const captureMessage = require("./tools/captureMessage");
+const updateEditedMessage = require("./tools/updateEditedMessage");
 
 const mysql = require("mysql");
 const db = require("./config/db");
@@ -116,28 +117,7 @@ client.on('message', message => {
     }
 });
 client.on('messageUpdate',(oldMessage,newMessage) => {
-    if(newMessage.author.bot) {
-        return;
-    }
-    const currentTimestamp = Date.now();
-    const newMessageParams = {
-        content: newMessage.content,
-        lastEditTimestamp: currentTimestamp,
-    };
-    conn.query("UPDATE messages SET ? WHERE id = ?",[newMessageParams,newMessage.id],(error) => {
-        if (error) throw error;
-        console.log(`Updated message ${newMessage.id} with edits.`);
-    });
-    const oldMessageParams = {
-        messageId: oldMessage.id,
-        newContent: newMessage.content,
-        oldContent: oldMessage.content,
-        editTimestamp: currentTimestamp,
-    }
-    conn.query("INSERT INTO messageEdits SET ?",oldMessageParams,(error) => {
-        if (error) throw error;
-        console.log(`Added edit history for message ${oldMessage.id}`);
-    });
+    updateEditedMessage(oldMessage,newMessage);
 });
 
 /**

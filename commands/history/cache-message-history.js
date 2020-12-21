@@ -10,6 +10,20 @@ captureMessage = require("../../tools/captureMessage");
 module.exports = {
     name: 'cache-message-history',
     description: "Retrieves message history for the current channel and stores it to the DB",
+    args: [
+        {
+            param: '[channel]',
+            type: 'Snowflake',
+            description: 'A channel ID snowflake to capture',
+            default: 'current channel',
+        },
+        {
+            param: '[includeBotMessages]',
+            type: 'Boolean',
+            description: 'Whether or not to retrieve messages from Discord bots',
+            default: 'false',
+        },
+    ],
     execute: async function (client, message, args) {
 
 
@@ -70,9 +84,9 @@ module.exports = {
         }
 
         message.channel.send(`There have been ${counts.total} messages sent in channel #${targetChannel.name}.`);
-        conn.query(`SELECT COUNT(*) FROM messages WHERE channel = ?`,targetChannel.id,(error,result,fields) => {
+        conn.query(`SELECT COUNT(*) AS messageCount FROM messages WHERE channel = ?`,targetChannel.id,(error,result,fields) => {
             if (error) throw error;
-            message.channel.send(`Updated mysql query successfully.  Rows: ${JSON.stringify(result)}`);
+            message.channel.send(`Updated DB successfully.  Rows: ${JSON.stringify(result.messageCount)}`);
             message.channel.send(`(Error:  ${counts.error}|Success: ${counts.added}|Skipped: ${counts.skipped}|Bot: ${counts.bot}|No Author: ${counts.noAuthor})`)
         });
     }
