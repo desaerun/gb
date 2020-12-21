@@ -23,6 +23,8 @@ module.exports = function updateEditedMessage(oldMessage, newMessage) {
 }
 
 function addMessageEdit(oldMessage, newMessage) {
+    console.log(`old Message: ${JSON.stringify(oldMessage)}`);
+    console.log(`new Message: ${JSON.stringify(newMessage)}`);
     const oldMessageParams = {
         messageId: oldMessage.id,
         newContent: newMessage.content,
