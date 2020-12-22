@@ -72,12 +72,13 @@ module.exports = {
 
             //select a random message from the DB
             let selectedMessages = [];
+            const humanMessageResults = allMessages.filter(element => !element.author_isBot);
             let noHumanMessages = (humanMessageResults.length === 0);
             if (noHumanMessages) {
                 channel.send(`There were no messages on ${moment(timestamp).format('dddd MMMM Do YYYY')}`);
                 return false;
             } else {
-                const humanMessageResults = allMessages.filter(element => !element.author_isBot);
+
                 if (allMessages.length < 3) {
                     selectedMessages = allMessages;
                 } else {
