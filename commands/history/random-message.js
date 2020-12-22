@@ -107,9 +107,9 @@ module.exports = {
                 let first = randomHumanMessageIndex - 1;
                 let last = randomHumanMessageIndex + 1;
                 console.log(`first: ${first}`);
-                console.log(`message: ${allMessages[first]}`);
+                console.log(`message: ${JSON.stringify(allMessages[first])}`);
                 console.log(`last: ${last}`);
-                console.log(`message: ${allMessages[last]}`);
+                console.log(`message: ${JSON.stringify(allMessages[last])}`);
                 selectedMessages = allMessages.slice(first,last).reverse();
             }
             console.log(`Selected messages: ${JSON.stringify(selectedMessages)}`);
