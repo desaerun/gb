@@ -1,12 +1,16 @@
 const snowflakeToTimestamp = require("../snowflakeToTimestamp");
 
 //mysql
-const mysql = require("mysql");
+const mysql = require("mysql2/promise");
 const db = require("../../config/db");
-const conn = mysql.createConnection(db);
-conn.connect();
+const pool = mysql.createPool({
+    ...db,
+    waitForConnections: true,
+    connectionLimit: 100,
+    queueLimit: 0,
+});
 
-module.exports = function insertNewMessage(message,lastEditTimestamp = null) {
+module.exports = async function insertNewMessage(message,lastEditTimestamp = null) {
     const author = message.guild.members.cache.get(message.author.id);
     let guild_values = {
         id: message.guild.id,
@@ -46,23 +50,22 @@ module.exports = function insertNewMessage(message,lastEditTimestamp = null) {
     console.log("Message: " + JSON.stringify(message) + "..." + JSON.stringify(message_values));
     console.log("Attachments: " + JSON.stringify(message.attachments));
     */
-    conn.query("INSERT INTO guilds SET ? ON DUPLICATE KEY UPDATE ?", [guild_values, guild_values], (error) => {
-        if (error) throw error;
+    await pool.beginTransaction();
+    try {
+        await pool.query("INSERT INTO guilds SET ? ON DUPLICATE KEY UPDATE ?", [guild_values, guild_values]);
+        await pool.query("INSERT INTO channels SET ? ON DUPLICATE KEY UPDATE ?", [channel_values, channel_values]);
+        await pool.query("INSERT INTO authors SET ? ON DUPLICATE KEY UPDATE ?", [author_values, author_values]);
+        await pool.query("INSERT INTO messages SET ? ON DUPLICATE KEY UPDATE ?", [message_values, message_values]);
+        await pool.commit();
+    } catch (err) {
+        await pool.rollback();
+        throw err;
+    } finally {
         console.log(`Successfully inserted guild ${guild_values.id}`);
-    });
-
-    conn.query("INSERT INTO channels SET ? ON DUPLICATE KEY UPDATE ?", [channel_values, channel_values], (error) => {
-        if (error) throw error;
         console.log(`Successfully inserted channel ${channel_values.id}`);
-    });
-    conn.query("INSERT INTO authors SET ? ON DUPLICATE KEY UPDATE ?", [author_values, author_values], (error) => {
-        if (error) throw error;
         console.log(`Successfully inserted author ${author_values.id}`);
-    });
-    conn.query("INSERT INTO messages SET ? ON DUPLICATE KEY UPDATE ?", [message_values, message_values], (error) => {
-        if (error) throw error;
         console.log(`Successfully inserted message ${message_values.id}`);
-    });
+    }
     let i = 1;
     for (let attachment of message.attachments) {
         const attachment_data = attachment[1];
@@ -77,7 +80,7 @@ module.exports = function insertNewMessage(message,lastEditTimestamp = null) {
             width: attachment_data.width,
             timestamp: snowflakeToTimestamp(attachment_data.id),
         };
-        conn.query("INSERT INTO attachments SET ? ON DUPLICATE KEY UPDATE ?", [attachment_values, attachment_values], (error, result, fields) => {
+        pool.query("INSERT INTO attachments SET ? ON DUPLICATE KEY UPDATE ?", [attachment_values, attachment_values], (error, result, fields) => {
             if (error) throw error;
             console.log(`Successfully inserted attachment ${attachment_values.id} (${i} of ${message.attachments.size})`);
             i++;

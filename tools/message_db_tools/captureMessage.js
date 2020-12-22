@@ -5,12 +5,16 @@ const snowflakeToTimestamp = require("../snowflakeToTimestamp");
 //mysql
 const mysql = require("mysql2/promise");
 const db = require("../../config/db");
-const conn = mysql.createConnection(db);
+const pool = mysql.createPool({
+    ...db,
+    waitForConnections: true,
+    connectionLimit: 100,
+    queueLimit: 0,
+});
 
 captureMessage = async function (client, message, includeBotMessages = false) {
     try {
-        const [rows, fields] = await conn.execute("SELECT * FROM messages WHERE id = ?", [message.id]);
-
+        const [rows, fields] = await pool.execute("SELECT * FROM messages WHERE id = ?", [message.id]);
         console.log(`Rows:  ${JSON.stringify(rows)}`);
         if (rows.length === 0) { // if message doesn't already exist in DB
             const author = message.guild.members.cache.get(message.author.id);
@@ -33,8 +37,8 @@ captureMessage = async function (client, message, includeBotMessages = false) {
             console.log(`Message ${message.id} already exists in DB, skipping...`);
             return 2; // skipped
         }
-    } finally {
-        conn.end();
+    } catch (err) {
+        console.log(err);
     }
     /*
     await conn.query("SELECT * FROM messages WHERE id = ?", message.id, (err, result) => {
