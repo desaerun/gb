@@ -72,33 +72,29 @@ module.exports = {
 
             //select a random message from the DB
             let selectedMessages = [];
-            let noHumanMessages = false;
-            if (allMessages.length < 3) {
-                selectedMessages = allMessages;
-            } else {
-                //try to select a non-bot message
-                const humanMessageResults = allMessages.filter(element => !element.author_isBot);
-                if (humanMessageResults.length === 0) {
-                    noHumanMessages = true;
-                } else {
-                    const randomHumanMessage = humanMessageResults[Math.floor(Math.random() * humanMessageResults.length)];
-
-                    let randomHumanMessageIndex = allMessages.findIndex(message => message.id === randomHumanMessage.id);
-                    //if the first or last message of the day, choose the 2nd from first or last instead
-                    if (randomHumanMessageIndex === 0) {
-                        randomHumanMessageIndex++;
-                    } else if (randomHumanMessageIndex === allMessages.length) {
-                        randomHumanMessageIndex--;
-                    }
-
-                    //add the selected messages to the array
-                    selectedMessages=allMessages.slice(randomHumanMessageIndex-1,randomHumanMessageIndex+1).reverse();
-                }
-            }
+            let noHumanMessages = (humanMessageResults.length === 0);
             if (noHumanMessages) {
                 channel.send(`There were no messages on ${moment(timestamp).format('dddd MMMM Do YYYY')}`);
                 return false;
             } else {
+                const humanMessageResults = allMessages.filter(element => !element.author_isBot);
+                if (allMessages.length < 3) {
+                    selectedMessages = allMessages;
+                } else {
+                    //try to select a non-bot message
+                    const randomHumanMessage = humanMessageResults[Math.floor(Math.random() * humanMessageResults.length)];
+                    let randomHumanMessageIndex = allMessages.findIndex(message => message.id === randomHumanMessage.id);
+
+                    //if the first or last message of the day, choose the 2nd from first or last instead
+                    if (randomHumanMessageIndex === 0 && allMessages.length > 0) {
+                        randomHumanMessageIndex++;
+                    } else if (randomHumanMessageIndex === allMessages.length && allMessages.length > 0) {
+                        randomHumanMessageIndex--;
+                    }
+
+                    //add the selected messages to the array
+                    selectedMessages = allMessages.slice(randomHumanMessageIndex - 1, randomHumanMessageIndex + 1).reverse();
+                }
                 console.log(`Selected messages: ${JSON.stringify(selectedMessages)}`);
 
                 for (const messageRow of selectedMessages) {
