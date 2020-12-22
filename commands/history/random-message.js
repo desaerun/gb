@@ -47,7 +47,7 @@ module.exports = {
 
         //calculate midnight on both ends of the day provided
         timestamp -= timestamp % (24 * 60 * 60 * 1000); //subtract minutes since midnight
-        let end_timestamp = timestamp + (24 * 60 * 60 * 1000);
+        let end_timestamp = timestamp + (24 * 60 * 60 * 1000) - 1; //get 11:59:59.999 at the end of that day
         console.log(`${timestamp} :: ${end_timestamp}`);
 
         //select messages from the DB that are between the two timestamps retrieved previously
@@ -59,9 +59,9 @@ module.exports = {
             "    m.author," +
             "    m.timestamp," +
             "    a.url AS attachmentURL," +
-            "    author.displayName as author_displayName," +
-            "    author.avatarURL as author_avatarURL," +
-            "    author.isBot as author_isBot" +
+            "    author.displayName AS author_displayName," +
+            "    author.avatarURL AS author_avatarURL," +
+            "    author.isBot AS author_isBot" +
             " FROM" +
             "    messages m" +
             " LEFT JOIN attachments a ON" +
@@ -97,14 +97,20 @@ module.exports = {
                 let randomHumanMessageIndex = allMessages.findIndex(message => message.id === randomHumanMessage.id);
 
                 //if the first or last message of the day, choose the 2nd from first or last instead
-                if (randomHumanMessageIndex === 0 && allMessages.length > 0) {
+                if (randomHumanMessageIndex === 0) {
                     randomHumanMessageIndex++;
-                } else if (randomHumanMessageIndex === allMessages.length && allMessages.length > 0) {
+                } else if (randomHumanMessageIndex === allMessages.length) {
                     randomHumanMessageIndex--;
                 }
 
                 //add the selected messages to the array
-                selectedMessages = allMessages.slice(randomHumanMessageIndex - 1, randomHumanMessageIndex + 1).reverse();
+                let first = randomHumanMessageIndex - 1;
+                let last = randomHumanMessageIndex + 1;
+                console.log(`first: ${first}`);
+                console.log(`message: ${allMessages[first]}`);
+                console.log(`last: ${last}`);
+                console.log(`message: ${allMessages[last]}`);
+                selectedMessages = allMessages.slice(first,last).reverse();
             }
             console.log(`Selected messages: ${JSON.stringify(selectedMessages)}`);
 

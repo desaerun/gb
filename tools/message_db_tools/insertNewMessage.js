@@ -50,12 +50,15 @@ module.exports = async function insertNewMessage(message,lastEditTimestamp = nul
     console.log("Message: " + JSON.stringify(message) + "..." + JSON.stringify(message_values));
     console.log("Attachments: " + JSON.stringify(message.attachments));
     */
+    await pool.query("BEGIN TRANSACTION");
     try {
         await pool.query("INSERT INTO guilds SET ? ON DUPLICATE KEY UPDATE ?", [guild_values, guild_values]);
         await pool.query("INSERT INTO channels SET ? ON DUPLICATE KEY UPDATE ?", [channel_values, channel_values]);
         await pool.query("INSERT INTO authors SET ? ON DUPLICATE KEY UPDATE ?", [author_values, author_values]);
         await pool.query("INSERT INTO messages SET ? ON DUPLICATE KEY UPDATE ?", [message_values, message_values]);
+        await pool.query("COMMIT");
     } catch (err) {
+        await pool.query("ROLLBACK");
         throw err;
     } finally {
         console.log(`Successfully inserted guild ${guild_values.id}`);
