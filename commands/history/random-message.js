@@ -1,11 +1,17 @@
-const {MessageAttachment} = require("discord.js");
 const locutus = require("locutus");
 const moment = require("moment");
-const mysql = require('mysql');
+
+//mysql
+const mysql = require("mysql2/promise");
 const db = require("../../config/db");
-const conn = mysql.createConnection(db);
+const pool = mysql.createPool({
+    ...db,
+    waitForConnections: true,
+    connectionLimit: 100,
+    queueLimit: 0,
+});
+
 const Discord = require("discord.js");
-conn.connect();
 
 module.exports = {
     name: 'random-message',
@@ -67,61 +73,65 @@ module.exports = {
             " ORDER BY" +
             "    m.timestamp" +
             " DESC";
-        conn.query(message_sql, [channel.id, timestamp, end_timestamp], async (error, allMessages, fields) => {
-            if (error) throw error;
+        let allMessages = [];
+        try {
+            const result = await pool.query(message_sql, [channel.id, timestamp, end_timestamp]);
+            allMessages = result[0];
+        } catch (err) {
+            throw err;
+        }
 
-            //select a random message from the DB
-            let selectedMessages = [];
-            const humanMessageResults = allMessages.filter(element => !element.author_isBot);
-            let noHumanMessages = (humanMessageResults.length === 0);
-            if (noHumanMessages) {
-                channel.send(`There were no messages on ${moment(timestamp).format('dddd MMMM Do YYYY')}`);
-                return false;
+        //select a random message from the DB
+        let selectedMessages = [];
+        const humanMessageResults = allMessages.filter(element => !element.author_isBot);
+        let noHumanMessages = (humanMessageResults.length === 0);
+        if (noHumanMessages) {
+            channel.send(`There were no messages on ${moment(timestamp).format('dddd MMMM Do YYYY')}`);
+            return false;
+        } else {
+            if (allMessages.length < 3) {
+                selectedMessages = allMessages;
             } else {
+                //try to select a non-bot message
+                const randomHumanMessage = humanMessageResults[Math.floor(Math.random() * humanMessageResults.length)];
+                let randomHumanMessageIndex = allMessages.findIndex(message => message.id === randomHumanMessage.id);
 
-                if (allMessages.length < 3) {
-                    selectedMessages = allMessages;
-                } else {
-                    //try to select a non-bot message
-                    const randomHumanMessage = humanMessageResults[Math.floor(Math.random() * humanMessageResults.length)];
-                    let randomHumanMessageIndex = allMessages.findIndex(message => message.id === randomHumanMessage.id);
-
-                    //if the first or last message of the day, choose the 2nd from first or last instead
-                    if (randomHumanMessageIndex === 0 && allMessages.length > 0) {
-                        randomHumanMessageIndex++;
-                    } else if (randomHumanMessageIndex === allMessages.length && allMessages.length > 0) {
-                        randomHumanMessageIndex--;
-                    }
-
-                    //add the selected messages to the array
-                    selectedMessages = allMessages.slice(randomHumanMessageIndex - 1, randomHumanMessageIndex + 1).reverse();
+                //if the first or last message of the day, choose the 2nd from first or last instead
+                if (randomHumanMessageIndex === 0 && allMessages.length > 0) {
+                    randomHumanMessageIndex++;
+                } else if (randomHumanMessageIndex === allMessages.length && allMessages.length > 0) {
+                    randomHumanMessageIndex--;
                 }
-                console.log(`Selected messages: ${JSON.stringify(selectedMessages)}`);
 
-                for (const messageRow of selectedMessages) {
-                    console.log(`Current message: ${JSON.stringify(messageRow)}`);
-                    let messageTimestamp = new Date(messageRow.timestamp);
-                    let humanTimedate = moment(messageTimestamp).format("dddd, MMMM Do YYYY @ hh:mm:ss a");
-                    let embedMessage = new Discord.MessageEmbed()
-                        .setAuthor(messageRow.author_displayName, messageRow.author_avatarURL)
-                        .setThumbnail(messageRow.author_avatarURL)
-                        .setTitle(humanTimedate)
-                        .setDescription(`[**Jump to Message**](https://discord.com/channels/${messageRow.guild}/${messageRow.channel}/${messageRow.id})`);
-                    if (messageRow.content) {
-                        embedMessage.addField('\u200b', messageRow.content)
-                    }
-                    if (messageRow.attachmentURL) {
-                        embedMessage.setImage(messageRow.attachmentURL);
-                    }
-                    try {
-                        channel.send(embedMessage);
-                        return true;
-                    } catch (err) {
-                        console.error("There was an error sending the embed message:", err);
-                        return false;
-                    }
+                //add the selected messages to the array
+                selectedMessages = allMessages.slice(randomHumanMessageIndex - 1, randomHumanMessageIndex + 1).reverse();
+            }
+            console.log(`Selected messages: ${JSON.stringify(selectedMessages)}`);
+
+            for (const messageRow of selectedMessages) {
+                console.log(`Current message: ${JSON.stringify(messageRow)}`);
+                let messageTimestamp = new Date(messageRow.timestamp);
+                let humanTimedate = moment(messageTimestamp).format("dddd, MMMM Do YYYY @ hh:mm:ss a");
+                let embedMessage = new Discord.MessageEmbed()
+                    .setAuthor(messageRow.author_displayName, messageRow.author_avatarURL)
+                    .setThumbnail(messageRow.author_avatarURL)
+                    .setTitle(humanTimedate)
+                    .setDescription(`[**Jump to Message**](https://discord.com/channels/${messageRow.guild}/${messageRow.channel}/${messageRow.id})`);
+                if (messageRow.content) {
+                    embedMessage.addField('\u200b', messageRow.content)
+                }
+                if (messageRow.attachmentURL) {
+                    embedMessage.setImage(messageRow.attachmentURL);
+                }
+                try {
+                    channel.send(embedMessage);
+                } catch (err) {
+                    console.error("There was an error sending the embed message:", err);
+                    return false;
                 }
             }
-        });
+            return true;
+        }
+
     }
 }
