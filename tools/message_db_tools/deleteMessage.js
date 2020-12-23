@@ -10,14 +10,10 @@ const pool = mysql.createPool({
 
 module.exports = async function deleteMessage (deletedMessage) {
     console.log(`Deleted message: ${JSON.stringify(deletedMessage)}`);
-    await pool.query("START TRANSACTION");
     try {
-        await pool.query("INSERT INTO deletedMessages SELECT * FROM messages WHERE id = ?",deletedMessage.id);
-        await pool.query("DELETE FROM messages WHERE id = ?",deletedMessage.id);
-        await pool.query("COMMIT;");
-        console.log(`Moved message ${deletedMessage.id} to deletedMessages table.`);
+        await pool.query("UPDATE messages SET deleted=TRUE WHERE id = ?",deletedMessage.id);
+        console.log(`Set deleted flag on message ${deletedMessage.id}.`);
     } catch (e) {
-        await pool.query("ROLLBACK");
         throw e;
     }
 }
