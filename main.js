@@ -1,7 +1,7 @@
 require("dotenv").config();  // pull in ENV variables from .env file
 const CONFIG = require('./config/config');
 const Discord = require('discord.js');
-const client = new Discord.Client();
+const client = new Discord.Client({partials: ['MESSAGE']});
 const snowflakeToTimestamp = require("./tools/snowflakeToTimestamp");
 
 const cron = require("node-cron");
