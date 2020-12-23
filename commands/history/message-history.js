@@ -39,9 +39,6 @@ module.exports = {
         } catch (e) {
             throw e;
         }
-        console.log(`dbMessage: ${JSON.stringify(dbMessageResult)}`);
-        console.log(`currentMessage: ${JSON.stringify(currentMessage)}`);
-        console.log(`messageHistory: ${JSON.stringify(messageHistory)}`);
         if (dbMessageResult.length === 0) {
             message.channel.send("That message ID does not exist.");
             return false;
@@ -53,14 +50,14 @@ module.exports = {
             .setTitle(`Message History for ${messageID}`);
         if (messageEdited) {
             const firstEdit = messageHistory.pop();
-            embedMessage.addField(`Current Content (edited on ${moment(currentMessage.lastEditTimestamp).format("MMMM Do YYYY HH:mm:ss a Z")}`, currentMessage.content);
+            embedMessage.addField(`Current Content (edited on ${moment(currentMessage.lastEditTimestamp).format("MMM Do YYYY h:mm:ssa z")})`, currentMessage.content);
             for (const edit of messageHistory) {
                 let formattedDatetime = moment(edit.timestamp).format("MMMM Do YYYY HH:mm:ss aT");
                 embedMessage.addField(`Edit on  ${formattedDatetime}`, edit.newContent);
             }
-            embedMessage.addField(`Original Content (posted ${moment(firstEdit.oldContent).format("MMMM Do YYYY HH:mm:ss aT")}`, firstEdit.oldContent);
+            embedMessage.addField(`Original Content (posted ${moment(firstEdit.oldContent).format("MMM Do YYYY h:mm:ssa z")}`, firstEdit.oldContent);
         } else {
-            embedMessage.addField(`Original Content (posted ${moment(currentMessage.content).format("MMMM Do YYYY HH:mm:ss aT")}`, currentMessage.content);
+            embedMessage.addField(`Original Content (posted ${moment(currentMessage.content).format("MMM Do YYYY h:mm:ssa z")}`, currentMessage.content);
         }
         try {
             await message.channel.send(embedMessage);
