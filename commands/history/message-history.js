@@ -39,7 +39,8 @@ module.exports = {
         } catch (e) {
             throw e;
         }
-        console.log(`dbMessage: ${JSON.stringify(dbMessage)}`);
+        console.log(`dbMessage: ${JSON.stringify(dbMessageResult)}`);
+        console.log(`currentMessage: ${JSON.stringify(currentMessage)}`);
         console.log(`messageHistory: ${JSON.stringify(messageHistory)}`);
         if (dbMessageResult.length === 0) {
             message.channel.send("That message ID does not exist.");
