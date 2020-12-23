@@ -1,3 +1,5 @@
+const Discord = require("discord.js");
+
 //mysql
 const mysql = require("mysql2/promise");
 const db = require("../../config/db");
@@ -11,7 +13,7 @@ const pool = mysql.createPool({
 const moment = require("moment");
 
 module.exports = {
-    name: 'get-message-history',
+    name: 'message-history',
     description: "Retrieves history for the specified message ID.",
     args: [
         {
