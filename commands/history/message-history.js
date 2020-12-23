@@ -53,7 +53,7 @@ module.exports = {
             .setTitle(`Message History for ${messageID}`);
         if (messageEdited) {
             const firstEdit = messageHistory.pop();
-            embedMessage.addField(`Current Content (edited on ${moment(currentMessage.lastEditTimestamp).format("MMMM Do YYYY HH:mm:ss a Z")}`, currentMessage[0].content);
+            embedMessage.addField(`Current Content (edited on ${moment(currentMessage.lastEditTimestamp).format("MMMM Do YYYY HH:mm:ss a Z")}`, currentMessage.content);
             for (const edit of messageHistory) {
                 let formattedDatetime = moment(edit.timestamp).format("MMMM Do YYYY HH:mm:ss aT");
                 embedMessage.addField(`Edit on  ${formattedDatetime}`, edit.newContent);
