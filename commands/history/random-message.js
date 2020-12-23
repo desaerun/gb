@@ -76,7 +76,7 @@ module.exports = {
             " LEFT JOIN authors author ON" +
             "    m.author=author.id" +
             " WHERE" +
-            "    m.channel = ? AND m.timestamp BETWEEN ? AND ?" +
+            "    m.channel = ? AND m.timestamp BETWEEN ? AND ? AND m.deleted=FALSE" +
             " ORDER BY" +
             "    m.timestamp" +
             " DESC";

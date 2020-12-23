@@ -8,13 +8,7 @@ const cron = require("node-cron");
 
 const captureMessage = require("./tools/message_db_tools/captureMessage");
 const updateEditedMessage = require("./tools/message_db_tools/updateEditedMessage");
-
-const mysql = require("mysql");
-const db = require("./config/db");
-const conn = mysql.createConnection(db);
-conn.connect();
-//const mysqlQuery = require('./tools/mysqlQuery');
-
+const deleteMessage = require("./tools/message_db_tools/deleteMessage");
 
 const dev_output = require('./dev_output');
 dev_output.setClient(client);
@@ -24,50 +18,7 @@ const fs = require('fs');
 client.commands = new Discord.Collection();
 client.listenerSet = new Discord.Collection();
 
-/**
- * Gets all command .js files from /commands
- * @param dir
- * @param level
- */
-function getCommands(dir, level = 0) {
-    const current_dir = `${dir}/`;
-    const commandFiles = fs.readdirSync(current_dir);
-
-    for (const file of commandFiles) {
-        if (fs.statSync(`${current_dir}${file}`).isDirectory()) {
-            getCommands(`${current_dir}${file}`, level + 1);
-        } else {
-            if (file.endsWith('.js')) {
-                const command = require(`${current_dir}${file}`);
-                client.commands.set(command.name, command);
-            }
-        }
-    }
-}
-
 getCommands("./commands");
-
-/**
- * Gets all listener .js files from /listeners
- * @param dir
- * @param level
- */
-function getListenerSet(dir, level = 0) {
-    const current_dir = `${dir}/`;
-    const listenerFiles = fs.readdirSync(current_dir);
-
-    for (const file of listenerFiles) {
-        if (fs.statSync(`${current_dir}${file}`).isDirectory()) {
-            getListenerSet(`${current_dir}${file}`, level + 1);
-        } else {
-            if (file.endsWith('.js')) {
-                const listener = require(`${current_dir}${file}`);
-                client.listenerSet.set(listener.name, listener);
-            }
-        }
-    }
-}
-
 getListenerSet("./listeners");
 
 client.once('ready', () => {
@@ -103,6 +54,7 @@ client.once('ready', () => {
     })
 });
 
+//handling for when messages are sent
 client.on('message', message => {
     captureMessage(client, message, true);
 
@@ -122,6 +74,51 @@ client.on('message', message => {
 client.on('messageUpdate', (oldMessage, newMessage) => {
     updateEditedMessage(oldMessage, newMessage);
 });
+client.on('messageDelete',deletedMessage => {
+    deleteMessage(deletedMessage);
+});
+
+/**
+ * Gets all command .js files from /commands
+ * @param dir
+ * @param level
+ */
+function getCommands(dir, level = 0) {
+    const current_dir = `${dir}/`;
+    const commandFiles = fs.readdirSync(current_dir);
+
+    for (const file of commandFiles) {
+        if (fs.statSync(`${current_dir}${file}`).isDirectory()) {
+            getCommands(`${current_dir}${file}`, level + 1);
+        } else {
+            if (file.endsWith('.js')) {
+                const command = require(`${current_dir}${file}`);
+                client.commands.set(command.name, command);
+            }
+        }
+    }
+}
+
+/**
+ * Gets all listener .js files from /listeners
+ * @param dir
+ * @param level
+ */
+function getListenerSet(dir, level = 0) {
+    const current_dir = `${dir}/`;
+    const listenerFiles = fs.readdirSync(current_dir);
+
+    for (const file of listenerFiles) {
+        if (fs.statSync(`${current_dir}${file}`).isDirectory()) {
+            getListenerSet(`${current_dir}${file}`, level + 1);
+        } else {
+            if (file.endsWith('.js')) {
+                const listener = require(`${current_dir}${file}`);
+                client.listenerSet.set(listener.name, listener);
+            }
+        }
+    }
+}
 
 /**
  * Identifies 'command' messages which must begin with CONFIG.prefix

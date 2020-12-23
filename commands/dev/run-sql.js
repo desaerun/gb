@@ -21,7 +21,7 @@ module.exports = {
             throw e;
         }
         for (let row of rows) {
-            message.channel.send(`\`\`\`${row}\`\`\``);
+            message.channel.send(`\`\`\`${JSON.stringify(row)}\`\`\``);
         }
     }
 }
