@@ -72,9 +72,11 @@ client.on('message', message => {
     }
 });
 client.on('messageUpdate', async (oldMessage, newMessage) => {
+    console.log(`Message Edit triggered.`);
     await updateEditedMessage(oldMessage, newMessage);
 });
-client.on('messageDelete',async deletedMessage => {
+client.on('messageDelete',async (deletedMessage) => {
+    console.log(`Message Deletion triggered: ${JSON.stringify(deletedMessage)}`);
     await deleteMessage(deletedMessage);
 });
 
