@@ -19,7 +19,9 @@ captureMessage = async function (client, message, includeBotMessages = false) {
     } catch (err) {
         console.log(err);
     }
-    console.log(`Rows:  ${JSON.stringify(rows)}`);
+    if (rows.length > 0) {
+        console.log(`Rows:  ${JSON.stringify(rows)}`);
+    }
     if (rows.length === 0) { // if message doesn't already exist in DB
         const author = message.guild.members.cache.get(message.author.id);
         if (!author) {

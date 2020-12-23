@@ -43,11 +43,11 @@ module.exports = {
         //convert string to timestamp using php-esque "strtotime"
         //https://www.php.net/manual/en/function.strtotime.php
         let timestamp = locutus.php.datetime.strtotime(arg_str) * 1000;
-        console.log(`Locutus timestamp: ${timestamp}`);
 
         //calculate midnight on both ends of the day provided
         timestamp -= timestamp % (24 * 60 * 60 * 1000); //subtract minutes since midnight
         let end_timestamp = timestamp + (24 * 60 * 60 * 1000) - 1; //get 11:59:59.999 at the end of that day
+        console.log(`Selecting messages between (${timestamp})${moment(timestamp).format('MMMM Do YYYY HH:mm:ss a')} and (${end_timestamp})${moment(end_timestamp).format('MMMM Do YYYY HH:mm:ss a')}`);
         console.log(`${timestamp} :: ${end_timestamp}`);
 
         //select messages from the DB that are between the two timestamps retrieved previously
@@ -84,8 +84,6 @@ module.exports = {
         //select a random message from the DB
         let selectedMessages = [];
         const humanMessageResults = allMessages.filter(element => !element.author_isBot);
-        console.log(`all messages retrieved: ${JSON.stringify(allMessages)}`);
-        console.log(`messages sent by humans: ${JSON.stringify(humanMessageResults)}`);
         let noHumanMessages = (humanMessageResults.length === 0);
         if (noHumanMessages) {
             channel.send(`There were no messages on ${moment(timestamp).format('dddd MMMM Do YYYY')}`);
