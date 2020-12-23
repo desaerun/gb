@@ -7,7 +7,7 @@ const snowflakeToTimestamp = require("./tools/snowflakeToTimestamp");
 const cron = require("node-cron");
 
 const captureMessage = require("./tools/message_db_tools/captureMessage");
-const updateEditedMessage = require("./tools/updateEditedMessage");
+const updateEditedMessage = require("./tools/message_db_tools/updateEditedMessage");
 
 const mysql = require("mysql");
 const db = require("./config/db");
@@ -74,7 +74,7 @@ client.once('ready', () => {
     console.log("bot online.");
     let guilds = client.guilds;
 
-    let online_message  = `Bot status: Online.  Type: ${process.env.BUILD_ENV}\n`;
+
 
     //todo: read in first line from github_update.txt and add it to the "online" message
     //todo: make the linux server print a line about recovering to the github_update.txt file when it recovers or is started manually
@@ -82,10 +82,14 @@ client.once('ready', () => {
     let lineReader = require('readline').createInterface({input: require('fs').createReadStream('github_update.txt')});
     online_message += ``
     */
-
+    //todo: fix the bot timing out every 8 hours
+    /*
+    let online_message  = `Bot status: Online.  Type: ${process.env.BUILD_ENV}\n`;
     dev_output.sendStatus(online_message, process.env.ONLINE_STATUS_CHANNEL_ID,"#21a721");
+     */
+
     if (CONFIG.verbosity >= 3) {
-        console.log(`Sending Online Status message to ${client.channels.cache.get(process.env.ONLINE_STATUS_CHANNEL_ID).name}(${process.env.ONLINE_STATUS_CHANNEL_ID}).`)
+        //console.log(`Sending Online Status message to ${client.channels.cache.get(process.env.ONLINE_STATUS_CHANNEL_ID).name}(${process.env.ONLINE_STATUS_CHANNEL_ID}).`)
     }
 
     //set initial bot status
@@ -117,7 +121,7 @@ client.on('message', message => {
     }
 });
 client.on('messageUpdate',(oldMessage,newMessage) => {
-    // updateEditedMessage(oldMessage,newMessage);
+     updateEditedMessage(oldMessage,newMessage);
 });
 
 /**

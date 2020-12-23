@@ -44,7 +44,7 @@ module.exports = {
         if (args.length === 2) {
             includeBotMessages = args[1];
         }
-        message.channel.send(`Caching messages from ${message.guild.name}.#${targetChannel.name} to DB...`);
+        message.channel.send(`Caching messages from "${message.guild.name}".#${targetChannel.name} to DB...`);
         console.log(`Retrieving list of messages...`);
 
         let messages = await targetChannel.messages.fetch({limit: 100});

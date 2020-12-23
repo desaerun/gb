@@ -1,15 +1,27 @@
-const mysqlQuery = require("../../tools/mysqlQuery");
+const mysql = require("mysql2/promise");
+const db = require("../../config/db");
+const pool = mysql.createPool({
+    ...db,
+    waitForConnections: true,
+    connectionLimit: 100,
+    queueLimit: 0,
+});
 
 module.exports = {
     name: 'run-sql',
     description: 'Runs SQL queries directly',
-    execute: function (client, message, args) {
+    execute: async function (client, message, args) {
         //todo: make this exclusive to devs
         let query = args.join(" ");
-        mysqlQuery(query, (err, rows) => {
-            for (let row of rows) {
-                message.channel.send(`\`\`\`${row}\`\`\``);
-            }
-        });
+        let rows, fields;
+        try {
+            [rows, fields] = await pool.query(query);
+        } catch (e) {
+            message.channel.send(`MySQL error: ${e}`);
+            throw e;
+        }
+        for (let row of rows) {
+            message.channel.send(`\`\`\`${row}\`\`\``);
+        }
     }
 }

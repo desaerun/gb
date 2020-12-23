@@ -52,6 +52,7 @@ module.exports = {
         //calculate midnight on both ends of the day provided
         timestamp -= timestamp % (24 * 60 * 60 * 1000); //subtract minutes since midnight
         timestamp += offsetMs; // add the UTC offset
+
         let end_timestamp = timestamp + (24 * 60 * 60 * 1000) - 1; //get 11:59:59.999 at the end of that day
         console.log(`Selecting messages between (${timestamp})${moment(timestamp).format('MMMM Do YYYY HH:mm:ss a')} and (${end_timestamp})${moment(end_timestamp).format('MMMM Do YYYY HH:mm:ss a')}`);
         console.log(`${timestamp} :: ${end_timestamp}`);
