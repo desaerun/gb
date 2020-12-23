@@ -43,10 +43,13 @@ module.exports = {
         //convert string to timestamp using php-esque "strtotime"
         //https://www.php.net/manual/en/function.strtotime.php
         let timestamp = locutus.php.datetime.strtotime(arg_str) * 1000;
-        let timestampMoment = moment(timestamp);
-        let utcOffset = timestampMoment.utcOffset();
-        let offsetMs = utcOffset * 60 * 1000;
-        console.log(`Moment: ${timestampMoment}|utcOffset: ${utcOffset}|offsetMs: ${offsetMs}`);
+
+        // adjust the timestamp to UTC
+        let utcOffset = moment(timestamp).utcOffset();
+        let offsetMs = -utcOffset * 60 * 1000;
+        console.log(`utcOffset: ${utcOffset}|offsetMs: ${offsetMs}`);
+        timestamp += offsetMs;
+
         //calculate midnight on both ends of the day provided
         timestamp -= timestamp % (24 * 60 * 60 * 1000); //subtract minutes since midnight
         let end_timestamp = timestamp + (24 * 60 * 60 * 1000) - 1; //get 11:59:59.999 at the end of that day
