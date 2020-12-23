@@ -20,5 +20,4 @@ module.exports = async function deleteMessage (deletedMessage) {
         await pool.query("ROLLBACK");
         throw e;
     }
-    return true;
 }

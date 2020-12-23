@@ -71,11 +71,11 @@ client.on('message', message => {
         parseWithListeners(message);
     }
 });
-client.on('messageUpdate', (oldMessage, newMessage) => {
-    updateEditedMessage(oldMessage, newMessage);
+client.on('messageUpdate', async (oldMessage, newMessage) => {
+    await updateEditedMessage(oldMessage, newMessage);
 });
-client.on('messageDelete',deletedMessage => {
-    deleteMessage(deletedMessage);
+client.on('messageDelete',async deletedMessage => {
+    await deleteMessage(deletedMessage);
 });
 
 /**
