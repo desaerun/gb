@@ -90,13 +90,14 @@ module.exports = {
             return false;
         } else {
             if (allMessages.length < 3) {
+                console.log(`<3 messages sent this day`);
                 selectedMessages = allMessages;
             } else {
                 //try to select a non-bot message
                 const randomHumanMessage = humanMessageResults[Math.floor(Math.random() * humanMessageResults.length)];
                 let randomHumanMessageIndex = allMessages.findIndex(message => message.id === randomHumanMessage.id);
 
-                //if the first or last message of the day, choose the 2nd from first or last instead
+                //if the first or last message of the day, choose the 2nd from first or last instead so we get context on both sides
                 if (randomHumanMessageIndex === 0) {
                     randomHumanMessageIndex++;
                 } else if (randomHumanMessageIndex === allMessages.length) {
@@ -105,11 +106,7 @@ module.exports = {
 
                 //add the selected messages to the array
                 let first = randomHumanMessageIndex - 1;
-                let last = randomHumanMessageIndex + 1;
-                console.log(`first: ${first}`);
-                console.log(`message: ${JSON.stringify(allMessages[first])}`);
-                console.log(`last: ${last}`);
-                console.log(`message: ${JSON.stringify(allMessages[last])}`);
+                let last = randomHumanMessageIndex + 2;
                 selectedMessages = allMessages.slice(first,last).reverse();
             }
             console.log(`Selected messages: ${JSON.stringify(selectedMessages)}`);
