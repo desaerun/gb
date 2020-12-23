@@ -29,17 +29,19 @@ module.exports = {
             return false;
         }
         let messageID = args[0];
-        let dbMessage,messageHistory,fields;
+        let dbMessageResult, currentMessage, messageHistory, fields;
         let messageEdited = false;
         try {
-            [dbMessage,fields] = await pool.query("SELECT * FROM messages WHERE id = ? LIMIT 1", messageID);
-            [messageHistory,fields] = await pool.query("SELECT * FROM messageEdits WHERE messageId = ? ORDER BY editTimestamp DESC", messageID);
+            [dbMessageResult, fields] = await pool.query("SELECT * FROM messages WHERE id = ? LIMIT 1", messageID);
+            [messageHistory, fields] = await pool.query("SELECT * FROM messageEdits WHERE messageId = ? ORDER BY editTimestamp DESC", messageID);
+
+            currentMessage = dbMessageResult[0];
         } catch (e) {
             throw e;
         }
         console.log(`dbMessage: ${JSON.stringify(dbMessage)}`);
         console.log(`messageHistory: ${JSON.stringify(messageHistory)}`);
-        if (dbMessage.length === 0 ) {
+        if (dbMessageResult.length === 0) {
             message.channel.send("That message ID does not exist.");
             return false;
         }
@@ -48,15 +50,17 @@ module.exports = {
         }
         const embedMessage = new Discord.MessageEmbed()
             .setTitle(`Message History for ${messageID}`);
-        const originalMessage = (messageEdited) ? messageHistory.pop() : dbMessage[0];
         if (messageEdited) {
-            embedMessage.addField(`Current Content (edited on ${moment(originalMessage.lastEditTimestamp).format("MMMM Do YYYY HH:mm:ss a Z")}`, originalMessage.content);
+            const firstEdit = messageHistory.pop();
+            embedMessage.addField(`Current Content (edited on ${moment(currentMessage.lastEditTimestamp).format("MMMM Do YYYY HH:mm:ss a Z")}`, currentMessage[0].content);
             for (const edit of messageHistory) {
                 let formattedDatetime = moment(edit.timestamp).format("MMMM Do YYYY HH:mm:ss aT");
                 embedMessage.addField(`Edit on  ${formattedDatetime}`, edit.newContent);
             }
+            embedMessage.addField(`Original Content (posted ${moment(firstEdit.oldContent).format("MMMM Do YYYY HH:mm:ss aT")}`, firstEdit.oldContent);
+        } else {
+            embedMessage.addField(`Original Content (posted ${moment(currentMessage.content).format("MMMM Do YYYY HH:mm:ss aT")}`, currentMessage.content);
         }
-        embedMessage.addField(`Original Content (posted ${moment(originalMessage.content).format("MMMM Do YYYY HH:mm:ss aT")}`,originalMessage.content);
         try {
             await message.channel.send(embedMessage);
         } catch (e) {
