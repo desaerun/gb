@@ -48,12 +48,12 @@ module.exports = {
         }
         const embedMessage = new Discord.MessageEmbed()
             .setTitle(`Message History for ${messageID}`);
-        const originalMessage = (messageEdited) ? messageHistory.pop() : dbMessage;
+        const originalMessage = (messageEdited) ? messageHistory.pop() : dbMessage[0];
         if (messageEdited) {
-            embedMessage.addField(`Current Content (edited on ${moment(dbMessage.lastEditTimestamp).format("MMMM Do YYYY HH:mm:ss a Z")}`, dbMessage.content);
+            embedMessage.addField(`Current Content (edited on ${moment(originalMessage.lastEditTimestamp).format("MMMM Do YYYY HH:mm:ss a Z")}`, originalMessage.content);
             for (const edit of messageHistory) {
                 let formattedDatetime = moment(edit.timestamp).format("MMMM Do YYYY HH:mm:ss aT");
-                embedMessage.addField(`Edit on  ${formattedDatetime}`, edit.content);
+                embedMessage.addField(`Edit on  ${formattedDatetime}`, edit.newContent);
             }
         }
         embedMessage.addField(`Original Content (posted ${moment(originalMessage.content).format("MMMM Do YYYY HH:mm:ss aT")}`,originalMessage.content);
