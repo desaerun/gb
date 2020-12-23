@@ -84,6 +84,8 @@ module.exports = {
         //select a random message from the DB
         let selectedMessages = [];
         const humanMessageResults = allMessages.filter(element => !element.author_isBot);
+        console.log(`all messages retrieved: ${JSON.stringify(allMessages)}`);
+        console.log(`messages sent by humans: ${JSON.stringify(humanMessageResults)}`);
         let noHumanMessages = (humanMessageResults.length === 0);
         if (noHumanMessages) {
             channel.send(`There were no messages on ${moment(timestamp).format('dddd MMMM Do YYYY')}`);
