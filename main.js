@@ -75,22 +75,21 @@ client.once('ready', () => {
     let guilds = client.guilds;
 
 
-
     //todo: read in first line from github_update.txt and add it to the "online" message
     //todo: make the linux server print a line about recovering to the github_update.txt file when it recovers or is started manually
     /*
     let lineReader = require('readline').createInterface({input: require('fs').createReadStream('github_update.txt')});
     online_message += ``
     */
+
+    if (CONFIG.verbosity >= 3) {
+        console.log(`Bot online. Sending Online Status message to ${client.channels.cache.get(process.env.ONLINE_STATUS_CHANNEL_ID).name}(${process.env.ONLINE_STATUS_CHANNEL_ID}).`)
+    }
     //todo: fix the bot timing out every 8 hours
     /*
     let online_message  = `Bot status: Online.  Type: ${process.env.BUILD_ENV}\n`;
     dev_output.sendStatus(online_message, process.env.ONLINE_STATUS_CHANNEL_ID,"#21a721");
      */
-
-    if (CONFIG.verbosity >= 3) {
-        //console.log(`Sending Online Status message to ${client.channels.cache.get(process.env.ONLINE_STATUS_CHANNEL_ID).name}(${process.env.ONLINE_STATUS_CHANNEL_ID}).`)
-    }
 
     //set initial bot status
     client.user.setActivity('eating chicken and grape drank', {type: 'PLAYING'})
@@ -98,14 +97,14 @@ client.once('ready', () => {
         .catch((err) => {
             dev_output.sendTrace(`Bot failed to set status: ${err}`, process.env.ONLINE_STATUS_CHANNEL_ID)
         });
-    cron.schedule("* * * * *",() => {
+    cron.schedule("* * * * *", () => {
         //todo: make command to add/remove guild/channel combos to historical messages cron
         //client.commands.get("random-message").execute(client,"","1 year ago",CONFIG.channel_primularies_id);
     })
 });
 
 client.on('message', message => {
-    captureMessage(client,message,true);
+    captureMessage(client, message, true);
 
     const args = message.content.slice(CONFIG.prefix.length).split(/ +/);
 
@@ -114,14 +113,14 @@ client.on('message', message => {
 
     // Attempt to parse commands
     if (isCommand(message)) {
-        runCommands(message,args);
+        runCommands(message, args);
         // Otherwise pass to listeners
     } else {
         parseWithListeners(message);
     }
 });
-client.on('messageUpdate',(oldMessage,newMessage) => {
-     updateEditedMessage(oldMessage,newMessage);
+client.on('messageUpdate', (oldMessage, newMessage) => {
+    updateEditedMessage(oldMessage, newMessage);
 });
 
 /**
@@ -137,7 +136,7 @@ function isCommand(message) {
  * Searches client.commands for the parsed command, and executes if the command is valid
  * @param message
  */
-function runCommands(message,args) {
+function runCommands(message, args) {
     const command = args.shift().toLowerCase();
     const guild = client.guilds.fetch(message.guild.id);
 
