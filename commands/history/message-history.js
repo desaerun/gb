@@ -29,7 +29,8 @@ module.exports = {
             return false;
         }
         let messageID = args[0];
-        let dbMessage,messageHistory,fields,messageEdited;
+        let dbMessage,messageHistory,fields;
+        let messageEdited = false;
         try {
             [dbMessage,fields] = await pool.query("SELECT * FROM messages WHERE id = ? LIMIT 1", messageID);
             [messageHistory,fields] = await pool.query("SELECT * FROM messageEdits WHERE id = ? ORDER BY editTimestamp DESC", messageID);
@@ -40,8 +41,8 @@ module.exports = {
             message.channel.send("That message ID does not exist.");
             return false;
         }
-        if (messageHistory.length === 0) {
-            messageEdited = false;
+        if (messageHistory.length > 0) {
+            messageEdited = true;
         }
         const embedMessage = new Discord.MessageEmbed()
             .setTitle(`Message History for ${messageID}`);
@@ -49,11 +50,11 @@ module.exports = {
         if (messageEdited) {
             embedMessage.addField(`Current Content (edited on ${moment(dbMessage.lastEditTimestamp).format("MMMM Do YYYY HH:mm:ss a Z")}`, dbMessage.content);
             for (const edit of messageHistory) {
-                let formattedDatetime = moment(edit.timestamp).format("MMMM Do YYYY HH:mm:ss a Z");
+                let formattedDatetime = moment(edit.timestamp).format("MMMM Do YYYY HH:mm:ss aT");
                 embedMessage.addField(`Edit on  ${formattedDatetime}`, edit.content);
             }
         }
-        embedMessage.addField(`Original Content (posted ${moment(originalMessage.content).format("MMMM Do YYYY HH:mm:ss a Z")}`,originalMessage.content);
+        embedMessage.addField(`Original Content (posted ${moment(originalMessage.content).format("MMMM Do YYYY HH:mm:ss aT")}`,originalMessage.content);
         try {
             await message.channel.send(embedMessage);
         } catch (e) {
