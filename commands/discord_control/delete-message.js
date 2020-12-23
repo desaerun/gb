@@ -17,8 +17,9 @@ module.exports = {
         let messageID = args[0];
         let targetMessage;
         try {
-            targetMessage = await client.channels.cache.get(message.channel.id).messages.fetch(messageID);
-            targetMessage.delete();
+            // targetMessage = await client.channels.cache.get(message.channel.id).messages.fetch(messageID);
+            targetMessage = await message.channel.messages.fetch(messageID);
+            await targetMessage.delete();
         } catch (e) {
             throw e;
         } finally {
