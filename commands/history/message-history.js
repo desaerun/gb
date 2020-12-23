@@ -50,14 +50,14 @@ module.exports = {
             .setTitle(`Message History for ${messageID}`);
         if (messageEdited) {
             const firstEdit = messageHistory.pop();
-            embedMessage.addField(`Current Content (edited on ${moment(currentMessage.lastEditTimestamp).format("MMM Do YYYY h:mm:ssa z")})`, currentMessage.content);
+            embedMessage.addField(`Current Content (edited on ${moment(currentMessage.lastEditTimestamp).format("MMM Do YYYY h:mm:ssa")})`, currentMessage.content);
             for (const edit of messageHistory) {
-                let formattedDatetime = moment(edit.timestamp).format("MMMM Do YYYY HH:mm:ss aT");
+                let formattedDatetime = moment(edit.timestamp).format("MMM Do YYYY h:mm:ssa");
                 embedMessage.addField(`Edit on  ${formattedDatetime}`, edit.newContent);
             }
-            embedMessage.addField(`Original Content (posted ${moment(firstEdit.oldContent).format("MMM Do YYYY h:mm:ssa z")}`, firstEdit.oldContent);
+            embedMessage.addField(`Original Content (posted ${moment(currentMessage.createdTimestamp).format("MMM Do YYYY h:mm:ssa")}`, firstEdit.oldContent);
         } else {
-            embedMessage.addField(`Original Content (posted ${moment(currentMessage.content).format("MMM Do YYYY h:mm:ssa z")}`, currentMessage.content);
+            embedMessage.addField(`Original Content (posted ${moment(currentMessage.createdTimestamp).format("MMM Do YYYY h:mm:ssa")}`, currentMessage.content);
         }
         try {
             await message.channel.send(embedMessage);
