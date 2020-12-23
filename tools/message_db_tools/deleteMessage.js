@@ -9,6 +9,7 @@ const pool = mysql.createPool({
 });
 
 module.exports = async function deleteMessage (deletedMessage) {
+    console.log(`Deleted message: ${JSON.stringify(deletedMessage)}`);
     await pool.query("START TRANSACTION");
     try {
         await pool.query("INSERT INTO deletedMessages SELECT * FROM messages WHERE id = ?",deletedMessage.id);
