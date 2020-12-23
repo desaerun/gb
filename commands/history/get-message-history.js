@@ -30,7 +30,7 @@ module.exports = {
         let dbMessage,messageHistory,fields,messageEdited;
         try {
             [dbMessage,fields] = await pool.query("SELECT * FROM messages WHERE id = ? LIMIT 1", messageID);
-            [messageHistory,fields] = await pool.query("SELECT * FROM messageEdits WHERE id = ? ORDER BY timestamp DESC", messageID);
+            [messageHistory,fields] = await pool.query("SELECT * FROM messageEdits WHERE id = ? ORDER BY editTimestamp DESC", messageID);
         } catch (e) {
             throw e;
         }
