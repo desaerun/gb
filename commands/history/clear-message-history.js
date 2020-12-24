@@ -12,7 +12,7 @@ module.exports = {
     description: "Clears all message history from db",
     execute: async function (client, message, args) {
         try {
-            await pool.query("DELETE FROM messages WHERE 1");
+            await pool.query("DELETE FROM messages WHERE deleted=FALSE");
         } catch (e) {
             throw e;
         } finally {

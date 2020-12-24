@@ -30,7 +30,6 @@ module.exports = {
         }
         let messageID = args[0];
         let dbMessageResult, currentMessage, messageHistory, fields;
-        let messageEdited = false;
         try {
             [dbMessageResult, fields] = await pool.query("SELECT m.guild,m.channel,m.content,m.timestamp,m.lastEditTimestamp,a.displayName AS author_displayName FROM messages m LEFT JOIN authors a ON m.author = a.id WHERE m.id = ? LIMIT 1", messageID);
             [messageHistory, fields] = await pool.query("SELECT * FROM messageEdits WHERE messageId = ? ORDER BY editTimestamp DESC", messageID);
@@ -45,14 +44,16 @@ module.exports = {
         }
 
         const embedMessage = new Discord.MessageEmbed()
-            .setTitle(`Message History for [${messageID}](https://discord.com/channels/${currentMessage.guild}/${currentMessage.channel}/${messageID})`)
-            .addField("Posted by:",currentMessage.author_displayName);
+            .setTitle(`Message History for ${messageID}`)
+            .setURL(`https://discord.com/channels/${currentMessage.guild}/${currentMessage.channel}/${messageID}`)
+            .addField("Posted by:", currentMessage.author_displayName);
         if (messageHistory.length > 0) { // if the message has an edit history
             const firstEdit = messageHistory.pop();
-            embedMessage.addField(`Current Content (edited on ${moment(currentMessage.lastEditTimestamp).format("MMM Do YYYY h:mm:ssa")})`, currentMessage.content);
+            const lastEdit = messageHistory.shift();
+            embedMessage.addField(`Current Content (edited on ${moment(lastEdit.editTimestamp).format("MMM Do YYYY h:mm:ssa")})`, lastEdit.newContent);
             for (const edit of messageHistory) {
                 let formattedDatetime = moment(edit.editTimestamp).format("MMM Do YYYY h:mm:ssa");
-                embedMessage.addField(`Edit on ${formattedDatetime}`, edit.oldContent);
+                embedMessage.addField(`Edit on ${formattedDatetime}`, edit.newContent);
             }
             embedMessage.addField(`Original Content (posted ${moment(currentMessage.timestamp).format("MMM Do YYYY h:mm:ssa")})`, firstEdit.oldContent);
         } else {
