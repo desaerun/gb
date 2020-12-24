@@ -55,7 +55,8 @@ module.exports = {
                 let formattedDatetime = moment(edit.editTimestamp).format("MMM Do YYYY h:mm:ssa");
                 embedMessage.addField(`Edit on ${formattedDatetime}`, edit.newContent);
             }
-            originalContent = messageHistory[messageHistory.length-1].oldContent;
+            console.log(`messageHistory: ${messageHistory}`);
+            originalContent = messageHistory[messageHistory.length - 1].oldContent;
         } else {
             originalContent = currentMessage.content;
         }
