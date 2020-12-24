@@ -42,7 +42,7 @@ module.exports = async function insertNewMessage(message,lastEditTimestamp = nul
         if (embed.description) {
             messageContent += `\n${embed.description}`;
         }
-        for (const field of message.fields) {
+        for (const field of embed.fields) {
             messageContent += `\n**${field.name}**`;
             messageContent += `\n    ${field.value}`;
         }
