@@ -23,7 +23,7 @@ module.exports = {
         } catch (e) {
             throw e;
         } finally {
-            message.channel.send(`Message ${messageID} in channel ${targetMessage.channel.name} deleted.`)
+            message.channel.send(`Message ${messageID} in channel "${targetMessage.guild.name}".#${targetMessage.channel.name} deleted.`)
         }
     }
 }
