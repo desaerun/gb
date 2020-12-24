@@ -11,6 +11,7 @@ const pool = mysql.createPool({
 const insertNewMessage = require ("./insertNewMessage");
 
 const snowflakeToTimestamp = require("../snowflakeToTimestamp");
+const convertEmbedToText = require("../convertEmbedToText");
 
 module.exports = async function updateEditedMessage(oldMessage, newMessage) {
     insertNewMessage(newMessage,Date.now());
@@ -28,12 +29,18 @@ module.exports = async function updateEditedMessage(oldMessage, newMessage) {
 }
 
 async function addMessageEdit(oldMessage, newMessage) {
-    console.log(`old Message: ${JSON.stringify(oldMessage)}`);
-    console.log(`new Message: ${JSON.stringify(newMessage)}`);
+    let oldMessageContent = oldMessage.content;
+    let newMessageContent = newMessage.content;
+    for (const embed of oldMessage.embeds) {
+        oldMessageContent += convertEmbedToText(embed);
+    }
+    for (const embed of newMessage.embeds) {
+        newMessageContent += convertEmbedToText(embed);
+    }
     const oldMessageParams = {
         messageId: oldMessage.id,
-        newContent: newMessage.content,
-        oldContent: oldMessage.content,
+        newContent: newMessageContent,
+        oldContent: oldMessageContent,
         editTimestamp: Date.now(),
     }
     try {

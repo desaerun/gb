@@ -47,7 +47,7 @@ module.exports = {
             .setTitle(`Message History for ${messageID}`)
             .setURL(`https://discord.com/channels/${currentMessage.guild}/${currentMessage.channel}/${messageID}`)
             .addField("Posted by:", currentMessage.author_displayName);
-        let originalContent;
+        let originalContent = currentMessage.content;
         if (messageHistory.length > 0) { // if the message has an edit history
             console.log(`messageHistory: ${messageHistory}`);
             originalContent = messageHistory[messageHistory.length - 1].oldContent;
@@ -58,8 +58,6 @@ module.exports = {
                 embedMessage.addField(`Edit on ${formattedDatetime}`, edit.newContent);
             }
 
-        } else {
-            originalContent = currentMessage.content;
         }
         embedMessage.addField(`Original Content (posted ${moment(currentMessage.timestamp).format("MMM Do YYYY h:mm:ssa")})`, originalContent);
         try {
