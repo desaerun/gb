@@ -17,13 +17,12 @@ module.exports = function convertEmbedToText(embed) {
         messageContent += `\n**${field.name}**`;
         messageContent += `\n    ${field.value}`;
     }
-    if (embed.author) {
-        console.log(`message Author: ${JSON.stringify(embed.author)}`);
-        messageContent += `\n${embed.author.displayName}`;
-        if (embed.timestamp) {
-            const formattedTimestamp = moment(embed.timestamp).format("MMM Do YYYY h:mm:ssa");
-            messageContent += `at ${formattedTimestamp}`;
-        }
+    if (embed.author.name) {
+        messageContent += `\n${embed.author.name}`;
+    }
+    if (embed.timestamp) {
+        const formattedTimestamp = moment(embed.timestamp).format("MMM Do YYYY h:mm:ssa");
+        messageContent += `at ${formattedTimestamp}`;
     }
     return messageContent;
 }
