@@ -51,7 +51,7 @@ module.exports = {
             const firstEdit = messageHistory.pop();
             embedMessage.addField(`Current Content (edited on ${moment(currentMessage.lastEditTimestamp).format("MMM Do YYYY h:mm:ssa")})`, currentMessage.content);
             for (const edit of messageHistory) {
-                let formattedDatetime = moment(edit.timestamp).format("MMM Do YYYY h:mm:ssa");
+                let formattedDatetime = moment(edit.editTimestamp).format("MMM Do YYYY h:mm:ssa");
                 embedMessage.addField(`Edit on ${formattedDatetime}`, edit.oldContent);
             }
             embedMessage.addField(`Original Content (posted ${moment(currentMessage.timestamp).format("MMM Do YYYY h:mm:ssa")})`, firstEdit.oldContent);
