@@ -1,6 +1,6 @@
 {
   "name": "groidbot",
-  "version": "1.0.2",
+  "version": "1.1.0",
   "private": true,
   "description": "",
   "main": "main.js",
@@ -16,8 +16,11 @@
     "coffeescript": "^2.5.1",
     "discord.js": "^12.4.1",
     "dotenv": "^8.2.0",
+    "locutus": "^2.0.14",
     "moment": "^2.29.1",
     "mysql": "latest",
+    "mysql2": "^2.2.5",
+    "node-cron": "^2.0.3",
     "stack-trace": "0.0.10",
     "superagent": "^6.1.0",
     "ytdl-core": "^4.0.0"
