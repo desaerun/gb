@@ -55,6 +55,8 @@ module.exports = {
                 let formattedDatetime = moment(edit.editTimestamp).format("MMM Do YYYY h:mm:ssa");
                 embedMessage.addField(`Edit on ${formattedDatetime}`, edit.newContent);
             }
+            let formattedDatetime = moment(firstEdit.editTimestamp).format("MMM Do YYYY h:mm:ssa");
+            embedMessage.addField(`Edit on ${formattedDatetime}`, firstEdit.newContent);
             embedMessage.addField(`Original Content (posted ${moment(currentMessage.timestamp).format("MMM Do YYYY h:mm:ssa")})`, firstEdit.oldContent);
         } else {
             embedMessage.addField(`Original Content (posted ${moment(currentMessage.timestamp).format("MMM Do YYYY h:mm:ssa")})`, currentMessage.content);
