@@ -1,4 +1,5 @@
 const snowflakeToTimestamp = require("../snowflakeToTimestamp");
+const moment = require("moment");
 
 //mysql
 const mysql = require("mysql2/promise");
@@ -29,8 +30,29 @@ module.exports = async function insertNewMessage(message,lastEditTimestamp = nul
         isBot: author.user.bot,
     }
     let messageContent = message.content;
-    if (message.embeds.length > 0) {
-        messageContent += "\n[Embedded Content Not Displayed]";
+    for (const embed of message.embeds) {
+        messageContent += "\n\n";
+        messageContent += "\*\*\*\*\*Embedded Content\*\*\*\*\*";
+        if (embed.title) {
+            if (embed.url) {
+                messageContent += `\n[**${embed.title}**](${embed.url})`;
+            }
+            messageContent += `\n${embed.title}`;
+        }
+        if (embed.description) {
+            messageContent += `\n${embed.description}`;
+        }
+        for (const field of message.fields) {
+            messageContent += `\n**${field.name}**`;
+            messageContent += `\n    ${field.value}`;
+        }
+        if (embed.author) {
+            messageContent += `\n${embed.author}`;
+            if (embed.timestamp) {
+                const formattedTimestamp = moment(embed.timestamp).format("MMM Do YYYY h:mm:ssa");
+                messageContent += `at ${formattedTimestamp}`;
+            }
+        }
     }
     let message_values = {
         id: message.id,
