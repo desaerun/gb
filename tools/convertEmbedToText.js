@@ -1,3 +1,5 @@
+const moment = require("moment");
+
 module.exports = function convertEmbedToText(embed) {
     let messageContent = "";
     messageContent += "\n\n";
