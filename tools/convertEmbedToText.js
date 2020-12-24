@@ -18,7 +18,7 @@ module.exports = function convertEmbedToText(embed) {
         messageContent += `\n    ${field.value}`;
     }
     if (embed.author) {
-        messageContent += `\n${embed.author}`;
+        messageContent += `\n${embed.author.displayName}`;
         if (embed.timestamp) {
             const formattedTimestamp = moment(embed.timestamp).format("MMM Do YYYY h:mm:ssa");
             messageContent += `at ${formattedTimestamp}`;
