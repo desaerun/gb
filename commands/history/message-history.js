@@ -49,14 +49,15 @@ module.exports = {
             .addField("Posted by:", currentMessage.author_displayName);
         let originalContent;
         if (messageHistory.length > 0) { // if the message has an edit history
+            console.log(`messageHistory: ${messageHistory}`);
+            originalContent = messageHistory[messageHistory.length - 1].oldContent;
             const mostRecentEdit = messageHistory.shift();
             embedMessage.addField(`Current Content (edited on ${moment(mostRecentEdit.editTimestamp).format("MMM Do YYYY h:mm:ssa")}`, mostRecentEdit.newContent);
             for (const edit of messageHistory) {
                 let formattedDatetime = moment(edit.editTimestamp).format("MMM Do YYYY h:mm:ssa");
                 embedMessage.addField(`Edit on ${formattedDatetime}`, edit.newContent);
             }
-            console.log(`messageHistory: ${messageHistory}`);
-            originalContent = messageHistory[messageHistory.length - 1].oldContent;
+
         } else {
             originalContent = currentMessage.content;
         }
