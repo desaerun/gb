@@ -48,19 +48,14 @@ module.exports = {
             .setURL(`https://discord.com/channels/${currentMessage.guild}/${currentMessage.channel}/${messageID}`)
             .addField("Posted by:", currentMessage.author_displayName);
         if (messageHistory.length > 0) { // if the message has an edit history
-            const firstEdit = messageHistory.pop();
-            const lastEdit = messageHistory.shift();
-            embedMessage.addField(`Current Content (edited on ${moment(lastEdit.editTimestamp).format("MMM Do YYYY h:mm:ssa")})`, lastEdit.newContent);
+            const mostRecentEdit = messageHistory.shift();
+            embedMessage.addField(`Current Content (edited on ${moment(mostRecentEdit.editTimestamp).format("MMM Do YYYY h:mm:ssa")}`, mostRecentEdit.newContent);
             for (const edit of messageHistory) {
                 let formattedDatetime = moment(edit.editTimestamp).format("MMM Do YYYY h:mm:ssa");
                 embedMessage.addField(`Edit on ${formattedDatetime}`, edit.newContent);
             }
-            let formattedDatetime = moment(firstEdit.editTimestamp).format("MMM Do YYYY h:mm:ssa");
-            embedMessage.addField(`Edit on ${formattedDatetime}`, firstEdit.newContent);
-            embedMessage.addField(`Original Content (posted ${moment(currentMessage.timestamp).format("MMM Do YYYY h:mm:ssa")})`, firstEdit.oldContent);
-        } else {
-            embedMessage.addField(`Original Content (posted ${moment(currentMessage.timestamp).format("MMM Do YYYY h:mm:ssa")})`, currentMessage.content);
         }
+        embedMessage.addField(`Original Content (posted ${moment(currentMessage.timestamp).format("MMM Do YYYY h:mm:ssa")})`, currentMessage.content);
         try {
             await message.channel.send(embedMessage);
         } catch (e) {
