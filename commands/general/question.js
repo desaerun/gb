@@ -17,7 +17,13 @@ module.exports = {
             const response = await axios.get(googleQueryURL);
             if (response.status === 200) {
 
-                message.channel.send(response.data);
+                let specificAnswerString = "about 24 miles per hour";
+                let contentIdx = response.data.indexOf(specificAnswerString);
+                if (contentIdx === -1) {
+                    message.channel.send("Nope still -1");
+                } else {
+                    message.channel.send(response.data.substring(contentIdx, contentIdx+100));
+                }
                 return;
 
                 let answerHTMLTag = 'data-tts-text="';
