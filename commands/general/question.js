@@ -24,8 +24,7 @@ module.exports = {
 
                 let answer = cheerioDOM("div[aria-level='3']")
                     .first()
-                    .remove('div.yxAsKe.kZ91ed')
-                    .remove('span.kX21rb')
+                    .remove('div.yxAsKe.kZ91ed,span.kX21rb')
                     .text();
 
                 if (answer) {
