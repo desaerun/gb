@@ -20,7 +20,9 @@ module.exports = {
 
                 const cheerioDOM = cheerio.load(response.data);
 
-                let answer = cheerioDOM("div[aria-level='3']").first().text();
+                cheerioDOM('div.yxAsKe.kZ91ed').remove();
+
+                let answer = cheerioDOM("div[aria-level='3']").first().remove('div.yxAsKe.kZ91ed').text();
 
                 if (answer) {
                     let context = cheerioDOM('span.hgKElc').text();
@@ -33,6 +35,7 @@ module.exports = {
 
                 } else {
                     let complementaryResults = cheerioDOM("div[id='wp-tabs-container']").html();
+                    
                     const innerDOM = cheerio.load(complementaryResults);
 
                     answer = innerDOM("h2[data-attrid='title']").text();
