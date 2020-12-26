@@ -20,7 +20,14 @@ module.exports = {
 
                 const cheerioDOM = cheerio.load(response.data);
 
-                let answer = cheerioDOM("div[aria-level='3']").first().children()[0].text();
+                let answer = cheerioDOM("div[aria-level='3']").first().text();
+
+                let fakeAnswer = await cheerioDOM("div[aria-level='3']");
+                message.channel.send(fakeAnswer);
+                message.channel.send(fakeAnswer.first());
+                message.channel.send(fakeAnswer.children());
+                return;
+
 
                 if (answer) {
                     let context = cheerioDOM('span.hgKElc').text();
