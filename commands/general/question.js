@@ -20,11 +20,7 @@ module.exports = {
 
                 const cheerioDOM = cheerio.load(response.data);
 
-             //   let answer = cheerioDOM("div[aria-level='3']").first().text();
-                let answer = cheerioDOM("div[aria-level='3']");
-                message.channel.send(`Do i have child nodes: ${answer.hasChildNodes()}`);
-
-                answer = answer.first().text();
+                let answer = cheerioDOM("div[aria-level='3']").first().children()[0].text();
 
                 if (answer) {
                     let context = cheerioDOM('span.hgKElc').text();
