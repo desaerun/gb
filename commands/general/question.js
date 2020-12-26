@@ -1,4 +1,5 @@
 const axios = require('axios');
+const cheerio = require('cheerio');
 
 module.exports = {
     name: 'question',
@@ -17,6 +18,12 @@ module.exports = {
             const response = await axios.get(googleQueryURL, { headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.101 Safari/537.36' } } );
             if (response.status === 200) {
 
+                const cheerio_dom = cheerio.load(response.data);
+
+                const test = cheerio_dom('div.Z0LcW.XcVN5d').text();
+
+                message.channel.send(test);
+                /*
                 let answerHTMLTag = 'data-tts-text="';
                 let startIndex = response.data.indexOf(answerHTMLTag);
 
@@ -32,6 +39,7 @@ module.exports = {
                 let answer = response.data.substring(startIndex, endIndex);
 
                 message.channel.send(answer);
+                */
             } else {
                 throw new Error(`Request returned status code ${response.status}`);
             }
