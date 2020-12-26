@@ -16,8 +16,14 @@ module.exports = {
         try {
             const response = await axios.get(googleQueryURL);
             if (response.status === 200) {
+                //testing
+                message.channel.send(`response length: ${response.data.length}`);
+
                 let answerHTMLTag = 'data-tts-text="';
                 let startIndex = response.data.indexOf(answerHTMLTag) + answerHTMLTag.length + 1;
+
+                //testing
+                message.channel.send(`startIndex: ${startIndex}`)
 
                 if (startIndex === -1) {
                     message.channel.send('Unable to find an answer. Please go fuck yourself.');
@@ -25,6 +31,9 @@ module.exports = {
                 }
 
                 let endIndex = response.data.indexOf('"', startIndex);
+
+                //testing
+                message.channel.send(`endIndex: ${endIndex}`)
 
                 let answer = response.data.substring(startIndex, endIndex);
 
