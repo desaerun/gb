@@ -22,7 +22,7 @@ module.exports = {
                 if (contentIdx === -1) {
                     message.channel.send("Nope still -1");
                 } else {
-                    message.channel.send(response.data.substring(contentIdx-100, contentIdx+100));
+                    message.channel.send(response.data.substring(contentIdx-500, contentIdx+500));
                 }
                 return;
 
