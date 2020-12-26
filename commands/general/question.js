@@ -19,11 +19,14 @@ module.exports = {
             if (response.status === 200) {
 
                 const cheerioDOM = cheerio.load(response.data);
+                // Remove 'Videos' box from search results
+                cheerioDOM('div.HD8Pae.luh4tb.cUezCb.xpd.O9g5cc.uUPGi').remove();
+
                 let innerDOM = cheerio.load(cheerioDOM("div[aria-level='3']").first().html());
 
+                // Remove some of the subtext in featured results
                 innerDOM('div.yxAsKe.kZ91ed').remove();
                 innerDOM('span.kX21rb').remove();
-                innerDOM('div.HD8Pae.luh4tb.cUezCb.xpd.O9g5cc.uUPGi').remove();
 
                 let answer = innerDOM.text();
 
