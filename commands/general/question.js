@@ -18,13 +18,13 @@ module.exports = {
             const response = await axios.get(googleQueryURL, { headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.101 Safari/537.36' } } );
             if (response.status === 200) {
 
-                const cheerio_dom = cheerio.load(response.data);
+                const cheerioDOM = cheerio.load(response.data);
 
-                //const answer = cheerio_dom('div.Z0LcW.XcVN5d').text();
-                const answer = cheerio_dom("div[aria-level='3']:first").text();
-                const context = cheerio_dom('span.hgKElc').text();
+                let answer = cheerioDOM("div[aria-level='3']:first").text();
 
                 if (answer) {
+                    let context = cheerioDOM('span.hgKElc').text();
+
                     if (!context || answer === context) {
                         message.channel.send(answer);
                     } else {
@@ -32,7 +32,22 @@ module.exports = {
                     }
 
                 } else {
-                    message.channel.send('Unable to find an answer. Please go fuck yourself.');
+                    let complementaryResults = cheerioDOM("div[id='wp-tabs-container']").html();
+                    const innerDOM = cheerio.load(complementaryResults);
+
+                    answer = innerDOM("h2[data-attrid='title']").text();
+
+                    if (answer) {
+                        let context = innerDOM('div.kno-rdesc > span').text();
+                        if (!context || answer === context) {
+                            message.channel.send(answer);
+                        } else {
+                            message.channel.send(`**${answer}**\n${context}`);
+                        }
+
+                    } else {
+                        message.channel.send('Unable to find an answer. Please go fuck yourself.');
+                    }
                 }
 
             } else {
