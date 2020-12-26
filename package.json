@@ -13,6 +13,7 @@
   "dependencies": {
     "@discordjs/opus": "latest",
     "axios": "^0.21.0",
+    "cheerio": "^1.0.0-rc.5",
     "coffeescript": "^2.5.1",
     "discord.js": "^12.4.1",
     "dotenv": "^8.2.0",
@@ -25,5 +26,7 @@
     "superagent": "^6.1.0",
     "ytdl-core": "^4.0.0"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "puppeteer": "^5.5.0"
+  }
 }
