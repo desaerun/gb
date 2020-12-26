@@ -22,7 +22,7 @@ module.exports = {
 
                 cheerioDOM('div.yxAsKe.kZ91ed').remove();
                 cheerioDOM('span.kX21rb').remove();
-                cheerioDOM('div[data-hveid="CBIQAQ"]').remove();
+                cheerioDOM('div.HD8Pae.luh4tb.cUezCb.xpd.O9g5cc.uUPGi').remove();
 
                 let answer = cheerioDOM("div[aria-level='3']").first().text();
 
