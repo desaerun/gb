@@ -21,8 +21,8 @@ module.exports = {
                 const cheerio_dom = cheerio.load(response.data);
 
                 //const answer = cheerio_dom('div.Z0LcW.XcVN5d').text();
-                const answer = cheerio_dom("div[aria-level='3']:first > div").text();
-                const context = cheerio_dom('span.hgKElc').text();;
+                const answer = cheerio_dom("div[aria-level='3']:first").text();
+                const context = cheerio_dom('span.hgKElc').text();
 
                 if (answer) {
                     if (!context || answer === context) {
