@@ -38,7 +38,7 @@ module.exports = {
                     answer = innerDOM("h2[data-attrid='title']").text();
 
                     if (answer) {
-                        let context = innerDOM('div.kno-rdesc > div > span').text();
+                        let context = innerDOM('div.kno-rdesc > div > span').first().text();
                         if (!context || answer === context) {
                             message.channel.send(answer);
                         } else {
