@@ -21,19 +21,11 @@ module.exports = {
                 const cheerioDOM = cheerio.load(response.data);
 
                 cheerioDOM('div.yxAsKe.kZ91ed').remove();
+                cheerioDOM('span.kX21rb').remove();
 
-                let answer = cheerioDOM("div[aria-level='3']")
-                    .first()
-                    .remove('div.yxAsKe.kZ91ed')
-                    .text();
+                let answer = cheerioDOM("div[aria-level='3']").first().text();
 
                 if (answer) {
-                    let unnecessaryDate = answer.indexOf('<span class="kX21rb">');
-
-                    if (unnecessaryDate != -1) {
-                        answer = answer.substring(0, unnecessaryDate);
-                    }
-
                     let context = cheerioDOM('span.hgKElc').text();
 
                     if (!context || answer === context) {
