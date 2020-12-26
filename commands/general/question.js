@@ -22,7 +22,11 @@ module.exports = {
 
                 cheerioDOM('div.yxAsKe.kZ91ed').remove();
 
-                let answer = cheerioDOM("div[aria-level='3']").first().remove('div.yxAsKe.kZ91ed').text();
+                let answer = cheerioDOM("div[aria-level='3']")
+                    .first()
+                    .remove('div.yxAsKe.kZ91ed')
+                    .remove('span.kX21rb')
+                    .text();
 
                 if (answer) {
                     let context = cheerioDOM('span.hgKElc').text();
