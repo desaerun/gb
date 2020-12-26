@@ -16,6 +16,9 @@ module.exports = {
         try {
             const response = await axios.get(googleQueryURL);
             if (response.status === 200) {
+                //test
+                message.channel.send(`response sample: ${response.data.substring(0, 1000)}`);
+
                 let answerHTMLTag = 'data-tts-text="';
                 let startIndex = response.data.indexOf(answerHTMLTag);
 
