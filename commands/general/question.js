@@ -24,11 +24,16 @@ module.exports = {
 
                 let answer = cheerioDOM("div[aria-level='3']")
                     .first()
-                   // .remove('div.yxAsKe.kZ91ed')
-                    .remove('span.kX21rb')
+                    .remove('div.yxAsKe.kZ91ed')
                     .text();
 
                 if (answer) {
+                    let unnecessaryDate = answer.indexOf('<span class="kX21rb">');
+
+                    if (unnecessaryDate != -1) {
+                        answer = answer.substring(0, unnecessaryDate);
+                    }
+
                     let context = cheerioDOM('span.hgKElc').text();
 
                     if (!context || answer === context) {
