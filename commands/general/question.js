@@ -12,12 +12,13 @@ module.exports = {
         let query = args.join('+');
 
         let googleQueryURL = `https://www.google.com/search?q=${query}`;
-        message.channel.send(`querying ${googleQueryURL}`);
-        return;
 
         try {
             const response = await axios.get(googleQueryURL);
             if (response.status === 200) {
+
+                message.channel.send(response.data);
+                return;
 
                 let answerHTMLTag = 'data-tts-text="';
                 let startIndex = response.data.indexOf(answerHTMLTag);
