@@ -25,5 +25,7 @@
     "superagent": "^6.1.0",
     "ytdl-core": "^4.0.0"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "puppeteer": "^5.5.0"
+  }
 }
