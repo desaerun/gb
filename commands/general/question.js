@@ -25,7 +25,12 @@ module.exports = {
                 const context = cheerio_dom('span.hgKElc').text();;
 
                 if (answer) {
-                    message.channel.send(`${answer}\n${context}`);
+                    if (answer === context) {
+                        message.channel.send(answer);
+                    } else {
+                        message.channel.send(`**${answer}**\n${context}`);
+                    }
+
                 } else {
                     message.channel.send('Unable to find an answer. Please go fuck yourself.');
                 }
