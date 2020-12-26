@@ -22,9 +22,10 @@ module.exports = {
 
                 //const answer = cheerio_dom('div.Z0LcW.XcVN5d').text();
                 const answer = cheerio_dom("div[aria-level='3']:first").text();
+                const context = cheerio_dom('span.hgKElc').text();;
 
                 if (answer) {
-                    message.channel.send(answer);
+                    message.channel.send(`${answer}\n${context}`);
                 } else {
                     message.channel.send('Unable to find an answer. Please go fuck yourself.');
                 }
