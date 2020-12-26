@@ -20,26 +20,14 @@ module.exports = {
 
                 const cheerio_dom = cheerio.load(response.data);
 
-                const test = cheerio_dom('div.Z0LcW.XcVN5d').text();
+                const answer = cheerio_dom('div.Z0LcW.XcVN5d').text();
 
-                message.channel.send(test);
-                /*
-                let answerHTMLTag = 'data-tts-text="';
-                let startIndex = response.data.indexOf(answerHTMLTag);
-
-                if (startIndex === -1) {
+                if (answer) {
+                    message.channel.send(answer);
+                } else {
                     message.channel.send('Unable to find an answer. Please go fuck yourself.');
-                    return;
                 }
 
-                startIndex += answerHTMLTag.length;
-
-                let endIndex = response.data.indexOf('"', startIndex);
-
-                let answer = response.data.substring(startIndex, endIndex);
-
-                message.channel.send(answer);
-                */
             } else {
                 throw new Error(`Request returned status code ${response.status}`);
             }
