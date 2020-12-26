@@ -21,7 +21,7 @@ module.exports = {
                 const cheerio_dom = cheerio.load(response.data);
 
                 //const answer = cheerio_dom('div.Z0LcW.XcVN5d').text();
-                const answer = cheerio_dom("div[aria-level='3']").text();
+                const answer = cheerio_dom("div[aria-level='3']:first").text();
 
                 if (answer) {
                     message.channel.send(answer);
