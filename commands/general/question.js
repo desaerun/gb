@@ -1,4 +1,4 @@
-const puppeteer = require('puppeteer');
+const axios = require('axios');
 
 module.exports = {
     name: 'question',
@@ -13,35 +13,8 @@ module.exports = {
 
         let googleQueryURL = `https://www.google.com/search?q=${query}`;
 
-        puppeteer
-            .launch()
-            .then(browser => browser.newPage())
-            .then(page => {
-                return page.goto(googleQueryURL).then(function () {
-                    return page.content();
-                });
-            })
-        .then(html => {
-            let answerHTMLTag = 'data-tts-text="';
-            let startIndex = html.indexOf(answerHTMLTag);
-
-            if (startIndex === -1) {
-                message.channel.send('Unable to find an answer. Please go fuck yourself.');
-                return;
-            }
-
-            startIndex += answerHTMLTag.length + 1
-
-            let endIndex = html.indexOf('"', startIndex);
-
-            let answer = html.substring(startIndex, endIndex);
-
-            message.channel.send(answer);
-        })
-            .catch(console.error);
-/*
         try {
-            const response = await axios.get(googleQueryURL);
+            const response = await axios.get(googleQueryURL, { headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.101 Safari/537.36' } } );
             if (response.status === 200) {
 
                 let answerHTMLTag = 'data-tts-text="';
@@ -65,6 +38,5 @@ module.exports = {
         } catch (err) {
             message.channel.send(`Error encountered while attempting to answer your question: ${err}`);
         }
- */
     }
 }
