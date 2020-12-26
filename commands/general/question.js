@@ -21,11 +21,11 @@ module.exports = {
                 const cheerio_dom = cheerio.load(response.data);
 
                 //const answer = cheerio_dom('div.Z0LcW.XcVN5d').text();
-                const answer = cheerio_dom("div[aria-level='3']:first").text();
+                const answer = cheerio_dom("div[aria-level='3']:first > div").text();
                 const context = cheerio_dom('span.hgKElc').text();;
 
                 if (answer) {
-                    if (answer === context) {
+                    if (!context || answer === context) {
                         message.channel.send(answer);
                     } else {
                         message.channel.send(`**${answer}**\n${context}`);
