@@ -22,13 +22,17 @@ module.exports = {
                 // Remove 'Videos' box from search results
                 cheerioDOM('div.HD8Pae.luh4tb.cUezCb.xpd.O9g5cc.uUPGi').remove();
 
-                let innerDOM = cheerio.load(cheerioDOM("div[aria-level='3']").first().html());
+                let innerDOMString = cheerioDOM("div[aria-level='3']").first().html();
+                let answer;
+                if (innerDOMString) {
+                    const innerDOM = cheerio.load(innerDOMString);
 
-                // Remove some of the subtext in featured results
-                innerDOM('div.yxAsKe.kZ91ed').remove();
-                innerDOM('span.kX21rb').remove();
+                    // Remove some of the subtext in featured results
+                    innerDOM('div.yxAsKe.kZ91ed').remove();
+                    innerDOM('span.kX21rb').remove();
 
-                let answer = innerDOM.text();
+                    answer = innerDOM.text();
+                }
 
                 if (answer) {
                     let context = cheerioDOM('span.hgKElc').text();
