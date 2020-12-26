@@ -19,12 +19,13 @@ module.exports = {
             if (response.status === 200) {
 
                 const cheerioDOM = cheerio.load(response.data);
+                let innerDOM = cheerio.load(cheerioDOM("div[aria-level='3']").first().html());
 
-                cheerioDOM('div.yxAsKe.kZ91ed').remove();
-                cheerioDOM('span.kX21rb').remove();
-                cheerioDOM('div.HD8Pae.luh4tb.cUezCb.xpd.O9g5cc.uUPGi').remove();
+                innerDOM('div.yxAsKe.kZ91ed').remove();
+                innerDOM('span.kX21rb').remove();
+                innerDOM('div.HD8Pae.luh4tb.cUezCb.xpd.O9g5cc.uUPGi').remove();
 
-                let answer = cheerioDOM("div[aria-level='3']").first().text();
+                let answer = innerDOM.text();
 
                 if (answer) {
                     let context = cheerioDOM('span.hgKElc').text();
