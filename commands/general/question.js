@@ -25,7 +25,7 @@ module.exports = {
                     return;
                 }
 
-                startIndex += answerHTMLTag.length + 1
+                startIndex += answerHTMLTag.length;
 
                 let endIndex = response.data.indexOf('"', startIndex);
 
