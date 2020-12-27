@@ -5,6 +5,6 @@ module.exports = {
     name: 'uwu',
     description: 'uwu-ifies your message',
     execute(client, message, args) {
-        message.channel.send(uwuify.uwuify(message.content));
+        message.channel.send(uwuify.uwuify(args.join(' ')));
     }
 }
