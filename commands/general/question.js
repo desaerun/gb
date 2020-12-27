@@ -135,10 +135,9 @@ function sendSearchResultsAsEmbeddedMessage(message, cheerioDOM) {
 
     cheerioDOM('div.rc').each(function() {
 
-        let link = cheerioDOM(this).find('div > a').attr('href');
+        let description = cheerioDOM(this).find('div.IsZvec > div > span').text();
         let title = cheerioDOM(this).find('div > a > h3.LC20lb > span').text();
-        let description = cheerioDOM(this).find('div.IsZvec > div > span:not([class!=""])').text();
-        message.channel.send(`Link: ${link}, title: ${title}, desc: ${description}`)
+        let link = cheerioDOM(this).find('div > a').attr('href');
 
         let embedMessage = new Discord.MessageEmbed()
             .setTitle(`[**${title}**](${link})`)
@@ -146,6 +145,8 @@ function sendSearchResultsAsEmbeddedMessage(message, cheerioDOM) {
 
         results.push(embedMessage);
     });
+
+    message.channel.send("Hmm, I couldn't figure that one out. Maybe these will help:");
 
     for (let i = 0; i < 3 && i < results.length; i++) {
         message.channel.send(results[i]);
