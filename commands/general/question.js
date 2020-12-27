@@ -1,5 +1,6 @@
 const axios = require('axios');
 const cheerio = require('cheerio');
+const Discord = require('discord.js');
 
 module.exports = {
     name: 'question',
@@ -22,14 +23,22 @@ module.exports = {
                 // Remove 'Videos' box from search results
                 cheerioDOM('div.HD8Pae.luh4tb.cUezCb.xpd.O9g5cc.uUPGi').remove();
 
+                // Attempt to parse answer from Featured Snippet first
                 if (retrieveAnswerFromFeaturedSnippet(message, cheerioDOM)) {
                     return;
                 }
 
+                // If there is no Featured Snippet, parse the Knowledge Panel
                 if (retrieveAnswerFromKnowledgePanel(message, cheerioDOM)) {
                     return;
                 }
 
+                // If neither the Featured Snippet nor the Knowledge Panel exist, return the first few search results
+                if (sendSearchResultsAsEmbeddedMessage(message, cheerioDOM)) {
+                    return;
+                }
+
+                // If all else fails, kindly inform the user that an answer was not found.
                 message.channel.send('Unable to find an answer. Please go fuck yourself.');
 
             } else {
@@ -109,4 +118,34 @@ function retrieveAnswerFromKnowledgePanel(message, cheerioDOM) {
     }
 
     return false;
+}
+
+/**
+ * Generates Embedded Discord Messages out of the first 3 search results and sends them to the
+ * designated channel
+ *
+ * @param message
+ * @param cheerioDOM
+ */
+function sendSearchResultsAsEmbeddedMessage(message, cheerioDOM) {
+    // Remove the "People also ask" section as these _aren't_ the thing we want an answer to
+    cheerioDOM('div.g.kno-kp.mnr-c.g-blk').remove();
+
+    let results = [];
+
+    cheerioDOM('div.rc').each(function () {
+        let link = cheerioDOM('div > a').attr('href');
+        let title = cheerioDOM('div > a > h3.LC20lb > span').text();
+        let description = cheerioDOM('div.IsZvec > div > span:not([class!=""])').text();
+
+        let embedMessage = new Discord.MessageEmbed()
+            .setTitle(`[**${title}**](${link})`)
+            .setDescription(description);
+
+        results.push(embedMessage);
+    });
+
+    for (const result of results) {
+        message.channel.send(result);
+    }
 }
