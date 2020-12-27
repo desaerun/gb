@@ -54,7 +54,7 @@ function retrieveAnswerFromFeaturedSnippet(message, cheerioDOM) {
 
     // Grabbing the first div with data-attrid containing a ":/" and aria-level "3"
     // should give us the Featured Snippet box if it exists
-    let innerDOMString = cheerioDOM('div[data-attrid*=":/"][aria-level="3"],div.EfDVh.mod > div > div > div[aria-level="3"],div[data-tts="answers"]').first().html();
+    let innerDOMString = cheerioDOM('div[data-tts="answers"],div[data-attrid*=":/"][aria-level="3"],div.EfDVh.mod > div > div > div[aria-level="3"]').first().html();
 
     if (innerDOMString) {
         const innerDOM = cheerio.load(innerDOMString);
