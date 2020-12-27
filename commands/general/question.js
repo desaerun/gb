@@ -38,9 +38,6 @@ module.exports = {
                     return;
                 }
 
-                // If all else fails, kindly inform the user that an answer was not found.
-                message.channel.send('Unable to find an answer. Please go fuck yourself.');
-
             } else {
                 throw new Error(`Request returned status code ${response.status}`);
             }
@@ -140,7 +137,8 @@ function sendSearchResultsAsEmbeddedMessage(message, cheerioDOM) {
         let link = cheerioDOM(this).find('div > a').attr('href');
 
         let embedMessage = new Discord.MessageEmbed()
-            .setTitle(`[**${title}**](${link})`)
+            .setTitle(`**${title}**`)
+            .setURL(link)
             .setDescription(description);
 
         results.push(embedMessage);
