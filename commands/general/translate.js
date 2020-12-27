@@ -53,10 +53,10 @@ module.exports = {
             opts = {to: toLang};
         }
 
-        message.channel.send(`Attempting to translate the sentence ${untranslated} from ${fromLang} to ${toLang}`)
-
         translate(untranslated, opts).then(res => {
             message.channel.send(res.text);
+        }).catch(err => {
+            message.channel.send(`I encountered an error while attempting to translate your message: ${err}`)
         })
     }
 }
