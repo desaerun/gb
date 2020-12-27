@@ -1,4 +1,4 @@
-const translate = require('google-translate-api');
+const translate = require('@vitalets/google-translate-api');
 
 module.exports = {
     name: 'translate',
@@ -9,10 +9,6 @@ module.exports = {
             message.channel.send('Type your message to be translated, including a `to:` language and an optional \`from:\` language.\n' +
                 'Example: `-translate to:ja I love you, Groidbot!`');
             return;
-        }
-
-        if (args.length === 1 && args[i] === 'languages') {
-            message.channel.send(translate.languages.toString());
         }
 
         let toLang;
@@ -36,12 +32,12 @@ module.exports = {
         }
 
         if (!translate.languages.isSupported(toLang)) {
-            message.channel.send(`The language ${toLang} is not supported. For a list of supported languages, type \`-translate languages\``);
+            message.channel.send(`The language ${toLang} is not supported. Supported languages are based on ISO 639-1 https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes`);
             return;
         }
 
         if (fromLang && !translate.languages.isSupported(fromLang)) {
-            message.channel.send(`The language ${fromLang} is not supported. For a list of supported languages, type \`-translate languages\``);
+            message.channel.send(`The language ${fromLang} is not supported. Supported languages are based on ISO 639-1 https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes`);
             return;
         }
 
