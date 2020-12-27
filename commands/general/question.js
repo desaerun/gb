@@ -133,8 +133,8 @@ function sendSearchResultsAsEmbeddedMessage(message, cheerioDOM) {
 
     let results = [];
 
-    cheerioDOM('div.rc').each( (index, value) => {
-        const innerDOM = cheerio.load(value);
+    cheerioDOM('div.rc').each(function() {
+        const innerDOM = cheerio.load(this);
 
         let link = innerDOM('div > a').attr('href');
         let title = innerDOM('div > a > h3.LC20lb > span').text();
