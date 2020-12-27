@@ -128,6 +128,8 @@ function retrieveAnswerFromKnowledgePanel(message, cheerioDOM) {
  * @param cheerioDOM
  */
 function sendSearchResultsAsEmbeddedMessage(message, cheerioDOM) {
+    message.channel.send('Attempting to get data from search results');
+
     // Remove the "People also ask" section as these _aren't_ the thing we want an answer to
     cheerioDOM('div.g.kno-kp.mnr-c.g-blk').remove();
 
@@ -135,8 +137,11 @@ function sendSearchResultsAsEmbeddedMessage(message, cheerioDOM) {
 
     cheerioDOM('div.rc').each(function () {
         let link = cheerioDOM('div > a').attr('href');
+        message.channel.send(`Found link ${link}`);
         let title = cheerioDOM('div > a > h3.LC20lb > span').text();
+        message.channel.send(`Link title ${title}`);
         let description = cheerioDOM('div.IsZvec > div > span:not([class!=""])').text();
+        message.channel.send(`Link description ${description}`);
 
         let embedMessage = new Discord.MessageEmbed()
             .setTitle(`[**${title}**](${link})`)
@@ -144,6 +149,8 @@ function sendSearchResultsAsEmbeddedMessage(message, cheerioDOM) {
 
         results.push(embedMessage);
     });
+
+    message.channel.send(`Attempting to send embedded messages ${results}`);
 
     for (const result of results) {
         message.channel.send(result);
