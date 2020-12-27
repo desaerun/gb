@@ -26,11 +26,6 @@ module.exports = {
             }
         }
 
-        if (!toLang) {
-            message.channel.send('Be sure to include a `to:` language in your request!');
-            return;
-        }
-
         if (toLang && !translate.languages.isSupported(toLang)) {
             message.channel.send(`The language ${toLang} is not supported. Supported languages are based on ISO 639-1 https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes`);
             return;
