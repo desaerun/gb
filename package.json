@@ -16,6 +16,7 @@
     "coffeescript": "^2.5.1",
     "discord.js": "^12.4.1",
     "dotenv": "^8.2.0",
+    "google-translate-api": "^2.3.0",
     "locutus": "^2.0.14",
     "moment": "^2.29.1",
     "mysql": "latest",
@@ -24,6 +25,5 @@
     "stack-trace": "0.0.10",
     "superagent": "^6.1.0",
     "ytdl-core": "^4.0.0"
-  },
-  "devDependencies": {}
+  }
 }
