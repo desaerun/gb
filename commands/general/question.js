@@ -22,11 +22,11 @@ module.exports = {
                 // Remove 'Videos' box from search results
                 cheerioDOM('div.HD8Pae.luh4tb.cUezCb.xpd.O9g5cc.uUPGi').remove();
 
-                if (retrieveAnswerFromKnowledgePanel(message, cheerioDOM)) {
+                if (retrieveAnswerFromFeaturedSnippet(message, cheerioDOM)) {
                     return;
                 }
 
-                if (retrieveAnswerFromFeaturedSnippet(message, cheerioDOM)) {
+                if (retrieveAnswerFromKnowledgePanel(message, cheerioDOM)) {
                     return;
                 }
 
@@ -39,6 +39,45 @@ module.exports = {
             message.channel.send(`Error encountered while attempting to answer your question: ${err}`);
         }
     }
+}
+
+/**
+ * Attempts to retrieve Google Search results contained within the "Featured Snippet" above the
+ * actual search results to provide in answer. Returns false if a response is not sent to Discord,
+ * true otherwise.
+ *
+ * @param message
+ * @param cheerioDOM
+ * @returns {boolean}
+ */
+function retrieveAnswerFromFeaturedSnippet(message, cheerioDOM) {
+
+    // Grabbing the first aria-level 3 div should give us the Featured Snippet box if it exists
+    let innerDOMString = cheerioDOM('div[data-attrid^="kc:/"]').first().html();
+
+    if (innerDOMString) {
+        const innerDOM = cheerio.load(innerDOMString);
+
+        // Remove some of the subtext in featured snippet
+        innerDOM('div.yxAsKe.kZ91ed').remove();
+        innerDOM('span.kX21rb').remove();
+
+        let answer = innerDOM.text();
+
+        if (answer) {
+            let context = cheerioDOM('span.hgKElc').text();
+
+            if (!context || answer === context) {
+                message.channel.send(answer);
+                return true;
+            } else {
+                message.channel.send(`**${answer}**\n${context}`);
+                return true;
+            }
+        }
+    }
+
+    return false;
 }
 
 /**
@@ -58,45 +97,6 @@ function retrieveAnswerFromKnowledgePanel(message, cheerioDOM) {
 
         if (answer) {
             let context = innerDOM('div.kno-rdesc > div > span').first().text();
-            if (!context || answer === context) {
-                message.channel.send(answer);
-                return true;
-            } else {
-                message.channel.send(`**${answer}**\n${context}`);
-                return true;
-            }
-        }
-    }
-
-    return false;
-}
-
-/**
- * Attempts to retrieve Google Search results contained within the "Featured Snippet" above the
- * actual search results to provide in answer. Returns false if a response is not sent to Discord,
- * true otherwise.
- *
- * @param message
- * @param cheerioDOM
- * @returns {boolean}
- */
-function retrieveAnswerFromFeaturedSnippet(message, cheerioDOM) {
-
-    // Grabbing the first aria-level 3 div should give us the Featured Snippet box if it exists
-    let innerDOMString = cheerioDOM("div[aria-level='3']").first().html();
-
-    if (innerDOMString) {
-        const innerDOM = cheerio.load(innerDOMString);
-
-        // Remove some of the subtext in featured snippet
-        innerDOM('div.yxAsKe.kZ91ed').remove();
-        innerDOM('span.kX21rb').remove();
-
-        let answer = innerDOM.text();
-
-        if (answer) {
-            let context = cheerioDOM('span.hgKElc').text();
-
             if (!context || answer === context) {
                 message.channel.send(answer);
                 return true;
