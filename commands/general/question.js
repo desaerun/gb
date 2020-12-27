@@ -38,6 +38,9 @@ module.exports = {
                     return;
                 }
 
+                // If all else fails, kindly inform the user that an answer was not found.
+                message.channel.send('Unable to find an answer. Please go fuck yourself.');
+
             } else {
                 throw new Error(`Request returned status code ${response.status}`);
             }
@@ -144,9 +147,15 @@ function sendSearchResultsAsEmbeddedMessage(message, cheerioDOM) {
         results.push(embedMessage);
     });
 
+    if (results.length === 0) {
+        return false;
+    }
+
     message.channel.send("Hmm, I couldn't figure that one out. Maybe these will help:");
 
     for (let i = 0; i < 3 && i < results.length; i++) {
         message.channel.send(results[i]);
     }
+
+    return true;
 }
