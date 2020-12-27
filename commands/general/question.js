@@ -134,11 +134,10 @@ function sendSearchResultsAsEmbeddedMessage(message, cheerioDOM) {
     let results = [];
 
     cheerioDOM('div.rc').each(function() {
-        const innerDOM = cheerio.load(this.html());
 
-        let link = innerDOM('div > a').attr('href');
-        let title = innerDOM('div > a > h3.LC20lb > span').text();
-        let description = innerDOM('div.IsZvec > div > span:not([class!=""])').text();
+        let link = this.find('div > a').attr('href');
+        let title = this.find('div > a > h3.LC20lb > span').text();
+        let description = this.find('div.IsZvec > div > span:not([class!=""])').text();
         message.channel.send(`Link: ${link}, title: ${title}, desc: ${description}`)
 
         let embedMessage = new Discord.MessageEmbed()
