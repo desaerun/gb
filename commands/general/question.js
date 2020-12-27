@@ -22,11 +22,11 @@ module.exports = {
                 // Remove 'Videos' box from search results
                 cheerioDOM('div.HD8Pae.luh4tb.cUezCb.xpd.O9g5cc.uUPGi').remove();
 
-                if (retrieveAnswerFromFeaturedSnippet(message, cheerioDOM)) {
+                if (retrieveAnswerFromKnowledgePanel(message, cheerioDOM)) {
                     return;
                 }
 
-                if (retrieveAnswerFromKnowledgePanel(message, cheerioDOM)) {
+                if (retrieveAnswerFromFeaturedSnippet(message, cheerioDOM)) {
                     return;
                 }
 
@@ -39,6 +39,36 @@ module.exports = {
             message.channel.send(`Error encountered while attempting to answer your question: ${err}`);
         }
     }
+}
+
+/**
+ * Attempts to retrieve Google Search results contained within the "Knowledge Panel" on the right side
+ * of the results page, if it exists. Returns false if a response is not sent to Discord, true otherwise.
+ *
+ * @param message
+ * @param cheerioDOM
+ */
+function retrieveAnswerFromKnowledgePanel(message, cheerioDOM) {
+    let knowledgePanel = cheerioDOM("div[id='wp-tabs-container']").html();
+
+    if (knowledgePanel) {
+        const innerDOM = cheerio.load(knowledgePanel);
+
+        let answer = innerDOM("h2[data-attrid='title']").text();
+
+        if (answer) {
+            let context = innerDOM('div.kno-rdesc > div > span').first().text();
+            if (!context || answer === context) {
+                message.channel.send(answer);
+                return true;
+            } else {
+                message.channel.send(`**${answer}**\n${context}`);
+                return true;
+            }
+        }
+    }
+
+    return false;
 }
 
 /**
@@ -67,36 +97,6 @@ function retrieveAnswerFromFeaturedSnippet(message, cheerioDOM) {
         if (answer) {
             let context = cheerioDOM('span.hgKElc').text();
 
-            if (!context || answer === context) {
-                message.channel.send(answer);
-                return true;
-            } else {
-                message.channel.send(`**${answer}**\n${context}`);
-                return true;
-            }
-        }
-    }
-
-    return false;
-}
-
-/**
- * Attempts to retrieve Google Search results contained within the "Knowledge Panel" on the right side
- * of the results page, if it exists. Returns false if a response is not sent to Discord, true otherwise.
- *
- * @param message
- * @param cheerioDOM
- */
-function retrieveAnswerFromKnowledgePanel(message, cheerioDOM) {
-    let knowledgePanel = cheerioDOM("div[id='wp-tabs-container']").html();
-
-    if (knowledgePanel) {
-        const innerDOM = cheerio.load(knowledgePanel);
-
-        let answer = innerDOM("h2[data-attrid='title']").text();
-
-        if (answer) {
-            let context = innerDOM('div.kno-rdesc > div > span').first().text();
             if (!context || answer === context) {
                 message.channel.send(answer);
                 return true;
