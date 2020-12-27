@@ -133,7 +133,7 @@ function sendSearchResultsAsEmbeddedMessage(message, cheerioDOM) {
 
     let results = [];
 
-    cheerioDOM('div.rc').some( (index, value) => {
+    cheerioDOM('div.rc').each( (index, value) => {
         const innerDOM = cheerio.load(value);
 
         let link = innerDOM('div > a').attr('href');
@@ -146,11 +146,9 @@ function sendSearchResultsAsEmbeddedMessage(message, cheerioDOM) {
             .setDescription(description);
 
         results.push(embedMessage);
-
-        return results.length === 3;
     });
 
-    for (const result of results) {
-        message.channel.send(result);
+    for (let i = 0; i < 3 && i < results.length; i++) {
+        message.channel.send(results[i]);
     }
 }
