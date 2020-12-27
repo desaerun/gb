@@ -16,11 +16,11 @@ module.exports = {
 
         let i = args.length;
         while (i--) {
-            if (args[i].contains('to:')) {
+            if (args[i].includes('to:')) {
                 toLang = args[i].replace('to:', '').trim();
                 args.splice(i, 1);
             }
-            if (args[i].contains('from:')) {
+            if (args[i].includes('from:')) {
                 fromLang = args[i].replace('from:', '').trim();
                 args.splice(i, 1);
             }
