@@ -1,4 +1,4 @@
-const translate = require('@vitalets/google-translate-api');
+const translate = require('@vitalets/google-translate-api#batchexecute');
 
 module.exports = {
     name: 'translate',
