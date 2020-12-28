@@ -22,7 +22,7 @@ module.exports = {
                 subreddit = subreddit.substring(subreddit.lastIndexOf('/')+1);
             }
         } else {
-            subreddit = args.default;
+            subreddit = this.args.default;
         }
 
         const requestURL = `https://reddit.com/r/${subreddit}/top/.json?sort=top&t=day&is_self=true&limit=1`;
@@ -30,8 +30,6 @@ module.exports = {
         try {
             const response = await axios.get(requestURL);
             if (response.status === 200) {
-
-                message.channel.send(JSON.stringify(response.data));
 
                 if (!response.data.data.children) {
                     message.channel.send(`I wasn't able to find a post from the subreddit /r/${subreddit}. Did you spell it correctly?`);
@@ -46,19 +44,19 @@ module.exports = {
                 let fullMessage = '';
 
                 if (title) {
-                    fullMessage += `Title: ${title}`;
+                    fullMessage += `**${title}**`;
                 }
 
                 if (selfText) {
                     if (fullMessage.length > 0)
                         fullMessage += '\n';
-                    fullMessage += `Text: ${selfText}`;
+                    fullMessage += `${selfText}`;
                 }
 
                 if (media) {
                     if (fullMessage.length > 0)
                         fullMessage += '\n';
-                    fullMessage += `Media: ${media}`;
+                    fullMessage += `${media}`;
                 }
 
                 message.channel.send(fullMessage);
