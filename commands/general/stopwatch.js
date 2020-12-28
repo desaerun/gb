@@ -16,6 +16,7 @@ module.exports = {
 
         if (stopwatchMap.has(name)) {
             let startTime = stopwatchMap.get(name);
+            stopwatchMap.delete(name);
             let endTime = new Date() - startTime;
 
             message.channel.send(`**${name}** took ${prettyMilliseconds(endTime)}`);
