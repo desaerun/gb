@@ -8,8 +8,19 @@ module.exports = {
             param: '[subreddit]',
             type: 'String',
             description: 'A string representing the subreddit name',
-            default: 'youtubehaiku',
+            default: `A random option from ${this.defaultSubreddits}`,
         },
+    ],
+    defaultSubreddits: [
+        'YoutubeHaiku',
+        'TodayILearned',
+        'NextFuckingLevel',
+        'Aww',
+        'InterestingAsFuck',
+        'Pics',
+        'Gifs',
+        'BlackPeopleTwitter',
+        'me_irl'
     ],
     async execute(client, message, args) {
 
@@ -22,7 +33,9 @@ module.exports = {
                 subreddit = subreddit.substring(subreddit.lastIndexOf('/')+1);
             }
         } else {
-            subreddit = this.args[0].default;
+            // If no subreddit arg is passed in, select a random one from defaultSubreddits
+            let rand = Math.floor(Math.random() * this.defaultSubreddits.length);
+            subreddit = this.defaultSubreddits[rand];
         }
 
         const requestURL = `https://reddit.com/r/${subreddit}/top/.json?sort=top&t=day&is_self=true&limit=1`;
