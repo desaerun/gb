@@ -28,7 +28,7 @@ module.exports = {
         }
         let deletedMessages;
         try {
-            [deletedMessages] = pool.query("SELECT" +
+            [deletedMessages] = await pool.query("SELECT" +
             "    m.id," +
             "    m.content," +
             "    m.guild," +
