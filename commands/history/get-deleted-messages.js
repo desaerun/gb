@@ -23,8 +23,8 @@ module.exports = {
     ],
     execute: async function (client, message, args) {
         let userID = args[0];
-        if (message.mentions.first) {
-            userID = message.mentions.first.user.id;
+        if (message.mentions.users.first()) {
+            userID = message.mentions.users.first().id;
         }
         let deletedMessages;
         try {
