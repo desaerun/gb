@@ -74,7 +74,7 @@ module.exports = {
                 embedMessage.setImage(deletedMessage.attachmentURL);
             }
             try {
-                channel.send(embedMessage);
+                await message.channel.send(embedMessage);
             } catch (err) {
                 console.error("There was an error sending the embed message:", err);
                 return false;

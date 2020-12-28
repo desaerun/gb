@@ -134,7 +134,7 @@ module.exports = {
                     embedMessage.setImage(messageRow.attachmentURL);
                 }
                 try {
-                    channel.send(embedMessage);
+                    await channel.send(embedMessage);
                 } catch (err) {
                     console.error("There was an error sending the embed message:", err);
                     return false;
