@@ -28,19 +28,16 @@ module.exports = {
         const requestURL = `https://reddit.com/r/${subreddit}/top/.json?sort=top&t=day&is_self=true&limit=1`;
 
         try {
-            message.channel.send(`Requesting from: ${requestURL}`);
             const response = await axios.get(requestURL);
             if (response.status === 200) {
 
-                message.channel.send(response.data);
+                message.channel.send(JSON.stringify(response.data));
 
-                const json = JSON.parse(response.data);
-
-                if (!json.data.children) {
+                if (!response.data.data.children) {
                     message.channel.send(`I wasn't able to find a post from the subreddit /r/${subreddit}. Did you spell it correctly?`);
                 }
 
-                const desiredPostData = json.data.children[0].data;
+                const desiredPostData = response.data.data.children[0].data;
 
                 const title = desiredPostData.title;
                 const selfText = desiredPostData.selftext;
