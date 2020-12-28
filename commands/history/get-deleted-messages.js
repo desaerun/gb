@@ -47,7 +47,9 @@ module.exports = {
             "    attachments a ON m.id = a.messageId" +
             " WHERE" +
             "    deleted != NULL AND author = ?", userID);
-            console.log(JSON.stringify(deletedMessages));
+            console.log(`userID: ${userID}`);
+            console.log(`deleted messages: ${JSON.stringify(deletedMessages)}`);
+
         } catch (e) {
             throw e;
         }
