@@ -46,7 +46,7 @@ module.exports = {
                 " LEFT JOIN authors author ON" +
                 "    m.author=author.id" +
                 " WHERE" +
-                "    deleted IS NOT NULL and m.author = ?" +
+                "    m.deleted IS NOT NULL and m.author = ?" +
                 " ORDER BY" +
                 "    m.timestamp" +
                 " DESC", userID);
@@ -56,20 +56,20 @@ module.exports = {
             throw e;
         }
         for (const deletedMessage of deletedMessages) {
-            console.log(`Current message: ${JSON.stringify(messageRow)}`);
-            let messageTimestamp = new Date(messageRow.timestamp);
+            console.log(`Current message: ${JSON.stringify(deletedMessage)}`);
+            let messageTimestamp = new Date(deletedMessage.timestamp);
             let humanTimedate = moment(messageTimestamp).format("dddd, MMMM Do YYYY @ hh:mm:ss a");
             let embedMessage = new Discord.MessageEmbed()
-                .setAuthor(messageRow.author_displayName, messageRow.author_avatarURL)
-                .setThumbnail(messageRow.author_avatarURL)
+                .setAuthor(deletedMessage.author_displayName, deletedMessage.author_avatarURL)
+                .setThumbnail(deletedMessage.author_avatarURL)
                 .setTitle(humanTimedate)
-                .addField("Deleted:",moment(messageRow.deleted).format("dddd, MMMM Do YYYY @ hh:mm:ss a"));
+                .addField("Deleted:",moment(deletedMessage.deleted).format("dddd, MMMM Do YYYY @ hh:mm:ss a"));
 
-            if (messageRow.content) {
-                embedMessage.addField('\u200b', messageRow.content)
+            if (deletedMessage.content) {
+                embedMessage.addField('\u200b', deletedMessage.content)
             }
-            if (messageRow.attachmentURL) {
-                embedMessage.setImage(messageRow.attachmentURL);
+            if (deletedMessage.attachmentURL) {
+                embedMessage.setImage(deletedMessage.attachmentURL);
             }
             try {
                 channel.send(embedMessage);
