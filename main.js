@@ -138,24 +138,24 @@ function isCommand(message) {
  * @param args
  */
 function runCommands(message, args) {
-    const command = args.shift().toLowerCase();
+    const commandName = args.shift().toLowerCase();
     //const guild = client.guilds.fetch(message.guild.id);
 
-    if (client.commands.has(command)) {
+    if (client.commands.has(commandName)) {
         try {
-            let command = client.commands.get(command);
+            let command = client.commands.get(commandName);
             if (!args && command.args) {
                 for (let arg of args) {
                     args += arg.default + ' ';
                 }
                 args = args.trim();
             }
-            client.commands.get(command).execute(client, message, args);
+            command.execute(client, message, args);
         } catch (err) {
             dev_output.sendTrace(err, CONFIG.channel_dev_id);
         }
     } else {
-        message.channel.send(`_${command}_ is not a valid command`);
+        message.channel.send(`_${commandName}_ is not a valid command`);
     }
 }
 
