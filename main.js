@@ -2,13 +2,14 @@ require("dotenv").config();  // pull in ENV variables from .env file
 const CONFIG = require('./config/config');
 const Discord = require('discord.js');
 const client = new Discord.Client({partials: ['MESSAGE']});
-const snowflakeToTimestamp = require("./tools/snowflakeToTimestamp");
+//const snowflakeToTimestamp = require("./tools/snowflakeToTimestamp");
 
 const cron = require("node-cron");
 
 const captureMessage = require("./tools/message_db_tools/captureMessage");
 const updateEditedMessage = require("./tools/message_db_tools/updateEditedMessage");
 const deleteMessage = require("./tools/message_db_tools/deleteMessage");
+const status = require('./commands/bot_control/set-bot-status.js');
 
 const dev_output = require('./dev_output');
 dev_output.setClient(client);
@@ -23,7 +24,7 @@ getListenerSet("./listeners");
 
 client.once('ready', () => {
     console.log("bot online.");
-    let guilds = client.guilds;
+    //let guilds = client.guilds;
 
 
     //todo: read in first line from github_update.txt and add it to the "online" message
@@ -43,7 +44,7 @@ client.once('ready', () => {
      */
 
     //set initial bot status
-    client.user.setActivity('eating chicken and grape drank', {type: 'PLAYING'})
+    client.user.setActivity(status.args[0].default, {type: 'PLAYING'})
         .then(() => console.log())
         .catch((err) => {
             dev_output.sendTrace(`Bot failed to set status: ${err}`, process.env.ONLINE_STATUS_CHANNEL_ID)
@@ -134,10 +135,11 @@ function isCommand(message) {
 /**
  * Searches client.commands for the parsed command, and executes if the command is valid
  * @param message
+ * @param args
  */
 function runCommands(message, args) {
     const command = args.shift().toLowerCase();
-    const guild = client.guilds.fetch(message.guild.id);
+    //const guild = client.guilds.fetch(message.guild.id);
 
     if (client.commands.has(command)) {
         try {
