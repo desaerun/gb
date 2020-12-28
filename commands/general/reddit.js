@@ -22,7 +22,7 @@ module.exports = {
                 subreddit = subreddit.substring(subreddit.lastIndexOf('/')+1);
             }
         } else {
-            subreddit = this.args.default;
+            subreddit = this.args[0].default;
         }
 
         const requestURL = `https://reddit.com/r/${subreddit}/top/.json?sort=top&t=day&is_self=true&limit=1`;
