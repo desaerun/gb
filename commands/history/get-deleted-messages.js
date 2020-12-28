@@ -59,8 +59,7 @@ module.exports = {
         }
         for (const deletedMessage of deletedMessages) {
             console.log(`Current message: ${JSON.stringify(deletedMessage)}`);
-            let messageTimestamp = new Date(deletedMessage.timestamp);
-            let humanTimedate = moment(messageTimestamp).format("dddd, MMMM Do YYYY @ hh:mm:ss a");
+            let humanTimedate = moment(deletedMessage.deleted).format("dddd, MMMM Do YYYY @ hh:mm:ss a");
             let embedMessage = new Discord.MessageEmbed()
                 .setAuthor(deletedMessage.author_displayName, deletedMessage.author_avatarURL)
                 .setThumbnail(deletedMessage.author_avatarURL)
