@@ -8,7 +8,8 @@ module.exports = {
     execute(client, message, args) {
 
         if (args.length < 1) {
-            message.channel.send('What are you trying to time? Include a name for your stopwatch!')
+            message.channel.send('What are you trying to time? Include a name for your stopwatch!');
+            return;
         }
 
         let name = args.join(' ');
@@ -17,10 +18,10 @@ module.exports = {
             let startTime = stopwatchMap.get(name);
             let endTime = new Date() - startTime;
 
-            message.channel.send(`${name} took ${prettyMilliseconds(endTime)}`);
+            message.channel.send(`**${name}** took ${prettyMilliseconds(endTime)}`);
         } else {
             stopwatchMap.set(name, new Date());
-            message.channel.send(`Started a timer for ${name}!`);
+            message.channel.send(`Started a timer for **${name}**!`);
         }
     }
 }
