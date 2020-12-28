@@ -32,7 +32,8 @@ module.exports = {
             if (response.status === 200) {
 
                 if (!response.data.data.children) {
-                    message.channel.send(`I wasn't able to find a post from the subreddit /r/${subreddit}. Did you spell it correctly?`);
+                    message.channel.send(`I wasn't able to find a post from the subreddit /r/${subreddit}.`);
+                    return;
                 }
 
                 const desiredPostData = response.data.data.children[0].data;
