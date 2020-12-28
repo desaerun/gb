@@ -1,3 +1,5 @@
+const Discord = require("discord.js");
+
 //mysql
 const mysql = require("mysql2/promise");
 const db = require("../../config/db");
