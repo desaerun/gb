@@ -31,6 +31,8 @@ module.exports = {
             const response = await axios.get(requestURL);
             if (response.status === 200) {
 
+                message.channel.send(response.data);
+
                 const json = JSON.parse(response.data);
 
                 if (!json.data.children) {
