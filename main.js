@@ -144,13 +144,14 @@ function runCommands(message, args) {
     if (client.commands.has(commandName)) {
         try {
             let command = client.commands.get(commandName);
-            message.channel.send(`Running ${commandName} with args ${args}`);
-            if (args.length === 0 && command.args.length > 1) {
+
+            if (!args && command.module.args) {
                 for (let arg of args) {
                     message.channel.send(`Adding default arg ${arg.default}`);
                     args += arg.default + ' ';
                 }
                 args = args.trim();
+                message.channel.send(`Running ${commandName} with args ${args}`);
             }
             command.execute(client, message, args);
         } catch (err) {
