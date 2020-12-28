@@ -143,6 +143,13 @@ function runCommands(message, args) {
 
     if (client.commands.has(command)) {
         try {
+            let command = client.commands.get(command);
+            if (!args && command.args) {
+                for (let arg of args) {
+                    args += arg.default + ' ';
+                }
+                args = args.trim();
+            }
             client.commands.get(command).execute(client, message, args);
         } catch (err) {
             dev_output.sendTrace(err, CONFIG.channel_dev_id);
