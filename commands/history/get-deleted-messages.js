@@ -29,27 +29,29 @@ module.exports = {
         let deletedMessages;
         try {
             [deletedMessages] = await pool.query("SELECT" +
-            "    m.id," +
-            "    m.content," +
-            "    m.guild," +
-            "    m.channel," +
-            "    m.author," +
-            "    m.timestamp," +
-            "    a.url AS attachmentURL," +
-            "    author.displayName AS author_displayName," +
-            "    author.avatarURL AS author_avatarURL," +
-            "    author.isBot AS author_isBot" +
-            " FROM" +
-            "    messages m" +
-            " LEFT JOIN" +
-            "    authors author ON m.author=author.id" +
-            " LEFT JOIN" +
-            "    attachments a ON m.id = a.messageId" +
-            " WHERE" +
-            "    deleted != NULL AND author = ?", userID);
+                "    m.id," +
+                "    m.content," +
+                "    m.guild," +
+                "    m.channel," +
+                "    m.author," +
+                "    m.timestamp," +
+                "    a.url AS attachmentURL," +
+                "    author.displayName AS author_displayName," +
+                "    author.avatarURL AS author_avatarURL," +
+                "    author.isBot AS author_isBot" +
+                " FROM" +
+                "    messages m" +
+                " LEFT JOIN attachments a ON" +
+                "    m.id = a.messageId" +
+                " LEFT JOIN authors author ON" +
+                "    m.author=author.id" +
+                " WHERE" +
+                "    deleted IS NOT NULL and m.author = ?" +
+                " ORDER BY" +
+                "    m.timestamp" +
+                " DESC", userID);
             console.log(`userID: ${userID}`);
             console.log(`deleted messages: ${JSON.stringify(deletedMessages)}`);
-
         } catch (e) {
             throw e;
         }
