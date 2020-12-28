@@ -28,6 +28,7 @@ module.exports = {
         const requestURL = `https://reddit.com/r/${subreddit}/top/.json?sort=top&t=day&is_self=true&limit=1`;
 
         try {
+            message.channel.send(`Requesting from: ${requestURL}`);
             const response = await axios.get(requestURL);
             if (response.status === 200) {
 
