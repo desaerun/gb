@@ -36,18 +36,10 @@ class Reddit implements Command {
 
     async executeCommand(client, message, args) {
 
-        let subreddit;
-
-        if (args.length > 0) {
-            subreddit = args[0];
-            // Strip down to only content after '/' chars in case the user selected 'r/youtubehaiku', for example
-            if (subreddit.includes('/')) {
-                subreddit = subreddit.substring(subreddit.lastIndexOf('/')+1);
-            }
-        } else {
-            // If no subreddit arg is passed in, select a random one from defaultSubreddits
-            let rand = Math.floor(Math.random() * this.defaultSubreddits.length);
-            subreddit = this.defaultSubreddits[rand];
+        let subreddit = args[0];
+        // Strip down to only content after '/' chars in case the user selected 'r/youtubehaiku', for example
+        if (subreddit.includes('/')) {
+            subreddit = subreddit.substring(subreddit.lastIndexOf('/')+1);
         }
 
         const requestURL = `https://reddit.com/r/${subreddit}/top/.json?sort=top&t=day&is_self=true&limit=1`;
@@ -63,33 +55,38 @@ class Reddit implements Command {
 
                 const desiredPostData = response.data.data.children[0].data;
 
-                const title = desiredPostData.title;
-                const selfText = desiredPostData.selftext;
-                const media = desiredPostData.url_overridden_by_dest;
-
-                let fullMessage = '';
-
-                if (title) {
-                    fullMessage += `**${title}**`;
-                }
-
-                if (selfText) {
-                    if (fullMessage.length > 0)
-                        fullMessage += '\n';
-                    fullMessage += `${selfText}`;
-                }
-
-                if (media) {
-                    if (fullMessage.length > 0)
-                        fullMessage += '\n';
-                    fullMessage += `${media}`;
-                }
-
-                message.channel.send(fullMessage);
+                const response = Reddit.buildMessageFromPostJSON(desiredPostData);
+                message.channel.send(response);
             }
         } catch (err) {
             message.channel.send(`Error encountered while requesting data from Reddit: ${err}`);
         }
+    }
+
+    static buildMessageFromPostJSON(json) {
+        const title = json.title;
+        const selfText = json.selftext;
+        const media = json.url_overridden_by_dest;
+
+        let fullMessage = '';
+
+        if (title) {
+            fullMessage += `**${title}**`;
+        }
+
+        if (selfText) {
+            if (fullMessage.length > 0)
+                fullMessage += '\n';
+            fullMessage += `${selfText}`;
+        }
+
+        if (media) {
+            if (fullMessage.length > 0)
+                fullMessage += '\n';
+            fullMessage += `${media}`;
+        }
+
+        return fullMessage;
     }
 }
 
