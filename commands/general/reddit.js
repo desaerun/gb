@@ -42,8 +42,8 @@ async function execute(client, message, args) {
 
             const desiredPostData = response.data.data.children[0].data;
 
-            const response = buildMessageFromPostJSON(desiredPostData);
-            message.channel.send(response);
+            const fullMessage = buildMessageFromPostJSON(desiredPostData);
+            message.channel.send(fullMessage);
         }
     } catch (err) {
         message.channel.send(`Error encountered while requesting data from Reddit: ${err}`);
