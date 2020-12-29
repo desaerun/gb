@@ -13,7 +13,7 @@ async function execute(client, message, args) {
 
     if (args.length === 0) {
         message.channel.send('Welcome, groid! To get started, type `-commands` for a list of commands, or ' +
-                                  'type `-{commandName} help` to get more information about a certain command.');
+                                  'type `-help {commandName}` to get more information about a certain command.');
     }
 
     const helpWithCommand = args[0];
