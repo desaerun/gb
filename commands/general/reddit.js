@@ -1,7 +1,6 @@
-import axios from 'axios';
-import Command from '../command';
+const axios = require('axios');
 
-class Reddit implements Command {
+class Reddit {
     name: 'reddit';
     description: 'Retrieves the top post of the day from the selected subreddit and shares it';
     args: [
