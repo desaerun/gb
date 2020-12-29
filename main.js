@@ -176,14 +176,18 @@ function getHelpMessage(command) {
     for (let i = 1; i < command.args.length + 1; i++) {
         let arg = command.args[i-1];
 
-        let value = `Arg name: ${arg.param}\n
-                     Arg type: ${arg.type}\n
-                     Arg desc: ${arg.description}\n`;
+        let value = `Name: ${arg.param}\n` +
+                    `Type: ${arg.type}\n` +
+                    `Desc: ${arg.description}\n`;
 
         if (arg.default) {
-            value += `Default(s): ${arg.default}`;
+            if (Array.isArray(arg.default)) {
+                value += `Default randomized from the following:\n${arg.default.join('\n')}`;
+            } else {
+                value += `Default: ${arg.default}`;
+            }
         } else {
-            value += `Default(s): none`;
+            value += `Default: none`;
         }
 
         fields[i] = {
