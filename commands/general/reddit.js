@@ -1,28 +1,25 @@
 const axios = require('axios');
 
-class Reddit {
-    static name = 'reddit';
-    static description = 'Retrieves the top post of the day from the selected subreddit and shares it';
-    static args = [
-        {
-            param: '[subreddit]',
-            type: 'String',
-            description: 'A string representing the subreddit name',
-            default: randomSubreddit()
-        }
-    ];
-    static defaultSubreddits = [
-        'YoutubeHaiku',
-        'TodayILearned',
-        'NextFuckingLevel',
-        'Aww',
-        'InterestingAsFuck',
-        'Pics',
-        'Gifs',
-        'BlackPeopleTwitter',
-        'me_irl'
-    ];
-}
+const name = 'reddit';
+const description = 'Retrieves the top post of the day from the selected subreddit and shares it';
+const args = [
+    {
+        param: '[subreddit]',
+        type: 'String',
+        description: 'A string representing the subreddit name',
+        default: [
+            'YoutubeHaiku',
+            'TodayILearned',
+            'NextFuckingLevel',
+            'Aww',
+            'InterestingAsFuck',
+            'Pics',
+            'Gifs',
+            'BlackPeopleTwitter',
+            'me_irl'
+        ]
+    }
+];
 
 async function execute(client, message, args) {
 
@@ -77,14 +74,6 @@ function buildMessageFromPostJSON(json) {
     }
 
     return fullMessage;
-}
-
-function randomSubreddit() {
-    return Reddit.defaultSubreddits[getRandom(Reddit.defaultSubreddits.length)];
-}
-
-function getRandom(max) {
-    return Math.floor(Math.random() * max);
 }
 
 module.exports = {

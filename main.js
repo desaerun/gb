@@ -148,8 +148,13 @@ function runCommands(message, args) {
             if (command.args && command.args.length > args.length) {
                 args = [];
                 for (let i = 0; i < command.args.length; i++) {
-                    if (args[i].default) {
-                        args[i] = command.args[i].default;
+                    if (command.args[i].default) {
+                        if (Array.isArray(command.args[i].default)) {
+                            args[i] = getRand(command.args[i].default);
+                        } else {
+                            args[i] = command.args[i].default;
+                        }
+
                     }
                 }
             }
@@ -160,6 +165,10 @@ function runCommands(message, args) {
     } else {
         message.channel.send(`_${commandName}_ is not a valid command`);
     }
+}
+
+function getRand(arr) {
+    return arr[Math.floor(Math.random() * arr.length)];
 }
 
 /**
