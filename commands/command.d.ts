@@ -1,6 +1,4 @@
-//import {Client, Message} from "discord.js";
-const Client = require("discord.js").Client;
-const Message = require("discord.js").Message;
+import {Client, Message} from "discord.js";
 
 interface Command {
     readonly name: string;
