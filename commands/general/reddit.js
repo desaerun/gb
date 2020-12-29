@@ -1,5 +1,5 @@
 const axios = require('axios');
-w
+
 class Reddit {
     static name = 'reddit';
     static description = 'Retrieves the top post of the day from the selected subreddit and shares it';
