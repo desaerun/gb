@@ -1,18 +1,17 @@
 const axios = require('axios');
 
-class Reddit {
-    name: 'reddit';
-    description: 'Retrieves the top post of the day from the selected subreddit and shares it';
+module.exports = {
+    name: 'reddit',
+    description: 'Retrieves the top post of the day from the selected subreddit and shares it',
     args: [
         {
             param: '[subreddit]',
             type: 'String',
             description: 'A string representing the subreddit name',
-            default: Reddit.randomSubreddit
+            default: randomSubreddit()
         },
-    ];
-
-    static defaultSubreddits: [
+    ],
+    defaultSubreddits: [
         'YoutubeHaiku',
         'TodayILearned',
         'NextFuckingLevel',
@@ -22,16 +21,7 @@ class Reddit {
         'Gifs',
         'BlackPeopleTwitter',
         'me_irl'
-    ]
-
-    static randomSubreddit() {
-        return this.defaultSubreddits[Reddit.getRandom(this.defaultSubreddits.length)];
-    }
-
-    static getRandom(max) {
-        return Math.floor(Math.random() * max);
-    }
-
+    ],
     async executeCommand(client, message, args) {
 
         let subreddit = args[0];
@@ -53,44 +43,45 @@ class Reddit {
 
                 const desiredPostData = response.data.data.children[0].data;
 
-                const response = Reddit.buildMessageFromPostJSON(desiredPostData);
+                const response = buildMessageFromPostJSON(desiredPostData);
                 message.channel.send(response);
             }
         } catch (err) {
             message.channel.send(`Error encountered while requesting data from Reddit: ${err}`);
         }
     }
-
-    static buildMessageFromPostJSON(json) {
-        const title = json.title;
-        const selfText = json.selftext;
-        const media = json.url_overridden_by_dest;
-
-        let fullMessage = '';
-
-        if (title) {
-            fullMessage += `**${title}**`;
-        }
-
-        if (selfText) {
-            if (fullMessage.length > 0)
-                fullMessage += '\n';
-            fullMessage += `${selfText}`;
-        }
-
-        if (media) {
-            if (fullMessage.length > 0)
-                fullMessage += '\n';
-            fullMessage += `${media}`;
-        }
-
-        return fullMessage;
-    }
 }
 
-module.exports = {
-    name: this.name,
-    description: this.description,
-    args: this.args,
-    execute: this.executeCommand
+function buildMessageFromPostJSON(json) {
+    const title = json.title;
+    const selfText = json.selftext;
+    const media = json.url_overridden_by_dest;
+
+    let fullMessage = '';
+
+    if (title) {
+        fullMessage += `**${title}**`;
+    }
+
+    if (selfText) {
+        if (fullMessage.length > 0)
+            fullMessage += '\n';
+        fullMessage += `${selfText}`;
+    }
+
+    if (media) {
+        if (fullMessage.length > 0)
+            fullMessage += '\n';
+        fullMessage += `${media}`;
+    }
+
+    return fullMessage;
+}
+
+function randomSubreddit() {
+    return this.defaultSubreddits[getRandom(this.defaultSubreddits.length)];
+}
+
+function getRandom(max) {
+    return Math.floor(Math.random() * max);
 }
