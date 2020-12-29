@@ -13,6 +13,7 @@ module.exports = {
             // no default, as we'll print a list of active stopwatches
         }
     ],
+    helpText: 'If this command is called with no arguments, a list of active stopwatches is printed.',
     execute(client, message, args) {
 
         if (args.length === 0) {
