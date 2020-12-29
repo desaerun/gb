@@ -1,6 +1,7 @@
 const axios = require('axios');
 
 module.exports = {
+
     name: 'reddit',
     description: 'Retrieves the top post of the day from the selected subreddit and shares it',
     args: [
