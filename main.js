@@ -166,6 +166,14 @@ function runCommands(message, args) {
     }
 }
 
+/**
+ * Constructs a MessageEmbed object from member fields of the command,
+ * including any custom helpText in order to relay helpful information about the
+ * command to the relevant text channel.
+ *
+ * @param command
+ * @returns {module:"discord.js".MessageEmbed}
+ */
 function getHelpMessage(command) {
     let fields = [];
     fields[0] = {
@@ -173,27 +181,29 @@ function getHelpMessage(command) {
         value: command.description
     };
 
-    for (let i = 1; i < command.args.length + 1; i++) {
-        let arg = command.args[i-1];
+    if (command.args) {
+        for (let i = 1; i < command.args.length + 1; i++) {
+            let arg = command.args[i - 1];
 
-        let value = `Name: ${arg.param}\n` +
-                    `Type: ${arg.type}\n` +
-                    `Desc: ${arg.description}\n`;
+            let value = `Name: ${arg.param}\n` +
+                `Type: ${arg.type}\n` +
+                `Desc: ${arg.description}\n`;
 
-        if (arg.default) {
-            if (Array.isArray(arg.default)) {
-                value += `Default randomized from the following:\n${arg.default.join('\n')}`;
+            if (arg.default) {
+                if (Array.isArray(arg.default)) {
+                    value += `Default randomized from the following:\n${arg.default.join('\n')}`;
+                } else {
+                    value += `Default: ${arg.default}`;
+                }
             } else {
-                value += `Default: ${arg.default}`;
+                value += `Default: none`;
             }
-        } else {
-            value += `Default: none`;
-        }
 
-        fields[i] = {
-            name: `Arg #${i}`,
-            value: value
-        };
+            fields[i] = {
+                name: `Arg #${i}`,
+                value: value
+            };
+        }
     }
 
     if (command.helpText) {
