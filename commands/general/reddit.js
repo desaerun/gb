@@ -1,17 +1,20 @@
+import {Command} from "../command";
+
 const axios = require('axios');
 
-module.exports = {
-    name: 'reddit',
-    description: 'Retrieves the top post of the day from the selected subreddit and shares it',
+class Reddit implements Command {
+    name: 'reddit';
+    description: 'Retrieves the top post of the day from the selected subreddit and shares it';
     args: [
         {
             param: '[subreddit]',
             type: 'String',
             description: 'A string representing the subreddit name',
-            default: `A random option from ${this.defaultSubreddits}`,
+            default: Reddit.randomSubreddit
         },
-    ],
-    defaultSubreddits: [
+    ];
+
+    static defaultSubreddits: [
         'YoutubeHaiku',
         'TodayILearned',
         'NextFuckingLevel',
@@ -21,8 +24,17 @@ module.exports = {
         'Gifs',
         'BlackPeopleTwitter',
         'me_irl'
-    ],
-    async execute(client, message, args) {
+    ]
+
+    static randomSubreddit() {
+        return this.defaultSubreddits[Reddit.getRandom(this.defaultSubreddits.length)];
+    }
+
+    static getRandom(max) {
+        return Math.floor(Math.random() * max);
+    }
+
+    async executeCommand(client, message, args) {
 
         let subreddit;
 
@@ -79,4 +91,11 @@ module.exports = {
             message.channel.send(`Error encountered while requesting data from Reddit: ${err}`);
         }
     }
+}
+
+module.exports = {
+    name: this.name,
+    description: this.description,
+    args: this.args,
+    execute: this.executeCommand
 }
