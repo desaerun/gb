@@ -9,7 +9,7 @@ module.exports = {
             param: '[userID]',
             type: 'Snowflake',
             description: 'A Snowflake representing a user ID',
-            default: '187048556643876864',
+            // no default, as we use the message sender by default
         }
     ],
     execute(client, message, args) {
