@@ -145,13 +145,6 @@ function runCommands(message, args) {
         try {
             let command = client.commands.get(commandName);
 
-            // The user is asking for help with the command
-            if (args.length === 1 && args[0] === 'help') {
-                let helpMessage = getHelpMessage(command);
-                message.channel.send(helpMessage);
-                return;
-            }
-
             // If there are fewer passed args than the required amount for the command, use defaults
             if (command.args && command.args.length > args.length) {
                 args = setArgsToDefault(command);
@@ -165,58 +158,6 @@ function runCommands(message, args) {
     } else {
         message.channel.send(`_${commandName}_ is not a valid command`);
     }
-}
-
-/**
- * Constructs a MessageEmbed object from member fields of the command,
- * including any custom helpText in order to relay helpful information about the
- * command to the relevant text channel.
- *
- * @param command
- * @returns {module:"discord.js".MessageEmbed}
- */
-function getHelpMessage(command) {
-    let fields = [];
-    fields[0] = {
-        name: 'Description',
-        value: command.description
-    };
-
-    if (command.args) {
-        for (let i = 1; i < command.args.length + 1; i++) {
-            let arg = command.args[i - 1];
-
-            let value = `Name: ${arg.param}\n` +
-                `Type: ${arg.type}\n` +
-                `Desc: ${arg.description}\n`;
-
-            if (arg.default) {
-                if (Array.isArray(arg.default)) {
-                    value += `Default randomized from the following:\n${arg.default.join('\n')}`;
-                } else {
-                    value += `Default: ${arg.default}`;
-                }
-            } else {
-                value += `Default: none`;
-            }
-
-            fields[i] = {
-                name: `Arg #${i}`,
-                value: value
-            };
-        }
-    }
-
-    if (command.helpText) {
-        fields[fields.length] = {
-            name: 'Information',
-            value: command.helpText
-        }
-    }
-
-    return new Discord.MessageEmbed()
-        .setTitle(`**${command.name}**`)
-        .addFields(fields);
 }
 
 /**
