@@ -146,12 +146,8 @@ function runCommands(message, args) {
             let command = client.commands.get(commandName);
 
             if (args.length === 1 && args[0] === 'help') {
-                if (command.help) {
-                    let helpMessage = getHelpMessage(command);
-                    message.channel.send(helpMessage);
-                } else {
-                    message.channel.send(`The command ${command.name} does not have any help information. Sorry!`);
-                }
+                let helpMessage = getHelpMessage(command);
+                message.channel.send(helpMessage);
                 return;
             }
 
@@ -196,16 +192,16 @@ function getHelpMessage(command) {
         };
     }
 
-    fields[fields.length] = {
-        name: 'Information',
-        value: command.helpText
+    if (command.helpText) {
+        fields[fields.length] = {
+            name: 'Information',
+            value: command.helpText
+        }
     }
 
-    let embedMessage = new Discord.MessageEmbed()
+    return new Discord.MessageEmbed()
         .setTitle(`**${command.name}**`)
         .addFields(fields);
-
-    return embedMessage;
 }
 
 function setArgsToDefault(command) {
