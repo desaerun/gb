@@ -22,7 +22,7 @@ module.exports = {
         'BlackPeopleTwitter',
         'me_irl'
     ],
-    async executeCommand(client, message, args) {
+    async execute(client, message, args) {
 
         let subreddit = args[0];
         // Strip down to only content after '/' chars in case the user selected 'r/youtubehaiku', for example
