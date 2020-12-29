@@ -80,5 +80,5 @@ module.exports = {
     name: name,
     description: description,
     args: args,
-    execute: execute()
+    execute: execute
 }
