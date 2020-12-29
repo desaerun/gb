@@ -144,12 +144,12 @@ function runCommands(message, args) {
     if (client.commands.has(commandName)) {
         try {
             let command = client.commands.get(commandName);
+            // If there are fewer passed args than the required amount for the command, use defaults
             if (command.args && command.args.length > args.length) {
-                args = '';
-                for (let arg of command.args) {
-                    args += arg.default + ' ';
+                args = [];
+                for (let i = 0; i < command.args.length; i++) {
+                    args[i] = command.args[i].default;
                 }
-                args = args.trim();
             }
             command.execute(client, message, args);
         } catch (err) {
