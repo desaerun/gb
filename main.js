@@ -145,6 +145,7 @@ function runCommands(message, args) {
         try {
             let command = client.commands.get(commandName);
 
+            // The user is asking for help with the command
             if (args.length === 1 && args[0] === 'help') {
                 let helpMessage = getHelpMessage(command);
                 message.channel.send(helpMessage);
@@ -218,6 +219,12 @@ function getHelpMessage(command) {
         .addFields(fields);
 }
 
+/**
+ * Returns an args array for the current command based on its default arg values
+ *
+ * @param command
+ * @returns {[]}
+ */
 function setArgsToDefault(command) {
     let args = [];
     for (let i = 0; i < command.args.length; i++) {
