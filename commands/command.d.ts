@@ -1,6 +1,6 @@
 import {Client, Message} from "discord.js";
 
-interface Command {
+export default interface Command {
     readonly name: string;
     readonly description: string;
     readonly args?: Array<{ param: string, type: string, description: string, default?: string }>;
