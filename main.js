@@ -148,7 +148,9 @@ function runCommands(message, args) {
             if (command.args && command.args.length > args.length) {
                 args = [];
                 for (let i = 0; i < command.args.length; i++) {
-                    args[i] = command.args[i].default;
+                    if (args[i].default) {
+                        args[i] = command.args[i].default;
+                    }
                 }
             }
             command.execute(client, message, args);
