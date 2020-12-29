@@ -23,7 +23,7 @@ module.exports = {
                 let response = '';
                 for (let name of stopwatchMap.keys()) {
                     let endTime = new Date() - stopwatchMap.get(name);
-                    response += `Stopwatch for **${name}** has been running for ${prettyMilliseconds(endTime)}`;
+                    response += `Stopwatch for **${name}** has been running for ${prettyMilliseconds(endTime)}\n`;
                 }
                 message.channel.send(response);
             }

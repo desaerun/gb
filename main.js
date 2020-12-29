@@ -145,6 +145,7 @@ function runCommands(message, args) {
         try {
             let command = client.commands.get(commandName);
             // If there are fewer passed args than the required amount for the command, use defaults
+            message.channel.send(`args before defaults: ${args}`);
             if (command.args && command.args.length > args.length) {
                 args = [];
                 for (let i = 0; i < command.args.length; i++) {
@@ -154,10 +155,10 @@ function runCommands(message, args) {
                         } else {
                             args[i] = command.args[i].default;
                         }
-
                     }
                 }
             }
+            message.channel.send(`args after defaults: ${args}`);
             command.execute(client, message, args);
         } catch (err) {
             dev_output.sendTrace(err, CONFIG.channel_dev_id);
