@@ -1,5 +1,4 @@
-import {Command} from "../command";
-
+const Command = require('../command');
 const axios = require('axios');
 
 class Reddit implements Command {
