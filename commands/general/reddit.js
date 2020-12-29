@@ -1,55 +1,54 @@
 const axios = require('axios');
 
-module.exports = {
+const name = 'reddit';
+const description = 'Retrieves the top post of the day from the selected subreddit and shares it';
+const args = [
+    {
+        param: '[subreddit]',
+        type: 'String',
+        description: 'A string representing the subreddit name',
+        default: randomSubreddit()
+    }
+];
 
-    name: 'reddit',
-    description: 'Retrieves the top post of the day from the selected subreddit and shares it',
-    args: [
-        {
-            param: '[subreddit]',
-            type: 'String',
-            description: 'A string representing the subreddit name',
-            default: randomSubreddit()
-        },
-    ],
-    defaultSubreddits: [
-        'YoutubeHaiku',
-        'TodayILearned',
-        'NextFuckingLevel',
-        'Aww',
-        'InterestingAsFuck',
-        'Pics',
-        'Gifs',
-        'BlackPeopleTwitter',
-        'me_irl'
-    ],
-    async execute(client, message, args) {
+const defaultSubreddits = [
+    'YoutubeHaiku',
+    'TodayILearned',
+    'NextFuckingLevel',
+    'Aww',
+    'InterestingAsFuck',
+    'Pics',
+    'Gifs',
+    'BlackPeopleTwitter',
+    'me_irl'
+]
 
-        let subreddit = args[0];
-        // Strip down to only content after '/' chars in case the user selected 'r/youtubehaiku', for example
-        if (subreddit.includes('/')) {
-            subreddit = subreddit.substring(subreddit.lastIndexOf('/')+1);
-        }
+async function execute(client, message, args) {
 
-        const requestURL = `https://reddit.com/r/${subreddit}/top/.json?sort=top&t=day&is_self=true&limit=1`;
+    let subreddit = args[0];
+    // Strip down to only content after '/' chars in case the user selected 'r/youtubehaiku', for example
+    if (subreddit.includes('/')) {
+        subreddit = subreddit.substring(subreddit.lastIndexOf('/')+1);
+    }
 
-        try {
-            const response = await axios.get(requestURL);
-            if (response.status === 200) {
+    const requestURL = `https://reddit.com/r/${subreddit}/top/.json?sort=top&t=day&is_self=true&limit=1`;
 
-                if (!response.data.data.children) {
-                    message.channel.send(`I wasn't able to find a post from the subreddit /r/${subreddit}.`);
-                    return;
-                }
+    try {
+        const response = await axios.get(requestURL);
+        if (response.status === 200) {
 
-                const desiredPostData = response.data.data.children[0].data;
-
-                const response = buildMessageFromPostJSON(desiredPostData);
-                message.channel.send(response);
+            if (!response.data.data.children) {
+                message.channel.send(`I wasn't able to find a post from the subreddit /r/${subreddit}.`);
+                return;
             }
-        } catch (err) {
-            message.channel.send(`Error encountered while requesting data from Reddit: ${err}`);
+
+            const desiredPostData = response.data.data.children[0].data;
+
+            const response = buildMessageFromPostJSON(desiredPostData);
+            message.channel.send(response);
         }
+    } catch (err) {
+        message.channel.send(`Error encountered while requesting data from Reddit: ${err}`);
     }
 }
 
@@ -80,9 +79,16 @@ function buildMessageFromPostJSON(json) {
 }
 
 function randomSubreddit() {
-    return this.defaultSubreddits[getRandom(this.defaultSubreddits.length)];
+    return defaultSubreddits[getRandom(defaultSubreddits.length)];
 }
 
 function getRandom(max) {
     return Math.floor(Math.random() * max);
+}
+
+module.exports = {
+    name: name,
+    description: description,
+    args: args,
+    execute: execute()
 }
