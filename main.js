@@ -144,26 +144,82 @@ function runCommands(message, args) {
     if (client.commands.has(commandName)) {
         try {
             let command = client.commands.get(commandName);
+
+            if (args.length === 1 && args[0] === 'help') {
+                if (command.help) {
+                    let helpMessage = getHelpMessage(command);
+                    message.channel.send(helpMessage);
+                } else {
+                    message.channel.send(`The command ${command.name} does not have any help information. Sorry!`);
+                }
+                return;
+            }
+
             // If there are fewer passed args than the required amount for the command, use defaults
             if (command.args && command.args.length > args.length) {
-                args = [];
-                for (let i = 0; i < command.args.length; i++) {
-                    if (command.args[i].default) {
-                        if (Array.isArray(command.args[i].default)) {
-                            args[i] = getRand(command.args[i].default);
-                        } else {
-                            args[i] = command.args[i].default;
-                        }
-                    }
-                }
+                args = setArgsToDefault(command);
             }
+
             command.execute(client, message, args);
+
         } catch (err) {
             dev_output.sendTrace(err, CONFIG.channel_dev_id);
         }
     } else {
         message.channel.send(`_${commandName}_ is not a valid command`);
     }
+}
+
+function getHelpMessage(command) {
+    let fields = [];
+    fields[0] = {
+        name: 'Description',
+        value: command.description
+    };
+
+    for (let i = 1; i < command.args.length + 1; i++) {
+        let arg = command.args[i-1];
+
+        let value = `Arg name: ${arg.param}\n
+                     Arg type: ${arg.type}\n
+                     Arg desc: ${arg.description}\n`;
+
+        if (arg.default) {
+            value += `Default(s): ${arg.default}`;
+        } else {
+            value += `Default(s): none`;
+        }
+
+        fields[i] = {
+            name: `Arg #${i}`,
+            value: value
+        };
+    }
+
+    fields[fields.length] = {
+        name: 'Information',
+        value: command.helpText
+    }
+
+    let embedMessage = new Discord.MessageEmbed()
+        .setTitle(`**${command.name}**`)
+        .addFields(fields);
+
+    return embedMessage;
+}
+
+function setArgsToDefault(command) {
+    let args = [];
+    for (let i = 0; i < command.args.length; i++) {
+        if (command.args[i].default) {
+            if (Array.isArray(command.args[i].default)) {
+                args[i] = getRand(command.args[i].default);
+            } else {
+                args[i] = command.args[i].default;
+            }
+        }
+    }
+    return args;
 }
 
 function getRand(arr) {

@@ -5,7 +5,7 @@ const description = 'Retrieves the top post of the day from the selected subredd
 const args = [
     {
         param: '[subreddit]',
-        type: 'String',
+        type: 'string',
         description: 'A string representing the subreddit name',
         default: [
             'YoutubeHaiku',
@@ -20,6 +20,7 @@ const args = [
         ]
     }
 ];
+const helpText = 'This is sample help text';
 
 async function execute(client, message, args) {
 
@@ -80,5 +81,6 @@ module.exports = {
     name: name,
     description: description,
     args: args,
-    execute: execute
+    helpText: helpText,
+    execute: execute,
 }
