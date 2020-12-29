@@ -144,10 +144,9 @@ function runCommands(message, args) {
     if (client.commands.has(commandName)) {
         try {
             let command = client.commands.get(commandName);
-            if (command.args.length > args.length) {
+            if (command.args && command.args.length > args.length) {
                 args = '';
                 for (let arg of command.args) {
-                    message.channel.send(`Adding default arg ${arg.default}`);
                     args += arg.default + ' ';
                 }
                 args = args.trim();
