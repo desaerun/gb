@@ -1,4 +1,4 @@
-const snowflakeToTimestamp = require(".../tools/snowflakeToTimestamp");
+const snowflakeToTimestamp = require("../../tools/snowflakeToTimestamp");
 
 module.exports = {
     name: 'ping',
