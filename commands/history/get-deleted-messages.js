@@ -61,7 +61,7 @@ module.exports = {
                 " ORDER BY" +
                 "    m.timestamp" +
                 " DESC" +
-                " LIMIT ?", [userID,numMessages]);
+                " LIMIT ?", [userID,+numMessages]);
         } catch (e) {
             throw e;
         }
