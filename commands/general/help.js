@@ -63,7 +63,7 @@ function getHelpMessage(command) {
             }
 
             fields.push({
-                name: `${currentArg.name}`,
+                name: `${currentArg.param}`,
                 value: value
             });
         }
