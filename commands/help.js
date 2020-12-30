@@ -16,49 +16,6 @@ module.exports = {
     ],
     async execute(client, message, args) {
         if (args.length === 0) {
-            let response = 'List of Commands:';
-
-            function indent(level) {
-                let indent_string = '';
-                for (var i = 0; i < level; i++) {
-                    indent_string += '    ';
-                }
-                return indent_string;
-            }
-
-            function listCommands(subdir_name = "", level = 0) {
-                const full_current_dir = `./commands/${subdir_name}`;
-                const command_files = fs.readdirSync(full_current_dir);
-                if (CONFIG.verbosity >= 2) {
-                    console.log(`Directory listing: ${command_files}`);
-                }
-
-                for (const file_name of command_files) {
-                    if (CONFIG.verbosity >= 2) {
-                        console.log(`full current dir: ${full_current_dir}`);
-                        console.log(`current subdir: ${subdir_name}`);
-                    }
-                    if (file_name.endsWith('.js')) {
-                        if (CONFIG.verbosity >= 2) {
-                            console.log(`loading file:  ./${subdir_name}/${file_name}`);
-                        }
-                        if (file_name === 'help.js') {
-                            response += `\n${indent(level)}${CONFIG.prefix}_${this.name}_: ${this.description}`;
-                            continue;
-                        }
-                        const command = require(`./${subdir_name}/${file_name}`);
-                        response += `\n${indent(level)}${CONFIG.prefix}_${command.name}_: ${command.description}`
-                    } else if (fs.statSync(`${full_current_dir}/${file_name}`).isDirectory()) {
-                        if (CONFIG.verbosity >= 2) {
-                            console.log(`${indent(level)}Recursing into directory ${full_current_dir}${file_name}`);
-                        }
-                        response += (`\n${indent(level)}${file_name} commands:`).replace("_", " ");
-                        listCommands(`${subdir_name}${file_name}`, level + 1);
-                    }
-                }
-                return response;
-            }
-
             message.channel.send(listCommands());
         }
 
@@ -126,4 +83,54 @@ function getHelpMessage(command) {
         .setTitle(`**${command.name}**`)
         .setDescription(`\`${fullCommand}\``)
         .addFields(fields);
+}
+
+/**
+ * Prints a list of commands by recursing into the commands directory
+ * and matching files with a .js extension
+ *
+ * @param subdir_name
+ * @param level
+ * @returns {String}
+ */
+
+function listCommands(subdir_name = "", level = 0) {
+    function indent(level) {
+        let indent_string = '';
+        for (let i = 0; i < level; i++) {
+            indent_string += '    ';
+        }
+        return indent_string;
+    }
+    let response = 'List of Commands:';
+    const full_current_dir = `./commands/${subdir_name}`;
+    const command_files = fs.readdirSync(full_current_dir);
+    if (CONFIG.verbosity >= 2) {
+        console.log(`Directory listing: ${command_files}`);
+    }
+
+    for (const file_name of command_files) {
+        if (CONFIG.verbosity >= 2) {
+            console.log(`full current dir: ${full_current_dir}`);
+            console.log(`current subdir: ${subdir_name}`);
+        }
+        if (file_name.endsWith('.js')) {
+            if (CONFIG.verbosity >= 2) {
+                console.log(`loading file:  ./${subdir_name}/${file_name}`);
+            }
+            if (file_name === 'help.js') {
+                response += `\n${indent(level)}${CONFIG.prefix}_help_: Prints a message telling users how to get a list of commands or help on a specific command.`;
+                continue;
+            }
+            const command = require(`./${subdir_name}/${file_name}`);
+            response += `\n${indent(level)}${CONFIG.prefix}_${command.name}_: ${command.description}`
+        } else if (fs.statSync(`${full_current_dir}/${file_name}`).isDirectory()) {
+            if (CONFIG.verbosity >= 2) {
+                console.log(`${indent(level)}Recursing into directory ${full_current_dir}${file_name}`);
+            }
+            response += (`\n${indent(level)}${file_name} commands:`).replace("_", " ");
+            listCommands(`${subdir_name}${file_name}`, level + 1);
+        }
+    }
+    return response;
 }
