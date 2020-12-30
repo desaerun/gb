@@ -14,20 +14,28 @@ const moment = require("moment");
 
 module.exports = {
     name: 'get-deleted-messages',
-    description: "Retrieves message history for the current channel and stores it to the DB",
+    description: "Retrieves the last numMessages messages",
     args: [
         {
             param: 'user',
             type: 'Snowflake|Mention',
             description: 'A user ID or @mention',
-            default: 'current channel',
+            default: 'current user',
         },
+        {
+            param: 'numMessages',
+            type: 'int',
+            description: 'The number of messages to retrieve',
+            default: 5,
+        },
+
     ],
     execute: async function (client, message, args) {
         let userID = args[0];
         if (message.mentions.users.first()) {
             userID = message.mentions.users.first().id;
         }
+        const numMessages = args[1] ? args[1] : this.args[1].default;
         let deletedMessages;
         try {
             [deletedMessages] = await pool.query("SELECT" +
@@ -52,19 +60,25 @@ module.exports = {
                 "    m.deleted IS NOT NULL and m.author = ?" +
                 " ORDER BY" +
                 "    m.timestamp" +
-                " DESC", userID);
-            console.log(`userID: ${userID}`);
-            console.log(`deleted messages: ${JSON.stringify(deletedMessages)}`);
+                " DESC" +
+                " LIMIT ?", [userID,numMessages]);
         } catch (e) {
+            throw e;
+        }
+        try {
+            message.channel.send(`Last ${numMessages} messages sent by ${deletedMessages[0].author_displayName}:`);
+        } catch (e) {
+            console.error("There was an error sending the embed message:", e);
             throw e;
         }
         for (const deletedMessage of deletedMessages) {
             console.log(`Current message: ${JSON.stringify(deletedMessage)}`);
+            console.log
             let embedMessage = new Discord.MessageEmbed()
                 .setAuthor(deletedMessage.author_displayName, deletedMessage.author_avatarURL)
                 .setThumbnail(deletedMessage.author_avatarURL)
                 .addField("Posted:", moment(deletedMessage.timestamp).format("dddd, MMMM Do YYYY @ hh:mm:ss a"))
-                .addField("Deleted:",moment(deletedMessage.deleted).format("dddd, MMMM Do YYYY @ hh:mm:ss a"));
+                .addField("Deleted:", moment(deletedMessage.deleted).format("dddd, MMMM Do YYYY @ hh:mm:ss a"));
 
             if (deletedMessage.content) {
                 embedMessage.addField('\u200b', deletedMessage.content)
@@ -74,8 +88,8 @@ module.exports = {
             }
             try {
                 await message.channel.send(embedMessage);
-            } catch (err) {
-                console.error("There was an error sending the embed message:", err);
+            } catch (e) {
+                console.error("There was an error sending the embed message:", e);
                 return false;
             }
         }
