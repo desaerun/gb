@@ -120,8 +120,7 @@ module.exports = {
 
             for (const messageRow of selectedMessages) {
                 console.log(`Current message: ${JSON.stringify(messageRow)}`);
-                let messageTimestamp = new Date(messageRow.timestamp);
-                let humanTimedate = moment(messageTimestamp).format("dddd, MMMM Do YYYY @ hh:mm:ss a");
+                let humanTimedate = moment(messageRow.timestamp).format("dddd, MMMM Do YYYY @ hh:mm:ss a");
                 let embedMessage = new Discord.MessageEmbed()
                     .setAuthor(messageRow.author_displayName, messageRow.author_avatarURL)
                     .setThumbnail(messageRow.author_avatarURL)
@@ -134,7 +133,7 @@ module.exports = {
                     embedMessage.setImage(messageRow.attachmentURL);
                 }
                 try {
-                    channel.send(embedMessage);
+                    await channel.send(embedMessage);
                 } catch (err) {
                     console.error("There was an error sending the embed message:", err);
                     return false;
