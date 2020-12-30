@@ -11,11 +11,11 @@ module.exports = {
             .setTitle('Pong!')
             .addField({
                 name: 'Latency',
-                value: latency
+                value: `${latency} ms`
             })
             .addField({
                 name: 'API',
-                value: client.ws.ping
+                value: `${client.ws.ping} ms`
             });
 
         message.channel.send(embedMessage);
