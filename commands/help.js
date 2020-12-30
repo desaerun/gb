@@ -1,5 +1,5 @@
 const Discord = require('discord.js');
-const CONFIG = require('../../config/config');
+const CONFIG = require('../config/config');
 
 const fs = require('fs');
 
@@ -42,8 +42,8 @@ async function execute(client, message, args) {
                     if (CONFIG.verbosity >= 2) {
                         console.log(`loading file:  ./${subdir_name}/${file_name}`);
                     }
-                    if (file_name === 'commands.js') {
-                        response += `\n${indent(level)}${CONFIG.prefix}_commands_: Lists all the available commands.`
+                    if (file_name === 'help.js') {
+                        response += `\n${indent(level)}${CONFIG.prefix}_${this.name}_: ${this.description}`;
                         continue;
                     }
                     const command = require(`./${subdir_name}/${file_name}`);

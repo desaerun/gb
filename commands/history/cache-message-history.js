@@ -11,7 +11,7 @@ module.exports = {
     args: [
         {
             param: 'channel',
-            type: 'Snowflake',
+            type: 'Snowflake|"this"|"self"',
             description: 'A channel ID snowflake to capture',
             default: 'current channel',
             required: false,
