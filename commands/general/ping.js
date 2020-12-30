@@ -9,14 +9,8 @@ module.exports = {
         let embedMessage = new Discord.MessageEmbed()
             .setThumbnail('https://cdn0.iconfinder.com/data/icons/sports-59/512/Table_tennis-256.png')
             .setTitle('Pong!')
-            .addField({
-                name: 'Latency',
-                value: `${latency} ms`
-            })
-            .addField({
-                name: 'API',
-                value: `${client.ws.ping} ms`
-            });
+            .addField('Latency', `${latency} ms`)
+            .addField('API',`${client.ws.ping} ms`);
 
         message.channel.send(embedMessage);
     }
