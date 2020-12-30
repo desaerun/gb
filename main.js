@@ -2,13 +2,14 @@ require("dotenv").config();  // pull in ENV variables from .env file
 const CONFIG = require('./config/config');
 const Discord = require('discord.js');
 const client = new Discord.Client({partials: ['MESSAGE']});
-const snowflakeToTimestamp = require("./tools/snowflakeToTimestamp");
+//const snowflakeToTimestamp = require("./tools/snowflakeToTimestamp");
 
 const cron = require("node-cron");
 
 const captureMessage = require("./tools/message_db_tools/captureMessage");
 const updateEditedMessage = require("./tools/message_db_tools/updateEditedMessage");
 const deleteMessage = require("./tools/message_db_tools/deleteMessage");
+const status = require('./commands/bot_control/set-bot-status.js');
 
 const dev_output = require('./dev_output');
 dev_output.setClient(client);
@@ -23,7 +24,7 @@ getListenerSet("./listeners");
 
 client.once('ready', () => {
     console.log("bot online.");
-    let guilds = client.guilds;
+    //let guilds = client.guilds;
 
 
     //todo: read in first line from github_update.txt and add it to the "online" message
@@ -43,7 +44,7 @@ client.once('ready', () => {
      */
 
     //set initial bot status
-    client.user.setActivity('eating chicken and grape drank', {type: 'PLAYING'})
+    client.user.setActivity(status.args[0].default, {type: 'PLAYING'})
         .then(() => console.log())
         .catch((err) => {
             dev_output.sendTrace(`Bot failed to set status: ${err}`, process.env.ONLINE_STATUS_CHANNEL_ID)
@@ -134,20 +135,53 @@ function isCommand(message) {
 /**
  * Searches client.commands for the parsed command, and executes if the command is valid
  * @param message
+ * @param args
  */
 function runCommands(message, args) {
-    const command = args.shift().toLowerCase();
-    const guild = client.guilds.fetch(message.guild.id);
+    const commandName = args.shift().toLowerCase();
+    //const guild = client.guilds.fetch(message.guild.id);
 
-    if (client.commands.has(command)) {
+    if (client.commands.has(commandName)) {
         try {
-            client.commands.get(command).execute(client, message, args);
+            let command = client.commands.get(commandName);
+
+            // If there are fewer passed args than the required amount for the command, use defaults
+            if (command.args && command.args.length > args.length) {
+                args = setArgsToDefault(command);
+            }
+
+            command.execute(client, message, args);
+
         } catch (err) {
             dev_output.sendTrace(err, CONFIG.channel_dev_id);
         }
     } else {
-        message.channel.send(`_${command}_ is not a valid command`);
+        message.channel.send(`_${commandName}_ is not a valid command`);
     }
+}
+
+/**
+ * Returns an args array for the current command based on its default arg values
+ *
+ * @param command
+ * @returns {[]}
+ */
+function setArgsToDefault(command) {
+    let args = [];
+    for (let i = 0; i < command.args.length; i++) {
+        if (command.args[i].default) {
+            if (Array.isArray(command.args[i].default)) {
+                args[i] = getRand(command.args[i].default);
+            } else {
+                args[i] = command.args[i].default;
+            }
+        }
+    }
+    return args;
+}
+
+function getRand(arr) {
+    return arr[Math.floor(Math.random() * arr.length)];
 }
 
 /**

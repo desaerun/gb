@@ -28,6 +28,7 @@
     "ytdl-core": "^4.0.0"
   },
   "devDependencies": {
-    "puppeteer": "^5.5.0"
+    "@swc/cli": "^0.1.27",
+    "@swc/core": "^1.2.40"
   }
 }
