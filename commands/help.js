@@ -2,10 +2,12 @@ const Discord = require('discord.js');
 const CONFIG = require('../config/config');
 
 const fs = require('fs');
+const name = 'help';
+const description = 'Prints a message telling users how to get a list of commands or help on a specific command.';
 
 module.exports = {
-    name: 'help',
-    description: 'Prints a message telling users how to get a list of commands or help on a specific command.',
+    name: name,
+    description: description,
     args: [
         {
             param: 'commandName',
@@ -119,7 +121,7 @@ function listCommands(subdir_name = "", level = 0) {
                 console.log(`loading file:  ./${subdir_name}/${file_name}`);
             }
             if (file_name === 'help.js') {
-                response += `\n${indent(level)}${CONFIG.prefix}_help_: Prints a message telling users how to get a list of commands or help on a specific command.`;
+                response += `\n${indent(level)}${CONFIG.prefix}_${name}_: ${description}`;
                 continue;
             }
             const command = require(`./${subdir_name}/${file_name}`);
