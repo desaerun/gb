@@ -17,7 +17,7 @@ module.exports = {
             required: false,
         },
         {
-            param: '[includeBotMessages]',
+            param: 'includeBotMessages',
             type: 'Boolean',
             description: 'Whether or not to retrieve messages from Discord bots',
             default: 'false',

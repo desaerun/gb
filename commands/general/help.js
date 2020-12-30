@@ -1,6 +1,8 @@
 const Discord = require('discord.js');
 const CONFIG = require('../../config/config');
 
+const fs = require('fs');
+
 const name = 'help';
 const description = 'Prints a message telling users how to get a list of commands or help on a specific command.'
 const args = [

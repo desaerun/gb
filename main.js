@@ -156,7 +156,7 @@ function runCommands(message, args) {
             dev_output.sendTrace(err, CONFIG.channel_dev_id);
         }
     } else {
-        message.channel.send(`_${commandName}_ is not a valid command`);
+        message.channel.send(`_${commandName}_ is not a valid command. Type \`${CONFIG.prefix}help\` to get a list of commands.`);
     }
 }
 
