@@ -120,10 +120,12 @@ function listCommands(subdir_name = "", level = 0) {
             if (CONFIG.verbosity >= 2) {
                 console.log(`loading file:  ./${subdir_name}/${file_name}`);
             }
+            /*
             if (file_name === 'help.js') {
                 response += `\n${indent(level)}${CONFIG.prefix}_${name}_: ${description}`;
                 continue;
             }
+             */
             const command = require(`./${subdir_name}/${file_name}`);
             response += `\n${indent(level)}${CONFIG.prefix}_${command.name}_: ${command.description}`
         } else if (fs.statSync(`${full_current_dir}/${file_name}`).isDirectory()) {
