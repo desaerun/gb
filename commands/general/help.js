@@ -48,8 +48,7 @@ function getHelpMessage(command) {
         let optionalMod = !currentArg.default ? "?" : "";
         fullCommand += `${optionalMod}[${currentArg.param}]`;
 
-        let value = `Name: ${currentArg.param}\n` +
-            `Type: ${currentArg.type}\n` +
+        let value = `Type: ${currentArg.type}\n` +
             `Desc: ${currentArg.description}\n`;
 
         if (currentArg.default) {
