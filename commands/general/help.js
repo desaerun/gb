@@ -8,15 +8,56 @@ const args = [
         param: 'commandName',
         type: 'string',
         description: 'A string representing the name of the command you need help with',
-        default: false,
+        required: false,
     }
 ];
 
 async function execute(client, message, args) {
-
     if (args.length === 0) {
-        message.channel.send('Welcome, groid! To get started, type `-commands` for a list of commands, or ' +
-                                  'type `-help {commandName}` to get more information about a certain command.');
+        let response = 'List of Commands:';
+
+        function indent(level) {
+            let indent_string = '';
+            for (var i = 0; i < level; i++) {
+                indent_string += '    ';
+            }
+            return indent_string;
+        }
+
+        function listCommands(subdir_name = "", level = 0) {
+            const full_current_dir = `./commands/${subdir_name}`;
+            const command_files = fs.readdirSync(full_current_dir);
+            if (CONFIG.verbosity >= 2) {
+                console.log(`Directory listing: ${command_files}`);
+            }
+
+            for (const file_name of command_files) {
+                if (CONFIG.verbosity >= 2) {
+                    console.log(`full current dir: ${full_current_dir}`);
+                    console.log(`current subdir: ${subdir_name}`);
+                }
+                if (file_name.endsWith('.js')) {
+                    if (CONFIG.verbosity >= 2) {
+                        console.log(`loading file:  ./${subdir_name}/${file_name}`);
+                    }
+                    if (file_name === 'commands.js') {
+                        response += `\n${indent(level)}${CONFIG.prefix}_commands_: Lists all the available commands.`
+                        continue;
+                    }
+                    const command = require(`./${subdir_name}/${file_name}`);
+                    response += `\n${indent(level)}${CONFIG.prefix}_${command.name}_: ${command.description}`
+                } else if (fs.statSync(`${full_current_dir}/${file_name}`).isDirectory()) {
+                    if (CONFIG.verbosity >= 2) {
+                        console.log(`${indent(level)}Recursing into directory ${full_current_dir}${file_name}`);
+                    }
+                    response += (`\n${indent(level)}${file_name} commands:`).replace("_", " ");
+                    listCommands(`${subdir_name}${file_name}`, level + 1);
+                }
+            }
+            return response;
+        }
+
+        message.channel.send(listCommands());
     }
 
     const helpWithCommand = args[0];
@@ -46,8 +87,8 @@ function getHelpMessage(command) {
         for (const currentArg of command.args) {
             console.log(currentArg);
             fullCommand += ` `;
-            let optionalMod = !currentArg.default ? "?" : "";
-            fullCommand += `${optionalMod}[${currentArg.param}]`;
+            let optionalMod = !currentArg.required ? "?" : "";
+            fullCommand += `[${optionalMod}${currentArg.param}]`;
 
             let value = `Type: ${currentArg.type}\n` +
                 `Desc: ${currentArg.description}\n`;
@@ -59,7 +100,11 @@ function getHelpMessage(command) {
                     value += `Default: ${currentArg.default}`;
                 }
             } else {
-                value += `**REQUIRED**`;
+                if (currentArg.required) {
+                    value += `**REQUIRED**`;
+                } else {
+                    value += `No default value`;
+                }
             }
 
             fields.push({
@@ -74,39 +119,6 @@ function getHelpMessage(command) {
             value: command.helpText
         });
     }
-/*
-    if (command.args) {
-        for (let i = 1; i < command.args.length + 1; i++) {
-            let arg = command.args[i - 1];
-
-            let value = `Name: ${arg.param}\n` +
-                `Type: ${arg.type}\n` +
-                `Desc: ${arg.description}\n`;
-
-            if (arg.default) {
-                if (Array.isArray(arg.default)) {
-                    value += `Default randomized from the following:\n${arg.default.join('\n')}`;
-                } else {
-                    value += `Default: ${arg.default}`;
-                }
-            } else {
-                value += `Default: none`;
-            }
-
-            fields[i] = {
-                name: `Arg #${i}`,
-                value: value
-            };
-        }
-    }
-    if (command.helpText) {
-        fields.push({
-            name: 'Information',
-            value: command.helpText
-        });
-    }
-*/
-
 
     return new Discord.MessageEmbed()
         .setTitle(`**${command.name}**`)

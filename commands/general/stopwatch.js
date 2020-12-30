@@ -7,10 +7,11 @@ module.exports = {
     description: 'Use -stopwatch {name} to time something! Once to start, again to stop.',
     args: [
         {
-            param: '[stopwatchName]',
+            param: 'stopwatchName',
             type: 'string',
             description: 'A name for the thing being timed',
             // no default, as we'll print a list of active stopwatches
+            required: false,
         }
     ],
     helpText: 'If this command is called with no arguments, a list of active stopwatches is printed.',

@@ -6,10 +6,11 @@ module.exports = {
     description: "play audio from a youtube file",
     args: [
         {
-            param: ['youtubeQuery'],
+            param: 'youtubeQuery',
             type: 'string',
             description: 'The query to be searched on youtube',
-            default: 'L4D2 jockey sounds'
+            default: 'L4D2 jockey sounds',
+            required: false,
         }
     ],
     execute(client, message, args) {
@@ -17,7 +18,7 @@ module.exports = {
             message.channel.send("You must be in a voice channel to use this command.");
             return false;
         }
-        let q = args.join(" ");
+        let q = args.length > 0 ? args.join(" ") : this.args[0].default;
         let params = {
             key: process.env.YOUTUBE_TOKEN,
             part: 'snippet',

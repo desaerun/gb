@@ -1,27 +1,15 @@
 const axios = require('axios');
 
-const currencyFormat = new Intl.NumberFormat('en-US',
-    {
-        style: 'currency',
-        currency: 'USD'
-    });
-
-const percentFormat = new Intl.NumberFormat('en-US',
-    {
-        style: 'percent',
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2
-    })
-
 module.exports = {
     name: 'crypto-price',
     description: "Retrieves crypto prices from Coinbase API (in USD)",
     args: [
         {
-            param: '[cryptoTicker]',
+            param: 'cryptoTicker',
             type: 'string',
             description: 'a crypto ticker (BTC, ETH)',
-            default: 'BTC'
+            default: 'BTC',
+            required: false,
         }
     ],
     async execute(client, message, args) {
@@ -58,3 +46,16 @@ module.exports = {
         }
     }
 }
+
+const currencyFormat = new Intl.NumberFormat('en-US',
+    {
+        style: 'currency',
+        currency: 'USD'
+    });
+
+const percentFormat = new Intl.NumberFormat('en-US',
+    {
+        style: 'percent',
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+    })

@@ -7,16 +7,20 @@ module.exports = {
     description: 'Attempts to answer your question',
     args: [
         {
-            param: '[question]',
+            param: 'question',
             type: 'string',
             description: 'A question that the bot will attempt to answer',
-            default: 'boobies'
+            default: 'boobies',
+            required: false,
         }
     ],
     async execute(client, message, args) {
         if (args.length < 1) {
+            args = this.args[0].default;
+            /*
             message.channel.send('You gotta include a question, dummy.');
             return;
+            */
         }
 
         let query = args.join('+');

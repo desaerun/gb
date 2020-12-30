@@ -12,10 +12,11 @@ module.exports = {
     description: 'Runs SQL queries directly',
     args: [
         {
-            param: '[query]',
+            param: 'query',
             type: 'String',
             description: 'An SQL query',
-            default: 'SELECT * FROM messages LIMIT 10'
+            default: 'SELECT * FROM messages LIMIT 10',
+            required: false,
         }
     ],
     execute: async function (client, message, args) {

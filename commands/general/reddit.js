@@ -4,7 +4,7 @@ const name = 'reddit';
 const description = 'Retrieves the top post of the day from the selected subreddit and shares it';
 const args = [
     {
-        param: '[subreddit]',
+        param: 'subreddit',
         type: 'string',
         description: 'A string representing the subreddit name',
         default: [
@@ -17,7 +17,8 @@ const args = [
             'Gifs',
             'BlackPeopleTwitter',
             'me_irl'
-        ]
+        ],
+        required: false,
     }
 ];
 const helpText = 'This is sample help text';

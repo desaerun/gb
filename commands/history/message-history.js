@@ -20,7 +20,8 @@ module.exports = {
             name: 'messageID',
             description: 'The ID of the message',
             type: 'Snowflake',
-            default: '[REQUIRED]',
+            //no default, a message ID must be given
+            required: true,
         },
     ],
     execute: async function (client, message, args) {

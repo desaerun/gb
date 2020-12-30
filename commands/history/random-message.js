@@ -18,10 +18,11 @@ module.exports = {
     description: "Chooses a random message from the DB from the day that is specified as an argument.",
     args: [
         {
-            param: '[date]',
+            param: 'relativeDate',
             type: 'String',
             description: 'A string representing from when the historical message should be retrieved',
             default: 'now',
+            required: false,
         },
     ],
     execute: async function (client, message, args, forceGuildID = null, forceChannelID = null) {

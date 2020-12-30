@@ -6,7 +6,8 @@ module.exports = {
             name: 'messageID',
             description: 'the ID of the message',
             type: 'Snowflake',
-            default: '[REQUIRED]',
+            //no default, a message ID _must_ be given
+            required: true,
         }
     ],
     async execute(client, message, args) {

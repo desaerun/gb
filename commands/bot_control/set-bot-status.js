@@ -3,10 +3,11 @@ module.exports = {
     description: "sets the bot status",
     args: [
         {
-            param: '[status]',
+            param: 'status',
             type: 'String',
             description: 'The value to set as the bots status',
-            default: 'eating chicken and grape drank'
+            default: 'eating chicken and grape drank',
+            required: false,
         }
     ],
     execute(client, message, args) {

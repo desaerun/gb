@@ -6,10 +6,11 @@ module.exports = {
     description: "get info on a user",
     args: [
         {
-            param: '[userID]',
+            param: 'userID',
             type: 'Snowflake',
             description: 'A Snowflake representing a user ID',
-            // no default, as we use the message sender by default
+            default: 'Message author',
+            required: false,
         }
     ],
     execute(client, message, args) {

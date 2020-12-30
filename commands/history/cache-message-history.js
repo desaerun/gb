@@ -10,16 +10,18 @@ module.exports = {
     description: "Retrieves message history for the current channel and stores it to the DB",
     args: [
         {
-            param: '[channel]',
+            param: 'channel',
             type: 'Snowflake',
             description: 'A channel ID snowflake to capture',
             default: 'current channel',
+            required: false,
         },
         {
             param: '[includeBotMessages]',
             type: 'Boolean',
             description: 'Whether or not to retrieve messages from Discord bots',
             default: 'false',
+            required: false,
         },
     ],
     execute: async function (client, message, args) {
