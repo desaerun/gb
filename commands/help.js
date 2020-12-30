@@ -95,13 +95,6 @@ function getHelpMessage(command) {
  */
 
 function listCommands(subdir_name = "", level = 0) {
-    function indent(level) {
-        let indent_string = '';
-        for (let i = 0; i < level; i++) {
-            indent_string += '    ';
-        }
-        return indent_string;
-    }
     let response = 'List of Commands:';
     const full_current_dir = `./commands/${subdir_name}`;
     const command_files = fs.readdirSync(full_current_dir);
@@ -133,4 +126,12 @@ function listCommands(subdir_name = "", level = 0) {
         }
     }
     return response;
+}
+
+function indent(level) {
+    let indent_string = '';
+    for (let i = 0; i < level; i++) {
+        indent_string += '    ';
+    }
+    return indent_string;
 }
