@@ -6,7 +6,7 @@ module.exports = {
     execute(client, message) {
         const now = Date.now();
         const msgTimestamp = snowflakeToTimestamp(message.id);
-        const latency = msgTimestamp - now;
+        const latency = now - msgTimestamp;
 
         message.channel.send(`pong (${latency}ms)`);
     }
