@@ -5,6 +5,14 @@ const Discord = require('discord.js');
 module.exports = {
     name: 'question',
     description: 'Attempts to answer your question',
+    args: [
+        {
+            param: '[question]',
+            type: 'string',
+            description: 'A question that the bot will attempt to answer',
+            default: 'boobies'
+        }
+    ],
     async execute(client, message, args) {
         if (args.length < 1) {
             message.channel.send('You gotta include a question, dummy.');

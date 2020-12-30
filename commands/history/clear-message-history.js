@@ -10,7 +10,7 @@ const pool = mysql.createPool({
 module.exports = {
     name: 'clear-message-history',
     description: "Clears all message history from db",
-    execute: async function (client, message, args) {
+    execute: async function (client, message) {
         try {
             await pool.query("DELETE FROM messages WHERE deleted=FALSE");
         } catch (e) {

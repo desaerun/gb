@@ -4,6 +4,14 @@ const moment = require('moment');
 module.exports = {
     name: 'user-info',
     description: "get info on a user",
+    args: [
+        {
+            param: '[userID]',
+            type: 'Snowflake',
+            description: 'A Snowflake representing a user ID',
+            // no default, as we use the message sender by default
+        }
+    ],
     execute(client, message, args) {
         let user = message.mentions.members.first() || message.guild.members.cache.get(args[0]) || message.guild.member(message.author);
         const response = new Discord.MessageEmbed()

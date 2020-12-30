@@ -10,6 +10,14 @@ const pool = mysql.createPool({
 module.exports = {
     name: 'run-sql',
     description: 'Runs SQL queries directly',
+    args: [
+        {
+            param: '[query]',
+            type: 'String',
+            description: 'An SQL query',
+            default: 'SELECT * FROM messages LIMIT 10'
+        }
+    ],
     execute: async function (client, message, args) {
         //todo: make this exclusive to devs
         let query = args.join(" ");

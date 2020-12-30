@@ -4,6 +4,14 @@ const superagent = require('superagent');
 module.exports = {
     name: 'play',
     description: "play audio from a youtube file",
+    args: [
+        {
+            param: ['youtubeQuery'],
+            type: 'string',
+            description: 'The query to be searched on youtube',
+            default: 'L4D2 jockey sounds'
+        }
+    ],
     execute(client, message, args) {
         if (!message.member.voice.channel) {
             message.channel.send("You must be in a voice channel to use this command.");
@@ -27,9 +35,7 @@ module.exports = {
 
                 //todo: print the name of the video and (maybe) attach thumbnail
                 const video_id = video.id.videoId;
-                const video_name = video.snippet.title;
                 const video_description = video.snippet.description;
-                const video_thumbnail = video.snippet.thumbnails.medium.url;
                 message.channel.send(`Playing **${video_description}**`);
                 message.member.voice.channel.join()
                     .then(connection => {

@@ -16,6 +16,14 @@ const percentFormat = new Intl.NumberFormat('en-US',
 module.exports = {
     name: 'crypto-price',
     description: "Retrieves crypto prices from Coinbase API (in USD)",
+    args: [
+        {
+            param: '[cryptoTicker]',
+            type: 'string',
+            description: 'a crypto ticker (BTC, ETH)',
+            default: 'BTC'
+        }
+    ],
     async execute(client, message, args) {
         if (args.length < 1) {
             message.channel.send('You must include a crypto ticker (BTC, ETH) with this request.');
