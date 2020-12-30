@@ -42,29 +42,31 @@ function getHelpMessage(command) {
         value: command.description
     };
     let fullCommand = `${CONFIG.prefix}${command.name}`;
-    for (const currentArg of command.args) {
+    if (command.args) {
+        for (const currentArg of command.args) {
+            console.log(currentArg);
+            fullCommand += ` `;
+            let optionalMod = !currentArg.default ? "?" : "";
+            fullCommand += `${optionalMod}[${currentArg.param}]`;
 
-        fullCommand += ` `;
-        let optionalMod = !currentArg.default ? "?" : "";
-        fullCommand += `${optionalMod}[${currentArg.param}]`;
+            let value = `Type: ${currentArg.type}\n` +
+                `Desc: ${currentArg.description}\n`;
 
-        let value = `Type: ${currentArg.type}\n` +
-            `Desc: ${currentArg.description}\n`;
-
-        if (currentArg.default) {
-            if (Array.isArray(currentArg.default)) {
-                value += `Default randomized from the following:\n${currentArg.default.join('\n')}`;
+            if (currentArg.default) {
+                if (Array.isArray(currentArg.default)) {
+                    value += `Default randomized from the following:\n${currentArg.default.join('\n')}`;
+                } else {
+                    value += `Default: ${currentArg.default}`;
+                }
             } else {
-                value += `Default: ${currentArg.default}`;
+                value += `**REQUIRED**`;
             }
-        } else {
-            value += `**REQUIRED**`;
-        }
 
-        fields.push({
-            name: `${currentArg.name}`,
-            value: value
-        });
+            fields.push({
+                name: `${currentArg.name}`,
+                value: value
+            });
+        }
     }
     if (command.helpText) {
         fields.push({
