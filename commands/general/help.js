@@ -1,13 +1,14 @@
 const Discord = require('discord.js');
+const CONFIG = require('../../config/config');
 
 const name = 'help';
 const description = 'Prints a message telling users how to get a list of commands or help on a specific command.'
 const args = [
     {
-        param: '[commandName]',
+        param: 'commandName',
         type: 'string',
         description: 'A string representing the name of the command you need help with',
-        // no default
+        default: false,
     }
 ];
 
@@ -40,7 +41,39 @@ function getHelpMessage(command) {
         name: 'Description',
         value: command.description
     };
+    let fullCommand = `${CONFIG.prefix}${command.name}`;
+    for (const currentArg of command.args) {
 
+        fullCommand += ` `;
+        let optionalMod = !currentArg.default ? "?" : "";
+        fullCommand += `${optionalMod}[${currentArg.param}]`;
+
+        let value = `Name: ${currentArg.param}\n` +
+            `Type: ${currentArg.type}\n` +
+            `Desc: ${currentArg.description}\n`;
+
+        if (currentArg.default) {
+            if (Array.isArray(currentArg.default)) {
+                value += `Default randomized from the following:\n${currentArg.default.join('\n')}`;
+            } else {
+                value += `Default: ${currentArg.default}`;
+            }
+        } else {
+            value += `**REQUIRED**`;
+        }
+
+        fields.push({
+            name: `${currentArg.name}`,
+            value: value
+        });
+    }
+    if (command.helpText) {
+        fields.push({
+            name: 'Information',
+            value: command.helpText
+        });
+    }
+/*
     if (command.args) {
         for (let i = 1; i < command.args.length + 1; i++) {
             let arg = command.args[i - 1];
@@ -65,16 +98,18 @@ function getHelpMessage(command) {
             };
         }
     }
-
     if (command.helpText) {
-        fields[fields.length] = {
+        fields.push({
             name: 'Information',
             value: command.helpText
-        }
+        });
     }
+*/
+
 
     return new Discord.MessageEmbed()
         .setTitle(`**${command.name}**`)
+        .setDescription(`\`${fullCommand}\``)
         .addFields(fields);
 }
 
