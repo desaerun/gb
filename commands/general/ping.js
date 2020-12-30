@@ -4,8 +4,9 @@ module.exports = {
     name: 'ping',
     description: "this is a ping command",
     execute(client, message) {
-        let msgTimestamp = snowflakeToTimestamp(message.id);
-        let latency = msgTimestamp - Date.now();
+        const now = Date.now();
+        const msgTimestamp = snowflakeToTimestamp(message.id);
+        const latency = msgTimestamp - now;
 
         message.channel.send(`pong (${latency}ms)`);
     }
