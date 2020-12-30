@@ -8,6 +8,9 @@ module.exports = {
         const msgTimestamp = snowflakeToTimestamp(message.id);
         const latency = now - msgTimestamp;
 
+        console.log(`now: ${now}`);
+        console.log(`msgTimestamp: ${msgTimestamp}`);
+
         message.channel.send(`pong (${latency}ms)`);
     }
 }
