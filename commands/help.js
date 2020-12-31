@@ -1,12 +1,13 @@
+//imports
 const Discord = require('discord.js');
 const CONFIG = require('../config/config');
-
 const fs = require('fs');
 const path = require('path');
 const logMessage = require("../tools/logMessage");
 
-const name = 'help';
-const description = 'Prints a message telling users how to get a list of commands or help on a specific command.';
+//module settings
+const name = "help";
+const description = "Prints a message telling users how to get a list of commands or help on a specific command.";
 const args = [
     {
         param: 'commandName',
@@ -16,7 +17,7 @@ const args = [
     }
 ];
 
-const execute = async function (client, message, args) {
+async function execute (client, message, args) {
     if (args.length === 0) {
         message.channel.send(listCommands());
     }
@@ -100,13 +101,13 @@ function getHelpMessage(command) {
  *
  * @param subdir_name
  * @param level
+ * @param response
  * @returns {String}
  */
-
-function listCommands(subdir_name = "", level = 0) {
+function listCommands(subdir_name = "", level = 0,response = 'List of Commands:') {
     const thisFile = path.basename(__filename);
     logMessage(`thisFile: ${thisFile}`,2);
-    let response = 'List of Commands:';
+
     const full_current_dir = `./commands/${subdir_name}`;
     const command_files = fs.readdirSync(full_current_dir);
     logMessage(`Directory listing: ${command_files}`, 2);
@@ -124,16 +125,16 @@ function listCommands(subdir_name = "", level = 0) {
             }
 
             // otherwise, load the file to gain access to command.name etc.
-            const {name,description} = require(`./${subdir_name}/${file_name}`);
-            logMessage(`command: ${name} | ${description}`,2);
-            response += `\n${indent(level)}${CONFIG.prefix}_${name}_: ${description}`;
+            const {name: commandName,description: commandDesc} = require(`./${subdir_name}/${file_name}`);
+            logMessage(`command: ${commandName} | ${commandDesc}`,2);
+            response += `\n${indent(level)}${CONFIG.prefix}_${commandName}_: ${commandDesc}`;
             logMessage(`current response: ${response}`,3);
         } else if (fs.statSync(`${full_current_dir}/${file_name}`).isDirectory()) {
             logMessage(`${indent(level)}Recursing into directory ${full_current_dir}${file_name}`, 2);
             //if we're looking at a directory, print the directory name,
             // recurse into that directory, and increase the indent level by 1
             response += (`\n${indent(level)}${file_name} commands:`).replace("_", " ");
-            listCommands(`${subdir_name}${file_name}`, level + 1);
+            listCommands(`${subdir_name}${file_name}`, level + 1,response);
         }
     }
     console.log(`Full response: ${response}`);
