@@ -165,11 +165,15 @@ function generateCommandList(clientCommands,subdirName = "",indentLevel= 0,respo
             const currentSubDir = `${subdirName}/${commandFile}`;
             logMessage(`Current Subdir: ${currentSubDir}`);
             const prettyDirName = commandFile.replace("_"," ");
-            response += (`\n${indent(indentLevel)}${prettyDirName})`);
-            generateCommandList(clientCommands,currentSubDir,indentLevel+1,response);
+            response += (`\n${indent(indentLevel)}${prettyDirName}`);
+            let recursiveReturn = generateCommandList(clientCommands,currentSubDir,indentLevel+1,response);
+            logMessage(`recursive return: ${recursiveReturn}`);
+            response += recursiveReturn;
         } else if (commandFile !== path.basename(__filename) && commandFile.endsWith(".js")) {
             logMessage(`Loading file: ${fullFilePath}`);
-            const currentCommand = clientCommands.get(commandFile.split(".")[0]);
+            const currentCommandName = commandFile.split(".")[0];
+            logMessage(`currentCommandName: ${currentCommandName}`);
+            const currentCommand = clientCommands.get(currentCommandName);
             response += `\n${indent(indentLevel)}${CONFIG.prefix}_${currentCommand.name}_: ${currentCommand.description}`;
         }
     }
