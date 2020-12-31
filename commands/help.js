@@ -150,7 +150,7 @@ function listCommands(subdir_name = "", level = 0) {
     return response;
 }
 */
-function generateCommandList(clientCommands,subdirName,indentLevel= 0,response) {
+function generateCommandList(clientCommands,subdirName = null,indentLevel= 0,response = null) {
     if (!response) {
         response = "List of commands:";
         response += `\n${indent(indentLevel)}${CONFIG.prefix}_${name}_: ${description}`;
