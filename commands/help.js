@@ -117,7 +117,7 @@ function listCommands(subdir_name = "", level = 0) {
             logMessage(`loading file:  ./${subdir_name}/${file_name}`, 2);
 
             // special handling for printing the info of the HELP command:
-            if (file_name === path.basename(__filename, path.extname(__filename))) {
+            if (file_name === path.basename(__filename)) {
                 response += `\n${indent(level)}${CONFIG.prefix}_${name}_: ${description}`;
                 //don't keep going to actually load the file
                 continue;
@@ -136,6 +136,7 @@ function listCommands(subdir_name = "", level = 0) {
             listCommands(`${subdir_name}${file_name}`, level + 1);
         }
     }
+    console.log(`Full response: ${response}`);
     return response;
 }
 
