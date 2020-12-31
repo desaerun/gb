@@ -168,8 +168,8 @@ function generateCommandList(clientCommands,subdirName = "",indentLevel= 0,respo
             response += (`\n${indent(indentLevel)}${prettyDirName})`);
             response += generateCommandList(clientCommands,currentSubDir,indentLevel+1,response);
         } else if (commandFile !== path.basename(__filename) && commandFile.endsWith(".js")) {
-            logMessage(`Loading file: ${fullFilePath}/${commandFile}`);
-            const [currentCommand] = clientCommands.get(commandFile.split("."));
+            logMessage(`Loading file: ${fullFilePath}`);
+            const currentCommand = clientCommands.get(commandFile.split(".")[0]);
             response += `\n${indent(indentLevel)}${CONFIG.prefix}_${currentCommand.name}_: ${currentCommand.description}`;
         }
     }
