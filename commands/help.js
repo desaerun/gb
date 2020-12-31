@@ -161,10 +161,12 @@ function generateCommandList(clientCommands,subdirName = "",indentLevel= 0,respo
     for (const commandFile of commandFiles) {
         const fullFilePath = `${fullCurrentDir}${commandFile}`;
         logMessage(`fullFilePath: ${fullFilePath}`);
-        if (fs.statSync(fullFilePath)) {
+        if (fs.statSync(fullFilePath).isDirectory()) {
+            const currentSubDir = `${subdirName}${commandFile}`;
+            logMessage(`Current Subdir: ${currentSubDir}`);
             const prettyDirName = commandFile.replace("_"," ");
             response += (`\n${indent(indentLevel)}${prettyDirName})`);
-            response += generateCommandList(clientCommands,fullFilePath,indentLevel+1,response);
+            response += generateCommandList(clientCommands,currentSubDir,indentLevel+1,response);
         } else if (commandFile !== path.basename(__filename) && commandFile.endsWith(".js")) {
             logMessage(`Loading file: ${fullFilePath}${commandFile}`);
             const [currentCommand] = clientCommands.get(commandFile.split("."));
