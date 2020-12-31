@@ -104,6 +104,8 @@ function getHelpMessage(command) {
  */
 
 function listCommands(subdir_name = "", level = 0) {
+    const thisFile = path.basename(__filename);
+    logMessage(`thisFile: ${thisFile}`,2);
     let response = 'List of Commands:';
     const full_current_dir = `./commands/${subdir_name}`;
     const command_files = fs.readdirSync(full_current_dir);
