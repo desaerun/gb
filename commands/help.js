@@ -21,13 +21,15 @@ const args = [
 async function execute (client, message, args) {
     if (args.length === 0) {
         message.channel.send(generateCommandList(client.commands));
+        return;
     }
 
     const helpWithCommand = args[0];
-
     if (client.commands.has(helpWithCommand)) {
         const embedMessage = getHelpMessage(client.commands.get(helpWithCommand));
         await message.channel.send(embedMessage);
+    } else {
+        await message.channel.send(`The command \`${helpWithCommand}\` does not exist.  Type \`${CONFIG.prefix}${name}\` for a commands list.`);
     }
 }
 
@@ -148,10 +150,10 @@ function listCommands(subdir_name = "", level = 0) {
     return response;
 }
 */
-function generateCommandList(clientCommands,subdirName,indentLevel=0,response) {
+function generateCommandList(clientCommands,subdirName,indentLevel= 0,response) {
     if (!response) {
         response = "List of commands:";
-        response += `\n${indent(level)}${CONFIG.prefix}_${name}_: ${description}`;
+        response += `\n${indent(indentLevel)}${CONFIG.prefix}_${name}_: ${description}`;
     }
     const fullCurrentDir = `./commands/${subdirName}`;
     logMessage(`fullCurrentDir: ${fullCurrentDir}`);
@@ -162,7 +164,7 @@ function generateCommandList(clientCommands,subdirName,indentLevel=0,response) {
         if (fs.statSync(fullFilePath)) {
             const prettyDirName = commandFile.replace("_"," ");
             response += (`\n${indent(indentLevel)}${prettyDirName})`);
-            response += generateCommandList(clientCommands,fullFilePath,indexLevel+1,response);
+            response += generateCommandList(clientCommands,fullFilePath,indentLevel+1,response);
         } else if (commandFile !== path.basename(__filename) && commandFile.endsWith(".js")) {
             logMessage(`Loading file: ${fullFilePath}${commandFile}`);
             const [currentCommand] = clientCommands.get(commandFile.split("."));
