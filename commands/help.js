@@ -134,7 +134,7 @@ function listCommands(subdir_name = "", level = 0,response = 'List of Commands:'
             //if we're looking at a directory, print the directory name,
             // recurse into that directory, and increase the indent level by 1
             response += (`\n${indent(level)}${file_name} commands:`).replace("_", " ");
-            listCommands(`${subdir_name}${file_name}`, level + 1,response);
+            response += listCommands(`${subdir_name}${file_name}`, level + 1,response);
         }
     }
     console.log(`Full response: ${response}`);
