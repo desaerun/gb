@@ -13,7 +13,6 @@ function execute(client, message) {
 module.exports = {
     name: name,
     description: description,
-    args: args,
     execute: execute,
 }
 
