@@ -155,11 +155,11 @@ function generateCommandList(clientCommands,subdirName = "",indentLevel= 0,respo
         response = "List of commands:";
         response += `\n${indent(indentLevel)}${CONFIG.prefix}_${name}_: ${description}`;
     }
-    const fullCurrentDir = `./commands/${subdirName}`;
+    const fullCurrentDir = `./commands${subdirName}`;
     logMessage(`fullCurrentDir: ${fullCurrentDir}`);
     const commandFiles = fs.readdirSync(fullCurrentDir);
     for (const commandFile of commandFiles) {
-        const fullFilePath = `${fullCurrentDir}${commandFile}`;
+        const fullFilePath = `${fullCurrentDir}/${commandFile}`;
         logMessage(`fullFilePath: ${fullFilePath}`);
         if (fs.statSync(fullFilePath).isDirectory()) {
             const currentSubDir = `${subdirName}/${commandFile}`;
