@@ -8,7 +8,7 @@ const CONFIG = require("../config/config");
  * @param minVerbosity
  */
 const logMessage = function (message,minVerbosity = 3) {
-    if (minVerbosity >= CONFIG.verbosity) {
+    if (CONFIG.verbosity >= minVerbosity) {
         console.log(message);
     }
 }
