@@ -151,7 +151,7 @@ function listCommands(subdir_name = "", level = 0) {
 }
 */
 function generateCommandList(clientCommands,subdirName = "",indentLevel= 0,response = "") {
-    if (!response) {
+    if (response !== "") {
         response = "List of commands:";
         response += `\n${indent(indentLevel)}${CONFIG.prefix}_${name}_: ${description}`;
     }
@@ -166,7 +166,7 @@ function generateCommandList(clientCommands,subdirName = "",indentLevel= 0,respo
             logMessage(`Current Subdir: ${currentSubDir}`);
             const prettyDirName = commandFile.replace("_"," ");
             response += (`\n${indent(indentLevel)}${prettyDirName})`);
-            response += generateCommandList(clientCommands,currentSubDir,indentLevel+1,response);
+            generateCommandList(clientCommands,currentSubDir,indentLevel+1,response);
         } else if (commandFile !== path.basename(__filename) && commandFile.endsWith(".js")) {
             logMessage(`Loading file: ${fullFilePath}`);
             const currentCommand = clientCommands.get(commandFile.split(".")[0]);
