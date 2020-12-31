@@ -17,6 +17,7 @@ const args = [
     }
 ];
 
+//main
 async function execute (client, message, args) {
     if (args.length === 0) {
         message.channel.send(listCommands());
@@ -30,6 +31,7 @@ async function execute (client, message, args) {
     }
 }
 
+//module export
 module.exports = {
     name: name,
     description: description,
@@ -37,6 +39,7 @@ module.exports = {
     execute: execute,
 }
 
+//helper functions
 /**
  * Constructs a MessageEmbed object from member fields of the command,
  * including any custom helpText in order to relay helpful information about the
@@ -104,7 +107,8 @@ function getHelpMessage(command) {
  * @param response
  * @returns {String}
  */
-function listCommands(subdir_name = "", level = 0,response = 'List of Commands:') {
+let response = 'List of Commands:'; //gross, a global var
+function listCommands(subdir_name = "", level = 0) {
     const thisFile = path.basename(__filename);
     logMessage(`thisFile: ${thisFile}`,2);
 
@@ -134,7 +138,7 @@ function listCommands(subdir_name = "", level = 0,response = 'List of Commands:'
             //if we're looking at a directory, print the directory name,
             // recurse into that directory, and increase the indent level by 1
             response += (`\n${indent(level)}${file_name} commands:`).replace("_", " ");
-            response += listCommands(`${subdir_name}${file_name}`, level + 1,response);
+            listCommands(`${subdir_name}${file_name}`, level + 1);
         }
     }
     console.log(`Full response: ${response}`);
