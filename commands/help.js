@@ -173,6 +173,7 @@ function generateCommandList(clientCommands,subdirName = "",indentLevel= 0,respo
             response += `\n${indent(indentLevel)}${CONFIG.prefix}_${currentCommand.name}_: ${currentCommand.description}`;
         }
     }
+    console.log(response);
     return response;
 }
 
