@@ -20,7 +20,7 @@ const args = [
 //main
 async function execute (client, message, args) {
     if (args.length === 0) {
-        message.channel.send(listCommands());
+        message.channel.send(generateCommandList());
     }
 
     const helpWithCommand = args[0];
@@ -107,6 +107,7 @@ function getHelpMessage(command) {
  * @param response
  * @returns {String}
  */
+/*
 let response = 'List of Commands:'; //gross, a global var
 function listCommands(subdir_name = "", level = 0) {
     const thisFile = path.basename(__filename);
@@ -129,9 +130,11 @@ function listCommands(subdir_name = "", level = 0) {
             }
 
             // otherwise, load the file to gain access to command.name etc.
-            const {name: commandName,description: commandDesc} = require(`./${subdir_name}/${file_name}`);
-            logMessage(`command: ${commandName} | ${commandDesc}`,2);
-            response += `\n${indent(level)}${CONFIG.prefix}_${commandName}_: ${commandDesc}`;
+            // const {name: commandName,description: commandDesc} = require(`./${subdir_name}/${file_name}`);
+            const [commandName] = file_name.split(".");
+            currentCommand = client.commands.get(commandName);
+            logMessage(`command: ${currentCommand.name} | ${currentCommand.description}`,2);
+            response += `\n${indent(level)}${CONFIG.prefix}_${currentCommand.name}_: ${currentCommand.description}`;
             logMessage(`current response: ${response}`,3);
         } else if (fs.statSync(`${full_current_dir}/${file_name}`).isDirectory()) {
             logMessage(`${indent(level)}Recursing into directory ${full_current_dir}${file_name}`, 2);
@@ -144,6 +147,31 @@ function listCommands(subdir_name = "", level = 0) {
     console.log(`Full response: ${response}`);
     return response;
 }
+*/
+function generateCommandList(client,subdirName,indentLevel=0,response) {
+    if (!response) {
+        response = "List of commands:";
+        response += `\n${indent(level)}${CONFIG.prefix}_${name}_: ${description}`;
+    }
+    const fullCurrentDir = `./commands/${subdirName}`;
+    logMessage(`fullCurrentDir: ${fullCurrentDir}`);
+    const commandFiles = fs.readdirSync(fullCurrentDir);
+    for (const commandFile of commandFiles) {
+        const fullFilePath = `${fullCurrentDir}${commandFile}`;
+        logMessage(`fullFilePath: ${fullFilePath}`);
+        if (fs.statSync(fullFilePath)) {
+            const prettyDirName = commandFile.replace("_"," ");
+            response += (`\n${indent(indentLevel)}${prettyDirName})`);
+            response += generateCommandList(client,fullFilePath,indexLevel+1,response);
+        } else if (commandFile !== path.basename(__filename) && commandFile.endsWith(".js")) {
+            logMessage(`Loading file: ${fullFilePath}${commandFile}`);
+            const [currentCommand] = client.commands.get(commandFile.split("."));
+            response += `\n${indent(indentLevel)}${CONFIG.prefix}_${currentCommand.name}_: ${currentCommand.description}`;
+        }
+    }
+    return response;
+}
+
 
 function indent(level) {
     let indent_string = '';
