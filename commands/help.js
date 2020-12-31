@@ -123,6 +123,7 @@ function listCommands(subdir_name = "", level = 0) {
 
             // otherwise, load the file to gain access to command.name etc.
             const command = require(`./${subdir_name}/${file_name}`);
+            logMessage(`command: ${JSON.stringify(command)}`,2);
             response += `\n${indent(level)}${CONFIG.prefix}_${command.name}_: ${command.description}`
         } else if (fs.statSync(`${full_current_dir}/${file_name}`).isDirectory()) {
             logMessage(`${indent(level)}Recursing into directory ${full_current_dir}${file_name}`, 2);
