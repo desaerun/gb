@@ -1,7 +1,12 @@
-const mysql = require('mysql');
+//mysql
+const mysql = require("mysql2/promise");
 const db = require("../../config/db");
-const conn = mysql.createConnection(db);
-conn.connect();
+const pool = mysql.createPool({
+    ...db,
+    waitForConnections: true,
+    connectionLimit: 100,
+    queueLimit: 0,
+});
 
 captureMessage = require("../../tools/message_db_tools/captureMessage");
 
@@ -88,12 +93,14 @@ module.exports = {
             console.log(`(Error:  ${counts.error}|Success: ${counts.added}|Skipped: ${counts.skipped}|Bot: ${counts.bot}|No Author: ${counts.noAuthor})`);
         }
 
+        let result;
         message.channel.send(`There have been ${counts.total} messages sent in channel #${targetChannel.name}.`);
-        conn.query(`SELECT COUNT(*) AS messageCount FROM messages WHERE channel = ?`,targetChannel.id,(error,result) => {
-            if (error) throw error;
-            console.log(`Result when re-selecting rows: ${JSON.stringify(result)}`);
-            message.channel.send(`Updated DB successfully.  Rows: ${result[0].messageCount}`);
-            message.channel.send(`(Error:  ${counts.error}|Success: ${counts.added}|Skipped: ${counts.skipped}|Bot: ${counts.bot}|No Author: ${counts.noAuthor})`);
-        });
+        try {
+            [result] = pool.query(`SELECT COUNT(*) AS messageCount FROM messages WHERE channel = ?`, targetChannel.id);
+        } catch (e) {
+            throw e;
+        }
+        message.channel.send(`Updated DB successfully.  Rows: ${result.messageCount}`);
+        message.channel.send(`(Error:  ${counts.error}|Success: ${counts.added}|Skipped: ${counts.skipped}|Bot: ${counts.bot}|No Author: ${counts.noAuthor})`);
     }
 }
