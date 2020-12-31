@@ -1,66 +1,78 @@
+//imports
 const axios = require('axios');
 const cheerio = require('cheerio');
 const Discord = require('discord.js');
 
-module.exports = {
-    name: 'question',
-    description: 'Attempts to answer your question',
-    args: [
-        {
-            param: 'question',
-            type: 'string',
-            description: 'A question that the bot will attempt to answer',
-            default: 'boobies',
-            required: false,
-        }
-    ],
-    async execute(client, message, args) {
-        if (args.length < 1) {
-            args = this.args[0].default;
-            /*
-            message.channel.send('You gotta include a question, dummy.');
-            return;
-            */
-        }
+//module settings
+const name = "question";
+const description = "Attempts to answer your question";
+const args = [
+    {
+        param: 'question',
+        type: 'string',
+        description: 'A question that the bot will attempt to answer',
+        default: 'boobies',
+        required: false,
+    }
+];
 
-        let query = args.join('+');
+//main
+async function execute(client, message, args) {
+    if (args.length < 1) {
+        args = this.args[0].default;
+        /*
+        message.channel.send('You gotta include a question, dummy.');
+        return;
+        */
+    }
 
-        let googleQueryURL = `https://www.google.com/search?q=${query}`;
+    let query = args.join('+');
 
-        try {
-            const response = await axios.get(googleQueryURL, { headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.101 Safari/537.36' } } );
-            if (response.status === 200) {
+    let googleQueryURL = `https://www.google.com/search?q=${query}`;
 
-                const cheerioDOM = cheerio.load(response.data);
-                // Remove 'Videos' box from search results
-                cheerioDOM('div.HD8Pae.luh4tb.cUezCb.xpd.O9g5cc.uUPGi').remove();
+    try {
+        const response = await axios.get(googleQueryURL, {headers: {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.101 Safari/537.36'}});
+        if (response.status === 200) {
 
-                // Attempt to parse answer from Featured Snippet first
-                if (retrieveAnswerFromFeaturedSnippet(message, cheerioDOM)) {
-                    return;
-                }
+            const cheerioDOM = cheerio.load(response.data);
+            // Remove 'Videos' box from search results
+            cheerioDOM('div.HD8Pae.luh4tb.cUezCb.xpd.O9g5cc.uUPGi').remove();
 
-                // If there is no Featured Snippet, parse the Knowledge Panel
-                if (retrieveAnswerFromKnowledgePanel(message, cheerioDOM)) {
-                    return;
-                }
-
-                // If neither the Featured Snippet nor the Knowledge Panel exist, return the first few search results
-                if (sendSearchResultsAsEmbeddedMessage(message, cheerioDOM)) {
-                    return;
-                }
-
-                // If all else fails, kindly inform the user that an answer was not found.
-                message.channel.send('Unable to find an answer. Please go fuck yourself.');
-
-            } else {
-                throw new Error(`Request returned status code ${response.status}`);
+            // Attempt to parse answer from Featured Snippet first
+            if (retrieveAnswerFromFeaturedSnippet(message, cheerioDOM)) {
+                return;
             }
-        } catch (err) {
-            message.channel.send(`Error encountered while attempting to answer your question: ${err}`);
+
+            // If there is no Featured Snippet, parse the Knowledge Panel
+            if (retrieveAnswerFromKnowledgePanel(message, cheerioDOM)) {
+                return;
+            }
+
+            // If neither the Featured Snippet nor the Knowledge Panel exist, return the first few search results
+            if (sendSearchResultsAsEmbeddedMessage(message, cheerioDOM)) {
+                return;
+            }
+
+            // If all else fails, kindly inform the user that an answer was not found.
+            message.channel.send('Unable to find an answer. Please go fuck yourself.');
+
+        } else {
+            throw new Error(`Request returned status code ${response.status}`);
         }
+    } catch (err) {
+        message.channel.send(`Error encountered while attempting to answer your question: ${err}`);
     }
 }
+
+//module export
+module.exports = {
+    name: name,
+    description: description,
+    args: args,
+    execute: execute,
+}
+
+//helper functions
 
 /**
  * Attempts to retrieve Google Search results contained within the "Featured Snippet" above the
@@ -145,7 +157,7 @@ function sendSearchResultsAsEmbeddedMessage(message, cheerioDOM) {
 
     let results = [];
 
-    cheerioDOM('div.rc').each(function() {
+    cheerioDOM('div.rc').each(function () {
 
         let description = cheerioDOM(this).find('div.IsZvec > div > span').text();
         let title = cheerioDOM(this).find('div > a > h3.LC20lb').text();

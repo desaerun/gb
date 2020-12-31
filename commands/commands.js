@@ -15,6 +15,7 @@ module.exports = {
                 }
                 return indent_string;
             }
+
             function listCommands(subdir_name = "", level = 0) {
                 const full_current_dir = `./commands/${subdir_name}`;
                 const command_files = fs.readdirSync(full_current_dir);
@@ -47,9 +48,9 @@ module.exports = {
                 }
                 return response;
             }
+
             message.channel.send(listCommands());
-        }
-        else {
+        } else {
 
         }
     }
