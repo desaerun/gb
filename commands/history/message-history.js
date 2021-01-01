@@ -97,7 +97,7 @@ async function execute(client, message, args) {
                 logMessage(`editHistoryLength: ${messageHistory.length}`);
                     const furtherEdits = new Discord.MessageEmbed()
                     .setURL(`https://discord.com/channels/${currentMessage.guild}/${currentMessage.channel}/${messageID}`)
-                for (let internalEditCount = 0; internalEditCount < 9 && internalEditCount < messageHistory.length - overallMessagePointer + internalEditCount; internalEditCount++) {
+                for (let internalEditCount = 0; internalEditCount < 9 && internalEditCount < messageHistory.length-1 - overallMessagePointer + internalEditCount; internalEditCount++) {
                     logMessage(`Looping through this set of edits`)
                     logMessage(`InternalEditCount: ${internalEditCount}`);
                     logMessage(`overallMessagePointer: ${overallMessagePointer}`);
