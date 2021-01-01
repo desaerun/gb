@@ -5,6 +5,7 @@ const moment = require("moment");
 // mysql
 const mysql = require("mysql2/promise");
 const db = require("../../config/db");
+const logMessage = require("../../tools/logMessage");
 const pool = mysql.createPool({
     ...db,
     waitForConnections: true,
@@ -72,27 +73,39 @@ async function execute(client, message, args) {
             }
         } else {
             //in case there are more edits than can fit in the MessageEmbed (it only supports 10 fields total)
+            logMessage(`There are more edits than can fit in one MessageEmbed: ${messageHistory.length}`);
             let l = 0;
             for (let currentMessagePointer = 0; (currentMessage.deleted && currentMessagePointer < 6) || (!currentMessage.deleted && currentMessagePointer < 7); currentMessagePointer++) {
+                logMessage(`currentMessagePointer: ${currentMessagePointer}`);
                 let formattedDatetime = moment(messageHistory[currentMessagePointer].editTimestamp).format("MMM Do YYYY h:mm:ssa");
                 embedMessage.addField(`Edit on ${formattedDatetime}`, messageHistory[currentMessagePointer].newContent);
                 l++;
             }
             try {
+                logMessage(`Sending first message`);
                 await message.channel.send(embedMessage);
             } catch (e) {
                 throw e;
             }
+            logMessage(`Moving on to send further edits.`);
+            logMessage(`currentMessagePointer: ${l}`);
+            let internalEditCount = 0;
             for (let overallMessagePointer = l; overallMessagePointer < messageHistory.length - overallMessagePointer; overallMessagePointer=overallMessagePointer+internalEditCount) {
+                logMessage(`overallMessagePointer: ${overallMessagePointer}`);
+                logMessage(`editHistoryLength: ${messageHistory.length}`);
                     const furtherEdits = new Discord.MessageEmbed()
                     .setURL(`https://discord.com/channels/${currentMessage.guild}/${currentMessage.channel}/${messageID}`)
                 for (let internalEditCount = 0; internalEditCount < 9 && internalEditCount < messageHistory.length - overallMessagePointer + internalEditCount; internalEditCount++) {
+                    logMessage(`InternalEditCount: ${internalEditCount}`);
+                    logMessage(`overallMessagePointer: ${overallMessagePointer}`);
                     furtherEdits.addField(`Edit on ${formattedDatetime}`, messageHistory[overallMessagePointer+internalEditCount].newContent);
                 }
                 if (messageHistory.length-overallMessagePointer+j === 0) {
+                    logMessage(`End of message reached. messageHistory.length: ${messageHistory.length} , overallMessagePointer: ${overallMessagePointer}, j: ${j}`);
                     furtherEdits.addField(`Original Content (posted ${moment(currentMessage.timestamp).format("MMM Do YYYY h:mm:ssa")})`, originalContent);
                 }
                 try {
+                    logMessage(`Attempting to send further edit embed`);
                     await message.channel.send(furtherEdits);
                 } catch (e) {
                     throw e;
