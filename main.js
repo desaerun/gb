@@ -15,6 +15,7 @@ const dev_output = require('./dev_output');
 dev_output.setClient(client);
 
 const fs = require('fs');
+const logMessage = require("./tools/logMessage");
 
 client.commands = new Discord.Collection();
 client.listenerSet = new Discord.Collection();
@@ -25,7 +26,6 @@ getListenerSet("./listeners");
 client.once('ready', () => {
     console.log("bot online.");
     //let guilds = client.guilds;
-
 
     //todo: read in first line from github_update.txt and add it to the "online" message
     //todo: make the linux server print a line about recovering to the github_update.txt file when it recovers or is started manually
@@ -76,7 +76,7 @@ client.on('messageUpdate', async (oldMessage, newMessage) => {
     console.log(`Message Edit triggered.`);
     await updateEditedMessage(oldMessage, newMessage);
 });
-client.on('messageDelete',async (deletedMessage) => {
+client.on('messageDelete', async (deletedMessage) => {
     console.log(`Message Deletion triggered: ${JSON.stringify(deletedMessage)}`);
     await deleteMessage(deletedMessage);
 });
@@ -129,7 +129,8 @@ function getListenerSet(dir, level = 0) {
  * @returns {boolean}
  */
 function isCommand(message) {
-    return message.content.startsWith(CONFIG.prefix);
+    const check = new RegExp(`${CONFIG.prefix}([^-+]+)`);
+    return message.content.match(check) !== null;
 }
 
 /**
@@ -139,16 +140,11 @@ function isCommand(message) {
  */
 function runCommands(message, args) {
     const commandName = args.shift().toLowerCase();
-    //const guild = client.guilds.fetch(message.guild.id);
 
     if (client.commands.has(commandName)) {
         try {
             let command = client.commands.get(commandName);
-
-            // If there are fewer passed args than the required amount for the command, use defaults
-            if (command.args && command.args.length > args.length) {
-                args = setArgsToDefault(command);
-            }
+            args = setArgsToDefault(command,args);
 
             command.execute(client, message, args);
 
@@ -156,7 +152,7 @@ function runCommands(message, args) {
             dev_output.sendTrace(err, CONFIG.channel_dev_id);
         }
     } else {
-        message.channel.send(`_${commandName}_ is not a valid command`);
+        message.channel.send(`_${commandName}_ is not a valid command. Type \`${CONFIG.prefix}help\` to get a list of commands.`);
     }
 }
 
@@ -164,16 +160,19 @@ function runCommands(message, args) {
  * Returns an args array for the current command based on its default arg values
  *
  * @param command
+ * @param givenArgs
  * @returns {[]}
  */
-function setArgsToDefault(command) {
-    let args = [];
-    for (let i = 0; i < command.args.length; i++) {
-        if (command.args[i].default) {
-            if (Array.isArray(command.args[i].default)) {
-                args[i] = getRand(command.args[i].default);
-            } else {
-                args[i] = command.args[i].default;
+function setArgsToDefault(command,givenArgs) {
+    let args = givenArgs;
+    if (command.args && givenArgs < command.args.length) {
+        for (let i = 0; i < command.args.length; i++) {
+            if (!(args[i]) && command.args[i].default) {
+                if (Array.isArray(command.args[i].default)) {
+                    args[i] = getRand(command.args[i].default);
+                } else {
+                    args[i] = command.args[i].default;
+                }
             }
         }
     }
@@ -197,6 +196,7 @@ function parseWithListeners(message) {
         dev_output.sendTrace(err, CONFIG.channel_dev_id);
     }
 }
+
 client.on('shardError', error => {
     console.error("possible shard error was caught: ", error);
 });

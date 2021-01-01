@@ -1,11 +1,13 @@
+//imports
 const axios = require('axios');
 const decode =require('unescape');
 
+//module settings
 const name = 'reddit';
 const description = 'Retrieves the top post of the day from the selected subreddit and shares it';
 const args = [
     {
-        param: '[subreddit]',
+        param: 'subreddit',
         type: 'string',
         description: 'A string representing the subreddit name',
         default: [
@@ -18,17 +20,19 @@ const args = [
             'Gifs',
             'BlackPeopleTwitter',
             'me_irl'
-        ]
+        ],
+        required: false,
     }
 ];
 const helpText = 'This is sample help text';
 
+//main
 async function execute(client, message, args) {
 
     let subreddit = args[0];
     // Strip down to only content after '/' chars in case the user selected 'r/youtubehaiku', for example
     if (subreddit.includes('/')) {
-        subreddit = subreddit.substring(subreddit.lastIndexOf('/')+1);
+        subreddit = subreddit.substring(subreddit.lastIndexOf('/') + 1);
     }
 
     const requestURL = `https://reddit.com/r/${subreddit}/top/.json?sort=top&t=day&is_self=true&limit=1`;
@@ -52,6 +56,16 @@ async function execute(client, message, args) {
     }
 }
 
+//module export
+module.exports = {
+    name: name,
+    description: description,
+    args: args,
+    helpText: helpText,
+    execute: execute,
+}
+
+//helper functions
 function buildMessageFromPostJSON(json) {
     const title = decode(json.title);
     const selfText = decode(json.selftext);
@@ -76,12 +90,4 @@ function buildMessageFromPostJSON(json) {
     }
 
     return fullMessage;
-}
-
-module.exports = {
-    name: name,
-    description: description,
-    args: args,
-    helpText: helpText,
-    execute: execute,
 }

@@ -1,7 +1,19 @@
-module.exports = {
-    name: 'ping',
-    description: "this is a ping command",
-    execute(client, message) {
-        message.channel.send('pong');
-    }
+//imports
+
+//module settings
+const name = "ping";
+const description = "this is a ping command";
+
+//main
+function execute(client, message) {
+    message.channel.send('pong');
 }
+
+//module export
+module.exports = {
+    name: name,
+    description: description,
+    execute: execute,
+}
+
+//helper functions

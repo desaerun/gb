@@ -13,9 +13,9 @@ const pool = mysql.createPool({
 });
 
 captureMessage = async function (client, message, includeBotMessages = false) {
-    let rows,fields;
+    let rows, fields;
     try {
-        [rows,fields] = await pool.execute("SELECT * FROM messages WHERE id = ?", [message.id]);
+        [rows, fields] = await pool.execute("SELECT * FROM messages WHERE id = ?", [message.id]);
     } catch (err) {
         console.log(err);
     }
