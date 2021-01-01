@@ -69,14 +69,13 @@ async function execute (client, message, args) {
         throw e;
     }
     try {
-        message.channel.send(`Last ${numMessages} messages sent by ${deletedMessages[0].author_displayName}:`);
+        message.channel.send(`${deletedMessages[0].author_displayName}'s last ${numMessages} deleted messages:`);
     } catch (e) {
         console.error("There was an error sending the embed message:", e);
         throw e;
     }
     for (const deletedMessage of deletedMessages) {
         console.log(`Current message: ${JSON.stringify(deletedMessage)}`);
-        console.log
         let embedMessage = new Discord.MessageEmbed()
             .setAuthor(deletedMessage.author_displayName, deletedMessage.author_avatarURL)
             .setThumbnail(deletedMessage.author_avatarURL)
