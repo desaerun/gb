@@ -129,9 +129,7 @@ function getListenerSet(dir, level = 0) {
  * @returns {boolean}
  */
 function isCommand(message) {
-    const checkString = `/${CONFIG.prefix}([^-+]+)/`;
-    logMessage(checkString);
-    const check = new RegExp(checkString);
+    const check = new RegExp(`${CONFIG.prefix}([^-+]+)`);
     const matches = message.content.match(check);
     logMessage(matches);
     return matches !== null;
