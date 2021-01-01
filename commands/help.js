@@ -100,7 +100,11 @@ function getHelpMessage(command) {
         .addFields(fields);
 }
 
-function generateCommandList(dirPath = "./commands",response = "") {
+function generateCommandList(clientCommands,dirPath = "./commands",response = "",indentLevel=0) {
+    //special case for the HELP file
+    if (response === "") {
+        response += `\n${indent(indentLevel)}${CONFIG.prefix}_${name}_: ${description}`;
+    }
     logMessage(`dirPath: ${dirPath}`);
     const commandFiles = fs.readdirSync(dirPath);
     for (const item of commandFiles) {
@@ -108,16 +112,27 @@ function generateCommandList(dirPath = "./commands",response = "") {
         logMessage(`fullItemName: ${fullItemName}`);
         if (fs.statSync(fullItemName).isDirectory()) {
             logMessage(`${fullItemName} is a directory, recursing`);
-            response = generateCommandList(fullItemName,response);
+            const prettyDirName = uppercaseFirstLetter(item.replace("_"," "));
+            response = `\n${indent(indentLevel)}${prettyDirName} commands:`;
+            response += generateCommandList(clientCommands,fullItemName,response);
         } else {
-            logMessage(`${fullItemName} is a file, adding..`)
-            response += `\n${fullItemName}`;
+            if (item !== path.basename(__filename) && item.endsWith(".js")) {
+                logMessage(`${fullItemName} is a file, adding..`);
+                const commandName = item.split(".")[0];
+                const currentCommand = clientCommands.get(commandName);
+                response += `\n${indent(indentLevel)}${CONFIG.prefix}_${currentCommand.name}_: ${currentCommand.description}`;
+            }
         }
     }
     console.log(response);
     return response;
 }
-
+function uppercaseFirstLetter(str) {
+    const words = str.split(" ");
+    words.map((word) => {
+        return word[0].toUpperCase() + word.substring(1);
+    }).join(" ");
+}
 
 function indent(level) {
     let indent_string = '';
