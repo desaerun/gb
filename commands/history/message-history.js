@@ -92,7 +92,7 @@ async function execute(client, message, args) {
             logMessage(`currentMessagePointer: ${l}`);
             let internalEditCount = 0;
             //loop through more edits until end of edit history is reached
-            for (let overallMessagePointer = l; overallMessagePointer < messageHistory.length; overallMessagePointer=overallMessagePointer+internalEditCount) {
+            for (let overallMessagePointer = l; overallMessagePointer < messageHistory.length-1; overallMessagePointer=overallMessagePointer+internalEditCount) {
                 logMessage(`overallMessagePointer: ${overallMessagePointer}`);
                 logMessage(`editHistoryLength: ${messageHistory.length}`);
                     const furtherEdits = new Discord.MessageEmbed()
@@ -101,6 +101,7 @@ async function execute(client, message, args) {
                     logMessage(`Looping through this set of edits`)
                     logMessage(`InternalEditCount: ${internalEditCount}`);
                     logMessage(`overallMessagePointer: ${overallMessagePointer}`);
+                    let formattedDatetime = moment(messageHistory[overallMessagePointer].editTimestamp).format("MMM Do YYYY h:mm:ssa");
                     furtherEdits.addField(`Edit on ${formattedDatetime}`, messageHistory[overallMessagePointer+internalEditCount].newContent);
                 }
                 if (messageHistory.length-overallMessagePointer+j === 0) {
