@@ -15,6 +15,7 @@ const dev_output = require('./dev_output');
 dev_output.setClient(client);
 
 const fs = require('fs');
+const logMessage = require("./tools/logMessage");
 
 client.commands = new Discord.Collection();
 client.listenerSet = new Discord.Collection();
@@ -128,8 +129,12 @@ function getListenerSet(dir, level = 0) {
  * @returns {boolean}
  */
 function isCommand(message) {
-    const check = new RegExp(`/${CONFIG.prefix}(.+)/`);
-    return message.content.match(check) !== null;
+    const checkString = `/${CONFIG.prefix}([^-+]+)/`;
+    logMessage(checkString);
+    const check = new RegExp(checkString);
+    const matches = message.content.match(check);
+    logMessage(matches);
+    return matches !== null;
 }
 
 /**
