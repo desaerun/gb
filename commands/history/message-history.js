@@ -72,10 +72,11 @@ async function execute(client, message, args) {
             }
         } else {
             //in case there are more edits than can fit in the MessageEmbed (it only supports 10 fields total)
-            var i;
-            for (i = 0; (currentMessage.deleted && i < 6) || (!currentMessage.deleted && i < 7); i++) {
+            let l;
+            for (let i = 0; (currentMessage.deleted && i < 6) || (!currentMessage.deleted && i < 7); i++) {
                 let formattedDatetime = moment(messageHistory[i].editTimestamp).format("MMM Do YYYY h:mm:ssa");
                 embedMessage.addField(`Edit on ${formattedDatetime}`, messageHistory[i].newContent);
+                l++;
             }
             try {
                 await message.channel.send(embedMessage);
