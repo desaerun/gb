@@ -80,7 +80,8 @@ async function execute (client, message, args) {
             .setAuthor(deletedMessage.author_displayName, deletedMessage.author_avatarURL)
             .setThumbnail(deletedMessage.author_avatarURL)
             .addField("Posted:", moment(deletedMessage.timestamp).format("dddd, MMMM Do YYYY @ hh:mm:ss a"))
-            .addField("Deleted:", moment(deletedMessage.deleted).format("dddd, MMMM Do YYYY @ hh:mm:ss a"));
+            .addField("Deleted:", moment(deletedMessage.deleted).format("dddd, MMMM Do YYYY @ hh:mm:ss a"))
+            .setFooter(`Message ID: ${deletedMessage.id}`);
 
         if (deletedMessage.content) {
             embedMessage.addField('\u200b', deletedMessage.content)

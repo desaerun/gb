@@ -2,6 +2,16 @@
 const Discord = require("discord.js");
 const moment = require("moment");
 
+// mysql
+const mysql = require("mysql2/promise");
+const db = require("../../config/db");
+const pool = mysql.createPool({
+    ...db,
+    waitForConnections: true,
+    connectionLimit: 100,
+    queueLimit: 0,
+});
+
 //module settings
 const name = "message-history";
 const description = "Retrieves history for the specified message ID.";
@@ -41,23 +51,61 @@ async function execute(client, message, args) {
         .setURL(`https://discord.com/channels/${currentMessage.guild}/${currentMessage.channel}/${messageID}`)
         .addField("Posted by:", currentMessage.author_displayName);
     let originalContent = currentMessage.content;
+    if (currentMessage.deleted) {
+        embedMessage.addField("Deleted:", moment(currentMessage.deleted).format("dddd, MMMM Do YYYY @ hh:mm:ss a"));
+    }
     if (messageHistory.length > 0) { // if the message has an edit history
         console.log(`messageHistory: ${messageHistory}`);
         originalContent = messageHistory[messageHistory.length - 1].oldContent;
         const mostRecentEdit = messageHistory.shift();
         embedMessage.addField(`Current Content (edited on ${moment(mostRecentEdit.editTimestamp).format("MMM Do YYYY h:mm:ssa")}`, mostRecentEdit.newContent);
-        for (const edit of messageHistory) {
-            let formattedDatetime = moment(edit.editTimestamp).format("MMM Do YYYY h:mm:ssa");
-            embedMessage.addField(`Edit on ${formattedDatetime}`, edit.newContent);
+        if ((currentMessage.deleted && messageHistory.length <= 7) || (!currentMessage.deleted && messageHistory.length <= 8)) {
+            for (const edit of messageHistory) {
+                let formattedDatetime = moment(edit.editTimestamp).format("MMM Do YYYY h:mm:ssa");
+                embedMessage.addField(`Edit on ${formattedDatetime}`, edit.newContent);
+            }
+            embedMessage.addField(`Original Content (posted ${moment(currentMessage.timestamp).format("MMM Do YYYY h:mm:ssa")})`, originalContent);
+            try {
+                await message.channel.send(embedMessage);
+            } catch (e) {
+                throw e;
+            }
+        } else {
+                for (let i = 0; (currentMessage.deleted && i < 6) || (!currentMessage.deleted && i < 7); i++) {
+                    let formattedDatetime = moment(messageHistory[i].editTimestamp).format("MMM Do YYYY h:mm:ssa");
+                    embedMessage.addField(`Edit on ${formattedDatetime}`, messageHistory[i].newContent);
+                }
+                try {
+                    await message.channel.send(embedMessage);
+                } catch (e) {
+                    throw e;
+                }
+                for (let k = i; k < messageHistory.length - k; k=k+j) {
+                        const furtherEdits = new Discord.MessageEmbed()
+                        .setURL(`https://discord.com/channels/${currentMessage.guild}/${currentMessage.channel}/${messageID}`)
+                    for (let j = 0; j < 9 && j < messageHistory.length - k + j; j++) {
+                        furtherEdits.addField(`Edit on ${formattedDatetime}`, messageHistory[k+j].newContent);
+                    }
+                    if (messageHistory.length-k+j === 0) {
+                        furtherEdits.addField(`Original Content (posted ${moment(currentMessage.timestamp).format("MMM Do YYYY h:mm:ssa")})`, originalContent);
+                    }
+                    try {
+                        await message.channel.send(furtherEdits);
+                    } catch (e) {
+                        throw e;
+                    }
+                }
         }
+    } else {
+        embedMessage.addField(`Original Content (posted ${moment(currentMessage.timestamp).format("MMM Do YYYY h:mm:ssa")})`, originalContent);
+        try {
+            await message.channel.send(embedMessage);
+        } catch (e) {
+            throw e;
+        }
+    }
 
-    }
-    embedMessage.addField(`Original Content (posted ${moment(currentMessage.timestamp).format("MMM Do YYYY h:mm:ssa")})`, originalContent);
-    try {
-        await message.channel.send(embedMessage);
-    } catch (e) {
-        throw e;
-    }
+
     return true;
 }
 
