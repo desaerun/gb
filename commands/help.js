@@ -110,11 +110,9 @@ function generateCommandList(clientCommands) {
 
     function walk (dirPath,clientCommands,indentLevel = 0) {
         let commandsText = "";
-        logMessage(`dirPath: ${dirPath}`);
         const commandFiles = fs.readdirSync(dirPath);
         for (const item of commandFiles) {
             const fullItemName = `${dirPath}/${item}`;
-            logMessage(`fullItemName: ${fullItemName}`);
             if (fs.statSync(fullItemName).isDirectory()) {
                 logMessage(`${fullItemName} is a directory, recursing`);
                 const prettyDirName = uppercaseFirstLetter(item.replace("_", " "));
@@ -124,12 +122,8 @@ function generateCommandList(clientCommands) {
                 if (item !== path.basename(__filename) && item.endsWith(".js")) {
                     logMessage(`${fullItemName} is a file, adding...`);
                     const commandName = item.match(/(.+)\.js/)[1];
-                    logMessage(`commandName: ${commandName}`);
                     const currentCommand = clientCommands.get(commandName);
                     commandsText += `\n${indent(indentLevel)}${CONFIG.prefix}_${currentCommand.name}_: ${currentCommand.description}`;
-                } else {
-                    logMessage(`file ${item} skipped:`);
-                    logMessage(`path.basename(__filename): ${path.basename(__filename)}`);
                 }
             }
         }
@@ -140,6 +134,7 @@ function generateCommandList(clientCommands) {
 }
 function uppercaseFirstLetter(str) {
     const words = str.split(" ");
+    console.log(words.toString());
     words.map((word) => {
         return word[0].toUpperCase() + word.substring(1);
     }).join(" ");
