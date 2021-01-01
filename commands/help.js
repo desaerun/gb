@@ -133,6 +133,7 @@ function generateCommandList(clientCommands) {
     return response;
 }
 function uppercaseFirstLetter(str) {
+    logMessage(str);
     const words = str.split(" ");
     console.log(words.toString());
     words.map((word) => {
