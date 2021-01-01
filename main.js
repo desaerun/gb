@@ -146,11 +146,7 @@ function runCommands(message, args) {
     if (client.commands.has(commandName)) {
         try {
             let command = client.commands.get(commandName);
-
-            // If there are fewer passed args than the required amount for the command, use defaults
-            if (command.args && command.args.length > args.length) {
-                args = setArgsToDefault(command,args);
-            }
+            args = setArgsToDefault(command,args);
 
             command.execute(client, message, args);
 
@@ -172,7 +168,7 @@ function runCommands(message, args) {
 function setArgsToDefault(command,givenArgs) {
     let args = givenArgs;
     for (let i = 0; i < command.args.length; i++) {
-        if (command.args[i].default && command.args.required) {
+        if (!(args[i]) && command.args[i].default && command.args.required) {
             if (Array.isArray(command.args[i].default)) {
                 args[i] = getRand(command.args[i].default);
             } else {
