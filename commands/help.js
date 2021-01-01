@@ -108,7 +108,7 @@ function generateCommandList(clientCommands) {
     //special case for the HELP file
     response += `\n${CONFIG.prefix}_${name}_: ${description}`;
 
-    function walk (dirPath,indentLevel = 0) {
+    function walk (dirPath,clientCommands,indentLevel = 0) {
         let commandsText = "";
         logMessage(`dirPath: ${dirPath}`);
         const commandFiles = fs.readdirSync(dirPath);
@@ -119,7 +119,7 @@ function generateCommandList(clientCommands) {
                 logMessage(`${fullItemName} is a directory, recursing`);
                 const prettyDirName = uppercaseFirstLetter(item.replace("_", " "));
                 commandsText += `\n${indent(indentLevel)}${prettyDirName} commands:`;
-                commandsText += walk(fullItemName, indentLevel + 1);
+                commandsText += walk(fullItemName,clientCommands,indentLevel + 1);
             } else {
                 if (item !== path.basename(__filename) && item.endsWith(".js")) {
                     logMessage(`${fullItemName} is a file, adding...`);
@@ -134,7 +134,7 @@ function generateCommandList(clientCommands) {
         }
         return commandsText;
     }
-    response += walk(dirPath);
+    response += walk(dirPath,clientCommands);
     return response;
 }
 function uppercaseFirstLetter(str) {
