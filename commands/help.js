@@ -133,13 +133,10 @@ function generateCommandList(clientCommands) {
     return response;
 }
 function uppercaseFirstLetter(str) {
-    logMessage(str);
     const words = str.split(" ");
-    console.log(words.toString());
-    words.map((word) => {
+    return words.map((word) => {
         return word[0].toUpperCase() + word.substring(1);
     }).join(" ");
-    return words;
 }
 
 function indent(level) {
