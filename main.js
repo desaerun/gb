@@ -142,7 +142,6 @@ function isCommand(message) {
  */
 function runCommands(message, args) {
     const commandName = args.shift().toLowerCase();
-    //const guild = client.guilds.fetch(message.guild.id);
 
     if (client.commands.has(commandName)) {
         try {
@@ -150,7 +149,7 @@ function runCommands(message, args) {
 
             // If there are fewer passed args than the required amount for the command, use defaults
             if (command.args && command.args.length > args.length) {
-                args = setArgsToDefault(command);
+                args = setArgsToDefault(command,args);
             }
 
             command.execute(client, message, args);
@@ -167,12 +166,13 @@ function runCommands(message, args) {
  * Returns an args array for the current command based on its default arg values
  *
  * @param command
+ * @param givenArgs
  * @returns {[]}
  */
-function setArgsToDefault(command) {
-    let args = [];
+function setArgsToDefault(command,givenArgs) {
+    let args = givenArgs;
     for (let i = 0; i < command.args.length; i++) {
-        if (command.args[i].default) {
+        if (command.args[i].default && command.args.required) {
             if (Array.isArray(command.args[i].default)) {
                 args[i] = getRand(command.args[i].default);
             } else {
