@@ -150,12 +150,16 @@ function listCommands(subdir_name = "", level = 0) {
 }
 */
 function generateCommandList(dirPath = "./commands",response = "") {
+    logMessage(`dirPath: ${dirPath}`);
     const commandFiles = fs.readdirSync(dirPath);
     for (const item of commandFiles) {
         const fullItemName = `${dirPath}/${item}`;
+        logMessage(`fullItemName: ${fullItemName}`);
         if (fs.statSync(fullItemName).isDirectory()) {
+            logMessage(`${fullItemName} is a directory, recursing`);
             response = generateCommandList(fullItemName,response);
         } else {
+            logMessage(`${fullItemName} is a file, adding..`)
             response += `\n${fullItemName}`;
         }
     }
