@@ -56,7 +56,7 @@ async function execute(client, message, args) {
         embedMessage.addField("Deleted:", moment(currentMessage.deleted).format("dddd, MMMM Do YYYY @ hh:mm:ss a"));
     }
     if (messageHistory.length > 0) { // if the message has an edit history
-        console.log(`messageHistory: ${messageHistory}`);
+        console.log(`messageHistory: ${JSON.stringify(messageHistory)}`);
         originalContent = messageHistory[messageHistory.length - 1].oldContent;
         const mostRecentEdit = messageHistory.shift();
         embedMessage.addField(`Current Content (edited on ${moment(mostRecentEdit.editTimestamp).format("MMM Do YYYY h:mm:ssa")}`, mostRecentEdit.newContent);
@@ -101,7 +101,7 @@ async function execute(client, message, args) {
                     logMessage(`Looping through this set of edits`)
                     logMessage(`InternalEditCount: ${internalEditCount}`);
                     logMessage(`overallMessagePointer: ${overallMessagePointer}`);
-                    let formattedDatetime = moment(messageHistory[overallMessagePointer].editTimestamp).format("MMM Do YYYY h:mm:ssa");
+                    let formattedDatetime = moment(messageHistory[overallMessagePointer+internalEditCount].editTimestamp).format("MMM Do YYYY h:mm:ssa");
                     furtherEdits.addField(`Edit on ${formattedDatetime}`, messageHistory[overallMessagePointer+internalEditCount].newContent);
                 }
                 if (messageHistory.length-overallMessagePointer+j === 0) {
