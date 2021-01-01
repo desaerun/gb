@@ -100,6 +100,7 @@ function getHelpMessage(command) {
         .addFields(fields);
 }
 
+/*
 /**
  * Prints a list of commands by recursing into the commands directory
  * and matching files with a .js extension
@@ -108,8 +109,6 @@ function getHelpMessage(command) {
  * @param level
  * @param response
  * @returns {String}
- */
-/*
 let response = 'List of Commands:'; //gross, a global var
 function listCommands(subdir_name = "", level = 0) {
     const thisFile = path.basename(__filename);
@@ -150,31 +149,14 @@ function listCommands(subdir_name = "", level = 0) {
     return response;
 }
 */
-function generateCommandList(clientCommands,subdirName = "",indentLevel= 0,response = "") {
-    if (response !== "") {
-        response = "List of commands:";
-        response += `\n${indent(indentLevel)}${CONFIG.prefix}_${name}_: ${description}`;
-    }
-    const fullCurrentDir = `./commands${subdirName}`;
-    logMessage(`fullCurrentDir: ${fullCurrentDir}`);
-    const commandFiles = fs.readdirSync(fullCurrentDir);
-    for (const commandFile of commandFiles) {
-        const fullFilePath = `${fullCurrentDir}/${commandFile}`;
-        logMessage(`fullFilePath: ${fullFilePath}`);
-        if (fs.statSync(fullFilePath).isDirectory()) {
-            const currentSubDir = `${subdirName}/${commandFile}`;
-            logMessage(`Current Subdir: ${currentSubDir}`);
-            const prettyDirName = commandFile.replace("_"," ");
-            response += (`\n${indent(indentLevel)}${prettyDirName}`);
-            let recursiveReturn = generateCommandList(clientCommands,currentSubDir,indentLevel+1,response);
-            logMessage(`recursive return: ${recursiveReturn}`);
-            response += recursiveReturn;
-        } else if (commandFile !== path.basename(__filename) && commandFile.endsWith(".js")) {
-            logMessage(`Loading file: ${fullFilePath}`);
-            const currentCommandName = commandFile.split(".")[0];
-            logMessage(`currentCommandName: ${currentCommandName}`);
-            const currentCommand = clientCommands.get(currentCommandName);
-            response += `\n${indent(indentLevel)}${CONFIG.prefix}_${currentCommand.name}_: ${currentCommand.description}`;
+function generateCommandList(dirPath = "./commands",response = "") {
+    const commandFiles = fs.readdirSync(dirPath);
+    for (const item of commandFiles) {
+        const fullItemName = `${dirPath}/${item}`;
+        if (fs.statSync(fullItemName).isDirectory()) {
+            response = generateCommandList(fullItemName,response);
+        } else {
+            response += `\n${fullItemName}`;
         }
     }
     console.log(response);
