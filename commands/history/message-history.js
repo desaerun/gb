@@ -101,7 +101,7 @@ async function execute(client, message, args) {
                     logMessage(`Looping through this set of edits`)
                     logMessage(`InternalEditCount: ${internalEditCount}`);
                     logMessage(`overallMessagePointer: ${overallMessagePointer}`);
-                    logMessage(`message: ${messageHistory[overallMessagePointer+internalEditCount]}`);
+                    logMessage(`message: ${JSON.stringify(messageHistory[overallMessagePointer+internalEditCount])}`);
                     let formattedDatetime = moment(messageHistory[overallMessagePointer+internalEditCount].editTimestamp).format("MMM Do YYYY h:mm:ssa");
                     furtherEdits.addField(`Edit on ${formattedDatetime}`, messageHistory[overallMessagePointer+internalEditCount].newContent);
                 }
