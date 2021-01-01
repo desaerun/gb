@@ -71,30 +71,32 @@ async function execute(client, message, args) {
                 throw e;
             }
         } else {
-                for (let i = 0; (currentMessage.deleted && i < 6) || (!currentMessage.deleted && i < 7); i++) {
-                    let formattedDatetime = moment(messageHistory[i].editTimestamp).format("MMM Do YYYY h:mm:ssa");
-                    embedMessage.addField(`Edit on ${formattedDatetime}`, messageHistory[i].newContent);
+            //in case there are more edits than can fit in the MessageEmbed (it only supports 10 fields total)
+            let i;
+            for (i = 0; (currentMessage.deleted && i < 6) || (!currentMessage.deleted && i < 7); i++) {
+                let formattedDatetime = moment(messageHistory[i].editTimestamp).format("MMM Do YYYY h:mm:ssa");
+                embedMessage.addField(`Edit on ${formattedDatetime}`, messageHistory[i].newContent);
+            }
+            try {
+                await message.channel.send(embedMessage);
+            } catch (e) {
+                throw e;
+            }
+            for (let k = i; k < messageHistory.length - k; k=k+j) {
+                    const furtherEdits = new Discord.MessageEmbed()
+                    .setURL(`https://discord.com/channels/${currentMessage.guild}/${currentMessage.channel}/${messageID}`)
+                for (let j = 0; j < 9 && j < messageHistory.length - k + j; j++) {
+                    furtherEdits.addField(`Edit on ${formattedDatetime}`, messageHistory[k+j].newContent);
+                }
+                if (messageHistory.length-k+j === 0) {
+                    furtherEdits.addField(`Original Content (posted ${moment(currentMessage.timestamp).format("MMM Do YYYY h:mm:ssa")})`, originalContent);
                 }
                 try {
-                    await message.channel.send(embedMessage);
+                    await message.channel.send(furtherEdits);
                 } catch (e) {
                     throw e;
                 }
-                for (let k = i; k < messageHistory.length - k; k=k+j) {
-                        const furtherEdits = new Discord.MessageEmbed()
-                        .setURL(`https://discord.com/channels/${currentMessage.guild}/${currentMessage.channel}/${messageID}`)
-                    for (let j = 0; j < 9 && j < messageHistory.length - k + j; j++) {
-                        furtherEdits.addField(`Edit on ${formattedDatetime}`, messageHistory[k+j].newContent);
-                    }
-                    if (messageHistory.length-k+j === 0) {
-                        furtherEdits.addField(`Original Content (posted ${moment(currentMessage.timestamp).format("MMM Do YYYY h:mm:ssa")})`, originalContent);
-                    }
-                    try {
-                        await message.channel.send(furtherEdits);
-                    } catch (e) {
-                        throw e;
-                    }
-                }
+            }
         }
     } else {
         embedMessage.addField(`Original Content (posted ${moment(currentMessage.timestamp).format("MMM Do YYYY h:mm:ssa")})`, originalContent);
