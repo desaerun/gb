@@ -100,9 +100,10 @@ function getHelpMessage(command) {
         .addFields(fields);
 }
 
-function generateCommandList(clientCommands,dirPath = "./commands",response = "",indentLevel=0) {
+function generateCommandList(clientCommands,dirPath = "./commands",response = "",indentLevel= 0) {
     //special case for the HELP file
     if (response === "") {
+        response = "List of commands: ";
         response += `\n${indent(indentLevel)}${CONFIG.prefix}_${name}_: ${description}`;
     }
     logMessage(`dirPath: ${dirPath}`);
@@ -113,19 +114,17 @@ function generateCommandList(clientCommands,dirPath = "./commands",response = ""
         if (fs.statSync(fullItemName).isDirectory()) {
             logMessage(`${fullItemName} is a directory, recursing`);
             const prettyDirName = uppercaseFirstLetter(item.replace("_"," "));
-            response = `\n${indent(indentLevel)}${prettyDirName} commands:`;
-            response += generateCommandList(clientCommands,fullItemName,response);
+            response += `\n${indent(indentLevel)}${prettyDirName} commands:`;
+            response += generateCommandList(clientCommands,fullItemName,response,indentLevel+1);
         } else {
             if (item !== path.basename(__filename) && item.endsWith(".js")) {
-                logMessage(`${fullItemName} is a file, adding..`);
+                logMessage(`${fullItemName} is a file, adding...`);
                 const commandName = item.split(".")[0];
-                logMessage(`commandName: ${commandName}`);
                 const currentCommand = clientCommands.get(commandName);
                 response += `\n${indent(indentLevel)}${CONFIG.prefix}_${currentCommand.name}_: ${currentCommand.description}`;
             }
         }
     }
-    console.log(response);
     return response;
 }
 function uppercaseFirstLetter(str) {
@@ -133,6 +132,7 @@ function uppercaseFirstLetter(str) {
     words.map((word) => {
         return word[0].toUpperCase() + word.substring(1);
     }).join(" ");
+    return words;
 }
 
 function indent(level) {
