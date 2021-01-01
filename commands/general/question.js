@@ -18,13 +18,6 @@ const args = [
 
 //main
 async function execute(client, message, args) {
-    if (args.length < 1) {
-        args = this.args[0].default;
-        /*
-        message.channel.send('You gotta include a question, dummy.');
-        return;
-        */
-    }
 
     let query = args.join('+');
 

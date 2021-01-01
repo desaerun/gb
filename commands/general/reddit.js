@@ -1,5 +1,6 @@
 //imports
 const axios = require('axios');
+const decode =require('unescape');
 
 //module settings
 const name = 'reddit';
@@ -66,9 +67,9 @@ module.exports = {
 
 //helper functions
 function buildMessageFromPostJSON(json) {
-    const title = json.title;
-    const selfText = json.selftext;
-    const media = json.url_overridden_by_dest;
+    const title = decode(json.title);
+    const selfText = decode(json.selftext);
+    const media = decode(json.url_overridden_by_dest);
 
     let fullMessage = '';
 
