@@ -114,8 +114,7 @@ function generateCommandList(clientCommands,dirPath = "./commands",response = ""
         if (fs.statSync(fullItemName).isDirectory()) {
             logMessage(`${fullItemName} is a directory, recursing`);
             const prettyDirName = uppercaseFirstLetter(item.replace("_"," "));
-            response += `\n${indent(indentLevel)}${prettyDirName} commands:`;
-            response += generateCommandList(clientCommands,fullItemName,response,indentLevel+1);
+            response = `\n${indent(indentLevel)}${prettyDirName} commands:` + generateCommandList(clientCommands,fullItemName,response,indentLevel+1);
         } else {
             if (item !== path.basename(__filename) && item.endsWith(".js")) {
                 logMessage(`${fullItemName} is a file, adding...`);
