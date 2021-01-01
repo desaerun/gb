@@ -18,7 +18,7 @@ const args = [
 ];
 
 //main
-async function execute (client, message, args) {
+async function execute(client, message, args) {
     if (args.length === 0) {
         message.channel.send(generateCommandList(client.commands));
         return;
@@ -108,7 +108,7 @@ function generateCommandList(clientCommands) {
     //special case for the HELP file
     response += `\n${CONFIG.prefix}_${name}_: ${description}`;
 
-    function walk (dirPath,clientCommands,indentLevel = 0) {
+    function getCommandsText(dirPath, clientCommands, indentLevel = 0) {
         let commandsText = "";
         const commandFiles = fs.readdirSync(dirPath);
         for (const item of commandFiles) {
@@ -117,7 +117,7 @@ function generateCommandList(clientCommands) {
                 logMessage(`${fullItemName} is a directory, recursing`);
                 const prettyDirName = uppercaseFirstLetter(item.replace("_", " "));
                 commandsText += `\n${indent(indentLevel)}${prettyDirName} commands:`;
-                commandsText += walk(fullItemName,clientCommands,indentLevel + 1);
+                commandsText += getCommandsText(fullItemName, clientCommands, indentLevel + 1);
             } else {
                 if (item !== path.basename(__filename) && item.endsWith(".js")) {
                     logMessage(`${fullItemName} is a file, adding...`);
@@ -129,9 +129,11 @@ function generateCommandList(clientCommands) {
         }
         return commandsText;
     }
-    response += walk(dirPath,clientCommands);
+
+    response += getCommandsText(dirPath, clientCommands);
     return response;
 }
+
 function uppercaseFirstLetter(str) {
     const words = str.split(" ");
     return words.map((word) => {

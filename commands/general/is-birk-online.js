@@ -16,7 +16,7 @@ async function execute(client, message) {
     }
     let response;
 
-    if(birk.presence) {
+    if (birk.presence) {
         switch (birk.presence.status) {
             case 'dnd':
                 response = `AY YO ${birk.nickname} DON'T WANNA BE FUCKED WITH RIGHT N0W`;

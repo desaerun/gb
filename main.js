@@ -26,7 +26,6 @@ client.once('ready', () => {
     console.log("bot online.");
     //let guilds = client.guilds;
 
-
     //todo: read in first line from github_update.txt and add it to the "online" message
     //todo: make the linux server print a line about recovering to the github_update.txt file when it recovers or is started manually
     /*
@@ -76,7 +75,7 @@ client.on('messageUpdate', async (oldMessage, newMessage) => {
     console.log(`Message Edit triggered.`);
     await updateEditedMessage(oldMessage, newMessage);
 });
-client.on('messageDelete',async (deletedMessage) => {
+client.on('messageDelete', async (deletedMessage) => {
     console.log(`Message Deletion triggered: ${JSON.stringify(deletedMessage)}`);
     await deleteMessage(deletedMessage);
 });
@@ -129,7 +128,7 @@ function getListenerSet(dir, level = 0) {
  * @returns {boolean}
  */
 function isCommand(message) {
-    return message.content.startsWith(CONFIG.prefix);
+    return message.content.match(`/${CONFIG.prefix}(.+)/`) !== null;
 }
 
 /**
@@ -197,6 +196,7 @@ function parseWithListeners(message) {
         dev_output.sendTrace(err, CONFIG.channel_dev_id);
     }
 }
+
 client.on('shardError', error => {
     console.error("possible shard error was caught: ", error);
 });
