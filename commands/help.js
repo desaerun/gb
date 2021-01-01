@@ -106,7 +106,7 @@ function generateCommandList(clientCommands) {
 
     let response = "List of commands: ";
     //special case for the HELP file
-    response += `\n${indent(indentLevel)}${CONFIG.prefix}_${name}_: ${description}`;
+    response += `\n${CONFIG.prefix}_${name}_: ${description}`;
 
     function walk (dirPath,indentLevel = 0) {
         let commandsText = "";
