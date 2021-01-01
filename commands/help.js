@@ -20,7 +20,7 @@ const args = [
 //main
 async function execute (client, message, args) {
     if (args.length === 0) {
-        message.channel.send(generateCommandList());
+        message.channel.send(generateCommandList(client.commands));
         return;
     }
 
