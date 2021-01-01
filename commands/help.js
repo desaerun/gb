@@ -123,7 +123,7 @@ function generateCommandList(clientCommands) {
             } else {
                 if (item !== path.basename(__filename) && item.endsWith(".js")) {
                     logMessage(`${fullItemName} is a file, adding...`);
-                    const commandName = item.match(/(.+)\.js/)[0];
+                    const commandName = item.match(/(.+)\.js/)[1];
                     logMessage(`commandName: ${commandName}`);
                     const currentCommand = clientCommands.get(commandName);
                     commandsText += `\n${indent(indentLevel)}${CONFIG.prefix}_${currentCommand.name}_: ${currentCommand.description}`;
