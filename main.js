@@ -168,7 +168,7 @@ function runCommands(message, args) {
 function setArgsToDefault(command,givenArgs) {
     let args = givenArgs;
     for (let i = 0; i < command.args.length; i++) {
-        if (!(args[i]) && command.args[i].default && command.args.required) {
+        if (!(args[i]) && command.args[i].default) {
             if (Array.isArray(command.args[i].default)) {
                 args[i] = getRand(command.args[i].default);
             } else {
