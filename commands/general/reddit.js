@@ -1,4 +1,5 @@
 const axios = require('axios');
+const decode =require('unescape');
 
 const name = 'reddit';
 const description = 'Retrieves the top post of the day from the selected subreddit and shares it';
@@ -52,9 +53,9 @@ async function execute(client, message, args) {
 }
 
 function buildMessageFromPostJSON(json) {
-    const title = json.title;
-    const selfText = json.selftext;
-    const media = json.url_overridden_by_dest;
+    const title = decode(json.title);
+    const selfText = decode(json.selftext);
+    const media = decode(json.url_overridden_by_dest);
 
     let fullMessage = '';
 

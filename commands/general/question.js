@@ -10,14 +10,11 @@ module.exports = {
             param: '[question]',
             type: 'string',
             description: 'A question that the bot will attempt to answer',
-            default: 'boobies'
+            default: 'boobies',
+            required: true
         }
     ],
     async execute(client, message, args) {
-        if (args.length < 1) {
-            message.channel.send('You gotta include a question, dummy.');
-            return;
-        }
 
         let query = args.join('+');
 
