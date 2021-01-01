@@ -134,7 +134,8 @@ function generateCommandList(clientCommands) {
         }
         return commandsText;
     }
-
+    response += walk(dirPath);
+    return response;
 }
 function uppercaseFirstLetter(str) {
     const words = str.split(" ");
