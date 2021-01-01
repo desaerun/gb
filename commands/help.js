@@ -100,31 +100,41 @@ function getHelpMessage(command) {
         .addFields(fields);
 }
 
-function generateCommandList(clientCommands,dirPath = "./commands",response = "",indentLevel= 0) {
+function generateCommandList(clientCommands) {
+    let dirPath = "./commands";
+
+
+    let response = "List of commands: ";
     //special case for the HELP file
-    if (response === "") {
-        response = "List of commands: ";
-        response += `\n${indent(indentLevel)}${CONFIG.prefix}_${name}_: ${description}`;
-    }
-    logMessage(`dirPath: ${dirPath}`);
-    const commandFiles = fs.readdirSync(dirPath);
-    for (const item of commandFiles) {
-        const fullItemName = `${dirPath}/${item}`;
-        logMessage(`fullItemName: ${fullItemName}`);
-        if (fs.statSync(fullItemName).isDirectory()) {
-            logMessage(`${fullItemName} is a directory, recursing`);
-            const prettyDirName = uppercaseFirstLetter(item.replace("_"," "));
-            response = `\n${indent(indentLevel)}${prettyDirName} commands:` + generateCommandList(clientCommands,fullItemName,response,indentLevel+1);
-        } else {
-            if (item !== path.basename(__filename) && item.endsWith(".js")) {
-                logMessage(`${fullItemName} is a file, adding...`);
-                const commandName = item.split(".")[0];
-                const currentCommand = clientCommands.get(commandName);
-                response += `\n${indent(indentLevel)}${CONFIG.prefix}_${currentCommand.name}_: ${currentCommand.description}`;
+    response += `\n${indent(indentLevel)}${CONFIG.prefix}_${name}_: ${description}`;
+
+    function walk (dirPath,indentLevel = 0) {
+        let commandsText = "";
+        logMessage(`dirPath: ${dirPath}`);
+        const commandFiles = fs.readdirSync(dirPath);
+        for (const item of commandFiles) {
+            const fullItemName = `${dirPath}/${item}`;
+            logMessage(`fullItemName: ${fullItemName}`);
+            if (fs.statSync(fullItemName).isDirectory()) {
+                logMessage(`${fullItemName} is a directory, recursing`);
+                const prettyDirName = uppercaseFirstLetter(item.replace("_", " "));
+                commandsText += `\n${indent(indentLevel)}${prettyDirName} commands:`;
+                commandsText += walk(fullItemName, indentLevel + 1);
+            } else {
+                if (item !== path.basename(__filename) && item.endsWith(".js")) {
+                    logMessage(`${fullItemName} is a file, adding...`);
+                    const commandName = item.match(/(.+)\.js/)[0];
+                    const currentCommand = clientCommands.get(commandName);
+                    commandsText += `\n${indent(indentLevel)}${CONFIG.prefix}_${currentCommand.name}_: ${currentCommand.description}`;
+                } else {
+                    logMessage(`file ${item} skipped:`);
+                    logMessage(`path.basename(__filename): ${path.basename(__filename)}`);
+                }
             }
         }
+        return commandsText;
     }
-    return response;
+
 }
 function uppercaseFirstLetter(str) {
     const words = str.split(" ");
@@ -135,9 +145,9 @@ function uppercaseFirstLetter(str) {
 }
 
 function indent(level) {
-    let indent_string = '';
+    let indentString = '';
     for (let i = 0; i < level; i++) {
-        indent_string += '    ';
+        indentString += '    ';
     }
-    return indent_string;
+    return indentString;
 }
