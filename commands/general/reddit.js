@@ -21,7 +21,7 @@ const args = [
             'BlackPeopleTwitter',
             'me_irl'
         ],
-        required: true,
+        required: false,
     }
 ];
 const helpText = 'This is sample help text';
