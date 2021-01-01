@@ -20,7 +20,7 @@ const args = [
 //main
 async function execute (client, message, args) {
     if (args.length === 0) {
-        message.channel.send(generateCommandList(client.commands));
+        message.channel.send(generateCommandList());
         return;
     }
 
@@ -100,55 +100,6 @@ function getHelpMessage(command) {
         .addFields(fields);
 }
 
-/*
-/**
- * Prints a list of commands by recursing into the commands directory
- * and matching files with a .js extension
- *
- * @param subdir_name
- * @param level
- * @param response
- * @returns {String}
-let response = 'List of Commands:'; //gross, a global var
-function listCommands(subdir_name = "", level = 0) {
-    const thisFile = path.basename(__filename);
-    logMessage(`thisFile: ${thisFile}`,2);
-
-    const full_current_dir = `./commands/${subdir_name}`;
-    const command_files = fs.readdirSync(full_current_dir);
-    logMessage(`Directory listing: ${command_files}`, 2);
-    for (const file_name of command_files) {
-        logMessage(`full current dir: ${full_current_dir}`, 2);
-        logMessage(`current subdir: ${subdir_name}`, 2);
-        if (file_name.endsWith('.js')) {
-            logMessage(`loading file:  ./${subdir_name}/${file_name}`, 2);
-
-            // special handling for printing the info of the HELP command:
-            if (file_name === path.basename(__filename)) {
-                response += `\n${indent(level)}${CONFIG.prefix}_${name}_: ${description}`;
-                //don't keep going to actually load the file
-                continue;
-            }
-
-            // otherwise, load the file to gain access to command.name etc.
-            // const {name: commandName,description: commandDesc} = require(`./${subdir_name}/${file_name}`);
-            const [commandName] = file_name.split(".");
-            currentCommand = client.commands.get(commandName);
-            logMessage(`command: ${currentCommand.name} | ${currentCommand.description}`,2);
-            response += `\n${indent(level)}${CONFIG.prefix}_${currentCommand.name}_: ${currentCommand.description}`;
-            logMessage(`current response: ${response}`,3);
-        } else if (fs.statSync(`${full_current_dir}/${file_name}`).isDirectory()) {
-            logMessage(`${indent(level)}Recursing into directory ${full_current_dir}${file_name}`, 2);
-            //if we're looking at a directory, print the directory name,
-            // recurse into that directory, and increase the indent level by 1
-            response += (`\n${indent(level)}${file_name} commands:`).replace("_", " ");
-            listCommands(`${subdir_name}${file_name}`, level + 1);
-        }
-    }
-    console.log(`Full response: ${response}`);
-    return response;
-}
-*/
 function generateCommandList(dirPath = "./commands",response = "") {
     logMessage(`dirPath: ${dirPath}`);
     const commandFiles = fs.readdirSync(dirPath);
