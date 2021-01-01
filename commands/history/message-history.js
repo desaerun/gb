@@ -61,6 +61,7 @@ async function execute(client, message, args) {
         const mostRecentEdit = messageHistory.shift();
         embedMessage.addField(`Current Content (edited on ${moment(mostRecentEdit.editTimestamp).format("MMM Do YYYY h:mm:ssa")}`, mostRecentEdit.newContent);
         if ((currentMessage.deleted && messageHistory.length <= 7) || (!currentMessage.deleted && messageHistory.length <= 8)) {
+            logMessage(`There is edit history but it will fit in one Embed: ${messageHistory.length}`);
             for (const edit of messageHistory) {
                 let formattedDatetime = moment(edit.editTimestamp).format("MMM Do YYYY h:mm:ssa");
                 embedMessage.addField(`Edit on ${formattedDatetime}`, edit.newContent);
@@ -90,12 +91,14 @@ async function execute(client, message, args) {
             logMessage(`Moving on to send further edits.`);
             logMessage(`currentMessagePointer: ${l}`);
             let internalEditCount = 0;
-            for (let overallMessagePointer = l; overallMessagePointer < messageHistory.length - overallMessagePointer; overallMessagePointer=overallMessagePointer+internalEditCount) {
+            //loop through more edits until end of edit history is reached
+            for (let overallMessagePointer = l; overallMessagePointer < messageHistory.length; overallMessagePointer=overallMessagePointer+internalEditCount) {
                 logMessage(`overallMessagePointer: ${overallMessagePointer}`);
                 logMessage(`editHistoryLength: ${messageHistory.length}`);
                     const furtherEdits = new Discord.MessageEmbed()
                     .setURL(`https://discord.com/channels/${currentMessage.guild}/${currentMessage.channel}/${messageID}`)
                 for (let internalEditCount = 0; internalEditCount < 9 && internalEditCount < messageHistory.length - overallMessagePointer + internalEditCount; internalEditCount++) {
+                    logMessage(`Looping through this set of edits`)
                     logMessage(`InternalEditCount: ${internalEditCount}`);
                     logMessage(`overallMessagePointer: ${overallMessagePointer}`);
                     furtherEdits.addField(`Edit on ${formattedDatetime}`, messageHistory[overallMessagePointer+internalEditCount].newContent);
