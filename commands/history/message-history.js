@@ -100,8 +100,9 @@ async function execute(client, message, args) {
                 // loop through the next set of up to 9 edits until the end of the message history has been reached
                 // (7 + 0) <= 9 - 1 - (7)
                 // 7 <= 1
-                console.log(`(overallMessagePointer + 0) <= messageHistory.length - 1 - (overallMessagePointer + 0): ${(overallMessagePointer) <= messageHistory.length - 1 - (overallMessagePointer)}`);
-                for (let internalEditCount = 0; internalEditCount < 9 && messageHistory.length - 1 - (overallMessagePointer + internalEditCount) > 0; internalEditCount++) {
+                logMessage(`messageHistory.length - 1 - (overallMessagePointer + internalEditCount): ${messageHistory.length - 1 - (overallMessagePointer + internalEditCount)}`)
+                logMessage(`messageHistory.length - 1 - (overallMessagePointer + internalEditCount) >= 0: ${(messageHistory.length - 1 - (overallMessagePointer + internalEditCount) >= 0)}`);
+                for (let internalEditCount = 0; internalEditCount < 9 && messageHistory.length - 1 - (overallMessagePointer + internalEditCount) >= 0; internalEditCount++) {
                     logMessage(`    Looping through this set of edits`)
                     logMessage(`    editHistoryLength: ${messageHistory.length}`);
                     logMessage(`    overallMessagePointer: ${overallMessagePointer}`);
