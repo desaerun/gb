@@ -117,6 +117,11 @@ async function execute(client, message, args) {
                     furtherEdits.addField(`Edit on ${formattedDatetime}`, messageHistory[pointer].newContent);
                     j++;
                 }
+                logMessage(`Checking for end of message history`);
+                logMessage(`messageHistory.length - 1: ${messageHistory.length -1}`);
+                logMessage(`overallMessagePointer: ${overallMessagePointer}`);
+                logMessage(`j: ${j}`);
+                logMessage(`messageHistory.length - 1 - (overallMessagePointer + j) === 0: ${(messageHistory.length - 1 - (overallMessagePointer + j) === 0)}`)
                 if (messageHistory.length - 1 - (overallMessagePointer + j) === 0) {
                     logMessage(`End of message reached. messageHistory.length: ${messageHistory.length} , overallMessagePointer: ${overallMessagePointer}, internalEditCount: ${j}`);
                     furtherEdits.addField(`Original Content (posted ${moment(currentMessage.timestamp).format("MMM Do YYYY h:mm:ssa")})`, originalContent);
