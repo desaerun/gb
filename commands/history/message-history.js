@@ -59,7 +59,7 @@ async function execute(client, message, args) {
         console.log(`messageHistory: ${JSON.stringify(messageHistory)}`);
         originalContent = messageHistory[messageHistory.length - 1].oldContent;
         const mostRecentEdit = messageHistory.shift();
-        embedMessage.addField(`Current Content (edited on ${moment(mostRecentEdit.editTimestamp).format("MMM Do YYYY h:mm:ssa")}`, mostRecentEdit.newContent);
+        embedMessage.addField(`Current Content (edited on ${moment(mostRecentEdit.editTimestamp).format("MMM Do YYYY h:mm:ssa")})`, mostRecentEdit.newContent);
         if ((currentMessage.deleted && messageHistory.length <= 7) || (!currentMessage.deleted && messageHistory.length <= 8)) {
             logMessage(`There is edit history but it will fit in one Embed: ${messageHistory.length}`);
             for (const edit of messageHistory) {
@@ -102,14 +102,14 @@ async function execute(client, message, args) {
                 // loop through the next set of up to 9 edits until the end of the message history has been reached
                 // (7 + 0) <= 9 - 1 - (7)
                 // 7 <= 1
-                logMessage(`messageHistory.length - 1 - (overallMessagePointer + internalEditCount): ${messageHistory.length - 1 - (overallMessagePointer + j)}`)
-                logMessage(`messageHistory.length - 1 - (overallMessagePointer + internalEditCount) >= 0: ${(messageHistory.length - 1 - (overallMessagePointer + j) >= 0)}`);
-                for (let internalEditCount = 0; internalEditCount < 9 && messageHistory.length - 1 - (overallMessagePointer + internalEditCount) >= 0; internalEditCount++) {
+                logMessage(`messageHistory.length - (overallMessagePointer + internalEditCount): ${messageHistory.length - (overallMessagePointer + j)}`)
+                logMessage(`messageHistory.length - (overallMessagePointer + internalEditCount) >= 0: ${(messageHistory.length - (overallMessagePointer + j) >= 0)}`);
+                for (let internalEditCount = 0; internalEditCount < 9 && messageHistory.length - (overallMessagePointer + internalEditCount) >= 0; internalEditCount++) {
                     logMessage(`    Looping through this set of edits`)
                     logMessage(`    editHistoryLength: ${messageHistory.length}`);
                     logMessage(`    overallMessagePointer: ${overallMessagePointer}`);
                     logMessage(`    InternalEditCount: ${internalEditCount}`);
-                    logMessage(`    messageHistory.length-1 - (overallMessagePointer + internalEditCount): ${messageHistory.length - 1 - (overallMessagePointer + internalEditCount)}`);
+                    logMessage(`    messageHistory.length - (overallMessagePointer + internalEditCount): ${messageHistory.length} - (${overallMessagePointer} + ${internalEditCount}) : ${messageHistory.length - (overallMessagePointer + internalEditCount)}`);
                     let pointer = overallMessagePointer + internalEditCount;
                     logMessage(`    pointer: ${pointer}`);
                     logMessage(`    message: ${JSON.stringify(messageHistory[pointer])}`);
@@ -122,7 +122,7 @@ async function execute(client, message, args) {
                 logMessage(`overallMessagePointer: ${overallMessagePointer}`);
                 logMessage(`j: ${j}`);
                 logMessage(`messageHistory.length - 1 - (overallMessagePointer + j) === 0: ${(messageHistory.length - 1 - (overallMessagePointer + j) === 0)}`)
-                if (messageHistory.length - 1 - (overallMessagePointer + j) === 0) {
+                if (messageHistory.length - (overallMessagePointer + j) === 0) {
                     logMessage(`End of message reached. messageHistory.length: ${messageHistory.length} , overallMessagePointer: ${overallMessagePointer}, internalEditCount: ${j}`);
                     furtherEdits.addField(`Original Content (posted ${moment(currentMessage.timestamp).format("MMM Do YYYY h:mm:ssa")})`, originalContent);
                 }
