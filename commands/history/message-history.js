@@ -100,6 +100,7 @@ async function execute(client, message, args) {
                 for (let internalEditCount = 0; internalEditCount < 9 && internalEditCount < messageHistory.length-1 - overallMessagePointer + internalEditCount; internalEditCount++) {
                     logMessage(`Looping through this set of edits`)
                     logMessage(`InternalEditCount: ${internalEditCount}`);
+                    logMessage(`messageHistory.length-1 - overallMessagePointer + internalEditCount: ${messageHistory.length-1 - overallMessagePointer + internalEditCount}`);
                     logMessage(`overallMessagePointer: ${overallMessagePointer}`);
                     let pointer = overallMessagePointer + internalEditCount;
                     logMessage(`pointer: ${pointer}`);
