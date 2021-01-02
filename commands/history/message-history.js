@@ -98,13 +98,14 @@ async function execute(client, message, args) {
                 const furtherEdits = new Discord.MessageEmbed()
                     .setURL(`https://discord.com/channels/${currentMessage.guild}/${currentMessage.channel}/${messageID}`)
                 for (let internalEditCount = 0; internalEditCount < 9 && internalEditCount < messageHistory.length - 1 - (overallMessagePointer + internalEditCount); internalEditCount++) {
-                    logMessage(`Looping through this set of edits`)
-                    logMessage(`InternalEditCount: ${internalEditCount}`);
-                    logMessage(`messageHistory.length-1 - (overallMessagePointer + internalEditCount): ${messageHistory.length - 1 - (overallMessagePointer + internalEditCount)}`);
-                    logMessage(`overallMessagePointer: ${overallMessagePointer}`);
+                    logMessage(`    Looping through this set of edits`)
+                    logMessage(`    editHistoryLength: ${messageHistory.length}`);
+                    logMessage(`    overallMessagePointer: ${overallMessagePointer}`);
+                    logMessage(`    InternalEditCount: ${internalEditCount}`);
+                    logMessage(`    messageHistory.length-1 - (overallMessagePointer + internalEditCount): ${messageHistory.length - 1 - (overallMessagePointer + internalEditCount)}`);
                     let pointer = overallMessagePointer + internalEditCount;
-                    logMessage(`pointer: ${pointer}`);
-                    logMessage(`message: ${JSON.stringify(messageHistory[pointer])}`);
+                    logMessage(`    pointer: ${pointer}`);
+                    logMessage(`    message: ${JSON.stringify(messageHistory[pointer])}`);
                     let formattedDatetime = moment(messageHistory[pointer].editTimestamp).format("MMM Do YYYY h:mm:ssa");
                     furtherEdits.addField(`Edit on ${formattedDatetime}`, messageHistory[pointer].newContent);
                 }
