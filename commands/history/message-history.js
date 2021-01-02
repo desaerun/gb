@@ -90,9 +90,10 @@ async function execute(client, message, args) {
             }
             logMessage(`Moving on to send further edits.`);
             logMessage(`currentMessagePointer: ${l}`);
-            let internalEditCount = 0;
             //loop through more edits until end of edit history is reached
-            for (let overallMessagePointer = l; overallMessagePointer < messageHistory.length - 1; overallMessagePointer = overallMessagePointer + internalEditCount) {
+            let j;
+            for (let overallMessagePointer = l; overallMessagePointer < messageHistory.length - 1; overallMessagePointer = overallMessagePointer + j) {
+                let j = 0;
                 logMessage(`overallMessagePointer: ${overallMessagePointer}`);
                 logMessage(`internalEditCount: ${internalEditCount}`);
                 logMessage(`editHistoryLength: ${messageHistory.length}`);
@@ -114,8 +115,9 @@ async function execute(client, message, args) {
                     logMessage(`    message: ${JSON.stringify(messageHistory[pointer])}`);
                     let formattedDatetime = moment(messageHistory[pointer].editTimestamp).format("MMM Do YYYY h:mm:ssa");
                     furtherEdits.addField(`Edit on ${formattedDatetime}`, messageHistory[pointer].newContent);
+                    j++;
                 }
-                if (messageHistory.length - 1 - (overallMessagePointer + internalEditCount) === 0) {
+                if (messageHistory.length - 1 - (overallMessagePointer + j) === 0) {
                     logMessage(`End of message reached. messageHistory.length: ${messageHistory.length} , overallMessagePointer: ${overallMessagePointer}, internalEditCount: ${internalEditCount}`);
                     furtherEdits.addField(`Original Content (posted ${moment(currentMessage.timestamp).format("MMM Do YYYY h:mm:ssa")})`, originalContent);
                 }
