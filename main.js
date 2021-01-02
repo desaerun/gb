@@ -129,7 +129,7 @@ function getListenerSet(dir, level = 0) {
  * @returns {boolean}
  */
 function isCommand(message) {
-    const check = new RegExp(`${CONFIG.prefix}([^-+]+)`);
+    const check = new RegExp(`${CONFIG.prefix}(^[^-+]+)`);
     return message.content.match(check) !== null;
 }
 

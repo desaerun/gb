@@ -18,9 +18,9 @@ const name = "message-history";
 const description = "Retrieves history for the specified message ID.";
 const args = [
     {
-        name: 'messageID',
-        description: 'The ID of the message',
-        type: 'Snowflake',
+        name: "messageID",
+        description: "The ID of the message",
+        type: "Snowflake",
         //no default, a message ID must be given
         required: true,
     },
@@ -75,12 +75,11 @@ async function execute(client, message, args) {
         } else {
             //in case there are more edits than can fit in the MessageEmbed (it only supports 10 fields total)
             logMessage(`There are more edits than can fit in one MessageEmbed: ${messageHistory.length}`);
-            let l = 0;
+            var currentMessagePointer = 0;
             for (let currentMessagePointer = 0; (currentMessage.deleted && currentMessagePointer < 6) || (!currentMessage.deleted && currentMessagePointer < 7); currentMessagePointer++) {
                 logMessage(`currentMessagePointer: ${currentMessagePointer}`);
                 let formattedDatetime = moment(messageHistory[currentMessagePointer].editTimestamp).format("MMM Do YYYY h:mm:ssa");
                 embedMessage.addField(`Edit on ${formattedDatetime}`, messageHistory[currentMessagePointer].newContent);
-                l++;
             }
             try {
                 logMessage(`Sending first message`);
@@ -92,7 +91,7 @@ async function execute(client, message, args) {
             logMessage(`currentMessagePointer: ${l}`);
             //loop through more edits until end of edit history is reached
             let j;
-            for (let overallMessagePointer = l; overallMessagePointer < messageHistory.length - 1; overallMessagePointer = overallMessagePointer + j) {
+            for (; currentMessagePointer < messageHistory.length - 1; currentMessagePointer = overallMessagePointer + j) {
                 let j = 0;
                 logMessage(`overallMessagePointer: ${overallMessagePointer}`);
                 logMessage(`internalEditCount: ${j}`);
@@ -104,18 +103,18 @@ async function execute(client, message, args) {
                 // 7 <= 1
                 logMessage(`messageHistory.length - (overallMessagePointer + internalEditCount): ${messageHistory.length - (overallMessagePointer + j)}`)
                 logMessage(`messageHistory.length - (overallMessagePointer + internalEditCount) >= 0: ${(messageHistory.length - (overallMessagePointer + j) >= 0)}`);
-                for (let internalEditCount = 0; internalEditCount < 9 && messageHistory.length - (overallMessagePointer + internalEditCount) >= 0; internalEditCount++) {
+                var internalEditCount;
+                for (internalEditCount = 0; internalEditCount < 9 && messageHistory.length - 1 - (overallMessagePointer + internalEditCount) >= 0; internalEditCount++) {
                     logMessage(`    Looping through this set of edits`)
                     logMessage(`    editHistoryLength: ${messageHistory.length}`);
                     logMessage(`    overallMessagePointer: ${overallMessagePointer}`);
                     logMessage(`    InternalEditCount: ${internalEditCount}`);
-                    logMessage(`    messageHistory.length - (overallMessagePointer + internalEditCount): ${messageHistory.length} - (${overallMessagePointer} + ${internalEditCount}) : ${messageHistory.length - (overallMessagePointer + internalEditCount)}`);
+                    logMessage(`    messageHistory.length - 1 - (overallMessagePointer + internalEditCount): ${messageHistory.length} - 1 - (${overallMessagePointer} + ${internalEditCount}) : ${messageHistory.length - 1 - (overallMessagePointer + internalEditCount)}`);
                     let pointer = overallMessagePointer + internalEditCount;
                     logMessage(`    pointer: ${pointer}`);
                     logMessage(`    message: ${JSON.stringify(messageHistory[pointer])}`);
                     let formattedDatetime = moment(messageHistory[pointer].editTimestamp).format("MMM Do YYYY h:mm:ssa");
                     furtherEdits.addField(`Edit on ${formattedDatetime}`, messageHistory[pointer].newContent);
-                    j++;
                 }
                 logMessage(`Checking for end of message history`);
                 logMessage(`messageHistory.length - 1: ${messageHistory.length -1}`);
@@ -142,7 +141,6 @@ async function execute(client, message, args) {
             throw e;
         }
     }
-
 
     return true;
 }
