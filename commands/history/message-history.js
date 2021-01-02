@@ -99,6 +99,7 @@ async function execute(client, message, args) {
                     .setURL(`https://discord.com/channels/${currentMessage.guild}/${currentMessage.channel}/${messageID}`)
                 // loop through the next set of up to 9 edits until the end of the message history has been reached
                 // 7 + 0 < 9 - 1 - (7 + 0) = 7 < 8
+                console.log(`(overallMessagePointer + 0) <= messageHistory.length - 1 - (overallMessagePointer + 0): ${(overallMessagePointer) <= messageHistory.length - 1 - (overallMessagePointer)}`);
                 for (let internalEditCount = 0; internalEditCount < 9 && (overallMessagePointer + internalEditCount) <= messageHistory.length - 1 - (overallMessagePointer + internalEditCount); internalEditCount++) {
                     logMessage(`    Looping through this set of edits`)
                     logMessage(`    editHistoryLength: ${messageHistory.length}`);
