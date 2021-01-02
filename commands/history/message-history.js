@@ -94,6 +94,7 @@ async function execute(client, message, args) {
             //loop through more edits until end of edit history is reached
             for (let overallMessagePointer = l; overallMessagePointer < messageHistory.length - 1; overallMessagePointer = overallMessagePointer + internalEditCount) {
                 logMessage(`overallMessagePointer: ${overallMessagePointer}`);
+                logMessage(`internalEditCount: ${internalEditCount}`);
                 logMessage(`editHistoryLength: ${messageHistory.length}`);
                 const furtherEdits = new Discord.MessageEmbed()
                     .setURL(`https://discord.com/channels/${currentMessage.guild}/${currentMessage.channel}/${messageID}`)
