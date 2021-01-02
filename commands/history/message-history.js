@@ -95,15 +95,15 @@ async function execute(client, message, args) {
             for (let overallMessagePointer = l; overallMessagePointer < messageHistory.length - 1; overallMessagePointer = overallMessagePointer + j) {
                 let j = 0;
                 logMessage(`overallMessagePointer: ${overallMessagePointer}`);
-                logMessage(`internalEditCount: ${internalEditCount}`);
+                logMessage(`internalEditCount: ${j}`);
                 logMessage(`editHistoryLength: ${messageHistory.length}`);
                 const furtherEdits = new Discord.MessageEmbed()
                     .setURL(`https://discord.com/channels/${currentMessage.guild}/${currentMessage.channel}/${messageID}`)
                 // loop through the next set of up to 9 edits until the end of the message history has been reached
                 // (7 + 0) <= 9 - 1 - (7)
                 // 7 <= 1
-                logMessage(`messageHistory.length - 1 - (overallMessagePointer + internalEditCount): ${messageHistory.length - 1 - (overallMessagePointer + internalEditCount)}`)
-                logMessage(`messageHistory.length - 1 - (overallMessagePointer + internalEditCount) >= 0: ${(messageHistory.length - 1 - (overallMessagePointer + internalEditCount) >= 0)}`);
+                logMessage(`messageHistory.length - 1 - (overallMessagePointer + internalEditCount): ${messageHistory.length - 1 - (overallMessagePointer + j)}`)
+                logMessage(`messageHistory.length - 1 - (overallMessagePointer + internalEditCount) >= 0: ${(messageHistory.length - 1 - (overallMessagePointer + j) >= 0)}`);
                 for (let internalEditCount = 0; internalEditCount < 9 && messageHistory.length - 1 - (overallMessagePointer + internalEditCount) >= 0; internalEditCount++) {
                     logMessage(`    Looping through this set of edits`)
                     logMessage(`    editHistoryLength: ${messageHistory.length}`);
@@ -118,7 +118,7 @@ async function execute(client, message, args) {
                     j++;
                 }
                 if (messageHistory.length - 1 - (overallMessagePointer + j) === 0) {
-                    logMessage(`End of message reached. messageHistory.length: ${messageHistory.length} , overallMessagePointer: ${overallMessagePointer}, internalEditCount: ${internalEditCount}`);
+                    logMessage(`End of message reached. messageHistory.length: ${messageHistory.length} , overallMessagePointer: ${overallMessagePointer}, internalEditCount: ${j}`);
                     furtherEdits.addField(`Original Content (posted ${moment(currentMessage.timestamp).format("MMM Do YYYY h:mm:ssa")})`, originalContent);
                 }
                 try {
