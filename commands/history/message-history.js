@@ -97,10 +97,10 @@ async function execute(client, message, args) {
                 logMessage(`editHistoryLength: ${messageHistory.length}`);
                     const furtherEdits = new Discord.MessageEmbed()
                     .setURL(`https://discord.com/channels/${currentMessage.guild}/${currentMessage.channel}/${messageID}`)
-                for (let internalEditCount = 0; internalEditCount < 9 && internalEditCount < messageHistory.length-1 - overallMessagePointer + internalEditCount; internalEditCount++) {
+                for (let internalEditCount = 0; internalEditCount < 9 && internalEditCount < messageHistory.length-1 - (overallMessagePointer + internalEditCount); internalEditCount++) {
                     logMessage(`Looping through this set of edits`)
                     logMessage(`InternalEditCount: ${internalEditCount}`);
-                    logMessage(`messageHistory.length-1 - overallMessagePointer + internalEditCount: ${messageHistory.length-1 - overallMessagePointer + internalEditCount}`);
+                    logMessage(`messageHistory.length-1 - (overallMessagePointer + internalEditCount): ${messageHistory.length-1 - (overallMessagePointer + internalEditCount)}`);
                     logMessage(`overallMessagePointer: ${overallMessagePointer}`);
                     let pointer = overallMessagePointer + internalEditCount;
                     logMessage(`pointer: ${pointer}`);
@@ -108,7 +108,7 @@ async function execute(client, message, args) {
                     let formattedDatetime = moment(messageHistory[pointer].editTimestamp).format("MMM Do YYYY h:mm:ssa");
                     furtherEdits.addField(`Edit on ${formattedDatetime}`, messageHistory[pointer].newContent);
                 }
-                if (messageHistory.length-overallMessagePointer+internalEditCount === 0) {
+                if (messageHistory.length-1-(overallMessagePointer+internalEditCount) === 0) {
                     logMessage(`End of message reached. messageHistory.length: ${messageHistory.length} , overallMessagePointer: ${overallMessagePointer}, internalEditCount: ${internalEditCount}`);
                     furtherEdits.addField(`Original Content (posted ${moment(currentMessage.timestamp).format("MMM Do YYYY h:mm:ssa")})`, originalContent);
                 }
