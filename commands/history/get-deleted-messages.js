@@ -14,25 +14,26 @@ const pool = mysql.createPool({
 
 //module settings
 const name = "get-deleted-messages";
-const description = "Retrieves the last numMessages messages";
+const description = "Retrieves the recently deleted messages by the mentioned user";
 const args = [
     {
         param: 'user',
         type: 'Snowflake|Mention',
         description: 'A user ID or @mention',
         default: 'current user',
+        required: false,
     },
     {
         param: 'numMessages',
         type: 'int',
         description: 'The number of messages to retrieve',
         default: 5,
+        required: false,
     },
-
 ];
 
 //main
-async function execute(client, message, args) {
+async function execute (client, message, args) {
     let userID = args[0];
     if (message.mentions.users.first()) {
         userID = message.mentions.users.first().id;
@@ -63,24 +64,24 @@ async function execute(client, message, args) {
             " ORDER BY" +
             "    m.timestamp" +
             " DESC" +
-            " LIMIT ?", [userID, +numMessages]);
+            " LIMIT ?", [userID,+numMessages]);
     } catch (e) {
         throw e;
     }
     try {
-        message.channel.send(`Last ${numMessages} messages sent by ${deletedMessages[0].author_displayName}:`);
+        message.channel.send(`${deletedMessages[0].author_displayName}'s last ${numMessages} deleted messages:`);
     } catch (e) {
         console.error("There was an error sending the embed message:", e);
         throw e;
     }
     for (const deletedMessage of deletedMessages) {
         console.log(`Current message: ${JSON.stringify(deletedMessage)}`);
-        console.log
         let embedMessage = new Discord.MessageEmbed()
             .setAuthor(deletedMessage.author_displayName, deletedMessage.author_avatarURL)
             .setThumbnail(deletedMessage.author_avatarURL)
             .addField("Posted:", moment(deletedMessage.timestamp).format("dddd, MMMM Do YYYY @ hh:mm:ss a"))
-            .addField("Deleted:", moment(deletedMessage.deleted).format("dddd, MMMM Do YYYY @ hh:mm:ss a"));
+            .addField("Deleted:", moment(deletedMessage.deleted).format("dddd, MMMM Do YYYY @ hh:mm:ss a"))
+            .setFooter(`Message ID: ${deletedMessage.id}`);
 
         if (deletedMessage.content) {
             embedMessage.addField('\u200b', deletedMessage.content)
