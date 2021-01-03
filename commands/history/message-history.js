@@ -50,7 +50,7 @@ async function execute(client, message, args) {
     const embedMessage = new Discord.MessageEmbed()
         .setTitle(`Message History for ${messageID}`)
         .setURL(`https://discord.com/channels/${currentMessage.guild}/${currentMessage.channel}/${messageID}`)
-        .addField("Posted by:", currentMessage.author_displayName);
+        .setDescription(`Posted by: ${currentMessage.author_displayName}`);
     let originalContent = currentMessage.content;
     if (currentMessage.deleted) {
         embedMessage.addField(":x: Deleted:", moment(currentMessage.deleted).format("dddd, MMMM Do YYYY @ hh:mm:ss a"));
@@ -60,7 +60,7 @@ async function execute(client, message, args) {
         originalContent = messageHistory[messageHistory.length - 1].oldContent;
         const mostRecentEdit = messageHistory.shift();
         embedMessage.addField(`Current Content (edited on ${moment(mostRecentEdit.editTimestamp).format("MMM Do YYYY h:mm:ssa")})`, mostRecentEdit.newContent);
-        if ((currentMessage.deleted && messageHistory.length <= 7) || (!currentMessage.deleted && messageHistory.length <= 8)) {
+        if ((currentMessage.deleted && messageHistory.length <= 8) || (!currentMessage.deleted && messageHistory.length <= 9)) {
             logMessage(`There is edit history but it will fit in one Embed: ${messageHistory.length}`);
             for (const edit of messageHistory) {
                 let formattedDatetime = moment(edit.editTimestamp).format("MMM Do YYYY h:mm:ssa");
