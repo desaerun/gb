@@ -63,7 +63,7 @@ async function execute(client, message, args) {
         if ((currentMessage.deleted && messageHistory.length <= 8) || (!currentMessage.deleted && messageHistory.length <= 9)) {
             for (const edit of messageHistory) {
                 let formattedDatetime = moment(edit.editTimestamp).format(dateFormat);
-                embedMessage.addField(`Edit on ${formattedDatetime}`, edit.newContent);
+                embedMessage.addField(`Edit on ${formattedDatetime}:`, edit.newContent);
             }
             embedMessage.addField(`Original Content (posted ${moment(currentMessage.timestamp).format(dateFormat)}):`, originalContent);
             try {
@@ -75,7 +75,7 @@ async function execute(client, message, args) {
             //in case there are more edits than can fit in the MessageEmbed (it only supports 10 fields total)
             for (var currentMessagePointer = 0; (currentMessage.deleted && currentMessagePointer < 7) || (!currentMessage.deleted && currentMessagePointer < 8); currentMessagePointer++) {
                 let formattedDatetime = moment(messageHistory[currentMessagePointer].editTimestamp).format(dateFormat);
-                embedMessage.addField(`Edit on ${formattedDatetime}`, messageHistory[currentMessagePointer].newContent);
+                embedMessage.addField(`Edit on ${formattedDatetime}:`, messageHistory[currentMessagePointer].newContent);
             }
             try {
                 await message.channel.send(embedMessage);
@@ -89,7 +89,7 @@ async function execute(client, message, args) {
                 for (var internalMessagePointer = 0;internalMessagePointer < 9 && messageHistory.length - 1 - (currentMessagePointer + internalMessagePointer) >= 0; internalMessagePointer++) {
                     let pointer = currentMessagePointer + internalMessagePointer;
                     let formattedDatetime = moment(messageHistory[pointer].editTimestamp).format(dateFormat);
-                    furtherEdits.addField(`Edit on ${formattedDatetime}`, messageHistory[pointer].newContent);
+                    furtherEdits.addField(`Edit on ${formattedDatetime}:`, messageHistory[pointer].newContent);
                 }
                 if (messageHistory.length - (currentMessagePointer + internalMessagePointer) === 0) {
                     furtherEdits.addField(`Original Content (posted ${moment(currentMessage.timestamp).format(dateFormat)}):`, originalContent);
