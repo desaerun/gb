@@ -87,42 +87,16 @@ async function execute(client, message, args) {
             } catch (e) {
                 throw e;
             }
-            logMessage(`Moving on to send further edits.`);
-            logMessage(`currentMessagePointer: ${l}`);
             //loop through more edits until end of edit history is reached
-            let j;
-            for (; currentMessagePointer < messageHistory.length - 1; currentMessagePointer = overallMessagePointer + j) {
-                let j = 0;
-                logMessage(`overallMessagePointer: ${overallMessagePointer}`);
-                logMessage(`internalEditCount: ${j}`);
-                logMessage(`editHistoryLength: ${messageHistory.length}`);
+            for (; currentMessagePointer < messageHistory.length - 1;currentMessagePointer+=internalMessagePointer) {
                 const furtherEdits = new Discord.MessageEmbed()
                     .setURL(`https://discord.com/channels/${currentMessage.guild}/${currentMessage.channel}/${messageID}`)
-                // loop through the next set of up to 9 edits until the end of the message history has been reached
-                // (7 + 0) <= 9 - 1 - (7)
-                // 7 <= 1
-                logMessage(`messageHistory.length - (overallMessagePointer + internalEditCount): ${messageHistory.length - (overallMessagePointer + j)}`)
-                logMessage(`messageHistory.length - (overallMessagePointer + internalEditCount) >= 0: ${(messageHistory.length - (overallMessagePointer + j) >= 0)}`);
-                var internalEditCount;
-                for (internalEditCount = 0; internalEditCount < 9 && messageHistory.length - 1 - (overallMessagePointer + internalEditCount) >= 0; internalEditCount++) {
-                    logMessage(`    Looping through this set of edits`)
-                    logMessage(`    editHistoryLength: ${messageHistory.length}`);
-                    logMessage(`    overallMessagePointer: ${overallMessagePointer}`);
-                    logMessage(`    InternalEditCount: ${internalEditCount}`);
-                    logMessage(`    messageHistory.length - 1 - (overallMessagePointer + internalEditCount): ${messageHistory.length} - 1 - (${overallMessagePointer} + ${internalEditCount}) : ${messageHistory.length - 1 - (overallMessagePointer + internalEditCount)}`);
-                    let pointer = overallMessagePointer + internalEditCount;
-                    logMessage(`    pointer: ${pointer}`);
-                    logMessage(`    message: ${JSON.stringify(messageHistory[pointer])}`);
+                for (var internalMessagePointer = 0;internalMessagePointer < 9 && messageHistory.length - 1 - (currentMessagePointer + internalMessagePointer) >= 0; internalMessagePointer++) {
+                    let pointer = currentMessagePointer + internalMessagePointer;
                     let formattedDatetime = moment(messageHistory[pointer].editTimestamp).format("MMM Do YYYY h:mm:ssa");
                     furtherEdits.addField(`Edit on ${formattedDatetime}`, messageHistory[pointer].newContent);
                 }
-                logMessage(`Checking for end of message history`);
-                logMessage(`messageHistory.length - 1: ${messageHistory.length -1}`);
-                logMessage(`overallMessagePointer: ${overallMessagePointer}`);
-                logMessage(`j: ${j}`);
-                logMessage(`messageHistory.length - 1 - (overallMessagePointer + j) === 0: ${(messageHistory.length - 1 - (overallMessagePointer + j) === 0)}`)
-                if (messageHistory.length - (overallMessagePointer + j) === 0) {
-                    logMessage(`End of message reached. messageHistory.length: ${messageHistory.length} , overallMessagePointer: ${overallMessagePointer}, internalEditCount: ${j}`);
+                if (messageHistory.length - (currentMessagePointer + internalMessagePointer) === 0) {
                     furtherEdits.addField(`Original Content (posted ${moment(currentMessage.timestamp).format("MMM Do YYYY h:mm:ssa")})`, originalContent);
                 }
                 try {
