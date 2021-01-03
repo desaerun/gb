@@ -75,8 +75,7 @@ async function execute(client, message, args) {
         } else {
             //in case there are more edits than can fit in the MessageEmbed (it only supports 10 fields total)
             logMessage(`There are more edits than can fit in one MessageEmbed: ${messageHistory.length}`);
-            var currentMessagePointer = 0;
-            for (let currentMessagePointer = 0; (currentMessage.deleted && currentMessagePointer < 6) || (!currentMessage.deleted && currentMessagePointer < 7); currentMessagePointer++) {
+            for (var currentMessagePointer = 0; (currentMessage.deleted && currentMessagePointer < 6) || (!currentMessage.deleted && currentMessagePointer < 7); currentMessagePointer++) {
                 logMessage(`currentMessagePointer: ${currentMessagePointer}`);
                 let formattedDatetime = moment(messageHistory[currentMessagePointer].editTimestamp).format("MMM Do YYYY h:mm:ssa");
                 embedMessage.addField(`Edit on ${formattedDatetime}`, messageHistory[currentMessagePointer].newContent);
