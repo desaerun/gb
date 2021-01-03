@@ -89,10 +89,12 @@ async function execute(client, message, args) {
             }
             //loop through more edits until end of edit history is reached
             for (; currentMessagePointer < messageHistory.length - 1;currentMessagePointer+=internalMessagePointer) {
+                logMessage(`currentMessagePointer: ${currentMessagePointer} | internalMessagePointer: ${internalMessagePointer}`);
                 const furtherEdits = new Discord.MessageEmbed()
                     .setURL(`https://discord.com/channels/${currentMessage.guild}/${currentMessage.channel}/${messageID}`)
                 for (var internalMessagePointer = 0;internalMessagePointer < 9 && messageHistory.length - 1 - (currentMessagePointer + internalMessagePointer) >= 0; internalMessagePointer++) {
                     let pointer = currentMessagePointer + internalMessagePointer;
+                    logMessage(`pointer: ${pointer} | currentMessagePointer: ${currentMessagePointer} | internalMessagePointer: ${internalMessagePointer}`)
                     let formattedDatetime = moment(messageHistory[pointer].editTimestamp).format("MMM Do YYYY h:mm:ssa");
                     furtherEdits.addField(`Edit on ${formattedDatetime}`, messageHistory[pointer].newContent);
                 }
