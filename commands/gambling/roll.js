@@ -23,7 +23,6 @@ const params = [
 //main
 async function execute(client, message, args, coinFlip = false) {
     let regularDie = false;
-    console.log(`length of args: ${args.length} | ${args}`);
     if (!args || args.length < 2) {
         if (args.length === 1) {
             args[1] = args[0];
@@ -37,7 +36,6 @@ async function execute(client, message, args, coinFlip = false) {
     const upper = Math.abs(args[1]);
     const range = upper-lower;
     const roll = lower + Math.floor(Math.random() * (range + 1));
-    console.log(`upper: ${upper} | lower: ${lower}  | range: ${range} | result: ${roll}`);
 
     let response = "";
     if (regularDie) {
