@@ -1,11 +1,11 @@
 //imports
 const axios = require('axios');
-const decode =require('unescape');
+const decode = require('unescape');
 
 //module settings
 const name = 'reddit';
 const description = 'Retrieves the top post of the day from the selected subreddit and shares it';
-const args = [
+const params = [
     {
         param: 'subreddit',
         type: 'string',
@@ -60,7 +60,7 @@ async function execute(client, message, args) {
 module.exports = {
     name: name,
     description: description,
-    args: args,
+    params: params,
     helpText: helpText,
     execute: execute,
 }

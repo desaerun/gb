@@ -4,7 +4,7 @@
 //module settings
 const name = "set-bot-status";
 const description = "Sets the bot status";
-const args = [
+const params = [
     {
         param: 'status',
         type: 'String',
@@ -26,7 +26,7 @@ function execute(client, message, args) {
 module.exports = {
     name: name,
     description: description,
-    args: args,
+    params: params,
     execute: execute,
 };
 

@@ -3,7 +3,7 @@
 //module settings
 const name = "delete-message";
 const description = "Deletes a message"
-const args = [
+const params = [
     {
         name: 'messageID',
         description: 'the ID of the message',
@@ -36,7 +36,7 @@ async function execute(client, message, args) {
 module.exports = {
     name: name,
     description: description,
-    args: args,
+    params: params,
     execute: execute,
 }
 

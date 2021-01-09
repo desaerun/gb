@@ -5,7 +5,7 @@ const superagent = require('superagent');
 //module settings
 const name = "play";
 const description = "play audio from a youtube file";
-const args = [
+const params = [
     {
         param: 'youtubeQuery',
         type: 'string',
@@ -21,7 +21,7 @@ function execute(client, message, args) {
         message.channel.send("You must be in a voice channel to use this command.");
         return false;
     }
-    let q = args.length > 0 ? args.join(" ") : this.args[0].default;
+    let q = args.length > 0 ? args.join(" ") : params[0].default;
     let params = {
         key: process.env.YOUTUBE_TOKEN,
         part: 'snippet',
@@ -55,7 +55,7 @@ function execute(client, message, args) {
 module.exports = {
     name: name,
     description: description,
-    args: args,
+    params: params,
     execute: execute,
 }
 

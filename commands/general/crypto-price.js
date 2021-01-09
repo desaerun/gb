@@ -4,7 +4,7 @@ const axios = require('axios');
 //module settings
 const name = "crypto-price";
 const description = "Retrieves crypto prices from Coinbase API (in USD)";
-const args = [
+const params = [
     {
         param: 'cryptoTicker',
         type: 'string',
@@ -53,7 +53,7 @@ async function execute(client, message, args) {
 module.exports = {
     name: name,
     description: description,
-    args: args,
+    params: params,
     execute: execute,
 }
 

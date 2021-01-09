@@ -16,7 +16,7 @@ const pool = mysql.createPool({
 //module settings
 const name = "random-message";
 const description = "Chooses a random message from the DB from the day that is specified as an argument.";
-const args = [
+const params = [
     {
         param: 'relativeDate',
         type: 'String',
@@ -151,7 +151,7 @@ async function execute(client, message, args, forceGuildID = null, forceChannelI
 module.exports = {
     name: name,
     description: description,
-    args: args,
+    params: params,
     execute: execute,
 }
 

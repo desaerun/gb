@@ -13,7 +13,7 @@ const pool = mysql.createPool({
 //module settings
 const name = "run-sql";
 const description = "Runs SQL queries directly";
-const args = [
+const params = [
     {
         param: 'query',
         type: 'String',
@@ -43,7 +43,7 @@ async function execute(client, message, args) {
 module.exports = {
     name: name,
     description: description,
-    args: args,
+    params: params,
     execute: execute,
 }
 

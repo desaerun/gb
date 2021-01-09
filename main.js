@@ -44,7 +44,7 @@ client.once('ready', () => {
      */
 
     //set initial bot status
-    client.user.setActivity(status.args[0].default, {type: 'PLAYING'})
+    client.user.setActivity(status.params[0].default, {type: 'PLAYING'})
         .then(() => console.log())
         .catch((err) => {
             dev_output.sendTrace(`Bot failed to set status: ${err}`, process.env.ONLINE_STATUS_CHANNEL_ID)
@@ -144,7 +144,7 @@ function runCommands(message, args) {
     if (client.commands.has(commandName)) {
         try {
             let command = client.commands.get(commandName);
-            args = setArgsToDefault(command,args);
+            args = setArgsToDefault(command, args);
 
             command.execute(client, message, args);
 
@@ -163,15 +163,15 @@ function runCommands(message, args) {
  * @param givenArgs
  * @returns {[]}
  */
-function setArgsToDefault(command,givenArgs) {
+function setArgsToDefault(command, givenArgs) {
     let args = givenArgs;
-    if (command.args && givenArgs < command.args.length) {
-        for (let i = 0; i < command.args.length; i++) {
-            if (!(args[i]) && command.args[i].default) {
-                if (Array.isArray(command.args[i].default)) {
-                    args[i] = getRand(command.args[i].default);
+    if (command.params && givenArgs < command.params.length) {
+        for (let i = 0; i < command.params.length; i++) {
+            if (!(args[i]) && command.params[i].default && command.params[i].required) {
+                if (Array.isArray(command.params[i].default)) {
+                    args[i] = getRand(command.params[i].default);
                 } else {
-                    args[i] = command.args[i].default;
+                    args[i] = command.params[i].default;
                 }
             }
         }

@@ -8,7 +8,7 @@ const logMessage = require("../tools/logMessage");
 //module settings
 const name = "help";
 const description = "Prints a message telling users how to get a list of commands or help on a specific command.";
-const args = [
+const params = [
     {
         param: 'commandName',
         type: 'string',
@@ -37,7 +37,7 @@ async function execute(client, message, args) {
 module.exports = {
     name: name,
     description: description,
-    args: args,
+    params: params,
     execute: execute,
 }
 
@@ -57,8 +57,8 @@ function getHelpMessage(command) {
         value: command.description
     });
     let fullCommand = `${CONFIG.prefix}${command.name}`;
-    if (command.args) {
-        for (const currentArg of command.args) {
+    if (command.params) {
+        for (const currentArg of command.params) {
             logMessage(currentArg, 3);
             fullCommand += ` `;
             let optionalMod = !currentArg.required ? "?" : "";

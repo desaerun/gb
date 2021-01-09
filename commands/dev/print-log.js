@@ -5,7 +5,7 @@ const fs = require('fs');
 //module settings
 const name = "print-log";
 const description = "prints the logfile";
-const args = [
+const params = [
     {
         param: 'numLines',
         description: 'The number of lines to print from each log.',
@@ -26,7 +26,7 @@ async function execute(client, message) {
 module.exports = {
     name: name,
     description: description,
-    args: args,
+    params: params,
     execute: execute,
 }
 
