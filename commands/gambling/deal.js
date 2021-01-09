@@ -41,7 +41,7 @@ async function execute(client, message, args) {
     let i = 0;
     for (let suit=0;suit<suits.length;suit++) {
         for (let rank=0;rank<ranks.length;rank++,i++) {
-            console.log(`suit: ${suit} | ${suits[suit]}`);
+            console.log(`rank: ${rank} / ${ranks[rank]} | suit: ${suit} / ${suits[suit]}`);
             cards.push(`${ranks[rank]} of ${suits[suit]}`);
         }
     }
