@@ -48,7 +48,7 @@ async function execute(client, message, args) {
     ];
     for (const logFile of logFiles) {
         const chunkSize = 2000;
-        const logText = await readLog(logFile.file);
+        const logText = await readLog(logFile.file,args[0]);
 
         try {
             await message.channel.send(`Contents of ${logFile.name} log file:`);
