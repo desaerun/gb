@@ -38,7 +38,7 @@ async function execute(client, message, args, coinFlip = false) {
     const range = (upper+1)-lower;
     const result = rand*range+lower;
     const roll = Math.floor(rand*(range)+lower);
-    console.log(`rand: ${rand} | range: ${range} | result: ${result} | floored: ${roll}`);
+    console.log(`upper: ${upper} | lower: ${lower} | rand: ${rand} | range: ${range} | result: ${result} | floored: ${roll}`);
 
     let response = "";
     if (regularDie) {
