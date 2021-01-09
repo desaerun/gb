@@ -32,8 +32,8 @@ async function execute(client, message, args, coinFlip = false) {
         args[0] = params[0].default;
         regularDie = true;
     }
-    const lower = args[0];
-    const upper = args[1];
+    const lower = +args[0];
+    const upper = +args[1];
     const rand = Math.random();
     const range = (upper+1)-lower;
     const result = rand*range+lower;
