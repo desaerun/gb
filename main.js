@@ -167,7 +167,7 @@ function setArgsToDefault(command,givenArgs) {
     let args = givenArgs;
     if (command.params && givenArgs < command.params.length) {
         for (let i = 0; i < command.params.length; i++) {
-            if (!(args[i]) && command.params[i].default) {
+            if (!(args[i]) && command.params[i].default && command.params[i].required) {
                 if (Array.isArray(command.params[i].default)) {
                     args[i] = getRand(command.params[i].default);
                 } else {
