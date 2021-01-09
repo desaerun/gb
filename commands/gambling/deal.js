@@ -70,7 +70,7 @@ async function execute(client, message, args) {
         console.log(`card: ${card} | cards left: ${cards.join(", ")}`);
     }
     try {
-        await message.channel.send(`Dealt the following cards: **${hand.join("**, **")}**`);
+        await message.channel.send(`Dealt the following cards (${hand.length}): **${hand.join("**, **")}**`);
     } catch (e) {
         throw e;
     }
