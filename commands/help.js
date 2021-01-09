@@ -20,11 +20,14 @@ const params = [
 //main
 async function execute(client, message, args) {
     if (args.length === 0) {
-        message.channel.send(generateCommandList(client.commands));
+        try {
+            await message.channel.send(generateCommandList(client.commands));
+        } catch (e) {
+            throw e;
+        }
         return;
     }
-
-    const helpWithCommand = args[0];
+    const helpWithCommand = args[0].match(/^-?([\w-_]+)$/)[1];
     if (client.commands.has(helpWithCommand)) {
         const embedMessage = getHelpMessage(client.commands.get(helpWithCommand));
         await message.channel.send(embedMessage);
