@@ -1,5 +1,5 @@
 //imports
-const roll = require("roll.js");
+const roll = require("./commands/gambling/roll.js");
 
 //module settings
 const name = "coinflip";
