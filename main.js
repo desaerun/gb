@@ -201,8 +201,4 @@ client.on('shardError', error => {
     console.error("possible shard error was caught: ", error);
 });
 
-try {
-    await client.login(process.env.BOT_TOKEN);
-} catch (e) {
-    throw `Failed to login: ${e}`;
-}
+client.login(process.env.BOT_TOKEN);
