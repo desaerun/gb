@@ -48,9 +48,9 @@ async function execute(client, message, args) {
     console.log(`cards: ${cards}`);
     let hand = [];
     for (i=1;i<=+args[0];i++) {
-        console.log(`cards left: ${cards}`);
         let card = 1 + (Math.random() * cards.length);
         hand.push(cards.splice(card,1)[0]);
+        console.log(`cards left: ${cards}`);
     }
     try {
         await message.channel.send(`Dealt the following cards: **${hand.join("**, **")}**`);
