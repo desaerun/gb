@@ -24,6 +24,7 @@ const params = [
 async function execute(client, message, args, coinFlip = false) {
     let regularDie = false;
     if (args.length < 2) {
+        console.log(`length of args: ${args.length}`);
         if (args.length === 1) {
             args[1] = args[0];
         } else {
@@ -47,7 +48,7 @@ async function execute(client, message, args, coinFlip = false) {
         response = `**${client.user.username}** rolls between **${args[0]}** and **${args[1]}**:  **${roll}**`;
     }
     if (coinFlip) {
-        const side = (roll) ? "Heads" : "Tails";
+        const side = (roll===2) ? "Heads" : "Tails";
         response = `**${client.user.username}** flips a coin. It's **${side}**!`;
     }
     try {
