@@ -33,7 +33,7 @@ const params = [
 ];
 
 //main
-async function execute (client, message, args) {
+async function execute(client, message, args) {
     let userID = args[0];
     if (message.mentions.users.first()) {
         userID = message.mentions.users.first().id;
@@ -64,7 +64,7 @@ async function execute (client, message, args) {
             " ORDER BY" +
             "    m.timestamp" +
             " DESC" +
-            " LIMIT ?", [userID,+numMessages]);
+            " LIMIT ?", [userID, +numMessages]);
     } catch (e) {
         throw e;
     }

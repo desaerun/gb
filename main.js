@@ -144,7 +144,7 @@ function runCommands(message, args) {
     if (client.commands.has(commandName)) {
         try {
             let command = client.commands.get(commandName);
-            args = setArgsToDefault(command,args);
+            args = setArgsToDefault(command, args);
 
             command.execute(client, message, args);
 
@@ -163,7 +163,7 @@ function runCommands(message, args) {
  * @param givenArgs
  * @returns {[]}
  */
-function setArgsToDefault(command,givenArgs) {
+function setArgsToDefault(command, givenArgs) {
     let args = givenArgs;
     if (command.params && givenArgs < command.params.length) {
         for (let i = 0; i < command.params.length; i++) {

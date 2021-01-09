@@ -16,7 +16,7 @@ const params = [
         type: 'Integer',
         description: 'Upper bounds of the roll.',
         default: 6,
-        required: false,
+        required: true,
     }
 ];
 
@@ -34,7 +34,7 @@ async function execute(client, message, args, coinFlip = false) {
     }
     const lower = Math.abs(args[0]);
     const upper = Math.abs(args[1]);
-    const range = upper-lower;
+    const range = upper - lower;
     const roll = lower + Math.floor(Math.random() * (range + 1));
 
     let response = "";
@@ -44,7 +44,7 @@ async function execute(client, message, args, coinFlip = false) {
         response = `**${client.user.username}** rolls between **${args[0]}** and **${args[1]}**:  **${roll}**`;
     }
     if (coinFlip) {
-        const side = (roll===1) ? "Heads" : "Tails";
+        const side = (roll === 1) ? "Heads" : "Tails";
         response = `**${client.user.username}** flips a coin. It's **${side}**!`;
     }
     try {
@@ -52,6 +52,7 @@ async function execute(client, message, args, coinFlip = false) {
     } catch (e) {
         throw e;
     }
+    return roll;
 }
 
 //module export

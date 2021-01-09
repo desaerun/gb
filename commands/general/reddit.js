@@ -1,6 +1,6 @@
 //imports
 const axios = require('axios');
-const decode =require('unescape');
+const decode = require('unescape');
 
 //module settings
 const name = 'reddit';

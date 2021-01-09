@@ -10,7 +10,7 @@ const CONFIG = require("../config/config");
 const logMessage = function (message, minVerbosity = 3) {
     if (CONFIG.verbosity >= minVerbosity) {
         //convert objects to JSON.stringify
-        if (typeof(message) === "object" && message !== null) {
+        if (typeof (message) === "object" && message !== null) {
             console.log(JSON.stringify(message));
             return;
         }

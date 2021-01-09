@@ -2,19 +2,20 @@
 
 //module settings
 const name = "deal";
-const description = "deals a hand of cards";
+const description = "Deals a hand of cards";
 const params = [
     {
         param: 'size',
         type: 'Integer',
-        description: 'How many cards to deal',
+        description: 'How many cards to deal.',
         default: 1,
         required: true,
     },
 ];
+
 //main
 async function execute(client, message, args) {
-    args[0] = Math.abs(parseInt(args[0],10));
+    args[0] = Math.abs(parseInt(args[0], 10));
     if (isNaN(args[0])) {
         try {
             await message.channel.send("You must provide a valid integer input.");
@@ -48,8 +49,8 @@ async function execute(client, message, args) {
     ]
     let cards = [];
     let i = 0;
-    for (let suit=0;suit<suits.length;suit++) {
-        for (let rank=0;rank<ranks.length;rank++,i++) {
+    for (let suit = 0; suit < suits.length; suit++) {
+        for (let rank = 0; rank < ranks.length; rank++, i++) {
             cards.push(`${ranks[rank]} of ${suits[suit]}`);
         }
     }
@@ -59,11 +60,11 @@ async function execute(client, message, args) {
     args[0] = (args[0] > deckSize) ? deckSize : args[0];
 
     let hand = [];
-    for (i=1;i<=+args[0];i++) {
+    for (i = 1; i <= +args[0]; i++) {
         const cardIndex = Math.floor((Math.random() * cards.length));
 
         const card = cards[cardIndex];
-        cards.splice(cardIndex,1);
+        cards.splice(cardIndex, 1);
         hand.push(card);
     }
     try {
