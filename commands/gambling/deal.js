@@ -45,7 +45,12 @@ async function execute(client, message, args) {
             cards.push(`${ranks[rank]} of ${suits[suit]}`);
         }
     }
-    console.log(`cards: ${cards}`);
+    const deckSize = ranks.length * cards.length;
+    console.log(`deck size: ${deckSize} | cards: ${cards}`);
+
+    // if a number bigger than the deck size is given, set it to the maximum size;
+    args[0] = (args[0] > deckSize) ? deckSize : args[0];
+
     let hand = [];
     for (i=1;i<=+args[0];i++) {
         const cardIndex = Math.floor((Math.random() * cards.length));
