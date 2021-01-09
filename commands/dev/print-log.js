@@ -58,7 +58,7 @@ async function execute(client, message, args) {
         for (let i = 0; i<logText.length;i+chunkSize) {
             const currentChunk = logText.substr(i,chunkSize);
             try {
-                await message.channel.send(`\`\`\`${currentChunk}`);
+                await message.channel.send(`\`\`\`${currentChunk}\`\`\``);
             } catch (e) {
                 throw e;
             }
