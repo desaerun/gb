@@ -46,7 +46,7 @@ async function execute(client, message, args) {
     }
 
     let hand = [];
-    for (i=1;i<=args[0];i++) {
+    for (i=1;i<=+args[0];i++) {
         let card = 1 + (Math.random() * cards.length);
         hand.push(cards.splice(card,1)[0]);
     }
