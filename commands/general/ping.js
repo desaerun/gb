@@ -1,4 +1,5 @@
 //imports
+const Discord = require('discord.js');
 
 //module settings
 const name = "ping";
@@ -6,7 +7,15 @@ const description = "this is a ping command";
 
 //main
 function execute(client, message) {
-    message.channel.send('pong');
+    let latency = Date.now() - message.createdTimestamp;
+
+    let embedMessage = new Discord.MessageEmbed()
+        .setThumbnail('https://cdn0.iconfinder.com/data/icons/sports-59/512/Table_tennis-256.png')
+        .setTitle('Pong!')
+        .addField('Latency', `${latency} ms`)
+        .addField('API',`${client.ws.ping} ms`);
+
+    message.channel.send(embedMessage);
 }
 
 //module export
