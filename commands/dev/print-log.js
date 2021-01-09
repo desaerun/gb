@@ -17,14 +17,16 @@ const params = [
 
 //main
 async function execute(client, message, args) {
-    args[0] = Math.abs(parseInt(args[0], 10));
-    if (isNaN(args[0])) {
-        try {
-            await message.channel.send(`You must provide a valid ${params[0].type} input for ${params[0].param}.`);
-        } catch (e) {
-            throw e;
+    if (args[0]) {
+        args[0] = Math.abs(parseInt(args[0], 10));
+        if (isNaN(args[0])) {
+            try {
+                await message.channel.send(`You must provide a valid ${params[0].type} input for ${params[0].param}.`);
+            } catch (e) {
+                throw e;
+            }
+            return;
         }
-        return;
     }
     const logFiles = [
         {
