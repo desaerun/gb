@@ -38,7 +38,7 @@ async function execute (client, message, args) {
     if (message.mentions.users.first()) {
         userID = message.mentions.users.first().id;
     }
-    const numMessages = args[1] ? args[1] : this.args[1].default;
+    const numMessages = args[1] ? args[1] : params[1].default;
     let deletedMessages;
     try {
         [deletedMessages] = await pool.query("SELECT" +
@@ -102,7 +102,7 @@ async function execute (client, message, args) {
 module.exports = {
     name: name,
     description: description,
-    args: params,
+    params: params,
     execute: execute,
 }
 

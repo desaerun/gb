@@ -36,7 +36,7 @@ async function execute(client, message, args) {
     let includeBotMessages = false;
     //if command is called with arg, check if it's a channel ID;
     if (args.length > 0) {
-        if (args[0] === "self" || args[0] === "this" || args[0] === this.args[0].default || args[0] === "") {
+        if (args[0] === "self" || args[0] === "this" || args[0] === params[0].default || args[0] === "") {
             targetChannel = message.channel;
         } else if (message.guild.channels.cache.get(args[0])) {
             targetChannel = message.guild.channels.cache.get(args[0]);
@@ -107,7 +107,7 @@ async function execute(client, message, args) {
 module.exports = {
     name: name,
     description: description,
-    args: params,
+    params: params,
     execute: execute,
 }
 

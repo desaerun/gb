@@ -53,7 +53,7 @@ async function execute(client, message, args) {
 module.exports = {
     name: name,
     description: description,
-    args: params,
+    params: params,
     execute: execute,
 }
 

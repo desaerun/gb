@@ -151,7 +151,7 @@ async function execute(client, message, args, forceGuildID = null, forceChannelI
 module.exports = {
     name: name,
     description: description,
-    args: params,
+    params: params,
     execute: execute,
 }
 
