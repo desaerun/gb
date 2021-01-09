@@ -33,13 +33,11 @@ async function execute(client, message, args, coinFlip = false) {
         args[0] = params[0].default;
         regularDie = true;
     }
-    const lower = +args[0];
-    const upper = +args[1];
-    const rand = Math.random();
-    const range = (upper+1)-lower;
-    const result = rand*range+lower;
-    const roll = Math.floor(rand*(range)+lower);
-    console.log(`upper: ${upper} | lower: ${lower} | rand: ${rand} | range: ${range} | result: ${result} | floored: ${roll}`);
+    const lower = Math.abs(args[0]);
+    const upper = Math.abs(args[1]);
+    const range = upper-lower;
+    const roll = lower + Math.floor(Math.random() * (range + 1));
+    console.log(`upper: ${upper} | lower: ${lower}  | range: ${range} | result: ${roll}`);
 
     let response = "";
     if (regularDie) {
@@ -48,7 +46,7 @@ async function execute(client, message, args, coinFlip = false) {
         response = `**${client.user.username}** rolls between **${args[0]}** and **${args[1]}**:  **${roll}**`;
     }
     if (coinFlip) {
-        const side = (roll===2) ? "Heads" : "Tails";
+        const side = (roll===1) ? "Heads" : "Tails";
         response = `**${client.user.username}** flips a coin. It's **${side}**!`;
     }
     try {
