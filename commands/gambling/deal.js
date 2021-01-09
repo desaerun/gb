@@ -50,12 +50,10 @@ async function execute(client, message, args) {
     let i = 0;
     for (let suit=0;suit<suits.length;suit++) {
         for (let rank=0;rank<ranks.length;rank++,i++) {
-            console.log(`rank: ${rank} / ${ranks[rank]} | suit: ${suit} / ${suits[suit]}`);
             cards.push(`${ranks[rank]} of ${suits[suit]}`);
         }
     }
     const deckSize = suits.length * ranks.length;
-    console.log(`deck size: ${deckSize} | cards: ${cards}`);
 
     // if a number bigger than the deck size is given, set it to the maximum size;
     args[0] = (args[0] > deckSize) ? deckSize : args[0];
@@ -67,7 +65,6 @@ async function execute(client, message, args) {
         const card = cards[cardIndex];
         cards.splice(cardIndex,1);
         hand.push(card);
-        console.log(`card: ${card} | cards left: ${cards.join(", ")}`);
     }
     try {
         await message.channel.send(`Dealt the following cards (${hand.length}): **${hand.join("**, **")}**`);
