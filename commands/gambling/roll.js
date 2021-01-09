@@ -23,8 +23,8 @@ const params = [
 //main
 async function execute(client, message, args, coinFlip = false) {
     let regularDie = false;
-    if (args.length < 2) {
-        console.log(`length of args: ${args.length}`);
+    console.log(`length of args: ${args.length}`);
+    if (!args || args.length < 2) {
         if (args.length === 1) {
             args[1] = args[0];
         } else {
