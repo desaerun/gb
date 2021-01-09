@@ -13,7 +13,7 @@ captureMessage = require("../../tools/message_db_tools/captureMessage");
 //module settings
 const name = "cache-message-history";
 const description = "Retrieves message history for the current channel and stores it to the DB";
-const args = [
+const params = [
     {
         param: 'channel',
         type: 'Snowflake|"this"|"self"',
@@ -107,7 +107,7 @@ async function execute(client, message, args) {
 module.exports = {
     name: name,
     description: description,
-    args: args,
+    args: params,
     execute: execute,
 }
 

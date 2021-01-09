@@ -5,7 +5,7 @@ const superagent = require('superagent');
 //module settings
 const name = "play";
 const description = "play audio from a youtube file";
-const args = [
+const params = [
     {
         param: 'youtubeQuery',
         type: 'string',
@@ -55,7 +55,7 @@ function execute(client, message, args) {
 module.exports = {
     name: name,
     description: description,
-    args: args,
+    args: params,
     execute: execute,
 }
 

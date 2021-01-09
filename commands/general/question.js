@@ -6,7 +6,7 @@ const Discord = require('discord.js');
 //module settings
 const name = "question";
 const description = "Attempts to answer your question";
-const args = [
+const params = [
     {
         param: 'question',
         type: 'string',
@@ -61,7 +61,7 @@ async function execute(client, message, args) {
 module.exports = {
     name: name,
     description: description,
-    args: args,
+    args: params,
     execute: execute,
 }
 

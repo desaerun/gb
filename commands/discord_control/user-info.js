@@ -5,7 +5,7 @@ const moment = require('moment');
 //module settings
 const name = "user-info";
 const description = "Get info on a user";
-const args = [
+const params = [
     {
         param: 'userID',
         type: 'Snowflake',
@@ -53,7 +53,7 @@ function execute(client, message, args) {
 module.exports = {
     name: name,
     description: description,
-    args: args,
+    args: params,
     execute: execute,
 }
 

@@ -44,7 +44,7 @@ client.once('ready', () => {
      */
 
     //set initial bot status
-    client.user.setActivity(status.args[0].default, {type: 'PLAYING'})
+    client.user.setActivity(status.params[0].default, {type: 'PLAYING'})
         .then(() => console.log())
         .catch((err) => {
             dev_output.sendTrace(`Bot failed to set status: ${err}`, process.env.ONLINE_STATUS_CHANNEL_ID)
@@ -165,13 +165,13 @@ function runCommands(message, args) {
  */
 function setArgsToDefault(command,givenArgs) {
     let args = givenArgs;
-    if (command.args && givenArgs < command.args.length) {
-        for (let i = 0; i < command.args.length; i++) {
-            if (!(args[i]) && command.args[i].default) {
-                if (Array.isArray(command.args[i].default)) {
-                    args[i] = getRand(command.args[i].default);
+    if (command.params && givenArgs < command.params.length) {
+        for (let i = 0; i < command.params.length; i++) {
+            if (!(args[i]) && command.params[i].default) {
+                if (Array.isArray(command.params[i].default)) {
+                    args[i] = getRand(command.params[i].default);
                 } else {
-                    args[i] = command.args[i].default;
+                    args[i] = command.params[i].default;
                 }
             }
         }
@@ -201,4 +201,8 @@ client.on('shardError', error => {
     console.error("possible shard error was caught: ", error);
 });
 
-client.login(process.env.BOT_TOKEN);
+try {
+    await client.login(process.env.BOT_TOKEN);
+} catch (e) {
+    throw `Failed to login: ${e}`;
+}

@@ -3,7 +3,7 @@
 //module settings
 const name = "trout";
 const description = "trout-slap command";
-const args = [
+const params = [
     {
         param: 'name',
         type: 'string',
@@ -15,7 +15,7 @@ const args = [
 
 //main
 function execute(client, message, args) {
-    args[0] = args.length > 0 ? args[0] : this.args[0].default;
+    args[0] = args.length > 0 ? args[0] : params[0].default;
     message.channel.send(`**${message.author.username}** slaps **${args.join(' ')}** with a large trout.`);
 }
 
@@ -23,7 +23,7 @@ function execute(client, message, args) {
 module.exports = {
     name: name,
     description: description,
-    args: args,
+    args: params,
     execute: execute,
 }
 

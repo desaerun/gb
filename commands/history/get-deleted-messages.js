@@ -15,7 +15,7 @@ const pool = mysql.createPool({
 //module settings
 const name = "get-deleted-messages";
 const description = "Retrieves the recently deleted messages by the mentioned user";
-const args = [
+const params = [
     {
         param: 'user',
         type: 'Snowflake|Mention',
@@ -102,7 +102,7 @@ async function execute (client, message, args) {
 module.exports = {
     name: name,
     description: description,
-    args: args,
+    args: params,
     execute: execute,
 }
 

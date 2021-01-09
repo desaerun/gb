@@ -7,7 +7,7 @@ const stopwatchMap = new Map();
 //module settings
 const name = "stopwatch";
 const description = 'Use -stopwatch {name} to time something! Once to start, again to stop.';
-const args = [
+const params = [
     {
         param: 'stopwatchName',
         type: 'string',
@@ -54,7 +54,7 @@ function execute(client, message, args) {
 module.exports = {
     name: name,
     description: description,
-    args: args,
+    args: params,
     helpText: helpText,
     execute: execute,
 }

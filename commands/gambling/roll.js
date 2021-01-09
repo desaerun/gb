@@ -3,7 +3,7 @@
 //module settings
 const name = "roll";
 const description = "Rolls a die.";
-const args = [
+const params = [
     {
         param: 'lower',
         type: 'Integer',
@@ -53,7 +53,7 @@ async function execute(client, message, args, coinFlip = false) {
 module.exports = {
     name: name,
     description: description,
-    args: args,
+    args: params,
     execute: execute,
 }
 

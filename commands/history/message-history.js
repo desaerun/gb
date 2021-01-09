@@ -16,7 +16,7 @@ const pool = mysql.createPool({
 //module settings
 const name = "message-history";
 const description = "Retrieves history for the specified message ID.";
-const args = [
+const params = [
     {
         name: "messageID",
         description: "The ID of the message",
@@ -117,7 +117,7 @@ async function execute(client, message, args) {
 module.exports = {
     name: name,
     description: description,
-    args: args,
+    args: params,
     execute: execute,
 }
 
