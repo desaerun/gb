@@ -14,6 +14,14 @@ const params = [
 ];
 //main
 async function execute(client, message, args) {
+    if (isNaN(args[0]) || (parseFloat(args[0]) | 0) !== args[0]) {
+        try {
+            await message.channel.send("You must provide a valid integer input.");
+        } catch (e) {
+            throw e;
+        }
+        return;
+    }
     //build a deck
     const suits = [
         "Hearts",
