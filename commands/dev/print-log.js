@@ -47,7 +47,7 @@ async function execute(client, message, args) {
         },
     ];
     for (const logFile of logFiles) {
-        const chunkSize = 2000;
+        const chunkSize = 1994;
         const logText = await readLog(logFile.file,args[0]);
 
         try {
