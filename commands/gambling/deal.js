@@ -14,7 +14,8 @@ const params = [
 ];
 //main
 async function execute(client, message, args) {
-    if (isNaN(parseInt(args[0],10))) {
+    args[0] = Math.abs(parseInt(args[0],10));
+    if (isNaN(args[0])) {
         try {
             await message.channel.send("You must provide a valid integer input.");
         } catch (e) {
