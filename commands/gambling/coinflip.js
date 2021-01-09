@@ -7,7 +7,7 @@ const description = "Flips a coin.";
 
 //main
 async function execute(client, message, args) {
-    await roll.execute(client,message,args,true);
+    await roll.execute(client,message,"0 1",true);
 }
 
 //module export

@@ -8,14 +8,14 @@ const params = [
         param: 'lower',
         type: 'Integer',
         description: 'Lower bounds of the roll.',
-        default: '1',
+        default: 1,
         required: false,
     },
     {
         param: 'upper',
         type: 'Integer',
         description: 'Upper bounds of the roll.',
-        default: '6',
+        default: 6,
         required: false,
     }
 ];
