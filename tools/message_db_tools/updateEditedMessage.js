@@ -8,13 +8,13 @@ const pool = mysql.createPool({
     queueLimit: 0,
 });
 
-const insertNewMessage = require ("./insertNewMessage");
+const insertNewMessage = require("./insertNewMessage");
 
 const snowflakeToTimestamp = require("../snowflakeToTimestamp");
 const convertEmbedToText = require("../convertEmbedToText");
 
 module.exports = async function updateEditedMessage(oldMessage, newMessage) {
-    insertNewMessage(newMessage,Date.now());
+    insertNewMessage(newMessage, Date.now());
     if (oldMessage.partial) {
         oldMessage.fetch()
             .then(async (fetchedMessage) => {
@@ -45,7 +45,7 @@ async function addMessageEdit(oldMessage, newMessage) {
     }
     try {
         await pool.query("INSERT INTO messageEdits SET ?", oldMessageParams);
-    }  catch (error) {
+    } catch (error) {
         throw error;
     } finally {
         console.log(`Added edit history for message ${oldMessage.id}`);
