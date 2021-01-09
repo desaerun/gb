@@ -49,7 +49,9 @@ async function execute(client, message, args) {
     let hand = [];
     for (i=1;i<=+args[0];i++) {
         const cardIndex = Math.floor((Math.random() * cards.length));
-        const card = cards.splice(card,1)[0]
+
+        const card = cards[cardIndex];
+        cards.splice(cardIndex,1);
         hand.push(card);
         console.log(`card: ${card} | cards left: ${cards.join(", ")}`);
     }
