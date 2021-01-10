@@ -114,7 +114,7 @@ function uwuify(text) {
         if (Math.random() < frequency.exclamations)  {
             const randomExclamation = getRand(0,exclamations.length-1);
             console.log(`Modifying exclamation: ${exclamations[randomExclamation]}`);
-            words[i] = words[i].substring(i,words[i].length-2) + exclamations[randomExclamation];
+            words[i] = words[i].substring(0,words[i].length-1) + exclamations[randomExclamation];
         }
     }
 
