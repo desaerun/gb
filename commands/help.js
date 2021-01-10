@@ -4,6 +4,7 @@ const CONFIG = require('../config/config');
 const fs = require('fs');
 const path = require('path');
 const logMessage = require("../tools/logMessage");
+const sendLongMessage = require("../tools/sendLongMessage");
 
 //module settings
 const name = "help";
@@ -21,7 +22,7 @@ const params = [
 async function execute(client, message, args) {
     if (args.length === 0) {
         try {
-            await message.channel.send(generateCommandList(client.commands));
+            await sendLongMessage(generateCommandList(client.commands),message.channel);
         } catch (e) {
             throw e;
         }
@@ -67,25 +68,39 @@ function getHelpMessage(command) {
             let optionalMod = !currentArg.required ? "?" : "";
             fullCommand += `[${optionalMod}${currentArg.param}]`;
 
-            let value = `Type: ${currentArg.type}\n` +
-                `Desc: ${currentArg.description}\n`;
+            let value = `**Type**: ${currentArg.type}\n` +
+                `**Description**: ${currentArg.description}\n`;
 
             if (currentArg.default) {
                 if (Array.isArray(currentArg.default)) {
-                    value += `Default randomized from the following:\n${currentArg.default.join('\n')}`;
+                    const defaultsList = currentArg.default.join("\n");
+                    let modifiedDefaults = [];
+                    if (defaultsList.length > 900) {
+                        const defaultsSizeEach = 900 / currentArg.default.length;
+                        for (const currentDefault of currentArg.default) {
+                            if (currentDefault.length > defaultsSizeEach-3) {
+                                modifiedDefaults.push(currentDefault.substr(0,defaultsSizeEach-3) + "...");
+                            } else {
+                                modifiedDefaults.push(currentDefault);
+                            }
+                        }
+                    } else {
+                        modifiedDefaults = currentArg.default;
+                    }
+                    value += `**Default randomized from the following**:\n${modifiedDefaults.join('\n')}`;
                 } else {
-                    value += `Default: ${currentArg.default}`;
+                    value += `**Default**: ${currentArg.default}`;
                 }
             } else {
                 if (currentArg.required) {
-                    value += `**REQUIRED**`;
+                    value += `\n**REQUIRED**`;
                 } else {
-                    value += `No default value`;
+                    value += `\nNo default value`;
                 }
             }
-
+            console.log(value);
             fields.push({
-                name: `${currentArg.param}`,
+                name: `\`${currentArg.param}\``,
                 value: value
             });
         }
