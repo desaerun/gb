@@ -134,6 +134,7 @@ function generateCommandList(clientCommands) {
     }
 
     response += getCommandsText(dirPath, clientCommands);
+    response += `\nType \`${CONFIG.prefix}${name} [command]\` for more detailed help information about specific commands.`;
     return response;
 }
 
