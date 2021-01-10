@@ -64,7 +64,6 @@ function uwuify(text) {
         '^_^'
     ];
     const exclamations = [
-        '!',
         '!?',
         '?!',
         '!??',
@@ -78,6 +77,7 @@ function uwuify(text) {
         stutter: .3,
         actions: .1,
         faces: .1,
+        exclamations: .8,
     }
 
     text = text.trim();
@@ -99,23 +99,23 @@ function uwuify(text) {
     let addedStuff = new Map();
 
     for (let i=0;i<words.length;i++) {
-        console.log(`Modifying word: ${i}: ${words[i]}`);
         if (Math.random() < frequency.stutter) {
-            console.log(`Applying stutter`);
             const stutterChar = words[i][0];
             words[i] = stutterChar + '-' + words[i].toLowerCase();
         }
         if (Math.random() < frequency.actions) {
-            console.log(`Adding random action`);
             const randomAction = getRand(0,actions.length-1);
             addedStuff.set(i+1,`*${actions[randomAction]}*`);
         }
         if (Math.random() < frequency.faces) {
-            console.log(`Adding a random face`);
             const randomFace = getRand(0,faces.length-1);
             addedStuff.set(i+1,faces[randomFace])
         }
-        console.log(`Modified word: ${words[i]}`);
+        if (Math.random() < frequency.exclamations)  {
+            const randomExclamation = getRand(0,exclamations.length-1);
+            console.log(`Modifying exclamation: ${exclamations[randomExclamation]}`);
+            words[i].replace(/(!)/g,exclamations[randomExclamation]);
+        }
     }
 
     //add in replacements
