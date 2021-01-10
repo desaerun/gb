@@ -1,26 +1,20 @@
 async function sendLongMessage(text,channel,chunkSize = 2000) {
     const words = text.split(" ");
-    let extraWord = "";
     let chunkWords = [];
-    let msgLength = 0;
-    for (const word of words) {
-        if (msgLength + word.length >= chunkSize) {
-            extraWord = word;
+    let chunkLength = 0;
+    for (let i=0;i<words.length;i++) {
+        if (chunkLength + words[i].length >= chunkSize) {
             try {
-                await channel.send(text.substr(i,chunkSize));
+                const msgChunk = chunkWords.join(" ");
+                await channel.send(msgChunk);
             } catch (e) {
                 throw e;
             }
-            continue;
+            i--;
+        } else {
+            chunkWords.push(words[i]);
+            chunkLength += words[i].length+1;
         }
-        if (extraWord !== "") {
-            chunkWords.push(extraWord);
-            msgLength += extraWord.length;
-            extraWord = "";
-        }
-        chunkWords.push(word);
-        msgLength+=word.length;
     }
-
 }
 module.exports = sendLongMessage;
