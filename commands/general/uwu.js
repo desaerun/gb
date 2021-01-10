@@ -85,6 +85,11 @@ function uwuify(text) {
     const words = text.split(" ");
     for (let i=0;i<words.length;i++) {
         console.log(`Modifying word: ${i}: ${words[i]}`);
+        if (words[i].endsWith("!")) {
+            console.log(`Modifying exclamation`);
+            const randomExclamation = getRand(0,exclamations.length-1);
+            words[i].replace("!",randomExclamation);
+        }
         if (Math.random() < frequency.stutter) {
             console.log(`Applying stutter`);
             const stutterChar = words[i][0];
@@ -94,11 +99,6 @@ function uwuify(text) {
             console.log(`Adding random action`);
             const randomAction = getRand(0,actions.length-1);
             words.splice(i,0,randomAction);
-        }
-        if (words[i].endsWith("!")) {
-            console.log(`Modifying exclamation`);
-            const randomExclamation = getRand(0,exclamations.length-1);
-            words[i].replace("!",randomExclamation);
         }
         if (Math.random() < frequency.faces) {
             console.log(`Adding a random face`);
