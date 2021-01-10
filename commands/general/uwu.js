@@ -50,6 +50,9 @@ function uwuify(text) {
         "ianal",
     ];
     const replacements = new Map();
+    replacements.set(/(The)/g,"Da");
+    replacements.set(/(the)/g,"da");
+    replacements.set(/(THE)/g,"DA");
     replacements.set(/(th)/g,"d");
     replacements.set(/(Th|TH)/g,"D");
     replacements.set(/([lr])/g,"w");
