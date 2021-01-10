@@ -36,7 +36,7 @@ module.exports = {
 function uwuify(text) {
     const replacements = new Map();
     replacements.set(/(th)/g,"d");
-    replacements.set(/(Th)/g,"D");
+    replacements.set(/(Th|TH)/g,"D");
     replacements.set(/([lr])/g,"w");
     replacements.set(/[LR]/g,"W");
     const actions = [
@@ -78,7 +78,6 @@ function uwuify(text) {
         stutter: .3,
         actions: .1,
         faces: .1,
-        exclamations: 1,
     }
 
     text = text.trim();
@@ -88,8 +87,9 @@ function uwuify(text) {
         text = text.replace(re,replacement);
     }
 
-    console.log(`Modifying exclamation`);
+
     const randomExclamation = getRand(0,exclamations.length-1);
+    console.log(`Modifying exclamation: ${exclamations[randomExclamation]}`);
     text.replace(/!/g,exclamations[randomExclamation]);
 
     console.log(`Modified text: ${text}`);
