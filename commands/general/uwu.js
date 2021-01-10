@@ -47,7 +47,7 @@ function uwuify(text) {
     replacements.set(/(th)/g,"d");
     replacements.set(/(Th|TH)/g,"D");
     replacements.set(/([lr])/g,"w");
-    replacements.set(/[LR]/g,"W");
+    replacements.set(/([LR])/g,"W");
     const actions = [
         'blushes',
         'sweats',
@@ -83,7 +83,7 @@ function uwuify(text) {
         '!11!!'
     ];
     const frequency = {
-        stutter: .3,
+        stutter: .18,
         actions: .1,
         faces: .1,
         exclamations: .8,
@@ -101,7 +101,7 @@ function uwuify(text) {
         //skip over some abbreviations
         for (const [re,replacement] of replacements) {
             const wordPart = words[i].match(/([\d\w]+)/)[1];
-            if (wordPart && !noReplace.includes(wordPart.toLowerCase())) {
+            if (wordPart && wordPart.length > 2 && !noReplace.includes(wordPart.toLowerCase())) {
                 words[i] = words[i].replace(re, replacement);
             }
         }
