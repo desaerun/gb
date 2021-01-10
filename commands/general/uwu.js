@@ -15,7 +15,13 @@ const params = [
 
 //main
 async function execute(client, message, args) {
-    await message.channel.send(uwuify(args.join(' ')));
+    const uwuText = uwuify(args.join(" "));
+    const chunkSize = 2000;
+
+    //send text in _chunkSize_ chunks
+    for (let i=0;i<uwuText.length;i+=chunkSize) {
+        await message.channel.send(uwuText.substr(i,chunkSize));
+    }
 }
 
 //module export
@@ -69,18 +75,24 @@ function uwuify(text) {
         '!11!!'
     ];
     const frequency = {
-        stutter: .2,
-        actions: .2,
-        faces: .2,
+        stutter: .3,
+        actions: .1,
+        faces: .1,
         exclamations: 1,
     }
 
     text = text.trim();
     // replace characters
+    console.log(`Full text: ${text}`);
     for (const [re,replacement] of replacements) {
         text = text.replace(re,replacement);
     }
-    console.log(`Full text: ${text}`);
+
+    console.log(`Modifying exclamation`);
+    const randomExclamation = getRand(0,exclamations.length-1);
+    text.replace(/!/g,exclamations[randomExclamation]);
+
+    console.log(`Modified text: ${text}`);
 
 
     const words = text.split(" ");
@@ -88,11 +100,6 @@ function uwuify(text) {
 
     for (let i=0;i<words.length;i++) {
         console.log(`Modifying word: ${i}: ${words[i]}`);
-        if (words[i].endsWith("!")) {
-            console.log(`Modifying exclamation`);
-            const randomExclamation = getRand(0,exclamations.length-1);
-            words[i].replace(/!/,exclamations[randomExclamation]);
-        }
         if (Math.random() < frequency.stutter) {
             console.log(`Applying stutter`);
             const stutterChar = words[i][0];
