@@ -119,7 +119,7 @@ function generateCommandList(clientCommands) {
             if (fs.statSync(fullItemName).isDirectory()) {
                 logMessage(`${fullItemName} is a directory, recursing`);
                 const prettyDirName = uppercaseFirstLetter(item.replace("_", " "));
-                commandsText += `\n${indent(indentLevel)}${prettyDirName} commands:`;
+                commandsText += `\n${indent(indentLevel)}**${prettyDirName}** commands:`;
                 commandsText += getCommandsText(fullItemName, clientCommands, indentLevel + 1);
             } else {
                 if (item !== path.basename(__filename) && item.endsWith(".js")) {
@@ -134,6 +134,7 @@ function generateCommandList(clientCommands) {
     }
 
     response += getCommandsText(dirPath, clientCommands);
+    response += `\n\nType \`${CONFIG.prefix}${name} [command]\` for more detailed help information about specific commands.`;
     return response;
 }
 
