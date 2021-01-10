@@ -114,7 +114,7 @@ function uwuify(text) {
     //add in replacements
     let offset = 0;
     for (const [index,newStuff] of addedStuff) {
-        words.splice(index+offset,0,addedStuff);
+        words.splice(index+offset,0,newStuff);
         offset++;
     }
 
