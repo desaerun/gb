@@ -34,6 +34,12 @@ module.exports = {
 
 //helper functions
 function uwuify(text) {
+    //trim whitespace
+    text = text.trim();
+    if (text.length === 0) {
+        text = params[0].default;
+    }
+
     const noReplace = [
         "lol",
         "lmao",
@@ -91,9 +97,6 @@ function uwuify(text) {
 
     //textToAdd will hold the faces, actions, etc. that are being spliced in to the text
     let textToAdd = new Map();
-
-    //trim whitespace
-    text = text.trim();
 
     const words = text.split(" ");
     for (let i=0;i<words.length;i++) {
