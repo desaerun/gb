@@ -73,7 +73,21 @@ function getHelpMessage(command) {
 
             if (currentArg.default) {
                 if (Array.isArray(currentArg.default)) {
-                    value += `Default randomized from the following:\n${currentArg.default.join('\n')}`;
+                    const defaultsList = currentArg.default.join("\n");
+                    let modifiedDefaults = [];
+                    if (defaultsList.length > 2000) {
+                        const defaultsSizeEach = 2000 / currentArg.default.length;
+                        for (const currentDefault of currentArg.default) {
+                            if (currentDefault.length > defaultsSizeEach-3) {
+                                modifiedDefaults.push(currentDefault.substr(0,defaultsSizeEach-3) + "...");
+                            } else {
+                                modifiedDefaults.push(currentDefault);
+                            }
+                        }
+                    } else {
+                        modifiedDefaults = currentArg.default;
+                    }
+                    value += `Default randomized from the following:\n${modifiedDefaults.join('\n')}`;
                 } else {
                     value += `Default: ${currentArg.default}`;
                 }
