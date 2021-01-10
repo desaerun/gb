@@ -75,8 +75,8 @@ function getHelpMessage(command) {
                 if (Array.isArray(currentArg.default)) {
                     const defaultsList = currentArg.default.join("\n");
                     let modifiedDefaults = [];
-                    if (defaultsList.length > 2000) {
-                        const defaultsSizeEach = 2000 / currentArg.default.length;
+                    if (defaultsList.length > 900) {
+                        const defaultsSizeEach = 900 / currentArg.default.length;
                         for (const currentDefault of currentArg.default) {
                             if (currentDefault.length > defaultsSizeEach-3) {
                                 modifiedDefaults.push(currentDefault.substr(0,defaultsSizeEach-3) + "...");
