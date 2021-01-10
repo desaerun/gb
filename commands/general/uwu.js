@@ -95,8 +95,8 @@ function uwuify(text) {
     ];
     const frequency = {
         stutter: .14,
-        actions: .1,
-        faces: .1,
+        actions: .08,
+        faces: .10,
         exclamations: .8,
     }
 
