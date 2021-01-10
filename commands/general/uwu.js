@@ -29,8 +29,8 @@ module.exports = {
 //helper functions
 function uwuify(text) {
     const replacements = new Map();
-    replacements.set(/(d)/g,"th");
-    replacements.set(/(D)/g,"Th");
+    replacements.set(/(th)/g,"d");
+    replacements.set(/(Th)/g,"D");
     replacements.set(/([lr])/g,"w");
     replacements.set(/[LR]/g,"W");
     const actions = [
@@ -80,11 +80,11 @@ function uwuify(text) {
     for (const [re,replacement] of replacements) {
         text = text.replace(re,replacement);
     }
+    console.log(`Full text: ${text}`);
 
     const words = text.split(" ");
-
     for (let i=0;i<words.length;i++) {
-        console.log(`Modifying word: ${words[i]}`);
+        console.log(`Modifying word: ${i}: ${words[i]}`);
         if (Math.random() < frequency.stutter) {
             console.log(`Applying stutter`);
             const stutterChar = words[i][0];
