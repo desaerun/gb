@@ -57,7 +57,8 @@ function uwuify(text) {
     replacements.set(/(Th|TH)/g,"D");
     replacements.set(/([lr])/g,"w");
     replacements.set(/([LR])/g,"W");
-    replacements.set(/n([aeoiu])/g,"ny$1");
+    replacements.set(/^n([aeoiu])/g,"ny$1");
+    replacements.set(/^N([aeoiu])/g,"Ny$1");
     const actions = [
         'blushes',
         'sweats',
