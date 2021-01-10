@@ -17,7 +17,7 @@ module.exports = function convertEmbedToText(embed) {
         messageContent += `\n**${field.name}**`;
         messageContent += `\n    ${field.value}`;
     }
-    if (embed.author.name) {
+    if (embed.author && embed.author.name) {
         messageContent += `\n${embed.author.name}`;
     }
     if (embed.timestamp) {
