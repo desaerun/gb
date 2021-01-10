@@ -42,7 +42,7 @@ function uwuify(text) {
         "idc",
         "ftl",
         "ianal",
-    ]
+    ];
     const replacements = new Map();
     replacements.set(/(th)/g,"d");
     replacements.set(/(Th|TH)/g,"D");
@@ -100,7 +100,7 @@ function uwuify(text) {
 
         //skip over some abbreviations
         for (const [re,replacement] of replacements) {
-            if (!noReplace.has(words[i].toLowerCase())) {
+            if (!noReplace.includes(words[i].toLowerCase())) {
                 words[i] = words[i].replace(re, replacement);
             }
         }
