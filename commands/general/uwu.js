@@ -101,7 +101,7 @@ function uwuify(text) {
         if (Math.random() < frequency.actions) {
             console.log(`Adding random action`);
             const randomAction = getRand(0,actions.length-1);
-            addedStuff.set(i+1,actions[randomAction]);
+            addedStuff.set(i+1,`*${actions[randomAction]}*`);
         }
         if (Math.random() < frequency.faces) {
             console.log(`Adding a random face`);
