@@ -5,21 +5,21 @@ async function sendLongMessage(text,channel,chunkSize = 2000) {
         console.log(`${i}: ${words[i]} | words.length: ${words.length} | chunkWords.length: ${chunkWords.length}`);
         let chunkLength = chunkWords.join(" ").length;
         if (chunkLength + words[i].length >= chunkSize) {
+            const msgChunk = chunkWords.join(" ");
             try {
-                const msgChunk = chunkWords.join(" ");
                 await channel.send(msgChunk);
-                chunkWords = [];
             } catch (e) {
                 throw e;
             }
+            chunkWords = [];
             i--;
         } else {
             chunkWords.push(words[i]);
         }
     }
     if (chunkWords.length > 0) {
+        const msgChunk = chunkWords.join(" ");
         try {
-            const msgChunk = chunkWords.join(" ");
             await channel.send(msgChunk);
         } catch (e) {
             throw e;
