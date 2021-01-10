@@ -75,6 +75,7 @@ function uwuify(text) {
         exclamations: 1,
     }
 
+    text = text.trim();
     // replace characters
     for (const [re,replacement] of replacements) {
         text = text.replace(re,replacement);
