@@ -98,12 +98,12 @@ function uwuify(text) {
         if (Math.random() < frequency.actions) {
             console.log(`Adding random action`);
             const randomAction = getRand(0,actions.length-1);
-            words.splice(i,0,randomAction);
+            words.splice(i+1,0,randomAction);
         }
         if (Math.random() < frequency.faces) {
             console.log(`Adding a random face`);
             const randomFace = getRand(0,faces.length-1);
-            words.splice(i,0,randomFace);
+            words.splice(i+1,0,randomFace);
         }
         console.log(`Modified word: ${words[i]}`);
     }
