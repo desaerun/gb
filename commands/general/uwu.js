@@ -149,6 +149,7 @@ function uwuify(text) {
         offset++;
     }
 
+    console.log(`modified fulltext: ${words.join}`);
     //join everything back together and return
     return words.join(" ");
 }
