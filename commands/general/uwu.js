@@ -82,7 +82,10 @@ function uwuify(text) {
     }
     console.log(`Full text: ${text}`);
 
+
     const words = text.split(" ");
+    let addedStuff = new Map();
+
     for (let i=0;i<words.length;i++) {
         console.log(`Modifying word: ${i}: ${words[i]}`);
         if (words[i].endsWith("!")) {
@@ -98,15 +101,24 @@ function uwuify(text) {
         if (Math.random() < frequency.actions) {
             console.log(`Adding random action`);
             const randomAction = getRand(0,actions.length-1);
-            words.splice(i+1,0,actions[randomAction]);
+            addedStuff.set(i+1,actions[randomAction]);
         }
         if (Math.random() < frequency.faces) {
             console.log(`Adding a random face`);
             const randomFace = getRand(0,faces.length-1);
-            words.splice(i+1,0,faces[randomFace]);
+            addedStuff.set(i+1,faces[randomFace])
         }
         console.log(`Modified word: ${words[i]}`);
     }
+
+    //add in replacements
+    let offset = 0;
+    for (const [index,newStuff] of addedStuff) {
+        words.splice(index+offset,0,addedStuff);
+        offset++;
+    }
+
+    //join everything back together and return
     return words.join(" ");
 }
 function getRand(min,max) {
