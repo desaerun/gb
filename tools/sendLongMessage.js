@@ -4,7 +4,7 @@ async function sendLongMessage(text,channel,chunkSize = 2000) {
     for (let i=0;i<words.length;i++) {
         console.log(`${i}: ${words[i]} | words.length: ${words.length} | chunkWords.length: ${chunkWords.length}`);
         let chunkLength = chunkWords.join(" ").length;
-        if (chunkLength + words[i].length >= chunkSize || (i === words.length-1 && chunkWords.length > 0)) {
+        if (chunkLength + words[i].length >= chunkSize) {
             try {
                 const msgChunk = chunkWords.join(" ");
                 await channel.send(msgChunk);
@@ -12,10 +12,17 @@ async function sendLongMessage(text,channel,chunkSize = 2000) {
             } catch (e) {
                 throw e;
             }
-            chunkWords.push(words[i]);
             i--;
         } else {
             chunkWords.push(words[i]);
+        }
+    }
+    if (chunkWords.length > 0) {
+        try {
+            const msgChunk = chunkWords.join(" ");
+            await channel.send(msgChunk);
+        } catch (e) {
+            throw e;
         }
     }
 }
