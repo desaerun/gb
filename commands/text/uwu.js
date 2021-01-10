@@ -92,7 +92,7 @@ function uwuify(text) {
         'uwu',
         'UwU',
         '^-^',
-        '^\_^'
+        '^\\_^'
     ];
     const exclamations = [
         '!?',
