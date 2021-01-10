@@ -79,7 +79,7 @@ async function execute(client, message, args, forceGuildID = null, forceChannelI
         " LEFT JOIN authors author ON" +
         "    m.author=author.id" +
         " WHERE" +
-        "    m.channel = ? AND m.timestamp BETWEEN ? AND ? AND m.deleted=FALSE" +
+        "    m.channel = ? AND m.timestamp BETWEEN ? AND ? AND m.deleted IS NULL" +
         " ORDER BY" +
         "    m.timestamp" +
         " DESC";
