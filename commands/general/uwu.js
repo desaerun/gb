@@ -125,6 +125,7 @@ function uwuify(text) {
         offset++;
     }
 
+    console.log(`Modified fulltext: ${words.join(" ")}`);
     //join everything back together and return
     return words.join(" ");
 }
