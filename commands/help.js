@@ -68,8 +68,8 @@ function getHelpMessage(command) {
             let optionalMod = !currentArg.required ? "?" : "";
             fullCommand += `[${optionalMod}${currentArg.param}]`;
 
-            let value = `Type: ${currentArg.type}\n` +
-                `Desc: ${currentArg.description}\n`;
+            let value = `**Type**: ${currentArg.type}\n` +
+                `**Description**: ${currentArg.description}\n`;
 
             if (currentArg.default) {
                 if (Array.isArray(currentArg.default)) {
@@ -87,20 +87,20 @@ function getHelpMessage(command) {
                     } else {
                         modifiedDefaults = currentArg.default;
                     }
-                    value += `Default randomized from the following:\n${modifiedDefaults.join('\n')}`;
+                    value += `**Default randomized from the following**:\n${modifiedDefaults.join('\n')}`;
                 } else {
-                    value += `Default: ${currentArg.default}`;
+                    value += `**Default**: ${currentArg.default}`;
                 }
             } else {
                 if (currentArg.required) {
-                    value += `**REQUIRED**`;
+                    value += `\n**REQUIRED**`;
                 } else {
-                    value += `No default value`;
+                    value += `\nNo default value`;
                 }
             }
-
+            console.log(value);
             fields.push({
-                name: `${currentArg.param}`,
+                name: `\`${currentArg.param}\``,
                 value: value
             });
         }
