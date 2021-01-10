@@ -90,7 +90,7 @@ function uwuify(text) {
 
     const randomExclamation = getRand(0,exclamations.length-1);
     console.log(`Modifying exclamation: ${exclamations[randomExclamation]}`);
-    text.replace(/!/g,exclamations[randomExclamation]);
+    text.replace(/(!)/g,exclamations[randomExclamation]);
 
     console.log(`Modified text: ${text}`);
 
