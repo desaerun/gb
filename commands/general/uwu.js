@@ -111,10 +111,9 @@ function uwuify(text) {
             const randomFace = getRand(0,faces.length-1);
             addedStuff.set(i+1,faces[randomFace])
         }
-        if (Math.random() < frequency.exclamations)  {
+        if (Math.random() < frequency.exclamations && words[i].endsWith("!")) {
             const randomExclamation = getRand(0,exclamations.length-1);
-            console.log(`Modifying exclamation: ${exclamations[randomExclamation]}`);
-            words[i] = words[i].substring(0,words[i].length-1) + exclamations[randomExclamation];
+            words[i] = words[i].replace("!",exclamations[randomExclamation]);
         }
     }
 
