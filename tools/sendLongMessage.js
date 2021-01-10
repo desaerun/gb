@@ -12,6 +12,7 @@ async function sendLongMessage(text,channel,chunkSize = 2000) {
             } catch (e) {
                 throw e;
             }
+            chunkWords.push(words[i]);
             i--;
         } else {
             chunkWords.push(words[i]);
