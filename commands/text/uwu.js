@@ -1,6 +1,7 @@
 //imports
 
 //module settings
+const sendLongMessage = require("../../tools/sendLongMessage");
 const name = "uwu";
 const description = "uwuifys text";
 const params = [
@@ -19,12 +20,7 @@ const params = [
 //main
 async function execute(client, message, args) {
     const uwuText = uwuify(args.join(" "));
-    const chunkSize = 2000;
-
-    //send text in _chunkSize_ chunks
-    for (let i=0;i<uwuText.length;i+=chunkSize) {
-        await message.channel.send(uwuText.substr(i,chunkSize));
-    }
+    await sendLongMessage(uwuText,message.channel);
 }
 
 //module export

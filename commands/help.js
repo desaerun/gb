@@ -4,6 +4,7 @@ const CONFIG = require('../config/config');
 const fs = require('fs');
 const path = require('path');
 const logMessage = require("../tools/logMessage");
+const sendLongMessage = require("../tools/sendLongMessage");
 
 //module settings
 const name = "help";
@@ -21,7 +22,7 @@ const params = [
 async function execute(client, message, args) {
     if (args.length === 0) {
         try {
-            await message.channel.send(generateCommandList(client.commands));
+            await sendLongMessage(generateCommandList(client.commands),message.channel);
         } catch (e) {
             throw e;
         }
