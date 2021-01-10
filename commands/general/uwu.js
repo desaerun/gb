@@ -29,9 +29,10 @@ module.exports = {
 //helper functions
 function uwuify(text) {
     const replacements = new Map();
-    replacements.set(/(d)/,"th");
-    replacements.set(/([lr])/,"w");
-    replacements.set(/[LR]/,"W");
+    replacements.set(/(d)/g,"th");
+    replacements.set(/(D)/g,"Th");
+    replacements.set(/([lr])/g,"w");
+    replacements.set(/[LR]/g,"W");
     const actions = [
         'blushes',
         'sweats',
