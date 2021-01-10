@@ -123,7 +123,7 @@ function uwuify(text) {
         //add random actions
         if (Math.random() < frequency.actions) {
             const randomAction = getRand(0,actions.length-1);
-            textToAdd.set(i+1,`*${actions[randomAction]}*`);
+            textToAdd.set(i+1,`*\*${actions[randomAction]}\**`);
         }
 
         //add random faces
