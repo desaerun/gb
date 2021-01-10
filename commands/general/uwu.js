@@ -34,6 +34,15 @@ module.exports = {
 
 //helper functions
 function uwuify(text) {
+    const noReplace = [
+        "lol",
+        "lmao",
+        "rofl",
+        "idk",
+        "idc",
+        "ftl",
+        "ianal",
+    ]
     const replacements = new Map();
     replacements.set(/(th)/g,"d");
     replacements.set(/(Th|TH)/g,"D");
@@ -80,37 +89,41 @@ function uwuify(text) {
         exclamations: .8,
     }
 
+    //textToAdd will hold the faces, actions, etc. that are being spliced in to the text
+    let textToAdd = new Map();
+
+    //trim whitespace
     text = text.trim();
-    // replace characters
-    console.log(`Full text: ${text}`);
-    for (const [re,replacement] of replacements) {
-        text = text.replace(re,replacement);
-    }
-
-
-    const randomExclamation = getRand(0,exclamations.length-1);
-    console.log(`Modifying exclamation: ${exclamations[randomExclamation]}`);
-    text.replace(/(!)/g,exclamations[randomExclamation]);
-
-    console.log(`Modified text: ${text}`);
-
 
     const words = text.split(" ");
-    let addedStuff = new Map();
-
     for (let i=0;i<words.length;i++) {
+
+        //skip over some abbreviations
+        for (const [re,replacement] of replacements) {
+            if (!noReplace.has(words[i].toLowerCase())) {
+                words[i] = words[i].replace(re, replacement);
+            }
+        }
+
+        //add random stutters
         if (Math.random() < frequency.stutter) {
             const stutterChar = words[i][0];
             words[i] = stutterChar + '-' + words[i].toLowerCase();
         }
+
+        //add random actions
         if (Math.random() < frequency.actions) {
             const randomAction = getRand(0,actions.length-1);
-            addedStuff.set(i+1,`*${actions[randomAction]}*`);
+            textToAdd.set(i+1,`*${actions[randomAction]}*`);
         }
+
+        //add random faces
         if (Math.random() < frequency.faces) {
             const randomFace = getRand(0,faces.length-1);
-            addedStuff.set(i+1,faces[randomFace])
+            textToAdd.set(i+1,faces[randomFace])
         }
+
+        //change exclamation marks
         if (Math.random() < frequency.exclamations && words[i].endsWith("!")) {
             const randomExclamation = getRand(0,exclamations.length-1);
             words[i] = words[i].replace("!",exclamations[randomExclamation]);
@@ -119,8 +132,8 @@ function uwuify(text) {
 
     //add in replacements
     let offset = 0;
-    for (const [index,newStuff] of addedStuff) {
-        words.splice(index+offset,0,newStuff);
+    for (const [index,addedText] of textToAdd) {
+        words.splice(index+offset,0,addedText);
         offset++;
     }
 
