@@ -100,8 +100,8 @@ function uwuify(text) {
 
         //skip over some abbreviations
         for (const [re,replacement] of replacements) {
-            const wordPart = words[i].match(/([\d\w]+)/)[1];
-            if (wordPart && wordPart.length > 2 && !noReplace.includes(wordPart.toLowerCase())) {
+            const wordPart = words[i].match(/([\d\w]+)/);
+            if (wordPart && wordPart[1].length > 2 && !noReplace.includes(wordPart[1].toLowerCase())) {
                 words[i] = words[i].replace(re, replacement);
             }
         }
