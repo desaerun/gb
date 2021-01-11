@@ -12,7 +12,7 @@ const pool = mysql.createPool({
     queueLimit: 0,
 });
 
-module.exports = async function insertNewMessage(message,lastEditTimestamp = null) {
+module.exports = async function insertNewMessage(message, lastEditTimestamp = null) {
     const author = message.guild.members.cache.get(message.author.id);
     let guild_values = {
         id: message.guild.id,
