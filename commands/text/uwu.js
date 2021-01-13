@@ -131,48 +131,54 @@ function uwuify(text,replacementsFreqBase = 1) {
     //calculate how much the replacement increment should increase by
     //it should be replacing 100% of the message by 2/3 of the way through.
     console.log(`Frequency base: ${frequency.replacements}`);
-    const replacementsFreqIncrement = (1-frequency.replacements) / (words.length / 3 * 2);
+    const replacementsFreqIncrement = (1-frequency.replacements) / (words.length / 100 * 85);
     console.log(`Frequency increment: ${replacementsFreqIncrement}`);
     for (let i=0,replacementsFreqCurrent = replacementsFreqBase;i<words.length;i++,replacementsFreqCurrent+=replacementsFreqIncrement) {
         const percentMessageParsed = ((i + 1) / words.length * 100).toFixed(2);
         console.log(`word ${i}(${percentMessageParsed}% of msg) (${words[i]}): Current replacement frequency: ${(replacementsFreqCurrent)}`);
 
-        if (Math.random() < replacementsFreqCurrent && i > words.length / 6) {
-            console.log (`performing uwu transform`);
+        if (i > words.length / 7) {
+            if (Math.random() < replacementsFreqCurrent) {
+                console.log(`performing uwu transform`);
 
-            //replace characters one word at a time
-            for (const [re, replacement] of replacements) {
-                const wordPart = words[i].match(/([\d\w]+)/);
-                if (
-                    wordPart && wordPart[1].length > 2 && //only replace if word is >= 3 characters long
-                    !noReplace.includes(wordPart[1].toLowerCase()) //skip some abbreviations
-                ) {
-                    words[i] = words[i].replace(re, replacement);
+                //replace characters one word at a time
+                for (const [re, replacement] of replacements) {
+                    const wordPart = words[i].match(/([\d\w]+)/);
+                    if (
+                        wordPart && wordPart[1].length > 2 && //only replace if word is >= 3 characters long
+                        !noReplace.includes(wordPart[1].toLowerCase()) //skip some abbreviations
+                    ) {
+                        words[i] = words[i].replace(re, replacement);
+                    }
                 }
-            }
 
-            //change exclamation marks
-            if (Math.random() < frequency.exclamations && words[i].endsWith("!")) {
-                words[i] = words[i].replace("!", getRandomArrayMember(exclamations));
-            }
+                //change exclamation marks
+                if (Math.random() < frequency.exclamations && words[i].endsWith("!")) {
+                    words[i] = words[i].replace("!", getRandomArrayMember(exclamations));
+                }
 
-            //add random stutters
-            if (Math.random() < frequency.stutter) {
-                const stutterChar = words[i][0];
-                words[i] = stutterChar + '-' + words[i].toLowerCase();
-            }
+                //add random stutters
+                if (Math.random() < frequency.stutter) {
+                    const stutterChar = words[i][0];
+                    words[i] = stutterChar + '-' + words[i].toLowerCase();
+                }
 
-            //add random actions
-            if (Math.random() < frequency.actions) {
-                words.splice(i + 1, 0,`*\\*${getRandomArrayMember(actions)}\\**`);
-                i++;
-            }
+                //add random actions
+                if (Math.random() < frequency.actions) {
+                    words.splice(i + 1, 0, `*\\*${getRandomArrayMember(actions)}\\**`);
+                    i++;
+                }
 
-            //add random faces
-            if (Math.random() < frequency.faces) {
-                words.splice(i + 1, 0, getRandomArrayMember(faces));
-                i++;
+                //add random faces
+                if (Math.random() < frequency.faces) {
+                    words.splice(i + 1, 0, getRandomArrayMember(faces));
+                    i++;
+                }
+            } else {
+                console.log(`skipping due to random frequency check`);
             }
+        } else {
+            console.log(`skipping due to not being far enough into the text`);
         }
     }
 
