@@ -134,8 +134,8 @@ function uwuify(text,replacementsFreqBase = 1) {
     const replacementsFreqIncrement = (1-frequency.replacements) / (words.length / 3 * 2);
     console.log(`Frequency increment: ${replacementsFreqIncrement}`);
     for (let i=0,replacementsFreqCurrent = replacementsFreqBase;i<words.length;i++,replacementsFreqCurrent+=replacementsFreqIncrement) {
-        const percentMessageParsed = (i + 1) / words.length;
-        console.log(`${i}(${(percentMessageParsed*100).toFixed(2)}%) (${words[i]}): Current replacement frequency: ${(replacementsFreqCurrent)}`);
+        const percentMessageParsed = ((i + 1) / words.length * 100).toFixed(2);
+        console.log(`${i}(${percentMessageParsed}%) (${words[i]}): Current replacement frequency: ${(replacementsFreqCurrent)}`);
 
         if (Math.random() < replacementsFreqCurrent && i > words.length / 6) {
             console.log (`performing uwu transform`);
