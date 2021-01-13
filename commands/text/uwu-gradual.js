@@ -22,14 +22,17 @@ const params = [
 
 //main
 async function execute(client, message, args) {
-    if (args[0] > 1) {
-        args[0] = args[0] / 100;
-    } else if (isNaN(parseFloat(args[0]))) {
+    if (!args[0] || (args[0] && isNaN(parseFloat(args[0])))) {
         args[0] = params[0].default;
+    } else if (args[0] > 1) {
+        args[0] = args[0] / 100;
     }
-    const freq = args.shift();
+    if (!args[1]) {
+        args[1] = params[1].default;
+    }
+    const freq = args.shift(); //shift the frequency amount off the beginning of the array
     const text = args.join(" ");
-    const uwuText = uwu.uwuify(args,freq);
+    const uwuText = uwu.uwuify(text,freq);
     await sendLongMessage(uwuText,message.channel);
 }
 
