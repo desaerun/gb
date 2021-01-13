@@ -45,11 +45,11 @@ module.exports = {
 }
 
 //helper functions
-function uwuify(text,replacementsFreqBase) {
+function uwuify(text,replacementsFreqBase = 1) {
     //trim whitespace
     text = text.trim();
     if (text.length === 0) {
-        text = params[0].default[getRand(0,params[0].default.length)];
+        text = getRandomArrayMember(params[0].default);
     }
 
     const noReplace = [
@@ -121,7 +121,8 @@ function uwuify(text,replacementsFreqBase) {
 
     //calculate how much the replacement increment should increase by
     //it should be replacing 100% of the message by 2/3 of the way through.
-    const replacementsFreqIncrement = (1-replacementsFreqBase) / (words.length / 3 * 2);
+    console.log(`Frequency base: ${frequency.replacements}`);
+    const replacementsFreqIncrement = (1-frequency.replacements) / (words.length / 3 * 2);
     console.log(`Frequency increment: ${replacementsFreqIncrement}`);
     for (let i=0,replacementsFreqCurrent = replacementsFreqBase;i<words.length;i++,replacementsFreqCurrent+=replacementsFreqIncrement) {
         const percentMessageParsed = i + 1 / words.length;
@@ -141,6 +142,11 @@ function uwuify(text,replacementsFreqBase) {
                 }
             }
 
+            //change exclamation marks
+            if (Math.random() < frequency.exclamations && words[i].endsWith("!")) {
+                words[i] = words[i].replace("!", getRandomArrayMember(exclamations));
+            }
+
             //add random stutters
             if (Math.random() < frequency.stutter) {
                 const stutterChar = words[i][0];
@@ -149,35 +155,22 @@ function uwuify(text,replacementsFreqBase) {
 
             //add random actions
             if (Math.random() < frequency.actions) {
-                const randomAction = getRand(0, actions.length);
-                textToAdd.set(i + 1, `*\\*${actions[randomAction]}\\**`);
+                words.splice(i + 1, 0,`*\\*${getRandomArrayMember(actions)}\\**`);
+                i++;
             }
 
             //add random faces
             if (Math.random() < frequency.faces) {
-                const randomFace = getRand(0, faces.length);
-                textToAdd.set(i + 1, faces[randomFace])
-            }
-
-            //change exclamation marks
-            if (Math.random() < frequency.exclamations && words[i].endsWith("!")) {
-                const randomExclamation = getRand(0, exclamations.length);
-                words[i] = words[i].replace("!", exclamations[randomExclamation]);
+                words.splice(i + 1, 0, getRandomArrayMember(faces));
+                i++;
             }
         }
-    }
-
-    //add in replacements
-    let offset = 0;
-    for (const [index,addedText] of textToAdd) {
-        words.splice(index+offset,0,addedText);
-        offset++;
     }
 
     console.log(`modified fulltext: ${words.join(" ")}`);
     //join everything back together and return
     return words.join(" ");
 }
-function getRand(min,max) {
-    return Math.floor(min + Math.random() * (max-min));
+function getRandomArrayMember(arr) {
+    return arr[Math.floor(Math.random() * arr.length)];
 }
