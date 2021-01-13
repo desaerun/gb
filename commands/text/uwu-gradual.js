@@ -24,7 +24,7 @@ const params = [
 //main
 async function execute(client, message, args) {
     if (!args[0] || (args[0] && isNaN(parseFloat(args[0])))) {
-        args[0] = params[0].default;
+        args.unshift(params[0].default);
     } else if (args[0] > 1) {
         args[0] = args[0] / 100;
     }
