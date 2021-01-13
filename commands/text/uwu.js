@@ -124,9 +124,11 @@ function uwuify(text,replacementsFreqBase) {
     const replacementsFreqIncrement = (1-replacementsFreqBase) / (words.length / 3 * 2);
 
     for (let i=0,replacementsFreqCurrent = replacementsFreqBase;i<words.length;i++,replacementsFreqCurrent+=replacementsFreqIncrement) {
+        const percentMessageParsed = i + 1 / words.length;
+        console.log(`${i}(${percentMessageParsed}%) (${words[i]}): Current replacement frequency: ${(replacementsFreqCurrent * 100).toFixed(2)}%`);
+
         if (Math.random() < replacementsFreqCurrent && i > words.length / 6) {
-            const percentMessageParsed = i + 1 / words.length;
-            console.log(`${i}(${percentMessageParsed}%) (${words[i]}): Current replacement frequency: ${(replacementsFreqCurrent * 100).toFixed(2)}%`);
+            console.log (`performing uwu transform`);
 
             //replace characters one word at a time
             for (const [re, replacement] of replacements) {
