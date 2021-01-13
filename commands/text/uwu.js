@@ -35,7 +35,7 @@ const params = [
 async function execute(client, message, args, replacementsFreqBase = 1) {
     const uwuText = uwuify(args.join(" "));
     console.log(`uwuText: ${uwuText}`);
-    await sendLongMessage(uwuText,message.channel,replacementsFreqBase);
+    await sendLongMessage(uwuText,message.channel);
 }
 
 //module export
@@ -147,7 +147,7 @@ function uwuify(text,replacementsFreqBase = 1) {
         const percentMessageParsed = ((i + 1) / words.length * 100).toFixed(2);
         console.log(`word ${i}(${percentMessageParsed}% of msg) (${words[i]}): Current replacement frequency: ${(Math.round(replacementsFreqCurrent*100)/100)}%`);
 
-        if (i > words.length / 7) {
+        if (i > words.length / 7 || replacementsFreqBase === 1) {
             if (Math.random() < replacementsFreqCurrent) {
                 console.log(`performing uwu transform`);
 
