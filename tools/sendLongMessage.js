@@ -4,8 +4,9 @@ async function sendLongMessage(text,channel,chunkSize = 2000) {
     const words = text.split(" ");
     let chunkWords = [];
     for (let i=0;i<words.length;i++) {
+        console.log(`Word: ${words[i]}`);
         const msgChunk = chunkWords.join(" ");
-        console.log(`message chunk: ${msgChunk}`);
+        console.log(`message chunk: ${msgChunk} | length ${msgChunk.length}`);
         if (msgChunk.length + words[i].length >= chunkSize) {
             try {
                 await channel.send(msgChunk);
