@@ -28,10 +28,11 @@ async function execute(client, message, args) {
     } else if (args[0] > 1) {
         args[0] = args[0] / 100;
     }
+
     if (!args[1]) {
         args[1] = getRandomArrayMember(params[1].default);
     }
-    const freq = args.shift(); //shift the frequency amount off the beginning of the array
+    const freq = parseFloat(args.shift()); //shift the frequency amount off the beginning of the array
     const text = args.join(" ");
     const uwuText = uwu.uwuify(text,freq);
     await sendLongMessage(uwuText,message.channel);
