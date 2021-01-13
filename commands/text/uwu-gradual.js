@@ -11,7 +11,7 @@ const params = [
         param: "frequency",
         description: "Starting frequency to replace chars",
         type: "Float",
-        default: .20,
+        default: .05,
     },
     {
         param: "text",
