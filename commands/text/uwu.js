@@ -117,23 +117,35 @@ function uwuify(text,replacementsFreqBase = 1) {
     ];
     const frequency = {
         replacements: replacementsFreqBase,
-        stutter: .12,
+        stutters: .12,
         actions: .05,
         faces: .10,
         exclamations: .8,
+    }
+    const cooldowns = {
+        stutters: 1,
+        actions: 3,
+        faces: 5,
+        exclamations: 1,
+    }
+    const cooldownCounter = {
+        stutters: 0,
+        actions: 0,
+        faces: 0,
+        exclamations: 0,
     }
 
     //split text to an array of words
     const words = text.split(" ");
 
     //calculate how much the replacement increment should increase by
-    //it should be replacing 100% of the message by 2/3 of the way through.
+    //it should be replacing 100% of the message by 85% of the way through.
     console.log(`Frequency base: ${frequency.replacements}`);
     const replacementsFreqIncrement = (1-frequency.replacements) / (words.length / 100 * 85);
     console.log(`Frequency increment: ${replacementsFreqIncrement}`);
     for (let i=0,replacementsFreqCurrent = replacementsFreqBase;i<words.length;i++,replacementsFreqCurrent+=replacementsFreqIncrement) {
         const percentMessageParsed = ((i + 1) / words.length * 100).toFixed(2);
-        console.log(`word ${i}(${percentMessageParsed}% of msg) (${words[i]}): Current replacement frequency: ${(replacementsFreqCurrent)}`);
+        console.log(`word ${i}(${percentMessageParsed}% of msg) (${words[i]}): Current replacement frequency: ${(Math.round(replacementsFreqCurrent*100)/100)}%`);
 
         if (i > words.length / 7) {
             if (Math.random() < replacementsFreqCurrent) {
@@ -151,26 +163,44 @@ function uwuify(text,replacementsFreqBase = 1) {
                 }
 
                 //change exclamation marks
-                if (Math.random() < frequency.exclamations && words[i].endsWith("!")) {
+                if (
+                    Math.random() < frequency.exclamations &&
+                    words[i].endsWith("!") &&
+                    i - cooldownCounter.exclamations > cooldowns.exclamations
+
+                ) {
                     words[i] = words[i].replace("!", getRandomArrayMember(exclamations));
+                    cooldownCounter.exclamations = i;
                 }
 
                 //add random stutters
-                if (Math.random() < frequency.stutter) {
+                if (
+                    Math.random() < frequency.stutters &&
+                    i - cooldownCounter.stutters > cooldowns.stutters
+                ) {
                     const stutterChar = words[i][0];
                     words[i] = stutterChar + '-' + words[i].toLowerCase();
+                    cooldownCounter.stutters = i;
                 }
 
                 //add random actions
-                if (Math.random() < frequency.actions) {
+                if (
+                    Math.random() < frequency.actions &&
+                    i - cooldownCounter.actions > cooldowns.actions
+                ) {
                     words.splice(i + 1, 0, `*\\*${getRandomArrayMember(actions)}\\**`);
                     i++;
+                    cooldownCounter.actions = i;
                 }
 
                 //add random faces
-                if (Math.random() < frequency.faces) {
+                if (
+                    Math.random() < frequency.faces &&
+                    i - cooldownCounter.faces > cooldowns.faces
+                ) {
                     words.splice(i + 1, 0, getRandomArrayMember(faces));
                     i++;
+                    cooldownCounter.faces = i;
                 }
             } else {
                 console.log(`skipping due to random frequency check`);
