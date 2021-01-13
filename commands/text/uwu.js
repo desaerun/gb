@@ -145,7 +145,7 @@ function uwuify(text,replacementsFreqBase = 1) {
     console.log(`Frequency increment: ${replacementsFreqIncrement}`);
     for (let i=0,replacementsFreqCurrent = replacementsFreqBase;i<words.length;i++,replacementsFreqCurrent+=replacementsFreqIncrement) {
         const percentMessageParsed = ((i + 1) / words.length * 100).toFixed(2);
-        console.log(`word ${i}(${percentMessageParsed}% of msg) (${words[i]}): Current replacement frequency: ${(Math.round(replacementsFreqCurrent*100)/100)}%`);
+        console.log(`word ${i}(${percentMessageParsed}% of msg) (${words[i]}): Current replacement frequency: ${(Math.round(replacementsFreqCurrent*10000)/100)}%`);
 
         if (i > words.length / 7 || replacementsFreqBase === 1) {
             if (Math.random() < replacementsFreqCurrent) {
