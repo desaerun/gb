@@ -30,9 +30,9 @@ const params = [
 ];
 
 //main
-async function execute(client, message, args) {
+async function execute(client, message, args, replacementsFreqBase = 1) {
     const uwuText = uwuify(args.join(" "));
-    await sendLongMessage(uwuText,message.channel);
+    await sendLongMessage(uwuText,message.channel,replacementsFreqBase);
 }
 
 //module export
@@ -41,10 +41,11 @@ module.exports = {
     description: description,
     params: params,
     execute: execute,
+    uwuify: uwuify,
 }
 
 //helper functions
-function uwuify(text) {
+function uwuify(text,replacementsFreqBase) {
     //trim whitespace
     text = text.trim();
     if (text.length === 0) {
@@ -105,6 +106,7 @@ function uwuify(text) {
         '!11!!'
     ];
     const frequency = {
+        replacements: replacementsFreqBase,
         stutter: .12,
         actions: .05,
         faces: .10,
@@ -114,13 +116,26 @@ function uwuify(text) {
     //textToAdd will hold the faces, actions, etc. that are being spliced in to the text
     let textToAdd = new Map();
 
+    //split text to an array of words
     const words = text.split(" ");
-    for (let i=0;i<words.length;i++) {
 
-        //skip over some abbreviations
+    //calculate how much the replacement increment should increase by
+    //it should be replacing 100% of the message by 2/3 of the way through.
+    const replacementsFreqIncrement = (1-replacementsFreqBase) / (words.length / 3 * 2);
+
+    for (let i=0,replacementsFreqCurrent = replacementsFreqBase;i<words.length;i++,replacementsFreqCurrent+=replacementsFreqIncrement) {
+        const percentMessageParsed = i+1 / words.length;
+        console.log(`${i}(${percentMessageParsed}%) (${words[i]}): Current replacement frequency: ${(replacementsFreqCurrent*100).toFixed(2)}%`);
+
+        //replace characters one word at a time
         for (const [re,replacement] of replacements) {
             const wordPart = words[i].match(/([\d\w]+)/);
-            if (wordPart && wordPart[1].length > 2 && !noReplace.includes(wordPart[1].toLowerCase())) {
+            if (
+                wordPart && wordPart[1].length > 2 && //only replace if word is >= 3 characters long
+                !noReplace.includes(wordPart[1].toLowerCase()) && //skip some abbreviations
+                Math.random() < replacementsFreqCurrent &&
+                i > words.length / 6 //only start attempting replacement 1/6 way thru message
+            ) {
                 words[i] = words[i].replace(re, replacement);
             }
         }
