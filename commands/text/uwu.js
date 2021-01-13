@@ -33,6 +33,7 @@ const params = [
 //main
 async function execute(client, message, args, replacementsFreqBase = 1) {
     const uwuText = uwuify(args.join(" "));
+    console.log(`uwuText: ${uwuText}`);
     await sendLongMessage(uwuText,message.channel,replacementsFreqBase);
 }
 
