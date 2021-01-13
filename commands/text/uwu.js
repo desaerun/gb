@@ -6,9 +6,9 @@ const name = "uwu";
 const description = "uwuifys text";
 const params = [
     {
-        param: 'text',
-        type: 'String',
-        description: 'The text to be uwu-ified',
+        param: "text",
+        type: "String",
+        description: "The text to be uwu-ified",
         default: [
             "I sexually Identify as an Attack Helicopter. Ever since I was a boy I dreamed of soaring over the oilfields dropping hot sticky loads on disgusting foreigners. People say to me that a person being a helicopter is Impossible and I'm fucking retarded but I don't care, I'm beautiful. I'm having a plastic surgeon install rotary blades, 30 mm cannons and AMG-114 Hellfire missiles on my body. From now on I want you guys to call me \"Apache\" and respect my right to kill from above and kill needlessly. If you can't accept me you're a heliphobe and need to check your vehicle privilege. Thank you for being so understanding.",
             "What the fuck did you just fucking say about me, you little bitch? I'll have you know I graduated top of my class in the Navy Seals, and I've been involved in numerous secret raids on Al-Quaeda, and I have over 300 confirmed kills. I am trained in gorilla warfare and I\'m the top sniper in the entire US armed forces. You are nothing to me but just another target. I will wipe you the fuck out with precision the likes of which has never been seen before on this Earth, mark my fucking words. You think you can get away with saying that shit to me over the Internet? Think again, fucker. As we speak I am contacting my secret network of spies across the USA and your IP is being traced right now so you better prepare for the storm, maggot. The storm that wipes out the pathetic little thing you call your life. You're fucking dead, kid. I can be anywhere, anytime, and I can kill you in over seven hundred ways, and that's just with my bare hands. Not only am I extensively trained in unarmed combat, but I have access to the entire arsenal of the United States Marine Corps and I will use it to its full extent to wipe your miserable ass off the face of the continent, you little shit. If only you could have known what unholy retribution your little \"clever\" comment was about to bring down upon you, maybe you would have held your fucking tongue. But you couldn't, you didn't, and now you're paying the price, you goddamn idiot. I will shit fury all over you and you will drown in it. You're fucking dead, kiddo.",
@@ -124,44 +124,44 @@ function uwuify(text,replacementsFreqBase) {
     const replacementsFreqIncrement = (1-replacementsFreqBase) / (words.length / 3 * 2);
 
     for (let i=0,replacementsFreqCurrent = replacementsFreqBase;i<words.length;i++,replacementsFreqCurrent+=replacementsFreqIncrement) {
-        const percentMessageParsed = i+1 / words.length;
-        console.log(`${i}(${percentMessageParsed}%) (${words[i]}): Current replacement frequency: ${(replacementsFreqCurrent*100).toFixed(2)}%`);
+        if (Math.random() < replacementsFreqCurrent && i > words.length / 6) {
+            const percentMessageParsed = i + 1 / words.length;
+            console.log(`${i}(${percentMessageParsed}%) (${words[i]}): Current replacement frequency: ${(replacementsFreqCurrent * 100).toFixed(2)}%`);
 
-        //replace characters one word at a time
-        for (const [re,replacement] of replacements) {
-            const wordPart = words[i].match(/([\d\w]+)/);
-            if (
-                wordPart && wordPart[1].length > 2 && //only replace if word is >= 3 characters long
-                !noReplace.includes(wordPart[1].toLowerCase()) && //skip some abbreviations
-                Math.random() < replacementsFreqCurrent &&
-                i > words.length / 6 //only start attempting replacement 1/6 way thru message
-            ) {
-                words[i] = words[i].replace(re, replacement);
+            //replace characters one word at a time
+            for (const [re, replacement] of replacements) {
+                const wordPart = words[i].match(/([\d\w]+)/);
+                if (
+                    wordPart && wordPart[1].length > 2 && //only replace if word is >= 3 characters long
+                    !noReplace.includes(wordPart[1].toLowerCase()) //skip some abbreviations
+                ) {
+                    words[i] = words[i].replace(re, replacement);
+                }
             }
-        }
 
-        //add random stutters
-        if (Math.random() < frequency.stutter) {
-            const stutterChar = words[i][0];
-            words[i] = stutterChar + '-' + words[i].toLowerCase();
-        }
+            //add random stutters
+            if (Math.random() < frequency.stutter) {
+                const stutterChar = words[i][0];
+                words[i] = stutterChar + '-' + words[i].toLowerCase();
+            }
 
-        //add random actions
-        if (Math.random() < frequency.actions) {
-            const randomAction = getRand(0,actions.length);
-            textToAdd.set(i+1,`*\\*${actions[randomAction]}\\**`);
-        }
+            //add random actions
+            if (Math.random() < frequency.actions) {
+                const randomAction = getRand(0, actions.length);
+                textToAdd.set(i + 1, `*\\*${actions[randomAction]}\\**`);
+            }
 
-        //add random faces
-        if (Math.random() < frequency.faces) {
-            const randomFace = getRand(0,faces.length);
-            textToAdd.set(i+1,faces[randomFace])
-        }
+            //add random faces
+            if (Math.random() < frequency.faces) {
+                const randomFace = getRand(0, faces.length);
+                textToAdd.set(i + 1, faces[randomFace])
+            }
 
-        //change exclamation marks
-        if (Math.random() < frequency.exclamations && words[i].endsWith("!")) {
-            const randomExclamation = getRand(0,exclamations.length);
-            words[i] = words[i].replace("!",exclamations[randomExclamation]);
+            //change exclamation marks
+            if (Math.random() < frequency.exclamations && words[i].endsWith("!")) {
+                const randomExclamation = getRand(0, exclamations.length);
+                words[i] = words[i].replace("!", exclamations[randomExclamation]);
+            }
         }
     }
 

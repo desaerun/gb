@@ -1,6 +1,6 @@
 //imports
 const sendLongMessage = require("../../tools/sendLongMessage");
-const {uwuify: uwuifyGradual} = require("./uwu");
+const uwu = require("./uwu");
 
 //module settings
 const name = "uwu-gradual";
@@ -8,9 +8,15 @@ const description = "Uwuifies text, but gradually.";
 const params = [
     {
         param: "frequency",
-        description: "Starting frequency to parse chars",
+        description: "Starting frequency to replace chars",
         type: "Float",
         default: .20,
+    },
+    {
+        param: "text",
+        description: "The text to uwu-ify gradually",
+        type: "String",
+        default: uwu.params[0].default,
     }
 ]
 
@@ -23,7 +29,7 @@ async function execute(client, message, args) {
     }
     const freq = args.shift();
     const text = args.join(" ");
-    const uwuText = uwuifyGradual(args,freq);
+    const uwuText = uwu.uwuify(args,freq);
     await sendLongMessage(uwuText,message.channel);
 }
 
