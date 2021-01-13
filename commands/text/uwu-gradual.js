@@ -9,7 +9,7 @@ const description = "Uwuifies text, but gradually.";
 const params = [
     {
         param: "frequency",
-        description: "Starting frequency to replace chars",
+        description: "Starting frequency (in %) to replace chars",
         type: "Float",
         default: .05,
     },
@@ -25,10 +25,9 @@ const params = [
 async function execute(client, message, args) {
     if (!args[0] || (args[0] && isNaN(parseFloat(args[0])))) {
         args.unshift(params[0].default);
-    } else if (args[0] > 1) {
+    } else if (args[0] >= 1) {
         args[0] = args[0] / 100;
     }
-
     if (!args[1]) {
         args[1] = getRandomArrayMember(params[1].default);
     }
