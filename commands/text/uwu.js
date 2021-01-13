@@ -122,10 +122,10 @@ function uwuify(text,replacementsFreqBase) {
     //calculate how much the replacement increment should increase by
     //it should be replacing 100% of the message by 2/3 of the way through.
     const replacementsFreqIncrement = (1-replacementsFreqBase) / (words.length / 3 * 2);
-
+    console.log(`Frequency increment: ${replacementsFreqIncrement}`);
     for (let i=0,replacementsFreqCurrent = replacementsFreqBase;i<words.length;i++,replacementsFreqCurrent+=replacementsFreqIncrement) {
         const percentMessageParsed = i + 1 / words.length;
-        console.log(`${i}(${percentMessageParsed}%) (${words[i]}): Current replacement frequency: ${(replacementsFreqCurrent * 100).toFixed(2)}%`);
+        console.log(`${i}(${percentMessageParsed}%) (${words[i]}): Current replacement frequency: ${(replacementsFreqCurrent)}`);
 
         if (Math.random() < replacementsFreqCurrent && i > words.length / 6) {
             console.log (`performing uwu transform`);
