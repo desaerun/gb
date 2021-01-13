@@ -1,7 +1,8 @@
 //imports
-
-//module settings
+const {getRandomArrayMember} = require("../../tools/utils.js");
 const sendLongMessage = require("../../tools/sendLongMessage");
+//module settings
+
 const name = "uwu";
 const description = "uwuifys text";
 const params = [
@@ -45,6 +46,13 @@ module.exports = {
 }
 
 //helper functions
+
+/**
+ * Uwu-ifies text
+ * @param text The text to uwu-ify
+ * @param replacementsFreqBase the frequency to replace the text
+ * @returns {string} The uwu-ified text
+ */
 function uwuify(text,replacementsFreqBase = 1) {
     //trim whitespace
     text = text.trim();
@@ -125,7 +133,7 @@ function uwuify(text,replacementsFreqBase = 1) {
     const replacementsFreqIncrement = (1-frequency.replacements) / (words.length / 3 * 2);
     console.log(`Frequency increment: ${replacementsFreqIncrement}`);
     for (let i=0,replacementsFreqCurrent = replacementsFreqBase;i<words.length;i++,replacementsFreqCurrent+=replacementsFreqIncrement) {
-        const percentMessageParsed = i + 1 / words.length;
+        const percentMessageParsed = (i + 1) / words.length;
         console.log(`${i}(${percentMessageParsed}%) (${words[i]}): Current replacement frequency: ${(replacementsFreqCurrent)}`);
 
         if (Math.random() < replacementsFreqCurrent && i > words.length / 6) {
@@ -170,7 +178,4 @@ function uwuify(text,replacementsFreqBase = 1) {
     console.log(`modified fulltext: ${words.join(" ")}`);
     //join everything back together and return
     return words.join(" ");
-}
-function getRandomArrayMember(arr) {
-    return arr[Math.floor(Math.random() * arr.length)];
 }

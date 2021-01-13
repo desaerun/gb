@@ -1,5 +1,6 @@
 //imports
 const sendLongMessage = require("../../tools/sendLongMessage");
+const {getRandomArrayMember} = require("../../tools/utils.js");
 const uwu = require("./uwu");
 
 //module settings
@@ -28,7 +29,7 @@ async function execute(client, message, args) {
         args[0] = args[0] / 100;
     }
     if (!args[1]) {
-        args[1] = params[1].default;
+        args[1] = getRandomArrayMember(params[1].default);
     }
     const freq = args.shift(); //shift the frequency amount off the beginning of the array
     const text = args.join(" ");
