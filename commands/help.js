@@ -64,11 +64,11 @@ function getHelpMessage(command) {
         for (const currentArg of command.params) {
             logMessage(currentArg, 3);
             fullCommand += ` `;
-            let optionalMod = !currentArg.required ? "?" : "";
+            let optionalMod = (!currentArg.default && !currentArg.required) ? "?" : "";
             fullCommand += `[${optionalMod}${currentArg.param}]`;
 
             let value = `**Type**: ${currentArg.type}\n` +
-                `**Description**: ${currentArg.description}\n`;
+                `**Description**: ${currentArg.description}\n\n`;
 
             if (currentArg.default) {
                 if (Array.isArray(currentArg.default)) {
@@ -86,7 +86,7 @@ function getHelpMessage(command) {
                     } else {
                         modifiedDefaults = currentArg.default;
                     }
-                    value += `**Default randomized from the following**:\n${modifiedDefaults.join("\n")}`;
+                    value += `**Default randomized from the following**:\n${modifiedDefaults.join("\n\n")}`;
                 } else {
                     value += `**Default**: ${currentArg.default}`;
                 }

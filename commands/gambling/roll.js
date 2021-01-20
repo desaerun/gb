@@ -9,6 +9,7 @@ const params = [
         type: "Integer",
         description: "Lower bounds of the roll.",
         default: 1,
+        required: false,
     },
     {
         param: "upper",
