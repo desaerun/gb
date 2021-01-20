@@ -23,6 +23,7 @@ client.commands = new Discord.Collection();
 client.listenerSet = new Discord.Collection();
 
 getCommands("./commands");
+logMessage(JSON.stringify(client.commands));
 getListenerSet("./listeners");
 
 client.once("ready", () => {
@@ -109,7 +110,6 @@ function getCommands(dir, level = 0) {
             }
         }
     }
-    logMessage(JSON.stringify(client.commands));
 }
 
 /**
