@@ -150,7 +150,7 @@ async function runCommands(message, args) {
     const commandName = args.shift().toLowerCase();
 
     if (client.commands.has(commandName)) {
-        try {
+//        try {
             let command = client.commands.get(commandName);
             args = setArgsToDefault(command, args);
 
@@ -163,9 +163,9 @@ async function runCommands(message, args) {
             }
             command.execute(client, message, args);
 
-        } catch (err) {
-            dev_output.sendTrace(err, CONFIG.CHANNEL_DEV_ID);
-        }
+ //       } catch (err) {
+ //           dev_output.sendTrace(err, CONFIG.CHANNEL_DEV_ID);
+ //       }
     } else {
         await message.channel.send(`_${commandName}_ is not a valid command. Type \`${CONFIG.PREFIX}help\` to get a list of commands.`);
     }
