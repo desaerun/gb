@@ -16,6 +16,7 @@ dev_output.setClient(client);
 
 const fs = require("fs");
 const logMessage = require("./tools/logMessage");
+const {getRandomArrayMember} = require("./tools/utils");
 
 client.commands = new Discord.Collection();
 client.listenerSet = new Discord.Collection();
@@ -171,11 +172,11 @@ async function runCommands(message, args) {
  */
 function setArgsToDefault(command, givenArgs) {
     let args = givenArgs;
-    if (command.params && givenArgs < command.params.length) {
+    if (command.params) {
         for (let i = 0; i < command.params.length; i++) {
             if (!(args[i]) && command.params[i].default) {
                 if (Array.isArray(command.params[i].default)) {
-                    args[i] = getRand(command.params[i].default);
+                    args[i] = getRandomArrayMember(command.params[i].default);
                 } else {
                     args[i] = command.params[i].default;
                 }
@@ -185,8 +186,25 @@ function setArgsToDefault(command, givenArgs) {
     return args;
 }
 
-function getRand(arr) {
-    return arr[Math.floor(Math.random() * arr.length)];
+//todo: logic to verify arg types can be coerced from string to their required type
+function verifyCommandTypes(command,args) {
+    if (command.params) {
+        for (let i = 0; i < command.params.length; i++) {
+            if (command.params[i].type) {
+                const allowedTypes = command.params[i].type.split("|");
+                for (const currentAllowedType of allowedTypes) {
+                    switch (currentAllowedType.toLowerCase()) {
+                        case "integer":
+                        case "int":
+                            break;
+                        case "string":
+                        case "str":
+                            break;
+                    }
+                }
+            }
+        }
+    }
 }
 
 /**
