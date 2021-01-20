@@ -56,8 +56,8 @@ client.once("ready", () => {
 });
 
 //handling for when messages are sent
-client.on("message", message => {
-    captureMessage(client, message, true);
+client.on("message", async message => {
+    await captureMessage(client, message, true);
 
     const args = message.content.slice(CONFIG.PREFIX.length).split(/ +/);
 
@@ -66,7 +66,7 @@ client.on("message", message => {
 
     // Attempt to parse commands
     if (isCommand(message)) {
-        runCommands(message, args);
+        await runCommands(message, args);
         // Otherwise pass to listeners
     } else {
         parseWithListeners(message);
@@ -173,7 +173,7 @@ function setArgsToDefault(command, givenArgs) {
     let args = givenArgs;
     if (command.params && givenArgs < command.params.length) {
         for (let i = 0; i < command.params.length; i++) {
-            if (!(args[i]) && command.params[i].default && command.params[i].required) {
+            if (!(args[i]) && command.params[i].default) {
                 if (Array.isArray(command.params[i].default)) {
                     args[i] = getRand(command.params[i].default);
                 } else {
@@ -195,6 +195,7 @@ function getRand(arr) {
  */
 function parseWithListeners(message) {
     try {
+        console.log("Checking for listeners");
         for (const listener of client.listenerSet.values()) {
             if (listener.listen(client, message)) return;
         }
@@ -207,4 +208,4 @@ client.on("shardError", error => {
     console.error("possible shard error was caught: ", error);
 });
 
-client.login(process.env.BOT_TOKEN);
+await client.login(process.env.BOT_TOKEN);
