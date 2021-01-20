@@ -98,12 +98,13 @@ function getCommands(dir, level = 0) {
         } else {
             if (file.endsWith(".js")) {
                 const command = require(`${current_dir}${file}`);
+                if (command.name) {
+                    client.commands.set(command.name, command);
+                }
                 if (command.names) {
                     for (let commandName of command.names) {
                         client.commands.set(commandName, command);
                     }
-                } else {
-                    client.commands.set(command.name, command);
                 }
             }
         }
