@@ -15,7 +15,7 @@ const params = [
 ];
 
 //main
-function execute(client, message, args) {
+async function execute(client, message, args) {
     let user = message.mentions.members.first() || message.guild.members.cache.get(args[0]) || message.guild.member(message.author);
     const response = new Discord.MessageEmbed()
         // .setColor("#DAF7A6")
