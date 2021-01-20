@@ -1,7 +1,8 @@
 //imports
+const {getRandomArrayMember} = require("../../tools/utils.js");
+const sendLongMessage = require("../../tools/sendLongMessage");
 
 //module settings
-const sendLongMessage = require("../../tools/sendLongMessage");
 const name = "uwu";
 const description = "uwuifys text";
 const params = [
@@ -29,9 +30,9 @@ const params = [
 ];
 
 //main
-async function execute(client, message, args) {
+async function execute(client, message, args, replacementsFreqBase = 1) {
     const uwuText = uwuify(args.join(" "));
-    await sendLongMessage(uwuText, message.channel);
+    await sendLongMessage(uwuText,message.channel);
 }
 
 //module export
@@ -40,14 +41,22 @@ module.exports = {
     description: description,
     params: params,
     execute: execute,
+    uwuify: uwuify,
 }
 
 //helper functions
-function uwuify(text) {
+
+/**
+ * Uwu-ifies text
+ * @param text The text to uwu-ify
+ * @param replacementsFreqBase the frequency to replace the text
+ * @returns {string} The uwu-ified text
+ */
+function uwuify(text,replacementsFreqBase = 1) {
     //trim whitespace
     text = text.trim();
     if (text.length === 0) {
-        text = params[0].default[getRand(0, params[0].default.length)];
+        text = getRandomArrayMember(params[0].default);
     }
 
     const noReplace = [
@@ -104,63 +113,101 @@ function uwuify(text) {
         "!11!!"
     ];
     const frequency = {
-        stutter: .12,
+        replacements: replacementsFreqBase,
+        stutters: .12,
         actions: .05,
         faces: .10,
         exclamations: .8,
     }
-
-    //textToAdd will hold the faces, actions, etc. that are being spliced in to the text
-    let textToAdd = new Map();
-
-    const words = text.split(" ");
-    for (let i = 0; i < words.length; i++) {
-
-        //skip over some abbreviations
-        for (const [re, replacement] of replacements) {
-            const wordPart = words[i].match(/([\d\w]+)/);
-            if (wordPart && wordPart[1].length > 2 && !noReplace.includes(wordPart[1].toLowerCase())) {
-                words[i] = words[i].replace(re, replacement);
-            }
-        }
-
-        //add random stutters
-        if (Math.random() < frequency.stutter) {
-            const stutterChar = words[i][0];
-            words[i] = stutterChar + "-" + words[i].toLowerCase();
-        }
-
-        //add random actions
-        if (Math.random() < frequency.actions) {
-            const randomAction = getRand(0, actions.length);
-            textToAdd.set(i + 1, `*\\*${actions[randomAction]}\\**`);
-        }
-
-        //add random faces
-        if (Math.random() < frequency.faces) {
-            const randomFace = getRand(0, faces.length);
-            textToAdd.set(i + 1, faces[randomFace])
-        }
-
-        //change exclamation marks
-        if (Math.random() < frequency.exclamations && words[i].endsWith("!")) {
-            const randomExclamation = getRand(0, exclamations.length);
-            words[i] = words[i].replace("!", exclamations[randomExclamation]);
-        }
+    const cooldowns = {
+        stutters: 1,
+        actions: 3,
+        faces: 5,
+        exclamations: 1,
+    }
+    const cooldownCounter = {
+        stutters: 0,
+        actions: 0,
+        faces: 0,
+        exclamations: 0,
     }
 
-    //add in replacements
-    let offset = 0;
-    for (const [index, addedText] of textToAdd) {
-        words.splice(index + offset, 0, addedText);
-        offset++;
+    //split text to an array of words
+    const words = text.split(" ");
+
+    //calculate how much the replacement increment should increase by
+    //it should be replacing 100% of the message by 85% of the way through.
+    console.log(`Frequency base: ${frequency.replacements}`);
+    const replacementsFreqIncrement = (1-frequency.replacements) / (words.length / 100 * 85);
+    console.log(`Frequency increment: ${replacementsFreqIncrement}`);
+    for (let i=0,replacementsFreqCurrent = replacementsFreqBase;i<words.length;i++,replacementsFreqCurrent+=replacementsFreqIncrement) {
+        const percentMessageParsed = ((i + 1) / words.length * 100).toFixed(2);
+        console.log(`word ${i}(${percentMessageParsed}% of msg) (${words[i]}): Current replacement frequency: ${(Math.round(replacementsFreqCurrent*10000)/100)}%`);
+
+        if (i > words.length / 7 || replacementsFreqBase === 1) {
+            if (Math.random() < replacementsFreqCurrent) {
+                console.log(`performing uwu transform`);
+
+                //replace characters one word at a time
+                for (const [re, replacement] of replacements) {
+                    const wordPart = words[i].match(/([\d\w]+)/);
+                    if (
+                        wordPart && wordPart[1].length > 2 && //only replace if word is >= 3 characters long
+                        !noReplace.includes(wordPart[1].toLowerCase()) //skip some abbreviations
+                    ) {
+                        words[i] = words[i].replace(re, replacement);
+                    }
+                }
+
+                //change exclamation marks
+                if (
+                    Math.random() < frequency.exclamations &&
+                    words[i].endsWith("!") &&
+                    i - cooldownCounter.exclamations > cooldowns.exclamations
+
+                ) {
+                    words[i] = words[i].replace("!", getRandomArrayMember(exclamations));
+                    cooldownCounter.exclamations = i;
+                }
+
+                //add random stutters
+                if (
+                    Math.random() < frequency.stutters &&
+                    i - cooldownCounter.stutters > cooldowns.stutters
+                ) {
+                    const stutterChar = words[i][0];
+                    words[i] = stutterChar + '-' + words[i].toLowerCase();
+                    cooldownCounter.stutters = i;
+                }
+
+                //add random actions
+                if (
+                    Math.random() < frequency.actions &&
+                    i - cooldownCounter.actions > cooldowns.actions
+                ) {
+                    words.splice(i + 1, 0, `*\\*${getRandomArrayMember(actions)}\\**`);
+                    i++;
+                    cooldownCounter.actions = i;
+                }
+
+                //add random faces
+                if (
+                    Math.random() < frequency.faces &&
+                    i - cooldownCounter.faces > cooldowns.faces
+                ) {
+                    words.splice(i + 1, 0, getRandomArrayMember(faces));
+                    i++;
+                    cooldownCounter.faces = i;
+                }
+            } else {
+                console.log(`skipping due to random frequency check`);
+            }
+        } else {
+            console.log(`skipping due to not being far enough into the text`);
+        }
     }
 
     console.log(`modified fulltext: ${words.join(" ")}`);
     //join everything back together and return
     return words.join(" ");
-}
-
-function getRand(min, max) {
-    return Math.floor(min + Math.random() * (max - min));
 }
