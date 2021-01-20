@@ -217,7 +217,10 @@ function parseWithListeners(message) {
         console.log(JSON.stringify(client.listenerSet));
         for (const [key,listener] of client.listenerSet) {
             console.log(`looping through listener: ${key}`);
-            if (listener.listen(client, message)) return;
+            if (listener.listen(client, message)) {
+                console.log(`Listener match in ${key}`);
+                return;
+            }
         }
     } catch (err) {
         dev_output.sendTrace(err, CONFIG.CHANNEL_DEV_ID);
