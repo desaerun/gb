@@ -1,8 +1,8 @@
 //imports
-const Discord = require('discord.js');
-const CONFIG = require('../config/config');
-const fs = require('fs');
-const path = require('path');
+const Discord = require("discord.js");
+const CONFIG = require("../config/config");
+const fs = require("fs");
+const path = require("path");
 const logMessage = require("../tools/logMessage");
 const sendLongMessage = require("../tools/sendLongMessage");
 
@@ -11,10 +11,9 @@ const name = "help";
 const description = "Prints a message telling users how to get a list of commands or help on a specific command.";
 const params = [
     {
-        param: 'commandName',
-        type: 'string',
-        description: 'A string representing the name of the command you need help with',
-        required: false,
+        param: "commandName",
+        type: "string",
+        description: "A string representing the name of the command you need help with",
     }
 ];
 
@@ -22,7 +21,7 @@ const params = [
 async function execute(client, message, args) {
     if (args.length === 0) {
         try {
-            await sendLongMessage(generateCommandList(client.commands),message.channel);
+            await sendLongMessage(generateCommandList(client.commands), message.channel);
         } catch (e) {
             throw e;
         }
@@ -33,7 +32,7 @@ async function execute(client, message, args) {
         const embedMessage = getHelpMessage(client.commands.get(helpWithCommand));
         await message.channel.send(embedMessage);
     } else {
-        await message.channel.send(`The command \`${helpWithCommand}\` does not exist.  Type \`${CONFIG.prefix}${name}\` for a commands list.`);
+        await message.channel.send(`The command \`${helpWithCommand}\` does not exist.  Type \`${CONFIG.PREFIX}${name}\` for a commands list.`);
     }
 }
 
@@ -57,10 +56,10 @@ module.exports = {
 function getHelpMessage(command) {
     let fields = [];
     fields.push({
-        name: 'Description',
+        name: "Description",
         value: command.description
     });
-    let fullCommand = `${CONFIG.prefix}${command.name}`;
+    let fullCommand = `${CONFIG.PREFIX}${command.name}`;
     if (command.params) {
         for (const currentArg of command.params) {
             logMessage(currentArg, 3);
@@ -78,8 +77,8 @@ function getHelpMessage(command) {
                     if (defaultsList.length > 900) {
                         const defaultsSizeEach = 900 / currentArg.default.length;
                         for (const currentDefault of currentArg.default) {
-                            if (currentDefault.length > defaultsSizeEach-3) {
-                                modifiedDefaults.push(currentDefault.substr(0,defaultsSizeEach-3) + "...");
+                            if (currentDefault.length > defaultsSizeEach - 3) {
+                                modifiedDefaults.push(currentDefault.substr(0, defaultsSizeEach - 3) + "...");
                             } else {
                                 modifiedDefaults.push(currentDefault);
                             }
@@ -87,7 +86,7 @@ function getHelpMessage(command) {
                     } else {
                         modifiedDefaults = currentArg.default;
                     }
-                    value += `**Default randomized from the following**:\n${modifiedDefaults.join('\n')}`;
+                    value += `**Default randomized from the following**:\n${modifiedDefaults.join("\n")}`;
                 } else {
                     value += `**Default**: ${currentArg.default}`;
                 }
@@ -107,7 +106,7 @@ function getHelpMessage(command) {
     }
     if (command.helpText) {
         fields.push({
-            name: 'Information',
+            name: "Information",
             value: command.helpText
         });
     }
@@ -124,7 +123,7 @@ function generateCommandList(clientCommands) {
 
     let response = "List of commands: ";
     //special case for the HELP file
-    response += `\n${CONFIG.prefix}_${name}_: ${description}`;
+    response += `\n${CONFIG.PREFIX}_${name}_: ${description}`;
 
     function getCommandsText(dirPath, clientCommands, indentLevel = 0) {
         let commandsText = "";
@@ -141,7 +140,7 @@ function generateCommandList(clientCommands) {
                     logMessage(`${fullItemName} is a file, adding...`);
                     const commandName = item.match(/(.+)\.js/)[1];
                     const currentCommand = clientCommands.get(commandName);
-                    commandsText += `\n${indent(indentLevel)}${CONFIG.prefix}_${currentCommand.name}_: ${currentCommand.description}`;
+                    commandsText += `\n${indent(indentLevel)}${CONFIG.PREFIX}_${currentCommand.name}_: ${currentCommand.description}`;
                 }
             }
         }
@@ -149,7 +148,7 @@ function generateCommandList(clientCommands) {
     }
 
     response += getCommandsText(dirPath, clientCommands);
-    response += `\n\nType \`${CONFIG.prefix}${name} [command]\` for more detailed help information about specific commands.`;
+    response += `\n\nType \`${CONFIG.PREFIX}${name} [command]\` for more detailed help information about specific commands.`;
     return response;
 }
 
@@ -161,9 +160,9 @@ function uppercaseFirstLetter(str) {
 }
 
 function indent(level) {
-    let indentString = '';
+    let indentString = "";
     for (let i = 0; i < level; i++) {
-        indentString += '    ';
+        indentString += "    ";
     }
     return indentString;
 }

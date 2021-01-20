@@ -1,28 +1,27 @@
 //imports
-const axios = require('axios');
+const axios = require("axios");
 
 //module settings
 const name = "crypto-price";
 const description = "Retrieves crypto prices from Coinbase API (in USD)";
 const params = [
     {
-        param: 'cryptoTicker',
-        type: 'string',
-        description: 'a crypto ticker (BTC, ETH)',
-        default: 'BTC',
-        required: false,
+        param: "cryptoTicker",
+        type: "string",
+        description: "a crypto ticker (BTC, ETH)",
+        default: "BTC",
     }
 ];
 
 //main
 async function execute(client, message, args) {
     if (args.length < 1) {
-        message.channel.send('You must include a crypto ticker (BTC, ETH) with this request.');
+        await message.channel.send(`You must include a crypto ticker (BTC, ETH) with this request.`);
         return;
     }
 
     if (args.length > 1) {
-        message.channel.send(`You cannot make multiple requests at once. (Requested ${args})`);
+        await message.channel.send(`You cannot make multiple requests at once. (Requested ${args})`);
         return;
     }
 
@@ -37,15 +36,15 @@ async function execute(client, message, args) {
             let percDiff = priceDiff / coinbaseData.open;
 
             let curPriceFormatted = currencyFormat.format(coinbaseData.last);
-            let priceDiffFormatted = (priceDiff < 0 ? '' : '+') + currencyFormat.format(priceDiff);
-            let percDiffFormatted = (priceDiff < 0 ? '' : '+') + percentFormat.format(percDiff);
+            let priceDiffFormatted = (priceDiff < 0 ? "" : "+") + currencyFormat.format(priceDiff);
+            let percDiffFormatted = (priceDiff < 0 ? "" : "+") + percentFormat.format(percDiff);
 
-            message.channel.send(`1 ${crypto} = **${curPriceFormatted}** (**${priceDiffFormatted}**[**${percDiffFormatted}**] last 24hrs)`);
+            await message.channel.send(`1 ${crypto} = **${curPriceFormatted}** (**${priceDiffFormatted}**[**${percDiffFormatted}**] last 24hrs)`);
         } else {
             throw new Error(`Request returned status code ${response.status}`);
         }
     } catch (err) {
-        message.channel.send(`error fetching crypto price: ${err}`);
+        await message.channel.send(`error fetching crypto price: ${err}`);
     }
 }
 
@@ -58,15 +57,15 @@ module.exports = {
 }
 
 //helper functions
-const currencyFormat = new Intl.NumberFormat('en-US',
+const currencyFormat = new Intl.NumberFormat("en-US",
     {
-        style: 'currency',
-        currency: 'USD'
+        style: "currency",
+        currency: "USD"
     });
 
-const percentFormat = new Intl.NumberFormat('en-US',
+const percentFormat = new Intl.NumberFormat("en-US",
     {
-        style: 'percent',
+        style: "percent",
         minimumFractionDigits: 2,
         maximumFractionDigits: 2
     })

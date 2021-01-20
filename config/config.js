@@ -1,15 +1,66 @@
-module.exports = {
-    prefix: '-', // sets the prefix for commands
+const CONFIG = {
+    PREFIX: "-", // sets the prefix for commands
 
     //todo: make verbosity output more consistent
-    verbosity: 3, // sets verbosity level
+    VERBOSITY: 3, // sets verbosity level
 
     //just hardcoding some channel/guild/user IDs for easier reference
-    guild_rageaholics_id: '270271948527894541',
-    guild_bot_sandbox_id: '576960974825979920',
-    user_desaerun_id: '187048556643876864',
-    user_josh_id: '95693092430020608',
-    user_charles_id: '97388794692505600',
-    channel_code_shit_id: '674824072126922753',
-    channel_dev_id: '576960974825979935',
+    GUILDS: {
+        RAGEAHOLICS: {
+            ID: "270271948527894541",
+            CHANNELS: {
+                CODE_SHIT: {
+                    ID: "674824072126922753",
+                },
+            }
+        },
+        BOT_SANDBOX: {
+            ID: "576960974825979920",
+            CHANNELS: {
+                DEV: {
+                    ID: "576960974825979935",
+                }
+            }
+        }
+    },
+    MEMBERS: {
+        DESAERUN: {
+            ID: "187048556643876864",
+            GUILDS: [
+                this.GUILDS.RAGEAHOLICS,
+                this.GUILDS.BOT_SANDBOX,
+            ],
+        },
+        JOSH: {
+            ID: "95693092430020608",
+            GUILDS: [
+                this.GUILDS.RAGEAHOLICS,
+            ],
+        },
+        CHARLES: {
+            ID: "95693092430020608",
+            GUILDS: [
+                this.GUILDS.RAGEAHOLICS,
+                this.GUILDS.BOT_SANDBOX,
+            ],
+        },
+        BIRK: {
+            ID: "97542223641464832",
+            GUILDS: [
+                this.GUILDS.RAGEAHOLICS,
+                this.GUILDS.BOT_SANDBOX,
+            ]
+        }
+    },
+
+    //legacy
+    GUILD_RAGEAHOLICS_ID: "270271948527894541",
+    GUILD_BOT_SANDBOX_ID: "576960974825979920",
+    USER_DESAERUN_ID: "187048556643876864",
+    USER_JOSH_ID: "95693092430020608",
+    USER_CHARLES_ID: "97388794692505600",
+    USER_BIRK_ID: "97542223641464832",
+    CHANNEL_CODE_SHIT_ID: "674824072126922753",
+    CHANNEL_DEV_ID: "576960974825979935",
 }
+module.exports = CONFIG;

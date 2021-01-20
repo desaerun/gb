@@ -15,11 +15,10 @@ const name = "run-sql";
 const description = "Runs SQL queries directly";
 const params = [
     {
-        param: 'query',
-        type: 'String',
-        description: 'An SQL query',
-        default: 'SELECT * FROM messages LIMIT 10',
-        required: false,
+        param: "query",
+        type: "String",
+        description: "An SQL query",
+        default: "SELECT * FROM messages LIMIT 10",
     }
 ];
 
@@ -31,11 +30,11 @@ async function execute(client, message, args) {
     try {
         [rows] = await pool.query(query);
     } catch (e) {
-        message.channel.send(`MySQL error: ${e}`);
+        await message.channel.send(`MySQL error: ${e}`);
         throw e;
     }
     for (let row of rows) {
-        message.channel.send(`\`\`\`${JSON.stringify(row)}\`\`\``);
+        await message.channel.send(`\`\`\`${JSON.stringify(row)}\`\`\``);
     }
 }
 

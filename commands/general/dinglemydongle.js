@@ -5,8 +5,8 @@ const name = "dinglemydongle";
 const description = "dingles your dongle";
 
 //main
-function execute(client, message) {
-    message.channel.send(`**${client.user.username}** dingles **${message.author.username}**'s dongle.`);
+async function execute(client, message) {
+    await message.channel.send(`**${client.user.username}** dingles **${message.author.username}**'s dongle.`);
 }
 
 //module export

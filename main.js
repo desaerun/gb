@@ -1,7 +1,7 @@
 require("dotenv").config();  // pull in ENV variables from .env file
-const CONFIG = require('./config/config');
-const Discord = require('discord.js');
-const client = new Discord.Client({partials: ['MESSAGE']});
+const CONFIG = require("./config/config");
+const Discord = require("discord.js");
+const client = new Discord.Client({partials: ["MESSAGE"]});
 //const snowflakeToTimestamp = require("./tools/snowflakeToTimestamp");
 
 const cron = require("node-cron");
@@ -9,12 +9,12 @@ const cron = require("node-cron");
 const captureMessage = require("./tools/message_db_tools/captureMessage");
 const updateEditedMessage = require("./tools/message_db_tools/updateEditedMessage");
 const deleteMessage = require("./tools/message_db_tools/deleteMessage");
-const status = require('./commands/bot_control/set-bot-status.js');
+const status = require("./commands/bot_control/set-bot-status.js");
 
-const dev_output = require('./dev_output');
+const dev_output = require("./dev_output");
 dev_output.setClient(client);
 
-const fs = require('fs');
+const fs = require("fs");
 const logMessage = require("./tools/logMessage");
 
 client.commands = new Discord.Collection();
@@ -23,18 +23,18 @@ client.listenerSet = new Discord.Collection();
 getCommands("./commands");
 getListenerSet("./listeners");
 
-client.once('ready', () => {
+client.once("ready", () => {
     console.log("bot online.");
     //let guilds = client.guilds;
 
     //todo: read in first line from github_update.txt and add it to the "online" message
     //todo: make the linux server print a line about recovering to the github_update.txt file when it recovers or is started manually
     /*
-    let lineReader = require('readline').createInterface({input: require('fs').createReadStream('github_update.txt')});
+    let lineReader = require("readline").createInterface({input: require("fs").createReadStream("github_update.txt")});
     online_message += ``
     */
 
-    if (CONFIG.verbosity >= 3) {
+    if (CONFIG.VERBOSITY >= 3) {
         console.log(`Bot online. Sending Online Status message to ${client.channels.cache.get(process.env.ONLINE_STATUS_CHANNEL_ID).name}(${process.env.ONLINE_STATUS_CHANNEL_ID}).`)
     }
     //todo: fix the bot timing out every 8 hours
@@ -44,7 +44,7 @@ client.once('ready', () => {
      */
 
     //set initial bot status
-    client.user.setActivity(status.params[0].default, {type: 'PLAYING'})
+    client.user.setActivity(status.params[0].default, {type: "PLAYING"})
         .then(() => console.log())
         .catch((err) => {
             dev_output.sendTrace(`Bot failed to set status: ${err}`, process.env.ONLINE_STATUS_CHANNEL_ID)
@@ -56,10 +56,10 @@ client.once('ready', () => {
 });
 
 //handling for when messages are sent
-client.on('message', message => {
+client.on("message", message => {
     captureMessage(client, message, true);
 
-    const args = message.content.slice(CONFIG.prefix.length).split(/ +/);
+    const args = message.content.slice(CONFIG.PREFIX.length).split(/ +/);
 
     // Ignore my own messages
     if (message.author.bot) return;
@@ -72,11 +72,11 @@ client.on('message', message => {
         parseWithListeners(message);
     }
 });
-client.on('messageUpdate', async (oldMessage, newMessage) => {
+client.on("messageUpdate", async (oldMessage, newMessage) => {
     console.log(`Message Edit triggered.`);
     await updateEditedMessage(oldMessage, newMessage);
 });
-client.on('messageDelete', async (deletedMessage) => {
+client.on("messageDelete", async (deletedMessage) => {
     console.log(`Message Deletion triggered: ${JSON.stringify(deletedMessage)}`);
     await deleteMessage(deletedMessage);
 });
@@ -94,9 +94,15 @@ function getCommands(dir, level = 0) {
         if (fs.statSync(`${current_dir}${file}`).isDirectory()) {
             getCommands(`${current_dir}${file}`, level + 1);
         } else {
-            if (file.endsWith('.js')) {
+            if (file.endsWith(".js")) {
                 const command = require(`${current_dir}${file}`);
-                client.commands.set(command.name, command);
+                if (command.names) {
+                    for (let commandName of command.names) {
+                        client.commands.set(commandName, command);
+                    }
+                } else {
+                    client.commands.set(command.name, command);
+                }
             }
         }
     }
@@ -115,7 +121,7 @@ function getListenerSet(dir, level = 0) {
         if (fs.statSync(`${current_dir}${file}`).isDirectory()) {
             getListenerSet(`${current_dir}${file}`, level + 1);
         } else {
-            if (file.endsWith('.js')) {
+            if (file.endsWith(".js")) {
                 const listener = require(`${current_dir}${file}`);
                 client.listenerSet.set(listener.name, listener);
             }
@@ -124,12 +130,12 @@ function getListenerSet(dir, level = 0) {
 }
 
 /**
- * Identifies 'command' messages which must begin with CONFIG.prefix
+ * Identifies "command" messages which must begin with CONFIG.prefix
  * @param message
  * @returns {boolean}
  */
 function isCommand(message) {
-    const check = new RegExp(`^${CONFIG.prefix}([^-+]+)`);
+    const check = new RegExp(`^${CONFIG.PREFIX}([^-+]+)`);
     return message.content.match(check) !== null;
 }
 
@@ -138,7 +144,7 @@ function isCommand(message) {
  * @param message
  * @param args
  */
-function runCommands(message, args) {
+async function runCommands(message, args) {
     const commandName = args.shift().toLowerCase();
 
     if (client.commands.has(commandName)) {
@@ -149,10 +155,10 @@ function runCommands(message, args) {
             command.execute(client, message, args);
 
         } catch (err) {
-            dev_output.sendTrace(err, CONFIG.channel_dev_id);
+            dev_output.sendTrace(err, CONFIG.CHANNEL_DEV_ID);
         }
     } else {
-        message.channel.send(`_${commandName}_ is not a valid command. Type \`${CONFIG.prefix}help\` to get a list of commands.`);
+        await message.channel.send(`_${commandName}_ is not a valid command. Type \`${CONFIG.PREFIX}help\` to get a list of commands.`);
     }
 }
 
@@ -193,11 +199,11 @@ function parseWithListeners(message) {
             if (listener.listen(client, message)) return;
         }
     } catch (err) {
-        dev_output.sendTrace(err, CONFIG.channel_dev_id);
+        dev_output.sendTrace(err, CONFIG.CHANNEL_DEV_ID);
     }
 }
 
-client.on('shardError', error => {
+client.on("shardError", error => {
     console.error("possible shard error was caught: ", error);
 });
 

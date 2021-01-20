@@ -1,5 +1,36 @@
-const CONFIG = require('../config/config');
+//imports
+const CONFIG = require("../config/config");
 
+//module config
+const name = "joshisms";
+const description = "Responds to Josh talking about the things he talks about frequently.";
+
+//main
+async function listen(client, message) {
+
+    if (message.author.id !== CONFIG.USER_JOSH_ID) return false;
+
+    let wordResponseMap = buildWordResponseMap();
+
+    for (let key of wordResponseMap.keys()) {
+        if (key.test(message.content)) {
+            let response = wordResponseMap.get(key);
+            await message.channel.send(response);
+            return true;
+        }
+    }
+
+    return false;
+}
+
+//module export
+module.exports = {
+    name: name,
+    description: description,
+    listen: listen,
+}
+
+//helper functions
 function buildWordResponseMap() {
     let map = new Map();
 
@@ -12,25 +43,4 @@ function buildWordResponseMap() {
     map.set(/\bs2000\b/i, "Look at Josh talking about his car again.");
 
     return map;
-}
-
-module.exports = {
-    name: 'joshisms',
-    description: 'Responds to Josh talking about the things he talks about frequently.',
-    listen(client, message) {
-
-        if (message.author.id !== CONFIG.user_josh_id) return false;
-
-        let wordResponseMap = buildWordResponseMap();
-
-        for (let key of wordResponseMap.keys()) {
-            if (key.test(message.content)) {
-                let response = wordResponseMap.get(key);
-                message.channel.send(response);
-                return true;
-            }
-        }
-
-        return false;
-    }
 }
