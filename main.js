@@ -109,6 +109,7 @@ function getCommands(dir, level = 0) {
             }
         }
     }
+    logMessage(JSON.stringify(client.commands));
 }
 
 /**
