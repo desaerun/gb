@@ -249,14 +249,8 @@ function verifyArgTypes(command,args) {
  */
 async function parseWithListeners(message) {
     try {
-        console.log("Checking for listeners");
-        console.log(JSON.stringify(client.listenerSet));
-        for (const [key,listener] of client.listenerSet) {
-            console.log(`looping through listener: ${key}`);
-            if (await listener.listen(client, message)) {
-                console.log(`Listener match in ${key}`);
-                return;
-            }
+        for (const listener of client.listenerSet.values()) {
+            if (await listener.listen(client, message)) return;
         }
     } catch (err) {
         dev_output.sendTrace(err, CONFIG.CHANNEL_DEV_ID);
