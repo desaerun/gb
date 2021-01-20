@@ -71,7 +71,7 @@ client.on("message", async message => {
         await runCommands(message, args);
         // Otherwise pass to listeners
     } else {
-        parseWithListeners(message);
+        await parseWithListeners(message);
     }
 });
 client.on("messageUpdate", async (oldMessage, newMessage) => {
@@ -248,13 +248,13 @@ function verifyArgTypes(command,args) {
  * Attempts to execute from the set of listeners on any given message that is not a command
  * @param message
  */
-function parseWithListeners(message) {
+async function parseWithListeners(message) {
     try {
         console.log("Checking for listeners");
         console.log(JSON.stringify(client.listenerSet));
         for (const [key,listener] of client.listenerSet) {
             console.log(`looping through listener: ${key}`);
-            if (listener.listen(client, message)) {
+            if (await listener.listen(client, message)) {
                 console.log(`Listener match in ${key}`);
                 return;
             }
