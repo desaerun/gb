@@ -214,7 +214,8 @@ function verifyCommandTypes(command,args) {
 function parseWithListeners(message) {
     try {
         console.log("Checking for listeners");
-        for (const listener of client.listenerSet.values()) {
+        for (const [key,listener] of client.listenerSet.values()) {
+            console.log(`looping through listener: ${key}`);
             if (listener.listen(client, message)) return;
         }
     } catch (err) {
