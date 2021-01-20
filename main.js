@@ -237,7 +237,7 @@ function verifyArgTypes(command,args) {
             console.log(coercibleTypes);
             const isValidType = Object.values(coercibleTypes).some(element => element === true);
             if (!isValidType) {
-                argTypeErrors[i] = `Arguement ${command.params[i].name} could not be coerced to a ${command.params[i].type} value.`;
+                argTypeErrors[i] = `Argument **${command.params[i].param}** could not be coerced to a ${command.params[i].type} value.`;
             }
         }
     }
