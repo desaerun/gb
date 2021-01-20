@@ -150,7 +150,7 @@ async function runCommands(message, args) {
     const commandName = args.shift().toLowerCase();
 
     if (client.commands.has(commandName)) {
-//        try {
+        try {
             let command = client.commands.get(commandName);
             args = setArgsToDefault(command, args);
 
@@ -163,9 +163,9 @@ async function runCommands(message, args) {
             }
             command.execute(client, message, args);
 
- //       } catch (err) {
- //           dev_output.sendTrace(err, CONFIG.CHANNEL_DEV_ID);
- //       }
+        } catch (err) {
+            dev_output.sendTrace(err, CONFIG.CHANNEL_DEV_ID);
+        }
     } else {
         await message.channel.send(`_${commandName}_ is not a valid command. Type \`${CONFIG.PREFIX}help\` to get a list of commands.`);
     }
@@ -195,49 +195,48 @@ function setArgsToDefault(command, args) {
 
 //todo: logic to verify arg types can be coerced from string to their required type
 function verifyArgTypes(command,args) {
-    if (!command.params) {
-        return false;
-    }
     let argTypeErrors = [];
-    for (let i = 0; i < command.params.length; i++) {
-        if (command.params[i].type) {
-            const allowedTypes = command.params[i].type.split("|");
-            let coercibleTypes = {
-                int: false,
-                string: false,
-                float: false,
-                snowflake: false,
-            };
-            for (const currentAllowedType of allowedTypes) {
-                switch (currentAllowedType.toLowerCase()) {
-                    case "integer":
-                    case "int":
-                        if (!isNaN(parseInt(args[i],10))) {
-                            args[i] = parseInt(args[i],10);
-                            coercibleTypes.int = true;
-                        }
-                        break;
-                    case "float":
-                        if (!isNaN(parseFloat(args[i]))) {
-                            args[i] = parseFloat(args[i]);
-                            coercibleTypes.float = true;
-                        }
-                        break;
-                    case "snowflake":
-                        const re = /^\d{16}$/
-                        coercibleTypes.snowflake = args[i].test(re);
-                        break;
-                    case "string":
-                    case "str":
-                    default:
-                        coercibleTypes.string = true;
-                        break;
+    if (command.params) {
+        for (let i = 0; i < command.params.length; i++) {
+            if (command.params[i].type) {
+                const allowedTypes = command.params[i].type.split("|");
+                let coercibleTypes = {
+                    int: false,
+                    string: false,
+                    float: false,
+                    snowflake: false,
+                };
+                for (const currentAllowedType of allowedTypes) {
+                    switch (currentAllowedType.toLowerCase()) {
+                        case "integer":
+                        case "int":
+                            if (!isNaN(parseInt(args[i], 10))) {
+                                args[i] = parseInt(args[i], 10);
+                                coercibleTypes.int = true;
+                            }
+                            break;
+                        case "float":
+                            if (!isNaN(parseFloat(args[i]))) {
+                                args[i] = parseFloat(args[i]);
+                                coercibleTypes.float = true;
+                            }
+                            break;
+                        case "snowflake":
+                            const re = /^\d{16}$/
+                            coercibleTypes.snowflake = args[i].test(re);
+                            break;
+                        case "string":
+                        case "str":
+                        default:
+                            coercibleTypes.string = true;
+                            break;
+                    }
                 }
-            }
-            console.log(coercibleTypes);
-            const isValidType = Object.values(coercibleTypes).some(element => element === true);
-            if (!isValidType) {
-                argTypeErrors[i] = `Argument **${command.params[i].param}** could not be coerced to a ${command.params[i].type} value.`;
+                console.log(coercibleTypes);
+                const isValidType = Object.values(coercibleTypes).some(element => element === true);
+                if (!isValidType) {
+                    argTypeErrors[i] = `Argument **${command.params[i].param}** could not be coerced to a ${command.params[i].type} value.`;
+                }
             }
         }
     }
