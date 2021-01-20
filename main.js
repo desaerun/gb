@@ -16,6 +16,7 @@ dev_output.setClient(client);
 
 const fs = require("fs");
 const logMessage = require("./tools/logMessage");
+const sendLongMessage = require("./tools/sendLongMessage");
 const {getRandomArrayMember} = require("./tools/utils");
 
 client.commands = new Discord.Collection();
@@ -153,6 +154,13 @@ async function runCommands(message, args) {
             let command = client.commands.get(commandName);
             args = setArgsToDefault(command, args);
 
+            let argTypeErrors = [];
+            [args,argTypeErrors] = verifyArgTypes(command,args);
+            if (argTypeErrors.length > 0) {
+                const errors = argTypeErrors.join("\n");
+                await sendLongMessage(errors,message.channel);
+                return false;
+            }
             command.execute(client, message, args);
 
         } catch (err) {
@@ -167,11 +175,10 @@ async function runCommands(message, args) {
  * Returns an args array for the current command based on its default arg values
  *
  * @param command
- * @param givenArgs
+ * @param args
  * @returns {[]}
  */
-function setArgsToDefault(command, givenArgs) {
-    let args = givenArgs;
+function setArgsToDefault(command, args) {
     if (command.params) {
         for (let i = 0; i < command.params.length; i++) {
             if (!(args[i]) && command.params[i].default) {
@@ -187,24 +194,54 @@ function setArgsToDefault(command, givenArgs) {
 }
 
 //todo: logic to verify arg types can be coerced from string to their required type
-function verifyCommandTypes(command,args) {
-    if (command.params) {
-        for (let i = 0; i < command.params.length; i++) {
-            if (command.params[i].type) {
-                const allowedTypes = command.params[i].type.split("|");
-                for (const currentAllowedType of allowedTypes) {
-                    switch (currentAllowedType.toLowerCase()) {
-                        case "integer":
-                        case "int":
-                            break;
-                        case "string":
-                        case "str":
-                            break;
-                    }
+function verifyArgTypes(command,args) {
+    if (!command.params) {
+        return false;
+    }
+    let argTypeErrors = [];
+    for (let i = 0; i < command.params.length; i++) {
+        if (command.params[i].type) {
+            const allowedTypes = command.params[i].type.split("|");
+            let coercibleTypes = {
+                int: false,
+                string: false,
+                float: false,
+                snowflake: false,
+            };
+            for (const currentAllowedType of allowedTypes) {
+                switch (currentAllowedType.toLowerCase()) {
+                    case "integer":
+                    case "int":
+                        if (!isNaN(parseInt(args[i],10))) {
+                            args[i] = parseInt(args[i],10);
+                            coercibleTypes.int = true;
+                        }
+                        break;
+                    case "float":
+                        if (!isNaN(parseFloat(args[i]))) {
+                            args[i] = parseFloat(args[i]);
+                            coercibleTypes.float = true;
+                        }
+                        break;
+                    case "snowflake":
+                        const re = /^\d{16}$/
+                        coercibleTypes.snowflake = args[i].test(re);
+                        break;
+                    case "string":
+                    case "str":
+                    default:
+                        coercibleTypes.string = true;
+                        break;
                 }
+            }
+            console.log(coercibleTypes);
+            const isValidType = Object.values(coercibleTypes).some(element => element === true);
+            if (!isValidType) {
+                argTypeErrors[i] = `Arguement ${command.params[i].name} could not be coerced to a ${command.params[i].type} value.`;
             }
         }
     }
+    return [args,argTypeErrors];
 }
 
 /**
