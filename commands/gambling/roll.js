@@ -1,6 +1,7 @@
 //imports
 
 //module settings
+const {getRand} = require("../../tools/utils");
 const name = "roll";
 const description = "Rolls a die.";
 const params = [
@@ -20,7 +21,7 @@ const params = [
 ];
 
 //main
-async function execute(client, message, args, coinFlip = false) {
+async function execute(client, message, args) {
     let regularDie = false;
     if (!args || args.length < 2) {
         if (args.length === 1) {
@@ -33,18 +34,13 @@ async function execute(client, message, args, coinFlip = false) {
     }
     const lower = Math.abs(args[0]);
     const upper = Math.abs(args[1]);
-    const range = upper - lower;
-    const roll = lower + Math.floor(Math.random() * (range + 1));
+    const roll = getRand(lower,upper);
 
     let response = "";
     if (regularDie) {
         response = `**${client.user.username}** rolls a **${args[1]}-sided** die:  **${roll}**`;
     } else {
         response = `**${client.user.username}** rolls between **${args[0]}** and **${args[1]}**:  **${roll}**`;
-    }
-    if (coinFlip) {
-        const side = (roll === 1) ? "Heads" : "Tails";
-        response = `**${client.user.username}** flips a coin. It's **${side}**!`;
     }
     try {
         await message.channel.send(response);

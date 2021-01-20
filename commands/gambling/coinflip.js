@@ -1,5 +1,5 @@
 //imports
-const roll = require("./roll");
+const {getRand} = require("../../tools/utils");
 
 //module settings
 const name = "coinflip";
@@ -7,7 +7,10 @@ const description = "Flips a coin.";
 
 //main
 async function execute(client, message, args) {
-    await roll.execute(client, message, [0, 1], true);
+    const roll = getRand(0,1);
+    const side = (roll === 1) ? "Heads" : "Tails";
+    await message.channel.send(`**${client.user.username}** flips a coin. It's **${side}**!`);
+    return true;
 }
 
 //module export
