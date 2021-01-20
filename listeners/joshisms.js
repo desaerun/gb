@@ -8,7 +8,7 @@ const description = "Responds to Josh talking about the things he talks about fr
 //main
 async function listen(client, message) {
     console.log("Made it to joshisms.js");
-    if (message.author.id !== CONFIG.USER_JOSH_ID) return false;
+    if (message.author.id !== CONFIG.USER_JOSH_ID && message.author.id !== CONFIG.MEMBERS.DESAERUN.ID) return false;
     console.log("joshisms detected josh!");
     let wordResponseMap = buildWordResponseMap();
 
