@@ -8,6 +8,16 @@ const CONFIG = {
     GUILDS: {
         RAGEAHOLICS: {
             ID: "270271948527894541",
+            NAME: "Rageaholics",
+            CHANNELS: {
+                CODE_SHIT: {
+                    ID: "674824072126922753",
+                },
+            }
+        },
+        "270271948527894541": {
+            ID: "270271948527894541",
+            NAME: "Rageaholics",
             CHANNELS: {
                 CODE_SHIT: {
                     ID: "674824072126922753",
@@ -16,6 +26,16 @@ const CONFIG = {
         },
         BOT_SANDBOX: {
             ID: "576960974825979920",
+            NAME: "Bot sandbox",
+            CHANNELS: {
+                DEV: {
+                    ID: "576960974825979935",
+                }
+            }
+        },
+        "576960974825979920": {
+            ID: "576960974825979920",
+            NAME: "Bot sandbox",
             CHANNELS: {
                 DEV: {
                     ID: "576960974825979935",
@@ -27,28 +47,28 @@ const CONFIG = {
         DESAERUN: {
             ID: "187048556643876864",
             GUILDS: [
-                this.GUILDS.RAGEAHOLICS,
-                this.GUILDS.BOT_SANDBOX,
+                "270271948527894541",
+                "576960974825979920",
             ],
         },
         JOSH: {
             ID: "95693092430020608",
             GUILDS: [
-                this.GUILDS.RAGEAHOLICS,
+                "270271948527894541",
             ],
         },
         CHARLES: {
             ID: "95693092430020608",
             GUILDS: [
-                this.GUILDS.RAGEAHOLICS,
-                this.GUILDS.BOT_SANDBOX,
+                "270271948527894541",
+                "576960974825979920",
             ],
         },
         BIRK: {
             ID: "97542223641464832",
             GUILDS: [
-                this.GUILDS.RAGEAHOLICS,
-                this.GUILDS.BOT_SANDBOX,
+                "270271948527894541",
+                "576960974825979920",
             ]
         }
     },
