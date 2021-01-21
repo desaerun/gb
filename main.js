@@ -100,7 +100,7 @@ function getCommands(dir, level = 0) {
             if (file.endsWith(".js")) {
                 const command = require(`${current_dir}${file}`);
                 if (command.names && !command.name) {
-                    command.name = command.names.shift();
+                    command.name = command.names[0];
                 }
                 if (command.name) {
                     client.commands.set(command.name, command);
