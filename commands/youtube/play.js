@@ -41,7 +41,7 @@ async function execute(client, message, args) {
         await message.channel.send(`Playing **${videoDescription}**`);
         message.member.voice.channel.join()
             .then(connection => {
-                const dispatcher = connection.play(await ytdl(videoUrl), { type:  "opus" }));
+                const dispatcher = connection.play(await ytdl(videoUrl), { type:  "opus" });
 
                 dispatcher.on("finish", () => message.member.voice.channel.leave());
             });
