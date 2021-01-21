@@ -139,9 +139,17 @@ function generateCommandList(clientCommands) {
                 if (item !== path.basename(__filename) && item.endsWith(".js")) {
                     logMessage(`${fullItemName} is a file, adding...`);
                     const commandName = item.match(/(.+)\.js/)[1];
-                    const currentCommand = clientCommands.get(commandName);
-                    console.log(currentCommand);
-                    commandsText += `\n${indent(indentLevel)}${CONFIG.PREFIX}_${currentCommand.name}_: ${currentCommand.description}`;
+                    if (clientCommands.get(commandName)) {
+                        let currentCommand = clientCommands.get(commandName);
+                        commandsText += `\n${indent(indentLevel)}\`${CONFIG.PREFIX}${currentCommand.name}\``;
+                        if (currentCommand.names) {
+                            for (const name of currentCommand.names) {
+                                commandsText += `; \`${CONFIG.PREFIX}${name}\``;
+                            }
+                        }
+                        commandsText += `: ${currentCommand.description}`;
+                    }
+
                 }
             }
         }
