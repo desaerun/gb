@@ -99,6 +99,9 @@ function getCommands(dir, level = 0) {
         } else {
             if (file.endsWith(".js")) {
                 const command = require(`${current_dir}${file}`);
+                if (command.names && !command.name) {
+                    command.name = command.names.shift();
+                }
                 if (command.name) {
                     client.commands.set(command.name, command);
                 }
@@ -140,7 +143,7 @@ function getListenerSet(dir, level = 0) {
  */
 function isCommand(message) {
     const check = new RegExp(`^${CONFIG.PREFIX}([^-+]+)`);
-    return message.content.match(check) !== null;
+    return message.content.test(check);
 }
 
 /**
