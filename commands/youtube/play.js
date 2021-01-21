@@ -29,7 +29,7 @@ async function execute(client, message, args) {
         q: q,
     };
     try {
-        const req = await axios.get("https://www.googleapis.com/youtube/v3/search");
+        const req = await axios.get("https://www.googleapis.com/youtube/v3/search",{params: params});
         if (req.status !== 200) {
             throw "non-http200 status";
         }

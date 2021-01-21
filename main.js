@@ -158,6 +158,7 @@ function isCommand(message) {
 async function runCommands(message, args) {
     const commandName = args.shift().toLowerCase();
 
+    console.log(`attempting to run command ${commandName}`);
     if (client.commands.has(commandName)) {
         try {
             let command = client.commands.get(commandName);
