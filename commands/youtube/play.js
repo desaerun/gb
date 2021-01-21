@@ -33,6 +33,7 @@ async function execute(client, message, args) {
         if (req.status !== 200) {
             throw "non-http200 status";
         }
+        console.log(JSON.stringify(req));
         const video = req.items[0];
         const videoId = video.id.videoId;
         const videoDescription = video.snippet.description;
