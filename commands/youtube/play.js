@@ -33,8 +33,8 @@ async function execute(client, message, args) {
         if (req.status !== 200) {
             throw "non-http200 status";
         }
-        console.log(req);
         const video = req.data.items[0];
+        console.log(JSON.stringify(video));
         const videoId = video.id.videoId;
         const videoDescription = video.snippet.description;
         await message.channel.send(`Playing **${videoDescription}**`);
