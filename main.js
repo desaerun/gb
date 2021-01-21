@@ -107,6 +107,7 @@ function getCommands(dir, level = 0) {
                 }
                 if (command.names) {
                     for (let commandName of command.names) {
+                        console.log(commandName);
                         client.commands.set(commandName, command);
                     }
                 }
