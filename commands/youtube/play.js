@@ -37,10 +37,11 @@ async function execute(client, message, args) {
         console.log(JSON.stringify(video));
         const videoId = video.id.videoId;
         const videoDescription = video.snippet.description;
+        const videoUrl = `https://youtube.com/watch?v=${videoId}`;
         await message.channel.send(`Playing **${videoDescription}**`);
         message.member.voice.channel.join()
             .then(connection => {
-                const stream = ytdl(`https://youtube.com/watch?v=${videoId}`, {filter: "audioonly"});
+                const stream = ytdl(videoUrl, {filter: "audioonly"});
                 const dispatcher = connection.play(stream);
 
                 dispatcher.on("finish", () => message.member.voice.channel.leave());
