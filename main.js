@@ -100,6 +100,7 @@ function getCommands(dir, level = 0) {
             if (file.endsWith(".js")) {
                 const command = require(`${current_dir}${file}`);
                 if (command.names && !command.name) {
+                    console.log(`Command ${command.names[0]} did not have a name but had "names": ${command.names}`);
                     command.name = command.names[0];
                 }
                 if (command.name) {
@@ -173,7 +174,7 @@ async function runCommands(message, args) {
             dev_output.sendTrace(err, CONFIG.CHANNEL_DEV_ID);
         }
     } else {
-        await message.channel.send(`_${commandName}_ is not a valid command. Type \`${CONFIG.PREFIX}help\` to get a list of commands.`);
+        await message.channel.send(`\`${commandName}\` is not a valid command. Type \`${CONFIG.PREFIX}help\` to get a list of commands.`);
     }
 }
 
