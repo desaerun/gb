@@ -140,6 +140,7 @@ function generateCommandList(clientCommands) {
                     logMessage(`${fullItemName} is a file, adding...`);
                     const commandName = item.match(/(.+)\.js/)[1];
                     const currentCommand = clientCommands.get(commandName);
+                    console.log(currentCommand);
                     commandsText += `\n${indent(indentLevel)}${CONFIG.PREFIX}_${currentCommand.name}_: ${currentCommand.description}`;
                 }
             }
