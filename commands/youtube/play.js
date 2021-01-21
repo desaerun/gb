@@ -21,7 +21,7 @@ async function execute(client, message, args) {
         return false;
     }
     let q = args.length > 0 ? args.join(" ") : params[0].default;
-    let params = {
+    let queryParams = {
         key: process.env.YOUTUBE_TOKEN,
         part: "snippet",
         type: "video",
@@ -29,7 +29,7 @@ async function execute(client, message, args) {
         q: q,
     };
     try {
-        const req = await axios.get("https://www.googleapis.com/youtube/v3/search",{params: params});
+        const req = await axios.get("https://www.googleapis.com/youtube/v3/search",{params: queryParams});
         if (req.status !== 200) {
             throw "non-http200 status";
         }
