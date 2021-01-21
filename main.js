@@ -203,7 +203,6 @@ function setArgsToDefault(command, args) {
     return args;
 }
 
-//todo: logic to verify arg types can be coerced from string to their required type
 function verifyArgTypes(command,args) {
     let argTypeErrors = [];
     if (command.params) {
