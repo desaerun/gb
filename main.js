@@ -23,7 +23,6 @@ client.commands = new Discord.Collection();
 client.listenerSet = new Discord.Collection();
 
 getCommands("./commands");
-logMessage(client.commands);
 getListenerSet("./listeners");
 
 client.once("ready", () => {
