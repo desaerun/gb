@@ -54,6 +54,7 @@ module.exports = {
     listQueue: listQueue,
     stopPlaying: stopPlaying,
     skipSong: skipSong,
+    clearQueue: clearQueue,
 }
 
 //helper functions
@@ -162,4 +163,8 @@ async function listQueue(textChannel) {
     let totalDurationDisplay = `${totalDurationHours}:${totalDurationMinutes}:${totalDurationSecondsRemaining}`;
     queueMessage += `\nTotal duration: ${totalDurationDisplay}`;
     await sendLongMessage(queueMessage,textChannel);
+}
+async function clearQueue(textChannel) {
+    queue = [];
+    await textChannel.send("Queue cleared.");
 }
