@@ -78,7 +78,7 @@ async function playNextSong(textChannel,voiceChannel) {
         const connection = await voiceChannel.join();
         const stream = await ytdl(song.url);
         const dispatcher = connection.play(stream, {type: "opus"});
-        await textChannel.send(`Playing **${video.description}**`);
+        await textChannel.send(`Playing **${song.description}**`);
         playing = true;
 
         dispatcher.on("finish",() => {
