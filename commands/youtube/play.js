@@ -103,7 +103,7 @@ async function listQueue(textChannel) {
 
         let durationHours = 0, durationMinutes = 0, durationSeconds = 0;
         let durationParts = song.duration.split(":");
-        console.log(durationParts);
+        console.log(`durationParts: ${durationParts}`);
         if (durationParts.length === 3) {
             [durationHours, durationMinutes, durationSeconds] = song.duration.split(":");
         } else if (durationParts.length === 2) {
@@ -111,8 +111,13 @@ async function listQueue(textChannel) {
         } else {
             [durationSeconds] = song.duration.split(":");
         }
+        console.log(`durationHours: ${durationHours}`);
+        console.log(`durationMinutes: ${durationMinutes}`);
+        console.log(`durationSeconds: ${durationSeconds}`);
+        console.log(`------------------`);
         durationSeconds += (durationMinutes * 60);
         durationSeconds += (durationHours * 60 * 60);
+        console.log(`durationSeconds: ${durationSeconds}`);
 
         totalDurationSeconds += durationSeconds;
         queueMessage += `\n${i+1}. ${song.description} (${song.duration})`;
