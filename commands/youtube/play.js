@@ -103,6 +103,7 @@ async function listQueue(textChannel) {
 
         let durationHours = 0, durationMinutes = 0, durationSeconds = 0;
         let durationParts = song.duration.split(":");
+        console.log(durationParts);
         if (durationParts.length === 3) {
             [durationHours, durationMinutes, durationSeconds] = song.duration.split(":");
         } else if (durationParts.length === 2) {
@@ -127,6 +128,6 @@ async function listQueue(textChannel) {
         totalDurationMinutes = "0" + totalDurationMinutes
     }
     let totalDurationDisplay = `${totalDurationHours}:${totalDurationMinutes}:${totalDurationSecondsRemaining}`;
-    queueMessage += `Total duration: ${totalDurationDisplay}`;
+    queueMessage += `\nTotal duration: ${totalDurationDisplay}`;
     await sendLongMessage(queueMessage,textChannel);
 }
