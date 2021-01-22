@@ -92,7 +92,7 @@ async function playNextSong(textChannel,voiceChannel) {
     }
 }
 async function listQueue(textChannel) {
-    if (queue.length > 0) {
+    if (queue.length === 0) {
         textChannel.send("There are no songs currently in queue.");
         return;
     }
