@@ -20,7 +20,7 @@ async function execute(client, message, args) {
         await message.channel.send(`You must be in a voice channel to use this command.`);
         return false;
     }
-    let q = args.length > 0 ? args.join(" ") : params[0].default;
+    let q = args.join(" ");
     let queryParams = {
         key: process.env.YOUTUBE_TOKEN,
         part: "snippet",
