@@ -17,7 +17,7 @@ const params = [
 
 //main
 let queue = [];
-let playing = false;
+let playing = {};
 
 async function execute(client, message, args) {
     if (!message.member.voice.channel) {
@@ -53,14 +53,34 @@ module.exports = {
     execute: execute,
     playNextSong: playNextSong,
     listQueue: listQueue,
+    stopPlaying: stopPlaying,
+    skipSong: skipSong,
 }
 
 //helper functions
 function addSongToQueue(song) {
     queue.push(song);
 }
+async function stopPlaying(textChannel) {
+    if (!playing) {
+        textChannel.send("There is no song currently playing.");
+        return;
+    }
+    textChannel.send("Stopping current song.")
+    playing.voiceChannel.leave();
+    playing = false;
+}
+async function skipSong(textChannel) {
+    if (!playing) {
+        textChannel.send(`There is no song currently playing.`);
+        return;
+    }
+    textChannel.send(`Skipping ${playing.song.description}`);
+    await playNextSong(textChannel,playing.voiceChannel);
+}
+
 async function playSong(song,textChannel,voiceChannel) {
-    if (queue.length > 0 || playing === true) {
+    if (queue.length > 0 || playing) {
         textChannel.send(`Added **${song.description}** to the queue in position #${queue.length+1}`);
         addSongToQueue(song);
     } else {
@@ -76,7 +96,11 @@ async function playNextSong(textChannel,voiceChannel) {
         const stream = await ytdl(song.url);
         const dispatcher = connection.play(stream, {type: "opus"});
         await textChannel.send(`Playing **${song.description}**`);
-        playing = song;
+        playing = {
+            started: +Date.now(),
+            voiceChannel: voiceChannel,
+            song: song,
+        };
 
         dispatcher.on("finish",() => {
             if (queue.length > 0) {
