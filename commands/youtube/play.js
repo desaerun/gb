@@ -80,7 +80,7 @@ async function playNextSong(textChannel,voiceChannel) {
 
         dispatcher.on("finish",() => {
             if (queue.length > 0) {
-                playNextSong(voiceChannel,voiceChannel);
+                playNextSong(textChannel,voiceChannel);
             } else {
                 playing = false;
                 voiceChannel.leave();
