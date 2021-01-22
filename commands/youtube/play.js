@@ -15,6 +15,9 @@ const params = [
 ];
 
 //main
+let queue = [];
+let playing = false;
+
 async function execute(client, message, args) {
     if (!message.member.voice.channel) {
         await message.channel.send(`You must be in a voice channel to use this command.`);
@@ -33,11 +36,16 @@ async function execute(client, message, args) {
         const filter = filters.get("Type").get("Video");
         let req = await ytsr(filter.url,{limit: 1});
 
-        console.log(req);
         const video = req.items[0];
+        const song = {
+            url: video.url,
+            description: video.description,
+            views: video.views,
+            duration: video.duration,
+            uploadedAt: video.uploadedAt,
+        }
         console.log(video.url);
-        await message.channel.send(`Playing **${video.description}**`);
-        await playSong(message.member.voice.channel,video.url);
+        await playSong(song);
     } catch (e) {
         throw e;
     }
@@ -51,12 +59,35 @@ module.exports = {
 }
 
 //helper functions
-async function playSong(voiceChannel,url) {
-    const connection = await voiceChannel.join();
-    const stream = await ytdl(url);
-    const dispatcher = connection.play(stream, {type: "opus"});
+function addSongToQueue(song) {
+    queue.push(song);
+}
+async function playSong(song,textChannel,voiceChannel) {
+    if (queue.length > 0) {
+        textChannel.send(`Added **${song.description}** to the queue in position #${queue.length}`);
+        addSongToQueue(song);
+    } else {
+        addSongToQueue(song);
+        await playNextSong(textChannel,voiceChannel);
+    }
+}
+async function playNextSong(textChannel,voiceChannel) {
+    if (queue.length > 1) {
+        const song = queue.shift();
+        const connection = await voiceChannel.join();
+        const stream = await ytdl(song.url);
+        const dispatcher = connection.play(stream, {type: "opus"});
+        await textChannel.send(`Playing **${video.description}**`);
+        playing = true;
 
-    dispatcher.on("finish",() => {
+        dispatcher.on("finish",() => {
+            if (queue.length > 0) {
+                playNextSong(voiceChannel);
+            } else {
+                voiceChannel.leave();
+            }
+        });
+    } else {
         voiceChannel.leave();
-    })
+    }
 }
