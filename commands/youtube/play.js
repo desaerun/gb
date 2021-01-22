@@ -62,7 +62,7 @@ function addSongToQueue(song) {
 }
 async function stopPlaying(textChannel) {
     if (!playing) {
-        textChannel.send("There is no song currently playing.");
+        await textChannel.send("There is no song currently playing.");
         return;
     }
     textChannel.send("Stopping current song.")
@@ -71,16 +71,16 @@ async function stopPlaying(textChannel) {
 }
 async function skipSong(textChannel) {
     if (!playing) {
-        textChannel.send(`There is no song currently playing.`);
+        await textChannel.send(`There is no song currently playing.`);
         return;
     }
-    textChannel.send(`Skipping ${playing.song.description}`);
+    await textChannel.send(`Skipping ${playing.song.description}`);
     await playNextSong(textChannel,playing.voiceChannel);
 }
 
 async function playSong(song,textChannel,voiceChannel) {
     if (queue.length > 0 || playing) {
-        textChannel.send(`Added **${song.description}** to the queue in position #${queue.length+1}`);
+        await textChannel.send(`Added **${song.description}** to the queue in position #${queue.length+1}`);
         addSongToQueue(song);
     } else {
         addSongToQueue(song);
@@ -117,10 +117,10 @@ async function playNextSong(textChannel,voiceChannel) {
 async function listQueue(textChannel) {
     if (playing) {
         // let playingMessage +=
-        textChannel.send("Currently playing: ");
+        await textChannel.send("Currently playing: ");
     }
     if (queue.length === 0) {
-        textChannel.send("There are no songs currently in queue.");
+        await textChannel.send("There are no songs currently in queue.");
         return;
     }
     let totalDurationSeconds = 0;

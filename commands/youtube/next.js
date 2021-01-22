@@ -1,5 +1,5 @@
 //imports
-const {skipSong} = require("./play.js");
+const {skipSong,playNextSong} = require("./play.js");
 
 //module settings
 const name = "next";
