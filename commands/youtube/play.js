@@ -45,7 +45,7 @@ async function execute(client, message, args) {
             uploadedAt: video.uploadedAt,
         }
         console.log(video.url);
-        await playSong(song);
+        await playSong(song,message.channel,message.member.voice.channel);
     } catch (e) {
         throw e;
     }
