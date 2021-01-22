@@ -148,6 +148,8 @@ function generateCommandList(clientCommands) {
                             }
                         }
                         commandsText += `: ${currentCommand.description}`;
+                    } else {
+                        console.log(`${commandName} does not exist in client.commands`);
                     }
                 }
             }
