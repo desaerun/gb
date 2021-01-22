@@ -17,7 +17,8 @@ const params = [
 
 //main
 let queue = [];
-let playing = {};
+let playing = false;
+let currentSong = {};
 
 async function execute(client, message, args) {
     if (!message.member.voice.channel) {
@@ -62,7 +63,7 @@ function addSongToQueue(song) {
     queue.push(song);
 }
 async function stopPlaying(textChannel) {
-    if (!isPlaying()) {
+    if (!playing) {
         await textChannel.send("There is no song currently playing.");
         return;
     }
@@ -71,7 +72,7 @@ async function stopPlaying(textChannel) {
     playing = {};
 }
 async function skipSong(textChannel) {
-    if (!isPlaying()) {
+    if (!playing) {
         await textChannel.send(`There is no song currently playing.`);
         return;
     }
@@ -81,7 +82,7 @@ async function skipSong(textChannel) {
 
 async function playSong(song,textChannel,voiceChannel) {
     console.log(`playing: ${playing} | queue: ${queue}`);
-    if (queue.length > 0 || isPlaying()) {
+    if (queue.length > 0 || playing) {
         addSongToQueue(song);
         await textChannel.send(`Added **${song.description}** to the queue in position #${queue.length+1}`);
     } else {
@@ -93,26 +94,33 @@ async function playNextSong(textChannel,voiceChannel) {
     console.log(queue);
     if (queue.length > 0) {
         const song = queue.shift();
-        const connection = await voiceChannel.join();
-        const stream = await ytdl(song.url);
-        const dispatcher = connection.play(stream, {type: "opus"});
-        await textChannel.send(`Playing **${song.description}**`);
-        playing = {
-            started: +Date.now(),
-            voiceChannel: voiceChannel,
-            song: song,
-        };
+        try {
+            const connection = await voiceChannel.join();
+            const stream = await ytdl(song.url);
+            const dispatcher = connection.play(stream, {type: "opus"});
+            await textChannel.send(`Playing **${song.description}**`);
+            playing = true;
+            currentSong = {
+                started: +Date.now(),
+                voiceChannel: voiceChannel,
+                song: song,
+            };
 
-        dispatcher.on("finish",() => {
-            if (queue.length > 0) {
-                playNextSong(textChannel,voiceChannel);
-            } else {
-                playing = {};
-                voiceChannel.leave();
-            }
-        });
+            dispatcher.on("finish", () => {
+                if (queue.length > 0) {
+                    playNextSong(textChannel, voiceChannel);
+                } else {
+                    playing = false;
+                    currentSong = {};
+                    voiceChannel.leave();
+                }
+            });
+        } catch (e) {
+            throw e;
+        }
     } else {
-        playing = {};
+        playing = false;
+        currentSong = {};
         voiceChannel.leave();
     }
 }
@@ -170,5 +178,5 @@ async function clearQueue(textChannel) {
     await textChannel.send("Queue cleared.");
 }
 function isPlaying () {
-    return !playing.equals({});
+    return Object.keys(playing).length === 0;
 }
