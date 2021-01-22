@@ -39,18 +39,10 @@ async function execute(client, message, args) {
         const videoUrl = `https://youtube.com/watch?v=${videoId}`;
         console.log(videoUrl);
         await message.channel.send(`Playing **${videoDescription}**`);
-        message.member.voice.channel.join()
-            .then(connection => {
-                ytdl(videoUrl).then( (stream) => {
-                    const dispatcher = connection.play(stream, {type: "opus"});
-
-                    dispatcher.on("finish", () => message.member.voice.channel.leave());
-                });
-            });
+        await playSong(message.member.voice.channel);
     } catch (e) {
         throw e;
     }
-
 }
 //module export
 module.exports = {
@@ -61,3 +53,12 @@ module.exports = {
 }
 
 //helper functions
+async function playSong(voiceChannel,url) {
+    const connection = await voiceChannel.join();
+    const stream = await ytdl(url);
+    const dispatcher = connection.play(stream, {type: "opus"});
+
+    dispatcher.on("finish",() => {
+        voiceChannel.leave();
+    })
+}
