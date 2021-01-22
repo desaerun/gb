@@ -76,7 +76,7 @@ async function playNextSong(textChannel,voiceChannel) {
         const stream = await ytdl(song.url);
         const dispatcher = connection.play(stream, {type: "opus"});
         await textChannel.send(`Playing **${song.description}**`);
-        playing = true;
+        playing = song;
 
         dispatcher.on("finish",() => {
             if (queue.length > 0) {
@@ -92,6 +92,10 @@ async function playNextSong(textChannel,voiceChannel) {
     }
 }
 async function listQueue(textChannel) {
+    if (playing) {
+        // let playingMessage +=
+        textChannel.send("Currently playing: ");
+    }
     if (queue.length === 0) {
         textChannel.send("There are no songs currently in queue.");
         return;
