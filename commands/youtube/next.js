@@ -3,6 +3,7 @@ const {skipSong} = require("./play.js");
 
 //module settings
 const name = "next";
+const names = ["skip"];
 const description = "Plays the next song in the queue.";
 
 //main
@@ -13,6 +14,7 @@ async function execute(client, message) {
 //module export
 module.exports = {
     name: name,
+    names: names,
     description: description,
     execute: execute,
 }
