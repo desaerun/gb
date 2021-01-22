@@ -58,7 +58,7 @@ function addSongToQueue(song) {
 }
 async function playSong(song,textChannel,voiceChannel) {
     if (queue.length > 0 || playing === true) {
-        textChannel.send(`Added **${song.description}** to the queue in position #${queue.length}`);
+        textChannel.send(`Added **${song.description}** to the queue in position #${queue.length+1}`);
         addSongToQueue(song);
     } else {
         addSongToQueue(song);
