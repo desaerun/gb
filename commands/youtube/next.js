@@ -7,7 +7,7 @@ const description = "Plays the next song in the queue.";
 
 //main
 async function execute(client, message) {
-    await playNextSong(message.channel,message.author.voice.channel);
+    await playNextSong(message.channel,message.member.voice.channel);
 }
 
 //module export
