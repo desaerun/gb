@@ -33,6 +33,7 @@ async function execute(client, message, args) {
         const filter = filters.get("Type").get("Video");
         let req = await ytsr(filter.url,{limit: 1});
 
+        console.log(req);
         const video = req.items[0];
         const videoId = video.id.videoId;
         const videoDescription = video.snippet.description;
