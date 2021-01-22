@@ -62,16 +62,16 @@ function addSongToQueue(song) {
     queue.push(song);
 }
 async function stopPlaying(textChannel) {
-    if (!playing) {
+    if (!isPlaying()) {
         await textChannel.send("There is no song currently playing.");
         return;
     }
     textChannel.send("Stopping current song.")
     playing.voiceChannel.leave();
-    playing = false;
+    playing = {};
 }
 async function skipSong(textChannel) {
-    if (!playing) {
+    if (!isPlaying()) {
         await textChannel.send(`There is no song currently playing.`);
         return;
     }
@@ -81,7 +81,7 @@ async function skipSong(textChannel) {
 
 async function playSong(song,textChannel,voiceChannel) {
     console.log(`playing: ${playing} | queue: ${queue}`);
-    if (queue.length > 0 || playing) {
+    if (queue.length > 0 || isPlaying()) {
         addSongToQueue(song);
         await textChannel.send(`Added **${song.description}** to the queue in position #${queue.length+1}`);
     } else {
@@ -107,12 +107,12 @@ async function playNextSong(textChannel,voiceChannel) {
             if (queue.length > 0) {
                 playNextSong(textChannel,voiceChannel);
             } else {
-                playing = false;
+                playing = {};
                 voiceChannel.leave();
             }
         });
     } else {
-        playing = false;
+        playing = {};
         voiceChannel.leave();
     }
 }
@@ -168,4 +168,7 @@ async function listQueue(textChannel) {
 async function clearQueue(textChannel) {
     queue = [];
     await textChannel.send("Queue cleared.");
+}
+function isPlaying () {
+    return !playing.equals({});
 }
