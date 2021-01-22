@@ -144,7 +144,11 @@ function generateCommandList(clientCommands) {
                         commandsText += `\n${indent(indentLevel)}\`${CONFIG.PREFIX}${currentCommand.name}\``;
                         if (currentCommand.names) {
                             for (const name of currentCommand.names) {
-                                commandsText += `; \`${CONFIG.PREFIX}${name}\``;
+                                if (clientCommands.has(name)) {
+                                    commandsText += `; \`${CONFIG.PREFIX}${name}\``;
+                                } else {
+                                    console.log(`${name} does not exist in client.commands`);
+                                }
                             }
                         }
                         commandsText += `: ${currentCommand.description}`;
