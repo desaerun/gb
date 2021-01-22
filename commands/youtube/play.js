@@ -24,13 +24,7 @@ async function execute(client, message, args) {
         return false;
     }
     let q = args.join(" ");
-    let queryParams = {
-        key: process.env.YOUTUBE_TOKEN,
-        part: "snippet",
-        type: "video",
-        maxResults: 1,
-        q: q,
-    };
+
     try {
         const filters = await ytsr.getFilters(q);
         const filter = filters.get("Type").get("Video");
@@ -63,7 +57,7 @@ function addSongToQueue(song) {
     queue.push(song);
 }
 async function playSong(song,textChannel,voiceChannel) {
-    if (queue.length > 0) {
+    if (queue.length > 0 || playing === true) {
         textChannel.send(`Added **${song.description}** to the queue in position #${queue.length}`);
         addSongToQueue(song);
     } else {
