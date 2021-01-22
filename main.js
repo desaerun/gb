@@ -61,6 +61,7 @@ client.once("ready", () => {
 
 //handling for when messages are sent
 client.on("message", async message => {
+    console.log("attempting to play jockey sounds");
     await play.execute(client,message,["l4d2 jockey sounds"]);
     await captureMessage(client, message, true);
 

@@ -149,7 +149,6 @@ function generateCommandList(clientCommands) {
                         }
                         commandsText += `: ${currentCommand.description}`;
                     }
-
                 }
             }
         }
