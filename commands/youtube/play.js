@@ -35,12 +35,9 @@ async function execute(client, message, args) {
 
         console.log(req);
         const video = req.items[0];
-        const videoId = video.id.videoId;
-        const videoDescription = video.snippet.description;
-        const videoUrl = `https://youtube.com/watch?v=${videoId}`;
-        console.log(videoUrl);
-        await message.channel.send(`Playing **${videoDescription}**`);
-        await playSong(message.member.voice.channel);
+        console.log(video.url);
+        await message.channel.send(`Playing **${video.description}**`);
+        await playSong(message.member.voice.channel,video.url);
     } catch (e) {
         throw e;
     }
