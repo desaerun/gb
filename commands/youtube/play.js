@@ -51,7 +51,6 @@ module.exports = {
     description: description,
     params: params,
     execute: execute,
-    playNextSong: playNextSong,
     listQueue: listQueue,
     stopPlaying: stopPlaying,
     skipSong: skipSong,
