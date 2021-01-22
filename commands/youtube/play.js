@@ -72,6 +72,7 @@ async function playSong(song,textChannel,voiceChannel) {
     }
 }
 async function playNextSong(textChannel,voiceChannel) {
+    console.log(queue);
     if (queue.length > 1) {
         const song = queue.shift();
         const connection = await voiceChannel.join();
@@ -84,10 +85,12 @@ async function playNextSong(textChannel,voiceChannel) {
             if (queue.length > 0) {
                 playNextSong(voiceChannel);
             } else {
+                playing = false;
                 voiceChannel.leave();
             }
         });
     } else {
+        playing = false;
         voiceChannel.leave();
     }
 }
