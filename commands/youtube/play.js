@@ -80,9 +80,10 @@ async function skipSong(textChannel) {
 }
 
 async function playSong(song,textChannel,voiceChannel) {
+    console.log(`playing: ${playing} | queue: ${queue}`);
     if (queue.length > 0 || playing) {
-        await textChannel.send(`Added **${song.description}** to the queue in position #${queue.length+1}`);
         addSongToQueue(song);
+        await textChannel.send(`Added **${song.description}** to the queue in position #${queue.length+1}`);
     } else {
         addSongToQueue(song);
         await playNextSong(textChannel,voiceChannel);
