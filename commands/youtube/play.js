@@ -126,8 +126,7 @@ async function playNextSong(textChannel,voiceChannel) {
 }
 async function listQueue(textChannel) {
     if (playing) {
-        // let playingMessage +=
-        await textChannel.send("Currently playing: ");
+        await textChannel.send(`Currently playing: **${currentSong.song.description}** (${currentSong.song.duration})`);
     }
     if (queue.length === 0) {
         await textChannel.send("There are no songs currently in queue.");
