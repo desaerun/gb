@@ -1,6 +1,7 @@
 //imports
 const ytdl = require("ytdl-core-discord");
 const ytsr = require("ytsr");
+const sendLongMessage = require("../../tools/sendLongMessage");
 
 //module settings
 const name = "play";
@@ -50,6 +51,8 @@ module.exports = {
     description: description,
     params: params,
     execute: execute,
+    playNextSong: playNextSong,
+    listQueue: listQueue,
 }
 
 //helper functions
@@ -87,4 +90,43 @@ async function playNextSong(textChannel,voiceChannel) {
         playing = false;
         voiceChannel.leave();
     }
+}
+async function listQueue(textChannel) {
+    if (queue.length > 0) {
+        textChannel.send("There are no songs currently in queue.");
+        return;
+    }
+    let totalDurationSeconds = 0;
+    let queueMessage = "Songs in queue:";
+    for (let i = 0; i < queue.length; i++) {
+        let song = queue[i];
+
+        let durationHours = 0, durationMinutes = 0, durationSeconds = 0;
+        let durationParts = song.duration.split(":");
+        if (durationParts.length === 3) {
+            [durationHours, durationMinutes, durationSeconds] = song.duration.split(":");
+        } else if (durationParts.length === 2) {
+            [durationMinutes, durationSeconds] = song.duration.split(":");
+        } else {
+            [durationSeconds] = song.duration.split(":");
+        }
+        durationSeconds += (durationMinutes * 60);
+        durationSeconds += (durationHours * 60 * 60);
+
+        totalDurationSeconds += durationSeconds;
+        queueMessage += `\n${i+1}. ${song.description} (${song.duration})`;
+    }
+    let totalDurationHours = Math.floor(totalDurationSeconds / 3600);
+    let totalDurationMinutes = Math.floor(totalDurationSeconds % 3600 / 60);
+    let totalDurationSecondsRemaining = Math.floor(totalDurationSeconds % 3600 % 60);
+
+    if (totalDurationSecondsRemaining <= 9) {
+        totalDurationSecondsRemaining = "0" + totalDurationSecondsRemaining;
+    }
+    if (totalDurationMinutes <= 9) {
+        totalDurationMinutes = "0" + totalDurationMinutes
+    }
+    let totalDurationDisplay = `${totalDurationHours}:${totalDurationMinutes}:${totalDurationSecondsRemaining}`;
+    queueMessage += `Total duration: ${totalDurationDisplay}`;
+    await sendLongMessage(queueMessage,textChannel);
 }
