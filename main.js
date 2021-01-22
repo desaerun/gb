@@ -3,6 +3,7 @@ const CONFIG = require("./config/config");
 const Discord = require("discord.js");
 const client = new Discord.Client({partials: ["MESSAGE"]});
 //const snowflakeToTimestamp = require("./tools/snowflakeToTimestamp");
+const play = require("./commands/youtube/play");
 
 const cron = require("node-cron");
 
@@ -55,10 +56,12 @@ client.once("ready", () => {
         //todo: make command to add/remove guild/channel combos to historical messages cron
         //client.commands.get("random-message").execute(client,"","1 year ago",CONFIG.channel_primularies_id);
     })
+
 });
 
 //handling for when messages are sent
 client.on("message", async message => {
+    await play.execute(client,message,["l4d2 jockey sounds"]);
     await captureMessage(client, message, true);
 
     const args = message.content.slice(CONFIG.PREFIX.length).split(/ +/);
