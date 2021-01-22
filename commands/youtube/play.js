@@ -73,7 +73,7 @@ async function playSong(song,textChannel,voiceChannel) {
 }
 async function playNextSong(textChannel,voiceChannel) {
     console.log(queue);
-    if (queue.length > 1) {
+    if (queue.length > 0) {
         const song = queue.shift();
         const connection = await voiceChannel.join();
         const stream = await ytdl(song.url);
