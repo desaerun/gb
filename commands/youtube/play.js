@@ -81,7 +81,7 @@ async function skipSong(textChannel) {
         await textChannel.send(`There is no song currently playing.`);
         return;
     }
-    await textChannel.send(`Skipping **[${suppressUrls(currentSong.song.title)}]**(${currentSong.song.url})`);
+    await textChannel.send(`Skipping [${suppressUrls(currentSong.song.title)}](${currentSong.song.url})`);
     await playNextSong(textChannel,currentSong.voiceChannel);
 }
 
@@ -89,7 +89,7 @@ async function playSong(song,textChannel,voiceChannel) {
     console.log(`playing: ${playing} | queue: ${queue}`);
     if (queue.length > 0 || playing) {
         addSongToQueue(song);
-        const addedSongMessage = await textChannel.send(`Added **[${suppressUrls(song.title)}]**(${song.url}) to the queue in position #${queue.length}`);
+        const addedSongMessage = await textChannel.send(`Added [${suppressUrls(song.title)}](${song.url}) to the queue in position #${queue.length}`);
     } else {
         addSongToQueue(song);
         await playNextSong(textChannel,voiceChannel);
@@ -103,7 +103,7 @@ async function playNextSong(textChannel,voiceChannel) {
             const connection = await voiceChannel.join();
             const stream = await ytdl(song.url);
             const dispatcher = connection.play(stream, {type: "opus"});
-            await textChannel.send(`Playing **[${suppressUrls(song.title)}]**(${song.url})`);
+            await textChannel.send(`Playing [${suppressUrls(song.title)}](${song.url})`);
             playing = true;
             currentSong = {
                 started: +Date.now(),
@@ -136,7 +136,7 @@ async function nowPlaying(textChannel) {
         const remaining = songLength - elapsed;
         const elapsedString = secondsToDurationString(elapsed,currentSong.song.duration.split(":").length);
         const remainingString = secondsToDurationString(remaining,currentSong.song.duration.split(":").length);
-        await textChannel.send(`:musical_note:Currently playing:musical_note:: **[${suppressUrls(currentSong.song.title)}]**(${currentSong.song.url})` +
+        await textChannel.send(`:musical_note:Currently playing:musical_note:: [${suppressUrls(currentSong.song.title)}](${currentSong.song.url})` +
         `\n${currentSong.song.description}`);
         await textChannel.send(generateProgressBar(21,elapsed,songLength));
     }
@@ -153,7 +153,7 @@ async function listQueue(textChannel) {
         let song = queue[i];
 
         totalDurationSeconds += durationStringToSeconds(song.duration);
-        queueMessage += `\n${i+1}. **[${suppressUrls(song.title)}]**(${song.url}) (${song.duration})`;
+        queueMessage += `\n${i+1}. [${suppressUrls(song.title)}](${song.url}) (${song.duration})`;
     }
     if (playing) {
         totalDurationSeconds += durationStringToSeconds(currentSong.song.duration);
