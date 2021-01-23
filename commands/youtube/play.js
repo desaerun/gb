@@ -33,6 +33,7 @@ async function execute(client, message, args) {
         let req = await ytsr(filter.url,{limit: 1});
 
         const video = req.items[0];
+        console.log(JSON.stringify(video));
         const song = {
             url: video.url,
             description: video.description,
@@ -248,10 +249,11 @@ function secondsToDurationString(seconds,precision = 2) {
  * @param total
  */
 function generateProgressBar(width,progress,total) {
-    const percent = progress - total;
+    const percent = progress / total;
     const barPosition = Math.round(width * percent);
     console.log(`progress: ${progress}`);
     console.log(`total: ${total}`);
+    console.log(`percent: ${percent}`);
     console.log(`barPosition: ${barPosition}`);
 
     let barText = "|";
