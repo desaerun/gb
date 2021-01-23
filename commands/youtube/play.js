@@ -241,7 +241,7 @@ function secondsToDurationString(seconds,precision = 2) {
     if (s <= 9) {
         s = "0" + s;
     }
-    if (i <= 9 && h > 0) {
+    if ((i <= 9 && h > 0) || precision >= 3) {
         i = "0" + i
     }
     if (precision >= 3 || h > 0) {
