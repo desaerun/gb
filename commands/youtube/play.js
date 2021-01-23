@@ -86,7 +86,7 @@ async function playSong(song,textChannel,voiceChannel) {
     if (queue.length > 0 || playing) {
         addSongToQueue(song);
         const addedSongMessage = await textChannel.send(`Added **${song.description}** to the queue in position #${queue.length}`);
-        addedSongMessage.suppressEmbeds(true);
+        await addedSongMessage.suppressEmbeds(true);
     } else {
         addSongToQueue(song);
         await playNextSong(textChannel,voiceChannel);
@@ -101,7 +101,7 @@ async function playNextSong(textChannel,voiceChannel) {
             const stream = await ytdl(song.url);
             const dispatcher = connection.play(stream, {type: "opus"});
             const playingMessage = await textChannel.send(`Playing **${song.description}**`);
-            playingMessage.suppressEmbeds(true);
+            await playingMessage.suppressEmbeds(true);
             playing = true;
             currentSong = {
                 started: +Date.now(),
@@ -251,8 +251,8 @@ function generateProgressBar(width,progress,total) {
     const percent = progress - total;
     const barPosition = Math.round(width * percent);
     console.log(`progress: ${progress}`);
-    console.log(`total: ${progress}`);
-    console.log(`barPosition: ${progress}`);
+    console.log(`total: ${total}`);
+    console.log(`barPosition: ${barPosition}`);
 
     let barText = "|";
     for (let i = 0; i < width; i++) {
