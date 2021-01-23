@@ -279,5 +279,5 @@ function generateProgressBar(width,progress,total) {
     }
     bar += "╣";
 
-    return `${progressBarText}\n${bar}`;
+    return `\`\`\`${progressBarText}\n${bar}\`\`\``;
 }
