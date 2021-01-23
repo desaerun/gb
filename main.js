@@ -3,7 +3,6 @@ const CONFIG = require("./config/config");
 const Discord = require("discord.js");
 const client = new Discord.Client({partials: ["MESSAGE"]});
 //const snowflakeToTimestamp = require("./tools/snowflakeToTimestamp");
-const play = require("./commands/youtube/play");
 
 const cron = require("node-cron");
 
@@ -16,7 +15,6 @@ const dev_output = require("./dev_output");
 dev_output.setClient(client);
 
 const fs = require("fs");
-const logMessage = require("./tools/logMessage");
 const sendLongMessage = require("./tools/sendLongMessage");
 const {getRandomArrayMember} = require("./tools/utils");
 
@@ -39,8 +37,8 @@ client.once("ready", () => {
     if (CONFIG.VERBOSITY >= 3) {
         console.log(`Bot online. Sending Online Status message to ${client.channels.cache.get(process.env.ONLINE_STATUS_CHANNEL_ID).name}(${process.env.ONLINE_STATUS_CHANNEL_ID}).`)
     }
-    let online_message  = `Bot status: Online.  Type: ${process.env.BUILD_ENV}\n`;
-    dev_output.sendStatus(online_message, process.env.ONLINE_STATUS_CHANNEL_ID,"#21a721");
+    let online_message = `Bot status: Online.  Type: ${process.env.BUILD_ENV}\n`;
+    dev_output.sendStatus(online_message, process.env.ONLINE_STATUS_CHANNEL_ID, "#21a721");
 
     //set initial bot status
     client.user.setActivity(status.params[0].default, {type: "PLAYING"})
@@ -63,10 +61,10 @@ client.on("message", async message => {
     //handling for quoted args
     //this regex matches the inside of single or double quotes, or single words.
     const re = /(?=["'])(?:"([^"\\]*(?:\\[\s\S][^"\\]*)*)"|'([^'\\]*(?:\\[\s\S][^'\\]*)*)')|\b([^\s]+)\b/;
-    const argRe = new RegExp(re,"ig");
+    const argRe = new RegExp(re, "ig");
 
     const matchesArr = [...args.matchAll(argRe)];
-    args = matchesArr.flatMap(a => a.slice(1,4).filter(a => a !== undefined));
+    args = matchesArr.flatMap(a => a.slice(1, 4).filter(a => a !== undefined));
 
     // Ignore my own messages
     if (message.author.bot) return;
@@ -163,11 +161,11 @@ async function runCommands(message, args) {
             let command = client.commands.get(commandName);
             args = setArgsToDefault(command, args);
 
-            let argTypeErrors = [];
-            [args,argTypeErrors] = verifyArgTypes(command,args);
+            let argTypeErrors;
+            [args, argTypeErrors] = verifyArgTypes(command, args);
             if (argTypeErrors.length > 0) {
                 const errors = argTypeErrors.join("\n");
-                await sendLongMessage(errors,message.channel);
+                await sendLongMessage(errors, message.channel);
                 return false;
             }
             command.execute(client, message, args);
@@ -190,7 +188,7 @@ async function runCommands(message, args) {
 function setArgsToDefault(command, args) {
     if (command.params) {
         for (let i = 0; i < command.params.length; i++) {
-            if (!(args[i]) && command.params[i].default) {
+            if (!(args[i]) && command.params[i].default && !command.params[i].optional) {
                 if (Array.isArray(command.params[i].default)) {
                     args[i] = getRandomArrayMember(command.params[i].default);
                 } else {
@@ -202,7 +200,7 @@ function setArgsToDefault(command, args) {
     return args;
 }
 
-function verifyArgTypes(command,args) {
+function verifyArgTypes(command, args) {
     let argTypeErrors = [];
     if (command.params) {
         for (let i = 0; i < command.params.length; i++) {
@@ -248,7 +246,7 @@ function verifyArgTypes(command,args) {
             }
         }
     }
-    return [args,argTypeErrors];
+    return [args, argTypeErrors];
 }
 
 /**

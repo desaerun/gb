@@ -2,7 +2,7 @@
 const {getRandomArrayMember} = require("../../tools/utils");
 //module settings
 const name = "randomize";
-const aliases = ["random","wandom","wandomize"];
+const aliases = ["random", "wandom", "wandomize"];
 const description = "Selects a random item from given list.";
 const params = [
     {

@@ -6,9 +6,9 @@ const name = "coinflip";
 const description = "Flips a coin.";
 
 //main
-async function execute(client, message, args) {
-    const roll = getRand(0,1);
-    const side = (roll === 1) ? "Heads" : "Tails";
+async function execute(client, message) {
+    const roll = getRand(0, 1);
+    const side = (roll >= .5) ? "Heads" : "Tails";
     await message.channel.send(`**${client.user.username}** flips a coin. It's **${side}**!`);
     return true;
 }
