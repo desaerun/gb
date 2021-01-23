@@ -47,7 +47,5 @@ async function addMessageEdit(oldMessage, newMessage) {
         await pool.query("INSERT INTO messageEdits SET ?", oldMessageParams);
     } catch (error) {
         throw error;
-    } finally {
-        console.log(`Added edit history for message ${oldMessage.id}`);
     }
 }
