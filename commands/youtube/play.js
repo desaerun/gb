@@ -76,7 +76,7 @@ async function skipSong(textChannel) {
         await textChannel.send(`There is no song currently playing.`);
         return;
     }
-    await textChannel.send(`Skipping ${currentSong.song.description}`);
+    await textChannel.send(`Skipping ${currentSong.song.description}`).suppressEmbeds(true);
     await playNextSong(textChannel,currentSong.voiceChannel);
 }
 
@@ -84,7 +84,7 @@ async function playSong(song,textChannel,voiceChannel) {
     console.log(`playing: ${playing} | queue: ${queue}`);
     if (queue.length > 0 || playing) {
         addSongToQueue(song);
-        await sendLongMessage(`Added **${song.description}** to the queue in position #${queue.length}`,textChannel,true);
+        await textChannel.send(`Added **${song.description}** to the queue in position #${queue.length}`).suppressEmbeds(true);
     } else {
         addSongToQueue(song);
         await playNextSong(textChannel,voiceChannel);
@@ -98,7 +98,7 @@ async function playNextSong(textChannel,voiceChannel) {
             const connection = await voiceChannel.join();
             const stream = await ytdl(song.url);
             const dispatcher = connection.play(stream, {type: "opus"});
-            await sendLongMessage(`Playing **${song.description}**`,textChannel,true);
+            await textChannel.send(`Playing **${song.description}**`).suppressEmbeds(true);
             playing = true;
             currentSong = {
                 started: +Date.now(),
@@ -131,7 +131,8 @@ async function listQueue(textChannel) {
         const remaining = songLength - elapsed;
         const elapsedString = secondsToDurationString(elapsed,currentSong.song.duration.split(":").length);
         const remainingString = secondsToDurationString(remaining,currentSong.song.duration.split(":").length);
-        await sendLongMessage(`Currently playing: **${currentSong.song.description}** (${elapsedString}/${currentSong.song.duration}) [-${remainingString}]`,textChannel,true);
+        await textChannel.send(`Currently playing: **${currentSong.song.description}** (${elapsedString}/${currentSong.song.duration}) [-${remainingString}]`).suppressEmbeds(true);
+        await textChannel.send(generateProgressBar(40,elapsed,songLength));
     }
     if (queue.length === 0) {
         await textChannel.send("There are no songs currently in queue.");
@@ -234,4 +235,25 @@ function secondsToDurationString(seconds,precision = 2) {
     } else {
         return `${i}:${s}`;
     }
+}
+
+/**
+ * generates a text status bar
+ * @param width
+ * @param progress
+ * @param total
+ */
+function generateProgressBar(width,progress,total) {
+    const percent = progress - total;
+    const barPosition = Math.round(width * percent);
+
+    let barText = "|";
+    for (i = 0; i < width; i++) {
+        if (i === barPosition) {
+            barText += "|";
+        } else {
+            barText += "-"
+        }
+    }
+    barText += "|";
 }
