@@ -278,7 +278,7 @@ function generateProgressBar(width,progress,total) {
         bar += "═"
     }
     bar += "╣";
-    bar += ` ${Math.round(percent * 100)/100}%`;
+    bar += ` ${Math.round(percent * 10000)/100}%`;
 
     return `\`${progressBarText}\`\n\`${bar}\``;
 }
