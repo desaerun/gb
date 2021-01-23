@@ -127,8 +127,8 @@ async function playNextSong(textChannel,voiceChannel) {
 async function listQueue(textChannel) {
     if (playing) {
         const songLength = durationStringToSeconds(currentSong.song.duration);
-        const elapsed = elapsed(currentSong.started);
-        const remaining = timeRemaining(songLength,elapsed);
+        const elapsed = +Date.now() - currentSong.started;
+        const remaining = songLength - elapsed;
         const elapsedString = secondsToDurationString(elapsed,currentSong.song.duration.split(":").length);
         const remainingString = secondsToDurationString(remaining,currentSong.song.duration.split(":").length);
         await textChannel.send(`Currently playing: **${currentSong.song.description}** (${elapsedString}/${currentSong.song.duration}) [-${remainingString}`);
