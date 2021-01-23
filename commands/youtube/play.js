@@ -268,7 +268,7 @@ function generateProgressBar(width,progress,total) {
             progressBarText += " ";
         }
     }
-    progressBarText += " " + secondsToDurationString(total);
+    progressBarText += "     " + secondsToDurationString(total);
 
     let bar = "╠";
     for (let i = 0; i <= width; i++) {
