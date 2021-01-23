@@ -3,7 +3,7 @@ const Discord = require("discord.js");
 
 //module settings
 const name = "ping";
-const names = ["p"];
+const aliases = ["p"];
 const description = "this is a ping command";
 
 //main
@@ -22,7 +22,7 @@ async function execute(client, message) {
 //module export
 module.exports = {
     name: name,
-    names: names,
+    aliases: aliases,
     description: description,
     execute: execute,
 }
