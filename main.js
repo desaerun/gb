@@ -161,8 +161,16 @@ function isCommand(message) {
  */
 async function runCommands(message, args) {
     const commandName = args.shift().toLowerCase();
-
     console.log(`attempting to run command ${commandName}: ${JSON.stringify(client.commands.get(commandName))}`);
+
+    //handling for quoted args
+    //this regex matches the inside of single or double quotes, or single words.
+    const re = /(?=["'])(?:"([^"\\]*(?:\\[\s\S][^"\\]*)*)"|'([^'\\]*(?:\\[\s\S][^'\\]*)*)')|\b([^\s]+)\b/;
+    const argRe = new RegExp(re,"ig");
+
+    const matchesArr = [...args.matchAll(argRe)];
+    args = matchesArr.flatMap(a => a.slice(1,4).filter(a => a !== undefined));
+
     if (client.commands.has(commandName)) {
         try {
             let command = client.commands.get(commandName);
