@@ -84,7 +84,7 @@ async function playSong(song,textChannel,voiceChannel) {
     console.log(`playing: ${playing} | queue: ${queue}`);
     if (queue.length > 0 || playing) {
         addSongToQueue(song);
-        await textChannel.send(`Added **${song.description}** to the queue in position #${queue.length}`);
+        await textChannel.send(`Added **${song.description}** to the queue in position #${queue.length}`).suppressEmbeds(true);
     } else {
         addSongToQueue(song);
         await playNextSong(textChannel,voiceChannel);
@@ -98,7 +98,7 @@ async function playNextSong(textChannel,voiceChannel) {
             const connection = await voiceChannel.join();
             const stream = await ytdl(song.url);
             const dispatcher = connection.play(stream, {type: "opus"});
-            await textChannel.send(`Playing **${song.description}**`);
+            await textChannel.send(`Playing **${song.description}**`).suppressEmbeds(true);
             playing = true;
             currentSong = {
                 started: +Date.now(),
@@ -131,7 +131,7 @@ async function listQueue(textChannel) {
         const remaining = songLength - elapsed;
         const elapsedString = secondsToDurationString(elapsed,currentSong.song.duration.split(":").length);
         const remainingString = secondsToDurationString(remaining,currentSong.song.duration.split(":").length);
-        await textChannel.send(`Currently playing: **${currentSong.song.description}** (${elapsedString}/${currentSong.song.duration}) [-${remainingString}]`);
+        await textChannel.send(`Currently playing: **${currentSong.song.description}** (${elapsedString}/${currentSong.song.duration}) [-${remainingString}]`).suppressEmbeds(true);
     }
     if (queue.length === 0) {
         await textChannel.send("There are no songs currently in queue.");
@@ -150,7 +150,7 @@ async function listQueue(textChannel) {
     }
     const totalDurationString = secondsToDurationString(totalDurationSeconds,3);
     queueMessage += `\nTotal duration: ${totalDurationString}`;
-    await sendLongMessage(queueMessage,textChannel);
+    await sendLongMessage(queueMessage,textChannel,true);
 }
 async function clearQueue(textChannel) {
     queue = [];
