@@ -100,8 +100,8 @@ function getCommands(dir, level = 0) {
         } else {
             if (file.endsWith(".js")) {
                 const command = require(`${current_dir}${file}`);
-                client.commands.set(command.name, command);
-                /*
+                // client.commands.set(command.name, command);
+
                 if (command.names && !command.name) {
                     console.log(`Command ${command.names[0]} did not have a name but had "names": ${command.names}`);
                     command.name = command.names[0];
@@ -118,8 +118,6 @@ function getCommands(dir, level = 0) {
                         console.log(client.commands.get(commandName));
                     }
                 }
-
-                 */
             }
         }
     }

@@ -1,13 +1,13 @@
 //imports
-const {stopPlaying} = require("./play");
+const {nowPlaying} = require("./play");
 
 //module settings
-const name = "stop";
-const description = "stops playing the current audio";
+const name = "now-playing";
+const description = "Lists the currently playing song.";
 
 //main
 async function execute(client, message) {
-    await stopPlaying(message.channel);
+    await nowPlaying(message.channel);
 }
 
 //module export
