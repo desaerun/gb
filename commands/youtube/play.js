@@ -110,7 +110,7 @@ async function playNextSong(textChannel,voiceChannel) {
                 voiceChannel: voiceChannel,
                 song: song,
             };
-            await nowPlaying(textChannel);
+            await nowPlaying(textChannel,false);
             dispatcher.on("finish", () => {
                 if (queue.length > 0) {
                     playNextSong(textChannel, voiceChannel);
@@ -129,7 +129,7 @@ async function playNextSong(textChannel,voiceChannel) {
         voiceChannel.leave();
     }
 }
-async function nowPlaying(textChannel) {
+async function nowPlaying(textChannel,showProgressBar = true) {
     if (playing) {
         const songLength = durationStringToSeconds(currentSong.song.duration);
         const elapsed = (+Date.now() - currentSong.started) / 1000;
@@ -139,8 +139,10 @@ async function nowPlaying(textChannel) {
         const nowPlayingEmbed = new Discord.MessageEmbed()
             .setTitle(":musical_note: Now Playing :musical_note:")
             .setDescription(`[**${currentSong.song.title}**](${currentSong.song.url})`)
-            .addField("Description",currentSong.song.description)
-            .addField("Progress",generateProgressBar(21,elapsed,songLength));
+            .addField("Description",currentSong.song.description);
+        if (showProgressBar) {
+            nowPlayingEmbed.addField("Progress", generateProgressBar(21, elapsed, songLength));
+        }
         await textChannel.send(nowPlayingEmbed);
     }
 }
