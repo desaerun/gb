@@ -14,7 +14,7 @@ const params = [
 
 //main
 async function execute(client, message, args) {
-    const text = args.join("");
+    const text = args.join(" ");
     console.log(text);
     let choices = text.split(",");
     console.log(choices);
