@@ -2,7 +2,7 @@
 const {getRandomArrayMember} = require("../../tools/utils");
 //module settings
 const name = "randomize";
-const names = ["random","wandom","wandomize"];
+const aliases = ["random","wandom","wandomize"];
 const description = "Selects a random item from given list.";
 const params = [
     {
@@ -26,7 +26,7 @@ async function execute(client, message, args) {
 //module export
 module.exports = {
     name: name,
-    names: names,
+    aliases: aliases,
     description: description,
     execute: execute,
     params: params,

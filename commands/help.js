@@ -142,8 +142,8 @@ function generateCommandList(clientCommands) {
                     if (clientCommands.get(commandName)) {
                         let currentCommand = clientCommands.get(commandName);
                         commandsText += `\n${indent(indentLevel)}\`${CONFIG.PREFIX}${currentCommand.name}\``;
-                        if (currentCommand.names) {
-                            for (const name of currentCommand.names) {
+                        if (currentCommand.aliases) {
+                            for (const name of currentCommand.aliases) {
                                 if (clientCommands.has(name)) {
                                     commandsText += `; \`${CONFIG.PREFIX}${name}\``;
                                 } else {

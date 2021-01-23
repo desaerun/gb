@@ -18,7 +18,7 @@ const name = "message-history";
 const description = "Retrieves history for the specified message ID.";
 const params = [
     {
-        name: "messageID",
+        param: "messageID",
         description: "The ID of the message",
         type: "Snowflake",
         //no default, a message ID must be given
