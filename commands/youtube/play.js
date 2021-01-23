@@ -257,7 +257,7 @@ function generateProgressBar(width,progress,total) {
     let remainingDurationText = `[-${secondsToDurationString(timeRemaining(total,progress))}]`;
     const remainingDurationPosition = Math.round(barPosition + ((width - barPosition) / 2) - (remainingDurationText.length / 2));
     let progressBarText = "";
-    for (let i = 0;i <= width; i++) {
+    for (let i = 1;i <= width-1; i++) {
         if (i === currentProgressTextPosition) {
             progressBarText += currentProgressText;
             i += currentProgressText.length;
@@ -268,7 +268,7 @@ function generateProgressBar(width,progress,total) {
             progressBarText += " ";
         }
     }
-    progressBarText += "     " + secondsToDurationString(total);
+    progressBarText += "   " + secondsToDurationString(total);
 
     let bar = "╠";
     for (let i = 0; i <= width; i++) {
