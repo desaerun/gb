@@ -3,6 +3,7 @@ const ytdl = require("ytdl-core-discord");
 const ytsr = require("ytsr");
 const sendLongMessage = require("../../tools/sendLongMessage");
 const {suppressUrls} = require("../../tools/utils");
+const Discord = require("discord.js");
 
 //module settings
 const name = "play";
@@ -81,7 +82,7 @@ async function skipSong(textChannel) {
         await textChannel.send(`There is no song currently playing.`);
         return;
     }
-    await textChannel.send(`Skipping [${suppressUrls(currentSong.song.title)}](${currentSong.song.url})`);
+    await textChannel.send(`Skipping **${suppressUrls(currentSong.song.title)}**`);
     await playNextSong(textChannel,currentSong.voiceChannel);
 }
 
@@ -89,7 +90,7 @@ async function playSong(song,textChannel,voiceChannel) {
     console.log(`playing: ${playing} | queue: ${queue}`);
     if (queue.length > 0 || playing) {
         addSongToQueue(song);
-        const addedSongMessage = await textChannel.send(`Added [${suppressUrls(song.title)}](${song.url}) to the queue in position #${queue.length}`);
+        await textChannel.send(`Added **${suppressUrls(song.title)}** to the queue in position #${queue.length}`);
     } else {
         addSongToQueue(song);
         await playNextSong(textChannel,voiceChannel);
@@ -103,7 +104,7 @@ async function playNextSong(textChannel,voiceChannel) {
             const connection = await voiceChannel.join();
             const stream = await ytdl(song.url);
             const dispatcher = connection.play(stream, {type: "opus"});
-            await textChannel.send(`Playing [${suppressUrls(song.title)}](${song.url})`);
+            await textChannel.send(`Playing **${suppressUrls(song.title)}**`);
             playing = true;
             currentSong = {
                 started: +Date.now(),
@@ -136,9 +137,13 @@ async function nowPlaying(textChannel) {
         const remaining = songLength - elapsed;
         const elapsedString = secondsToDurationString(elapsed,currentSong.song.duration.split(":").length);
         const remainingString = secondsToDurationString(remaining,currentSong.song.duration.split(":").length);
-        await textChannel.send(`:musical_note:Currently playing:musical_note:: [${suppressUrls(currentSong.song.title)}](${currentSong.song.url})` +
-        `\n${suppressUrls(currentSong.song.description)}`);
-        await textChannel.send(generateProgressBar(21,elapsed,songLength));
+        const nowPlayingEmbed = new Discord.MessageEmbed()
+            .setTitle("Now Playing")
+            .setDescription(currentSong.song.title)
+            .setURL(currentSong.song.url)
+            .addField("Description",currentSong.song.description)
+            .addField("Progress",generateProgressBar(21,elapsed,songLength));
+        await textChannel.send(nowPlayingEmbed);
     }
 }
 async function listQueue(textChannel) {
@@ -153,7 +158,7 @@ async function listQueue(textChannel) {
         let song = queue[i];
 
         totalDurationSeconds += durationStringToSeconds(song.duration);
-        queueMessage += `\n${i+1}. [${suppressUrls(song.title)}](${song.url}) (${song.duration})`;
+        queueMessage += `\n${i+1}. **${suppressUrls(song.title)}** (${song.duration})`;
     }
     if (playing) {
         totalDurationSeconds += durationStringToSeconds(currentSong.song.duration);
@@ -284,5 +289,5 @@ function generateProgressBar(width,progress,total) {
     bar += "╣";
     bar += ` ${Math.round(percent * 10000)/100}%`;
 
-    return `\`${progressBarText}\`\n\`${bar}\``;
+    return `\`\`\`${progressBarText}\`\n\`${bar}\`\`\``;
 }
