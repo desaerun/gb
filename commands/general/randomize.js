@@ -14,7 +14,10 @@ const params = [
 
 //main
 async function execute(client, message, args) {
-    await message.channel.send(getRandomArrayMember(args));
+    const text = args.join();
+    let choices = text.split(",");
+    choices = choices.map((a) => a.trim);
+    await message.channel.send(getRandomArrayMember(choices));
 }
 
 //module export
