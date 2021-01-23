@@ -136,7 +136,7 @@ async function nowPlaying(textChannel) {
         const elapsedString = secondsToDurationString(elapsed,currentSong.song.duration.split(":").length);
         const remainingString = secondsToDurationString(remaining,currentSong.song.duration.split(":").length);
         await textChannel.send(suppressUrls(`Currently playing: **${currentSong.song.description}** (${elapsedString}/${currentSong.song.duration}) [-${remainingString}]`));
-        await textChannel.send(generateProgressBar(40,elapsed,songLength));
+        await textChannel.send(generateProgressBar(23,elapsed,songLength));
     }
 }
 async function listQueue(textChannel) {
