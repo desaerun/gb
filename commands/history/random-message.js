@@ -18,11 +18,10 @@ const name = "random-message";
 const description = "Chooses a random message from the DB from the day that is specified as an argument.";
 const params = [
     {
-        param: 'relativeDate',
-        type: 'String',
-        description: 'A string representing from when the historical message should be retrieved',
-        default: 'now',
-        required: false,
+        param: "relativeDate",
+        type: "String",
+        description: "A string representing from when the historical message should be retrieved",
+        default: "now",
     },
 ];
 
@@ -57,7 +56,7 @@ async function execute(client, message, args, forceGuildID = null, forceChannelI
     timestamp += offsetMs; // add the UTC offset
 
     let end_timestamp = timestamp + (24 * 60 * 60 * 1000) - 1; //get 11:59:59.999 at the end of that day
-    console.log(`Selecting messages between (${timestamp})${moment(timestamp).format('MMMM Do YYYY HH:mm:ss a')} and (${end_timestamp})${moment(end_timestamp).format('MMMM Do YYYY HH:mm:ss a')}`);
+    console.log(`Selecting messages between (${timestamp})${moment(timestamp).format("MMMM Do YYYY HH:mm:ss a")} and (${end_timestamp})${moment(end_timestamp).format("MMMM Do YYYY HH:mm:ss a")}`);
     console.log(`${timestamp} :: ${end_timestamp}`);
 
     //select messages from the DB that are between the two timestamps retrieved previously
@@ -96,7 +95,7 @@ async function execute(client, message, args, forceGuildID = null, forceChannelI
     const humanMessageResults = allMessages.filter(element => !element.author_isBot);
     let noHumanMessages = (humanMessageResults.length === 0);
     if (noHumanMessages) {
-        channel.send(`There were no messages on ${moment(timestamp).format('dddd MMMM Do YYYY')}`);
+        channel.send(`There were no messages on ${moment(timestamp).format("dddd MMMM Do YYYY")}`);
         return false;
     } else {
         if (allMessages.length < 3) {
@@ -130,7 +129,7 @@ async function execute(client, message, args, forceGuildID = null, forceChannelI
                 .setTitle(humanTimedate)
                 .setDescription(`[**Jump to Message**](https://discord.com/channels/${messageRow.guild}/${messageRow.channel}/${messageRow.id})`);
             if (messageRow.content) {
-                embedMessage.addField('\u200b', messageRow.content)
+                embedMessage.addField("\u200b", messageRow.content)
             }
             if (messageRow.attachmentURL) {
                 embedMessage.setImage(messageRow.attachmentURL);

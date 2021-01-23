@@ -1,12 +1,13 @@
 //imports
+const {nowPlaying} = require("./play");
 
 //module settings
-const name = "dinglemydongle";
-const description = "dingles your dongle";
+const name = "now-playing";
+const description = "Lists the currently playing song.";
 
 //main
 async function execute(client, message) {
-    await message.channel.send(`**${client.user.username}** dingles **${message.author.username}**'s dongle.`);
+    await nowPlaying(message.channel);
 }
 
 //module export

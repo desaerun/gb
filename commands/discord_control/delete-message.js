@@ -5,18 +5,17 @@ const name = "delete-message";
 const description = "Deletes a message"
 const params = [
     {
-        name: 'messageID',
-        description: 'the ID of the message',
-        type: 'Snowflake',
+        name: "messageID",
+        description: "the ID of the message",
+        type: "Snowflake",
         //no default, a message ID _must_ be given
-        required: true,
     }
 ];
 
 //main
 async function execute(client, message, args) {
     if (args.length !== 1) {
-        message.channel.send("You must provide the message ID.")
+        await message.channel.send(`You must provide the message ID.`)
         return false;
     }
     let messageID = args[0];
@@ -28,7 +27,7 @@ async function execute(client, message, args) {
     } catch (e) {
         throw e;
     } finally {
-        message.channel.send(`Message ${messageID} in channel "${targetMessage.guild.name}".#${targetMessage.channel.name} deleted.`)
+        await message.channel.send(`Message ${messageID} in channel "${targetMessage.guild.name}".#${targetMessage.channel.name} deleted.`)
     }
 }
 

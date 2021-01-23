@@ -1,6 +1,6 @@
 const snowflakeToTimestamp = require("../snowflakeToTimestamp");
 const convertEmbedToText = require("../convertEmbedToText");
-const moment = require("moment");
+const logMessage = require("../logMessage");
 
 //mysql
 const mysql = require("mysql2/promise");
@@ -63,12 +63,11 @@ module.exports = async function insertNewMessage(message, lastEditTimestamp = nu
     } catch (err) {
         // await pool.query("ROLLBACK");
         throw err;
-    } finally {
-        console.log(`Successfully inserted guild ${guild_values.id}`);
-        console.log(`Successfully inserted channel ${channel_values.id}`);
-        console.log(`Successfully inserted author ${author_values.id}`);
-        console.log(`Successfully inserted message ${message_values.id}`);
     }
+    logMessage(`Successfully inserted guild ${guild_values.id}`,4);
+    logMessage(`Successfully inserted channel ${channel_values.id}`,4);
+    logMessage(`Successfully inserted author ${author_values.id}`,4);
+    logMessage(`Successfully inserted message ${message_values.id}`,4);
     let i = 1;
     for (let attachment of message.attachments) {
         const attachment_data = attachment[1];

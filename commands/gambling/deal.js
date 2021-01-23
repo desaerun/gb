@@ -5,25 +5,17 @@ const name = "deal";
 const description = "Deals a hand of cards";
 const params = [
     {
-        param: 'size',
-        type: 'Integer',
-        description: 'How many cards to deal.',
+        param: "size",
+        type: "Integer",
+        description: "How many cards to deal.",
         default: 1,
-        required: true,
     },
 ];
 
 //main
 async function execute(client, message, args) {
-    args[0] = Math.abs(parseInt(args[0], 10));
-    if (isNaN(args[0])) {
-        try {
-            await message.channel.send("You must provide a valid integer input.");
-        } catch (e) {
-            throw e;
-        }
-        return;
-    }
+    args[0] = Math.abs(args[0]);
+
     //build a deck
     const suits = [
         "Hearts",

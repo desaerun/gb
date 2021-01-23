@@ -4,8 +4,8 @@
  * generates and sends stack traces to specified channels
  */
 
-const stackTrace = require('stack-trace');
-const Discord = require('discord.js');
+const stackTrace = require("stack-trace");
+const Discord = require("discord.js");
 module.exports = {
     setClient: function (client) {
         this.client = client;
@@ -32,7 +32,7 @@ module.exports = {
                 }
             }
             default: {
-                console.log('could not send stack trace to output channel. output_channel_ids is not a string or array.')
+                console.log("could not send stack trace to output channel. output_channel_ids is not a string or array.")
             }
         }
     },
@@ -42,7 +42,7 @@ module.exports = {
                 .setAuthor(`${this.client.user.username}`, `${this.client.user.displayAvatarURL()}`)
                 .setColor(color)
                 .addFields({
-                    name: 'Bot Message:',
+                    name: "Bot Message:",
                     value: message
                 })
             this.client.channels.cache.get(channel_ids).send(response);

@@ -22,14 +22,13 @@ const params = [
         description: "The ID of the message",
         type: "Snowflake",
         //no default, a message ID must be given
-        required: true,
     },
 ];
 
 //main
 async function execute(client, message, args) {
     if (args.length !== 1) {
-        message.channel.send("You must provide the message ID.")
+        await message.channel.send(`You must provide the message ID.`)
         return false;
     }
     let messageID = args[0];
@@ -43,7 +42,7 @@ async function execute(client, message, args) {
         throw e;
     }
     if (dbMessageResult.length === 0) {
-        message.channel.send("That message ID does not exist.");
+        await message.channel.send(`That message ID does not exist.`);
         return false;
     }
     const dateFormat = "dddd, MMMM Do YYYY @ hh:mm:ss a";

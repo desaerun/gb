@@ -17,18 +17,16 @@ const name = "get-deleted-messages";
 const description = "Retrieves the recently deleted messages by the mentioned user";
 const params = [
     {
-        param: 'user',
-        type: 'Snowflake|Mention',
-        description: 'A user ID or @mention',
-        default: 'current user',
-        required: false,
+        param: "user",
+        type: "Snowflake|Mention",
+        description: "A user ID or @mention",
+        default: "current user",
     },
     {
-        param: 'numMessages',
-        type: 'int',
-        description: 'The number of messages to retrieve',
+        param: "numMessages",
+        type: "int",
+        description: "The number of messages to retrieve",
         default: 5,
-        required: false,
     },
 ];
 
@@ -69,7 +67,7 @@ async function execute(client, message, args) {
         throw e;
     }
     try {
-        message.channel.send(`${deletedMessages[0].author_displayName}'s last ${numMessages} deleted messages:`);
+        await message.channel.send(`${deletedMessages[0].author_displayName}'s last ${numMessages} deleted messages:`);
     } catch (e) {
         console.error("There was an error sending the embed message:", e);
         throw e;
@@ -84,7 +82,7 @@ async function execute(client, message, args) {
             .setFooter(`Message ID: ${deletedMessage.id}`);
 
         if (deletedMessage.content) {
-            embedMessage.addField('\u200b', deletedMessage.content)
+            embedMessage.addField("\u200b", deletedMessage.content)
         }
         if (deletedMessage.attachmentURL) {
             embedMessage.setImage(deletedMessage.attachmentURL);

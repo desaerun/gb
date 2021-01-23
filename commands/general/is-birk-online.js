@@ -9,7 +9,7 @@ const description = "Reports on Birk's status";
 async function execute(client, message) {
     let birk;
     try {
-        const birkID = '97542223641464832';
+        const birkID = "97542223641464832";
         birk = await message.guild.members.fetch(birkID);
     } catch (err) {
         console.error(err);
@@ -18,19 +18,19 @@ async function execute(client, message) {
 
     if (birk.presence) {
         switch (birk.presence.status) {
-            case 'dnd':
+            case "dnd":
                 response = `AY YO ${birk.nickname} DON'T WANNA BE FUCKED WITH RIGHT N0W`;
                 break;
-            case 'idle':
+            case "idle":
                 response = `This motherfucker ${birk.nickname} thinks he can just STEP AWAY?`;
                 break;
-            case 'online':
+            case "online":
                 response = `WTF? Why is ${birk.nickname} online?`;
                 break;
-            case 'invisible':
+            case "invisible":
                 response = `Hey don't worry, ${birk.nickname} is just invisible`;
                 break;
-            case 'offline':
+            case "offline":
                 response = `Ah yes, a ${birk.nickname} in his natural habitat. Offline.`;
                 break;
             default:
