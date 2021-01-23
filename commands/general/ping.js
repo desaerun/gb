@@ -2,7 +2,7 @@
 const Discord = require("discord.js");
 
 //module settings
-const name = ["ping"];
+const name = "ping";
 const names = ["p"];
 const description = "this is a ping command";
 
