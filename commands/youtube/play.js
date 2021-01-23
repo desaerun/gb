@@ -253,9 +253,9 @@ function generateProgressBar(width,progress,total) {
     const barPosition = Math.round(width * percent);
     const currentProgressText = secondsToDurationString(progress);
     let currentProgressTextPosition = barPosition - (currentProgressText.length / 2);
-    currentProgressTextPosition = currentProgressTextPosition <= 0 ? 0 : currentProgressTextPosition;
+    currentProgressTextPosition = Math.round(currentProgressTextPosition <= 0 ? 0 : currentProgressTextPosition);
     let remainingDurationText = `[-${secondsToDurationString(timeRemaining(total,progress))}]`;
-    const remainingDurationPosition = barPosition + ((width - barPosition) / 2) - (remainingDurationText.length / 2);
+    const remainingDurationPosition = Math.round(barPosition + ((width - barPosition) / 2) - (remainingDurationText.length / 2));
     let progressBarText = "";
     for (let i = 0;i < width; i++) {
         if (i === currentProgressTextPosition) {
