@@ -84,6 +84,9 @@ async function skipSong(textChannel) {
     }
     await textChannel.send(`Skipping **${suppressUrls(currentSong.song.title)}**`);
     await playNextSong(textChannel,currentSong.voiceChannel);
+    if (!playing && queue.length === 0) {
+        await textChannel.send(`End of song queue.`);
+    }
 }
 
 async function playSong(song,textChannel,voiceChannel) {
@@ -138,7 +141,7 @@ async function nowPlaying(textChannel) {
         const elapsedString = secondsToDurationString(elapsed,currentSong.song.duration.split(":").length);
         const remainingString = secondsToDurationString(remaining,currentSong.song.duration.split(":").length);
         const nowPlayingEmbed = new Discord.MessageEmbed()
-            .setTitle(":musical_note:Now Playing:musical_note:")
+            .setTitle(":musical_note: Now Playing :musical_note:")
             .setDescription(`[**${currentSong.song.title}**](${currentSong.song.url})`)
             .addField("Description",currentSong.song.description)
             .addField("Progress",generateProgressBar(21,elapsed,songLength));
@@ -288,5 +291,5 @@ function generateProgressBar(width,progress,total) {
     bar += "╣";
     bar += ` ${Math.round(percent * 10000)/100}%`;
 
-    return `\`\`\`${progressBarText}\`\n\`${bar}\`\`\``;
+    return `\`\`\`${progressBarText}\n${bar}\`\`\``;
 }
