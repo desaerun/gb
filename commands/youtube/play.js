@@ -76,7 +76,8 @@ async function skipSong(textChannel) {
         await textChannel.send(`There is no song currently playing.`);
         return;
     }
-    await textChannel.send(`Skipping ${currentSong.song.description}`).suppressEmbeds(true);
+    const skippingMessage = await textChannel.send(`Skipping ${currentSong.song.description}`);
+    skippingMessage.suppressEmbeds(true);
     await playNextSong(textChannel,currentSong.voiceChannel);
 }
 
@@ -84,7 +85,8 @@ async function playSong(song,textChannel,voiceChannel) {
     console.log(`playing: ${playing} | queue: ${queue}`);
     if (queue.length > 0 || playing) {
         addSongToQueue(song);
-        await textChannel.send(`Added **${song.description}** to the queue in position #${queue.length}`).suppressEmbeds(true);
+        const addedSongMessage = await textChannel.send(`Added **${song.description}** to the queue in position #${queue.length}`);
+        addedSongMessage.suppressEmbeds(true);
     } else {
         addSongToQueue(song);
         await playNextSong(textChannel,voiceChannel);
@@ -98,7 +100,8 @@ async function playNextSong(textChannel,voiceChannel) {
             const connection = await voiceChannel.join();
             const stream = await ytdl(song.url);
             const dispatcher = connection.play(stream, {type: "opus"});
-            await textChannel.send(`Playing **${song.description}**`).suppressEmbeds(true);
+            const playingMessage = await textChannel.send(`Playing **${song.description}**`);
+            playingMessage.suppressEmbeds(true);
             playing = true;
             currentSong = {
                 started: +Date.now(),
@@ -131,7 +134,8 @@ async function listQueue(textChannel) {
         const remaining = songLength - elapsed;
         const elapsedString = secondsToDurationString(elapsed,currentSong.song.duration.split(":").length);
         const remainingString = secondsToDurationString(remaining,currentSong.song.duration.split(":").length);
-        await textChannel.send(`Currently playing: **${currentSong.song.description}** (${elapsedString}/${currentSong.song.duration}) [-${remainingString}]`).suppressEmbeds(true);
+        const playingMessage = await textChannel.send(`Currently playing: **${currentSong.song.description}** (${elapsedString}/${currentSong.song.duration}) [-${remainingString}]`);
+        playingMessage.suppressEmbeds(true);
         await textChannel.send(generateProgressBar(40,elapsed,songLength));
     }
     if (queue.length === 0) {
