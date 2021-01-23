@@ -64,10 +64,10 @@ module.exports = async function insertNewMessage(message, lastEditTimestamp = nu
         // await pool.query("ROLLBACK");
         throw err;
     }
-    logMessage(`Successfully inserted guild ${guild_values.id}`,4);
-    logMessage(`Successfully inserted channel ${channel_values.id}`,4);
-    logMessage(`Successfully inserted author ${author_values.id}`,4);
-    logMessage(`Successfully inserted message ${message_values.id}`,4);
+    logMessage(`Successfully inserted guild ${guild_values.id}`, 4);
+    logMessage(`Successfully inserted channel ${channel_values.id}`, 4);
+    logMessage(`Successfully inserted author ${author_values.id}`, 4);
+    logMessage(`Successfully inserted message ${message_values.id}`, 4);
     let i = 1;
     for (let attachment of message.attachments) {
         const attachment_data = attachment[1];
@@ -82,8 +82,8 @@ module.exports = async function insertNewMessage(message, lastEditTimestamp = nu
             width: attachment_data.width,
             timestamp: snowflakeToTimestamp(attachment_data.id),
         };
-        pool.query("INSERT INTO attachments SET ? ON DUPLICATE KEY UPDATE ?", [attachment_values, attachment_values], (error, result, fields) => {
-            if (error) throw error;
+        pool.query("INSERT INTO attachments SET ? ON DUPLICATE KEY UPDATE ?", [attachment_values, attachment_values], (err) => {
+            if (err) throw err;
             console.log(`Successfully inserted attachment ${attachment_values.id} (${i} of ${message.attachments.size})`);
             i++;
         });

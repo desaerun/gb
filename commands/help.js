@@ -64,7 +64,7 @@ function getHelpMessage(command) {
         for (const currentArg of command.params) {
             logMessage(currentArg, 3);
             fullCommand += ` `;
-            let optionalMod = (!currentArg.default && !currentArg.required) ? "?" : "";
+            let optionalMod = (currentArg.optional) ? "?" : "";
             fullCommand += `[${optionalMod}${currentArg.param}]`;
 
             let value = `**Type**: ${currentArg.type}\n` +
@@ -91,10 +91,10 @@ function getHelpMessage(command) {
                     value += `**Default**: ${currentArg.default}`;
                 }
             } else {
-                if (currentArg.required) {
-                    value += `\n**REQUIRED**`;
+                if (currentArg.optional) {
+                    value += `\n**OPTIONAL**`;
                 } else {
-                    value += `\nNo default value`;
+                    value += `\nNo default value.`;
                 }
             }
             fields.push({

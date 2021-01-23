@@ -30,9 +30,9 @@ const params = [
 ];
 
 //main
-async function execute(client, message, args, replacementsFreqBase = 1) {
+async function execute(client, message, args) {
     const uwuText = uwuify(args.join(" "));
-    await sendLongMessage(uwuText,message.channel);
+    await sendLongMessage(uwuText, message.channel);
     message.delete();
 }
 
@@ -53,7 +53,7 @@ module.exports = {
  * @param replacementsFreqBase the frequency to replace the text
  * @returns {string} The uwu-ified text
  */
-function uwuify(text,replacementsFreqBase = 1) {
+function uwuify(text, replacementsFreqBase = 1) {
     //trim whitespace
     text = text.trim();
     if (text.length === 0) {
@@ -138,10 +138,8 @@ function uwuify(text,replacementsFreqBase = 1) {
 
     //calculate how much the replacement increment should increase by
     //it should be replacing 100% of the message by 85% of the way through.
-    const replacementsFreqIncrement = (1-frequency.replacements) / (words.length / 100 * 85);
-    for (let i=0,replacementsFreqCurrent = replacementsFreqBase;i<words.length;i++,replacementsFreqCurrent+=replacementsFreqIncrement) {
-        const percentMessageParsed = ((i + 1) / words.length * 100).toFixed(2);
-
+    const replacementsFreqIncrement = (1 - frequency.replacements) / (words.length / 100 * 85);
+    for (let i = 0, replacementsFreqCurrent = replacementsFreqBase; i < words.length; i++, replacementsFreqCurrent += replacementsFreqIncrement) {
         if (i > words.length / 7 || replacementsFreqBase === 1) {
             if (Math.random() < replacementsFreqCurrent) {
 
