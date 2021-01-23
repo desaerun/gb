@@ -104,14 +104,13 @@ async function playNextSong(textChannel,voiceChannel) {
             const connection = await voiceChannel.join();
             const stream = await ytdl(song.url);
             const dispatcher = connection.play(stream, {type: "opus"});
-            await textChannel.send(`Playing **${suppressUrls(song.title)}**`);
             playing = true;
             currentSong = {
                 started: +Date.now(),
                 voiceChannel: voiceChannel,
                 song: song,
             };
-
+            await nowPlaying(textChannel);
             dispatcher.on("finish", () => {
                 if (queue.length > 0) {
                     playNextSong(textChannel, voiceChannel);
