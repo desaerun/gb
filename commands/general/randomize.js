@@ -30,6 +30,6 @@ module.exports = {
     description: description,
     execute: execute,
     params: params,
-}
+};
 
 //helper functions
