@@ -251,19 +251,33 @@ function secondsToDurationString(seconds,precision = 2) {
 function generateProgressBar(width,progress,total) {
     const percent = progress / total;
     const barPosition = Math.round(width * percent);
-    console.log(`progress: ${progress}`);
-    console.log(`total: ${total}`);
-    console.log(`percent: ${percent}`);
-    console.log(`barPosition: ${barPosition}`);
-
-    let barText = "|";
-    for (let i = 0; i < width; i++) {
-        if (i === barPosition) {
-            barText += "|";
+    const currentProgressText = secondsToDurationString(progress);
+    let currentProgressTextPosition = barPosition - (currentProgressText.length / 2);
+    currentProgressTextPosition = currentProgressTextPosition <= 0 ? 0 : currentProgressTextPosition;
+    let remainingDurationText = `[-${secondsToDurationString(timeRemaining(total,progress))}]`;
+    const remainingDurationPosition = barPosition + ((width - barPosition) / 2) - (remainingDurationText.length / 2);
+    let progressBarText = "";
+    for (let i = 0;i < width; i++) {
+        if (i === currentProgressTextPosition) {
+            progressBarText += currentProgressText;
+            i += currentProgressText.length;
+        } else if (i === remainingDurationPosition) {
+            progressBarText += remainingDurationText;
+            i += remainingDurationText.length;
         } else {
-            barText += "-"
+            progressBarText += " ";
         }
     }
-    barText += "|";
-    return barText;
+    progressBarText += secondsToDurationString(total);
+
+    let bar = "╠";
+    for (let i = 0; i < width; i++) {
+        if (i === barPosition) {
+            bar += "►";
+        }
+        bar += "═"
+    }
+    bar += "╣";
+
+    return `${progressBarText}\n${bar}`;
 }

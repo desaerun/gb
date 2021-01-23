@@ -33,6 +33,7 @@ const params = [
 async function execute(client, message, args, replacementsFreqBase = 1) {
     const uwuText = uwuify(args.join(" "));
     await sendLongMessage(uwuText,message.channel);
+    message.delete();
 }
 
 //module export
