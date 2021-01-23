@@ -236,7 +236,8 @@ function verifyArgTypes(command,args) {
                             break;
                         case "snowflake":
                             const re = /^\d{16}$/
-                            coercibleTypes.snowflake = args[i].test(re);
+                            const snowFlake = new RegExp(re);
+                            coercibleTypes.snowflake = snowFlake.test(args[i]);
                             break;
                         case "string":
                         case "str":
