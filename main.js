@@ -1,21 +1,24 @@
 require("dotenv").config();  // pull in ENV variables from .env file
-const CONFIG = require('./config/config');
-const Discord = require('discord.js');
-const client = new Discord.Client({partials: ['MESSAGE']});
+const CONFIG = require("./config/config");
+const Discord = require("discord.js");
+const client = new Discord.Client({partials: ["MESSAGE"]});
 //const snowflakeToTimestamp = require("./tools/snowflakeToTimestamp");
+const play = require("./commands/youtube/play");
 
 const cron = require("node-cron");
 
 const captureMessage = require("./tools/message_db_tools/captureMessage");
 const updateEditedMessage = require("./tools/message_db_tools/updateEditedMessage");
 const deleteMessage = require("./tools/message_db_tools/deleteMessage");
-const status = require('./commands/bot_control/set-bot-status.js');
+const status = require("./commands/bot_control/set-bot-status.js");
 
-const dev_output = require('./dev_output');
+const dev_output = require("./dev_output");
 dev_output.setClient(client);
 
-const fs = require('fs');
+const fs = require("fs");
 const logMessage = require("./tools/logMessage");
+const sendLongMessage = require("./tools/sendLongMessage");
+const {getRandomArrayMember} = require("./tools/utils");
 
 client.commands = new Discord.Collection();
 client.listenerSet = new Discord.Collection();
@@ -23,18 +26,18 @@ client.listenerSet = new Discord.Collection();
 getCommands("./commands");
 getListenerSet("./listeners");
 
-client.once('ready', () => {
+client.once("ready", () => {
     console.log("bot online.");
     //let guilds = client.guilds;
 
     //todo: read in first line from github_update.txt and add it to the "online" message
     //todo: make the linux server print a line about recovering to the github_update.txt file when it recovers or is started manually
     /*
-    let lineReader = require('readline').createInterface({input: require('fs').createReadStream('github_update.txt')});
+    let lineReader = require("readline").createInterface({input: require("fs").createReadStream("github_update.txt")});
     online_message += ``
     */
 
-    if (CONFIG.verbosity >= 3) {
+    if (CONFIG.VERBOSITY >= 3) {
         console.log(`Bot online. Sending Online Status message to ${client.channels.cache.get(process.env.ONLINE_STATUS_CHANNEL_ID).name}(${process.env.ONLINE_STATUS_CHANNEL_ID}).`)
     }
     //todo: fix the bot timing out every 8 hours
@@ -44,7 +47,7 @@ client.once('ready', () => {
      */
 
     //set initial bot status
-    client.user.setActivity(status.params[0].default, {type: 'PLAYING'})
+    client.user.setActivity(status.params[0].default, {type: "PLAYING"})
         .then(() => console.log())
         .catch((err) => {
             dev_output.sendTrace(`Bot failed to set status: ${err}`, process.env.ONLINE_STATUS_CHANNEL_ID)
@@ -53,30 +56,31 @@ client.once('ready', () => {
         //todo: make command to add/remove guild/channel combos to historical messages cron
         //client.commands.get("random-message").execute(client,"","1 year ago",CONFIG.channel_primularies_id);
     })
+
 });
 
 //handling for when messages are sent
-client.on('message', message => {
-    captureMessage(client, message, true);
+client.on("message", async message => {
+    await captureMessage(client, message, true);
 
-    const args = message.content.slice(CONFIG.prefix.length).split(/ +/);
+    const args = message.content.slice(CONFIG.PREFIX.length).split(/ +/);
 
     // Ignore my own messages
     if (message.author.bot) return;
 
     // Attempt to parse commands
     if (isCommand(message)) {
-        runCommands(message, args);
+        await runCommands(message, args);
         // Otherwise pass to listeners
     } else {
-        parseWithListeners(message);
+        await parseWithListeners(message);
     }
 });
-client.on('messageUpdate', async (oldMessage, newMessage) => {
+client.on("messageUpdate", async (oldMessage, newMessage) => {
     console.log(`Message Edit triggered.`);
     await updateEditedMessage(oldMessage, newMessage);
 });
-client.on('messageDelete', async (deletedMessage) => {
+client.on("messageDelete", async (deletedMessage) => {
     console.log(`Message Deletion triggered: ${JSON.stringify(deletedMessage)}`);
     await deleteMessage(deletedMessage);
 });
@@ -94,9 +98,26 @@ function getCommands(dir, level = 0) {
         if (fs.statSync(`${current_dir}${file}`).isDirectory()) {
             getCommands(`${current_dir}${file}`, level + 1);
         } else {
-            if (file.endsWith('.js')) {
+            if (file.endsWith(".js")) {
                 const command = require(`${current_dir}${file}`);
-                client.commands.set(command.name, command);
+                // client.commands.set(command.name, command);
+
+                if (command.names && !command.name) {
+                    console.log(`Command ${command.names[0]} did not have a name but had "names": ${command.names}`);
+                    command.name = command.names[0];
+                }
+                if (command.name) {
+                    client.commands.set(command.name, command);
+                    console.log(`adding command ${command.name}`);
+                    console.log(client.commands.get(command.name));
+                }
+                if (command.names) {
+                    for (let commandName of command.names) {
+                        client.commands.set(commandName, command);
+                        console.log(`adding command from Names list: ${commandName}`);
+                        console.log(client.commands.get(commandName));
+                    }
+                }
             }
         }
     }
@@ -115,7 +136,7 @@ function getListenerSet(dir, level = 0) {
         if (fs.statSync(`${current_dir}${file}`).isDirectory()) {
             getListenerSet(`${current_dir}${file}`, level + 1);
         } else {
-            if (file.endsWith('.js')) {
+            if (file.endsWith(".js")) {
                 const listener = require(`${current_dir}${file}`);
                 client.listenerSet.set(listener.name, listener);
             }
@@ -124,13 +145,13 @@ function getListenerSet(dir, level = 0) {
 }
 
 /**
- * Identifies 'command' messages which must begin with CONFIG.prefix
+ * Identifies "command" messages which must begin with CONFIG.prefix
  * @param message
  * @returns {boolean}
  */
 function isCommand(message) {
-    const check = new RegExp(`^${CONFIG.prefix}([^-+]+)`);
-    return message.content.match(check) !== null;
+    const check = new RegExp(`^${CONFIG.PREFIX}([^-+]+)`);
+    return check.test(message.content);
 }
 
 /**
@@ -138,21 +159,29 @@ function isCommand(message) {
  * @param message
  * @param args
  */
-function runCommands(message, args) {
+async function runCommands(message, args) {
     const commandName = args.shift().toLowerCase();
 
+    console.log(`attempting to run command ${commandName}: ${JSON.stringify(client.commands.get(commandName))}`);
     if (client.commands.has(commandName)) {
         try {
             let command = client.commands.get(commandName);
             args = setArgsToDefault(command, args);
 
+            let argTypeErrors = [];
+            [args,argTypeErrors] = verifyArgTypes(command,args);
+            if (argTypeErrors.length > 0) {
+                const errors = argTypeErrors.join("\n");
+                await sendLongMessage(errors,message.channel);
+                return false;
+            }
             command.execute(client, message, args);
 
         } catch (err) {
-            dev_output.sendTrace(err, CONFIG.channel_dev_id);
+            dev_output.sendTrace(err, CONFIG.CHANNEL_DEV_ID);
         }
     } else {
-        message.channel.send(`_${commandName}_ is not a valid command. Type \`${CONFIG.prefix}help\` to get a list of commands.`);
+        await message.channel.send(`\`${commandName}\` is not a valid command. Type \`${CONFIG.PREFIX}help\` to get a list of commands.`);
     }
 }
 
@@ -160,16 +189,15 @@ function runCommands(message, args) {
  * Returns an args array for the current command based on its default arg values
  *
  * @param command
- * @param givenArgs
+ * @param args
  * @returns {[]}
  */
-function setArgsToDefault(command, givenArgs) {
-    let args = givenArgs;
-    if (command.params && givenArgs < command.params.length) {
+function setArgsToDefault(command, args) {
+    if (command.params) {
         for (let i = 0; i < command.params.length; i++) {
-            if (!(args[i]) && command.params[i].default && command.params[i].required) {
+            if (!(args[i]) && command.params[i].default) {
                 if (Array.isArray(command.params[i].default)) {
-                    args[i] = getRand(command.params[i].default);
+                    args[i] = getRandomArrayMember(command.params[i].default);
                 } else {
                     args[i] = command.params[i].default;
                 }
@@ -179,25 +207,70 @@ function setArgsToDefault(command, givenArgs) {
     return args;
 }
 
-function getRand(arr) {
-    return arr[Math.floor(Math.random() * arr.length)];
+function verifyArgTypes(command,args) {
+    let argTypeErrors = [];
+    if (command.params) {
+        for (let i = 0; i < command.params.length; i++) {
+            if (command.params[i].type) {
+                const allowedTypes = command.params[i].type.split("|");
+                let coercibleTypes = {
+                    int: false,
+                    string: false,
+                    float: false,
+                    snowflake: false,
+                };
+                for (const currentAllowedType of allowedTypes) {
+                    switch (currentAllowedType.toLowerCase()) {
+                        case "integer":
+                        case "int":
+                            if (!isNaN(parseInt(args[i], 10))) {
+                                args[i] = parseInt(args[i], 10);
+                                coercibleTypes.int = true;
+                            }
+                            break;
+                        case "float":
+                            if (!isNaN(parseFloat(args[i]))) {
+                                args[i] = parseFloat(args[i]);
+                                coercibleTypes.float = true;
+                            }
+                            break;
+                        case "snowflake":
+                            const re = /^\d{16}$/
+                            coercibleTypes.snowflake = args[i].test(re);
+                            break;
+                        case "string":
+                        case "str":
+                        default:
+                            coercibleTypes.string = true;
+                            break;
+                    }
+                }
+                console.log(coercibleTypes);
+                const isValidType = Object.values(coercibleTypes).some(element => element === true);
+                if (!isValidType) {
+                    argTypeErrors[i] = `Argument **${command.params[i].param}** could not be coerced to a ${command.params[i].type} value.`;
+                }
+            }
+        }
+    }
+    return [args,argTypeErrors];
 }
 
 /**
  * Attempts to execute from the set of listeners on any given message that is not a command
  * @param message
  */
-function parseWithListeners(message) {
+async function parseWithListeners(message) {
     try {
         for (const listener of client.listenerSet.values()) {
-            if (listener.listen(client, message)) return;
+            if (await listener.listen(client, message)) return;
         }
     } catch (err) {
-        dev_output.sendTrace(err, CONFIG.channel_dev_id);
+        dev_output.sendTrace(err, CONFIG.CHANNEL_DEV_ID);
     }
 }
 
-client.on('shardError', error => {
+client.on("shardError", error => {
     console.error("possible shard error was caught: ", error);
 });
 

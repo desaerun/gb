@@ -15,18 +15,16 @@ const name = "cache-message-history";
 const description = "Retrieves message history for the current channel and stores it to the DB";
 const params = [
     {
-        param: 'channel',
-        type: 'Snowflake|"this"|"self"',
-        description: 'A channel ID snowflake to capture',
-        default: 'current channel',
-        required: false,
+        param: "channel",
+        type: `Snowflake|"this"|"self"`,
+        description: "A channel ID snowflake to capture",
+        default: "current channel",
     },
     {
-        param: 'includeBotMessages',
-        type: 'Boolean',
-        description: 'Whether or not to retrieve messages from Discord bots',
-        default: 'false',
-        required: false,
+        param: "includeBotMessages",
+        type: "Boolean",
+        description: "Whether or not to retrieve messages from Discord bots",
+        default: "false",
     },
 ];
 
@@ -41,14 +39,14 @@ async function execute(client, message, args) {
         } else if (message.guild.channels.cache.get(args[0])) {
             targetChannel = message.guild.channels.cache.get(args[0]);
         } else {
-            message.channel.send("The specified channel ID was not found.");
+            await message.channel.send(`The specified channel ID was not found.`);
             return false;
         }
     }
     if (args.length === 2) {
         includeBotMessages = args[1];
     }
-    message.channel.send(`Caching messages from "${message.guild.name}".#${targetChannel.name} to DB...`);
+    await message.channel.send(`Caching messages from "${message.guild.name}".#${targetChannel.name} to DB...`);
     console.log(`Retrieving list of messages...`);
 
     let messages = await targetChannel.messages.fetch({limit: 100});
@@ -93,14 +91,14 @@ async function execute(client, message, args) {
     }
 
     let result;
-    message.channel.send(`There have been ${counts.total} messages sent in channel #${targetChannel.name}.`);
+    await message.channel.send(`There have been ${counts.total} messages sent in channel #${targetChannel.name}.`);
     try {
         [result] = pool.query(`SELECT COUNT(*) AS messageCount FROM messages WHERE channel = ?`, targetChannel.id);
     } catch (e) {
         throw e;
     }
-    message.channel.send(`Updated DB successfully.  Rows: ${result.messageCount}`);
-    message.channel.send(`(Error:  ${counts.error}|Success: ${counts.added}|Skipped: ${counts.skipped}|Bot: ${counts.bot}|No Author: ${counts.noAuthor})`);
+    await message.channel.send(`Updated DB successfully.  Rows: ${result.messageCount}`);
+    await message.channel.send(`(Error:  ${counts.error}|Success: ${counts.added}|Skipped: ${counts.skipped}|Bot: ${counts.bot}|No Author: ${counts.noAuthor})`);
 }
 
 //module export

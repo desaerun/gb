@@ -1,35 +1,34 @@
 //imports
-const axios = require('axios');
-const cheerio = require('cheerio');
-const Discord = require('discord.js');
+const axios = require("axios");
+const cheerio = require("cheerio");
+const Discord = require("discord.js");
 
 //module settings
 const name = "question";
 const description = "Attempts to answer your question";
 const params = [
     {
-        param: 'question',
-        type: 'string',
-        description: 'A question that the bot will attempt to answer',
-        default: 'boobies',
-        required: false,
+        param: "question",
+        type: "string",
+        description: "A question that the bot will attempt to answer",
+        default: "boobies",
     }
 ];
 
 //main
 async function execute(client, message, args) {
 
-    let query = args.join('+');
+    let query = args.join("+");
 
     let googleQueryURL = `https://www.google.com/search?q=${query}`;
 
     try {
-        const response = await axios.get(googleQueryURL, {headers: {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.101 Safari/537.36'}});
+        const response = await axios.get(googleQueryURL, {headers: {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.101 Safari/537.36"}});
         if (response.status === 200) {
 
             const cheerioDOM = cheerio.load(response.data);
-            // Remove 'Videos' box from search results
-            cheerioDOM('div.HD8Pae.luh4tb.cUezCb.xpd.O9g5cc.uUPGi').remove();
+            // Remove "Videos" box from search results
+            cheerioDOM("div.HD8Pae.luh4tb.cUezCb.xpd.O9g5cc.uUPGi").remove();
 
             // Attempt to parse answer from Featured Snippet first
             if (retrieveAnswerFromFeaturedSnippet(message, cheerioDOM)) {
@@ -47,13 +46,13 @@ async function execute(client, message, args) {
             }
 
             // If all else fails, kindly inform the user that an answer was not found.
-            message.channel.send('Unable to find an answer. Please go fuck yourself.');
+            await message.channel.send(`Unable to find an answer. Please go fuck yourself.`);
 
         } else {
             throw new Error(`Request returned status code ${response.status}`);
         }
     } catch (err) {
-        message.channel.send(`Error encountered while attempting to answer your question: ${err}`);
+        await message.channel.send(`Error encountered while attempting to answer your question: ${err}`);
     }
 }
 
@@ -76,29 +75,29 @@ module.exports = {
  * @param cheerioDOM
  * @returns {boolean}
  */
-function retrieveAnswerFromFeaturedSnippet(message, cheerioDOM) {
+async function retrieveAnswerFromFeaturedSnippet(message, cheerioDOM) {
 
     // Grabbing the first div with data-attrid containing a ":/" and aria-level "3"
     // should give us the Featured Snippet box if it exists
-    let innerDOMString = cheerioDOM('div[data-tts="answers"],div[data-attrid*=":/"][aria-level="3"],div.EfDVh.mod > div > div > div[aria-level="3"]').first().html();
+    let innerDOMString = cheerioDOM(`div[data-tts="answers"],div[data-attrid*=":/"][aria-level="3"],div.EfDVh.mod > div > div > div[aria-level="3"]`).first().html();
 
     if (innerDOMString) {
         const innerDOM = cheerio.load(innerDOMString);
 
         // Remove some of the subtext in featured snippet
-        innerDOM('div.yxAsKe.kZ91ed').remove();
-        innerDOM('span.kX21rb').remove();
+        innerDOM("div.yxAsKe.kZ91ed").remove();
+        innerDOM("span.kX21rb").remove();
 
         let answer = innerDOM.text();
 
         if (answer) {
-            let context = cheerioDOM('span.hgKElc').text();
+            let context = cheerioDOM("span.hgKElc").text();
 
             if (!context || answer === context) {
-                message.channel.send(answer);
+                await message.channel.send(answer);
                 return true;
             } else {
-                message.channel.send(`**${answer}**\n${context}`);
+                await message.channel.send(`**${answer}**\n${context}`);
                 return true;
             }
         }
@@ -114,8 +113,8 @@ function retrieveAnswerFromFeaturedSnippet(message, cheerioDOM) {
  * @param message
  * @param cheerioDOM
  */
-function retrieveAnswerFromKnowledgePanel(message, cheerioDOM) {
-    let knowledgePanel = cheerioDOM("div[id='wp-tabs-container']").html();
+async function retrieveAnswerFromKnowledgePanel(message, cheerioDOM) {
+    let knowledgePanel = cheerioDOM(`div[id="wp-tabs-container"]`).html();
 
     if (knowledgePanel) {
         const innerDOM = cheerio.load(knowledgePanel);
@@ -123,12 +122,12 @@ function retrieveAnswerFromKnowledgePanel(message, cheerioDOM) {
         let answer = innerDOM("h2[data-attrid='title']").text();
 
         if (answer) {
-            let context = innerDOM('div.kno-rdesc > div > span').first().text();
+            let context = innerDOM("div.kno-rdesc > div > span").first().text();
             if (!context || answer === context) {
-                message.channel.send(answer);
+                await message.channel.send(answer);
                 return true;
             } else {
-                message.channel.send(`**${answer}**\n${context}`);
+                await message.channel.send(`**${answer}**\n${context}`);
                 return true;
             }
         }
@@ -144,17 +143,17 @@ function retrieveAnswerFromKnowledgePanel(message, cheerioDOM) {
  * @param message
  * @param cheerioDOM
  */
-function sendSearchResultsAsEmbeddedMessage(message, cheerioDOM) {
+async function sendSearchResultsAsEmbeddedMessage(message, cheerioDOM) {
     // Remove the "People also ask" section as these _aren't_ the thing we want an answer to
-    cheerioDOM('div.g.kno-kp.mnr-c.g-blk').remove();
+    cheerioDOM("div.g.kno-kp.mnr-c.g-blk").remove();
 
     let results = [];
 
-    cheerioDOM('div.rc').each(function () {
+    cheerioDOM("div.rc").each(function () {
 
-        let description = cheerioDOM(this).find('div.IsZvec > div > span').text();
-        let title = cheerioDOM(this).find('div > a > h3.LC20lb').text();
-        let link = cheerioDOM(this).find('div > a').attr('href');
+        let description = cheerioDOM(this).find("div.IsZvec > div > span").text();
+        let title = cheerioDOM(this).find("div > a > h3.LC20lb").text();
+        let link = cheerioDOM(this).find("div > a").attr("href");
 
         let embedMessage = new Discord.MessageEmbed()
             .setTitle(`**${title}**`)
@@ -168,10 +167,10 @@ function sendSearchResultsAsEmbeddedMessage(message, cheerioDOM) {
         return false;
     }
 
-    message.channel.send("Hmm, I couldn't figure that one out. Maybe these will help:");
+    await message.channel.send(`Hmm, I couldn't figure that one out. Maybe these will help:`);
 
     for (let i = 0; i < 3 && i < results.length; i++) {
-        message.channel.send(results[i]);
+        await message.channel.send(results[i]);
     }
 
     return true;

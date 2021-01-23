@@ -1,12 +1,13 @@
 //imports
+const {clearQueue} = require("./play.js");
 
 //module settings
-const name = "dinglemydongle";
-const description = "dingles your dongle";
+const name = "clear-queue";
+const description = "Clears the song queue.";
 
 //main
 async function execute(client, message) {
-    await message.channel.send(`**${client.user.username}** dingles **${message.author.username}**'s dongle.`);
+    await clearQueue(message.channel);
 }
 
 //module export

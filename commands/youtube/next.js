@@ -1,17 +1,20 @@
 //imports
+const {skipSong} = require("./play.js");
 
 //module settings
-const name = "dinglemydongle";
-const description = "dingles your dongle";
+const name = "next";
+const names = ["skip"];
+const description = "Plays the next song in the queue.";
 
 //main
 async function execute(client, message) {
-    await message.channel.send(`**${client.user.username}** dingles **${message.author.username}**'s dongle.`);
+    await skipSong(message.channel);
 }
 
 //module export
 module.exports = {
     name: name,
+    names: names,
     description: description,
     execute: execute,
 }

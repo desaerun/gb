@@ -1,12 +1,13 @@
 //imports
+const {listQueue} = require("./play");
 
 //module settings
-const name = "dinglemydongle";
-const description = "dingles your dongle";
+const name = "queue";
+const description = "Lists the songs in the queue.";
 
 //main
 async function execute(client, message) {
-    await message.channel.send(`**${client.user.username}** dingles **${message.author.username}**'s dongle.`);
+    await listQueue(message.channel);
 }
 
 //module export

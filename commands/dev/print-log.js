@@ -1,17 +1,16 @@
 //imports
-const readline = require('readline');
-const fs = require('fs');
+const readline = require("readline");
+const fs = require("fs");
 
 //module settings
 const name = "print-log";
 const description = "prints the logfile";
 const params = [
     {
-        param: 'numLines',
-        type: 'Integer',
-        description: 'The number of lines to print from each log.',
+        param: "numLines",
+        type: "Integer",
+        description: "The number of lines to print from each log.",
         default: 10,
-        required: false,
     }
 ];
 
@@ -20,11 +19,7 @@ async function execute(client, message, args) {
     if (args[0]) {
         args[0] = Math.abs(parseInt(args[0], 10));
         if (isNaN(args[0])) {
-            try {
-                await message.channel.send(`You must provide a valid ${params[0].type} input for ${params[0].param}.`);
-            } catch (e) {
-                throw e;
-            }
+            await message.channel.send(`You must provide a valid ${params[0].type} input for ${params[0].param}.`);
             return;
         }
     }
@@ -48,20 +43,12 @@ async function execute(client, message, args) {
     ];
     for (const logFile of logFiles) {
         const chunkSize = 1994;
-        const logText = await readLog(logFile.file,args[0]);
+        const logText = await readLog(logFile.file, args[0]);
 
-        try {
-            await message.channel.send(`Contents of ${logFile.name} log file:`);
-        } catch (e) {
-            throw e;
-        }
-        for (let i = 0; i<logText.length;i+=chunkSize) {
-            const currentChunk = logText.substr(i,chunkSize);
-            try {
-                await message.channel.send(`\`\`\`${currentChunk}\`\`\``);
-            } catch (e) {
-                throw e;
-            }
+        await message.channel.send(`Contents of ${logFile.name} log file:`);
+        for (let i = 0; i < logText.length; i += chunkSize) {
+            const currentChunk = logText.substr(i, chunkSize);
+            await message.channel.send(`\`\`\`${currentChunk}\`\`\``);
         }
     }
 }
@@ -91,14 +78,14 @@ function readLog(file, numLines = 10) {
         let lines = [];
 
         lineReader
-            .on('line', function (line) {
+            .on("line", function (line) {
                 let length = lines.push(line);
 
                 if (length === numLines) {
                     lineReader.close();
                 }
             })
-            .on('close', () => {
+            .on("close", () => {
                 resolve(lines.join("\n"));
             })
     });
