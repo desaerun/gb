@@ -137,7 +137,7 @@ async function nowPlaying(textChannel) {
         const elapsedString = secondsToDurationString(elapsed,currentSong.song.duration.split(":").length);
         const remainingString = secondsToDurationString(remaining,currentSong.song.duration.split(":").length);
         await textChannel.send(`:musical_note:Currently playing:musical_note:: [${suppressUrls(currentSong.song.title)}](${currentSong.song.url})` +
-        `\n${currentSong.song.description}`);
+        `\n${suppressUrls(currentSong.song.description)}`);
         await textChannel.send(generateProgressBar(21,elapsed,songLength));
     }
 }
