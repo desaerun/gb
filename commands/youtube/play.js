@@ -68,7 +68,7 @@ async function stopPlaying(textChannel) {
         return;
     }
     textChannel.send("Stopping current song.")
-    playing.voiceChannel.leave();
+    currentSong.voiceChannel.leave();
     playing = {};
 }
 async function skipSong(textChannel) {
@@ -76,8 +76,8 @@ async function skipSong(textChannel) {
         await textChannel.send(`There is no song currently playing.`);
         return;
     }
-    await textChannel.send(`Skipping ${playing.song.description}`);
-    await playNextSong(textChannel,playing.voiceChannel);
+    await textChannel.send(`Skipping ${currentSong.song.description}`);
+    await playNextSong(textChannel,currentSong.voiceChannel);
 }
 
 async function playSong(song,textChannel,voiceChannel) {
@@ -126,7 +126,12 @@ async function playNextSong(textChannel,voiceChannel) {
 }
 async function listQueue(textChannel) {
     if (playing) {
-        await textChannel.send(`Currently playing: **${currentSong.song.description}** (${currentSong.song.duration})`);
+        const songLength = durationStringToSeconds(currentSong.song.duration);
+        const elapsed = elapsed(currentSong.started);
+        const remaining = timeRemaining(songLength,elapsed);
+        const elapsedString = secondsToDurationString(elapsed,currentSong.song.duration.split(":").length);
+        const remainingString = secondsToDurationString(remaining,currentSong.song.duration.split(":").length);
+        await textChannel.send(`Currently playing: **${currentSong.song.description}** (${elapsedString}/${currentSong.song.duration}) [-${remainingString}`);
     }
     if (queue.length === 0) {
         await textChannel.send("There are no songs currently in queue.");
@@ -137,46 +142,94 @@ async function listQueue(textChannel) {
     for (let i = 0; i < queue.length; i++) {
         let song = queue[i];
 
-        let durationHours = 0, durationMinutes = 0, durationSeconds = 0;
-        let durationParts = song.duration.split(":");
-        console.log(`durationParts: ${durationParts}`);
-        if (durationParts.length === 3) {
-            [durationHours, durationMinutes, durationSeconds] = song.duration.split(":");
-        } else if (durationParts.length === 2) {
-            [durationMinutes, durationSeconds] = song.duration.split(":");
-        } else {
-            [durationSeconds] = song.duration.split(":");
-        }
-        console.log(`durationHours: ${durationHours}`);
-        console.log(`durationMinutes: ${durationMinutes}`);
-        console.log(`durationSeconds: ${durationSeconds}`);
-        console.log(`------------------`);
-        durationSeconds = +durationSeconds;
-        durationSeconds += (+durationMinutes * 60);
-        durationSeconds += (+durationHours * 60 * 60);
-        console.log(`durationSeconds: ${durationSeconds}`);
-
-        totalDurationSeconds += durationSeconds;
+        totalDurationSeconds += durationStringToSeconds(song.duration);
         queueMessage += `\n${i+1}. ${song.description} (${song.duration})`;
     }
-    let totalDurationHours = Math.floor(totalDurationSeconds / 3600);
-    let totalDurationMinutes = Math.floor(totalDurationSeconds % 3600 / 60);
-    let totalDurationSecondsRemaining = Math.floor(totalDurationSeconds % 3600 % 60);
-
-    if (totalDurationSecondsRemaining <= 9) {
-        totalDurationSecondsRemaining = "0" + totalDurationSecondsRemaining;
-    }
-    if (totalDurationMinutes <= 9) {
-        totalDurationMinutes = "0" + totalDurationMinutes
-    }
-    let totalDurationDisplay = `${totalDurationHours}:${totalDurationMinutes}:${totalDurationSecondsRemaining}`;
-    queueMessage += `\nTotal duration: ${totalDurationDisplay}`;
+    totalDurationSeconds += durationStringToSeconds(currentSong.song.duration);
+    const queueDurationString = secondsToDurationString(totalDurationSeconds,3);
+    queueMessage += `\nTotal duration: ${queueDurationString}`;
     await sendLongMessage(queueMessage,textChannel);
 }
 async function clearQueue(textChannel) {
     queue = [];
-    await textChannel.send("Queue cleared.");
+    await textChannel.send("Song queue cleared.");
 }
-function isPlaying () {
-    return Object.keys(playing).length === 0;
+
+/**
+ * Computes the number of seconds since the given timestamp
+ * @param started - the reference timestamp
+ * @returns {number}
+ */
+function elapsed(started) {
+    return +Date.now() - started;
+}
+
+/**
+ * computes the remaining time in seconds, given a duration and the amount of time elapsed
+ * @param duration
+ * @param elapsed - the number of seconds that have elapsed
+ * @returns {number}
+ */
+function timeRemaining(duration,elapsed) {
+    return duration - elapsed;
+}
+
+/**
+ * returns the remaining duration, given a duration in seconds and the number of seconds elapsed
+ * @param duration
+ * @param elapsed
+ * @returns {string}
+ */
+function timeRemainingString(duration,elapsed) {
+    return secondsToDurationString(duration - elapsed);
+}
+
+/**
+ * converts a duration string into a number of seconds
+ * @param durationString - a duration string, eg. "1:23:45" or "12:34"
+ * @returns {number}
+ */
+function durationStringToSeconds(durationString) {
+    let durationHours = 0;
+    let durationMinutes = 0;
+    let durationSeconds = 0;
+    const durationParts = durationString.split(":");
+    if (durationParts.length === 3) {
+        [durationHours, durationMinutes, durationSeconds] = durationParts;
+    } else if (durationParts.length === 2) {
+        [durationMinutes, durationSeconds] = durationParts;
+    } else {
+        [durationSeconds] = durationParts;
+    }
+    durationSeconds = +durationSeconds;
+    durationSeconds += (+durationMinutes * 60);
+    durationSeconds += (+durationHours * 60 * 60);
+
+    return +durationSeconds;
+}
+
+/**
+ * Generates a string representing the number of hours / minutes / seconds in format hh:ii:ss, given a number of seconds
+ * A second parameter can be passed to specify the level of precision (whether or not a 0 should be printed on 0 hours)
+ * Note: hours will always be printed if hours are > 0
+ * @param seconds - the number of seconds
+ * @param precision - 2 or 3, 3 will print hours as well even if there is 0 hours
+ * @returns {string}
+ */
+function secondsToDurationString(seconds,precision = 2) {
+    let h = Math.floor(seconds / 3600);
+    let i = Math.floor(seconds % 3600 / 60);
+    let s = Math.floor(seconds % 3600 % 60);
+
+    if (s <= 9) {
+        s = "0" + s;
+    }
+    if (i <= 9) {
+        i = "0" + i
+    }
+    if (precision >= 3 || h > 0) {
+        return `${h}:${i}:${s}`;
+    } else {
+        return `${i}:${s}`;
+    }
 }
