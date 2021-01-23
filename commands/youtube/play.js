@@ -145,9 +145,11 @@ async function listQueue(textChannel) {
         totalDurationSeconds += durationStringToSeconds(song.duration);
         queueMessage += `\n${i+1}. ${song.description} (${song.duration})`;
     }
-    totalDurationSeconds += durationStringToSeconds(currentSong.song.duration);
-    const queueDurationString = secondsToDurationString(totalDurationSeconds,3);
-    queueMessage += `\nTotal duration: ${queueDurationString}`;
+    if (playing) {
+        totalDurationSeconds += durationStringToSeconds(currentSong.song.duration);
+    }
+    const totalDurationString = secondsToDurationString(totalDurationSeconds,3);
+    queueMessage += `\nTotal duration: ${totalDurationString}`;
     await sendLongMessage(queueMessage,textChannel);
 }
 async function clearQueue(textChannel) {
