@@ -250,9 +250,12 @@ function secondsToDurationString(seconds,precision = 2) {
 function generateProgressBar(width,progress,total) {
     const percent = progress - total;
     const barPosition = Math.round(width * percent);
+    console.log(`progress: ${progress}`);
+    console.log(`total: ${progress}`);
+    console.log(`barPosition: ${progress}`);
 
     let barText = "|";
-    for (i = 0; i < width; i++) {
+    for (let i = 0; i < width; i++) {
         if (i === barPosition) {
             barText += "|";
         } else {
