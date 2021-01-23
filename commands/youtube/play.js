@@ -138,9 +138,8 @@ async function nowPlaying(textChannel) {
         const elapsedString = secondsToDurationString(elapsed,currentSong.song.duration.split(":").length);
         const remainingString = secondsToDurationString(remaining,currentSong.song.duration.split(":").length);
         const nowPlayingEmbed = new Discord.MessageEmbed()
-            .setTitle("Now Playing")
-            .setDescription(currentSong.song.title)
-            .setURL(currentSong.song.url)
+            .setTitle(":musical_note:Now Playing:musical_note:")
+            .setDescription(`[**${currentSong.song.title}**](${currentSong.song.url})`)
             .addField("Description",currentSong.song.description)
             .addField("Progress",generateProgressBar(21,elapsed,songLength));
         await textChannel.send(nowPlayingEmbed);
