@@ -84,7 +84,7 @@ async function playSong(song,textChannel,voiceChannel) {
     console.log(`playing: ${playing} | queue: ${queue}`);
     if (queue.length > 0 || playing) {
         addSongToQueue(song);
-        await textChannel.send(`Added **${song.description}** to the queue in position #${queue.length+1}`);
+        await textChannel.send(`Added **${song.description}** to the queue in position #${queue.length}`);
     } else {
         addSongToQueue(song);
         await playNextSong(textChannel,voiceChannel);
@@ -127,11 +127,11 @@ async function playNextSong(textChannel,voiceChannel) {
 async function listQueue(textChannel) {
     if (playing) {
         const songLength = durationStringToSeconds(currentSong.song.duration);
-        const elapsed = +Date.now() - currentSong.started;
+        const elapsed = (+Date.now() / 1000) - currentSong.started;
         const remaining = songLength - elapsed;
         const elapsedString = secondsToDurationString(elapsed,currentSong.song.duration.split(":").length);
         const remainingString = secondsToDurationString(remaining,currentSong.song.duration.split(":").length);
-        await textChannel.send(`Currently playing: **${currentSong.song.description}** (${elapsedString}/${currentSong.song.duration}) [-${remainingString}`);
+        await textChannel.send(`Currently playing: **${currentSong.song.description}** (${elapsedString}/${currentSong.song.duration}) [-${remainingString}]`);
     }
     if (queue.length === 0) {
         await textChannel.send("There are no songs currently in queue.");
@@ -163,7 +163,7 @@ async function clearQueue(textChannel) {
  * @returns {number}
  */
 function elapsed(started) {
-    return +Date.now() - started;
+    return (+Date.now() / 1000) - started;
 }
 
 /**
