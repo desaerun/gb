@@ -260,4 +260,5 @@ function generateProgressBar(width,progress,total) {
         }
     }
     barText += "|";
+    return barText;
 }
