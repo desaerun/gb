@@ -70,7 +70,8 @@ async function stopPlaying(textChannel) {
     }
     textChannel.send("Stopping current song.")
     currentSong.voiceChannel.leave();
-    playing = {};
+    currentSong = {};
+    playing = false;
 }
 async function skipSong(textChannel) {
     if (!playing) {
@@ -128,7 +129,7 @@ async function playNextSong(textChannel,voiceChannel) {
         voiceChannel.leave();
     }
 }
-async function listQueue(textChannel) {
+async function nowPlaying(textChannel) {
     if (playing) {
         const songLength = durationStringToSeconds(currentSong.song.duration);
         const elapsed = (+Date.now() - currentSong.started) / 1000;
@@ -139,6 +140,9 @@ async function listQueue(textChannel) {
         playingMessage.suppressEmbeds(true);
         await textChannel.send(generateProgressBar(40,elapsed,songLength));
     }
+}
+async function listQueue(textChannel) {
+    await nowPlaying(textChannel);
     if (queue.length === 0) {
         await textChannel.send("There are no songs currently in queue.");
         return;
