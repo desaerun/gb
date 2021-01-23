@@ -13,7 +13,7 @@ module.exports = async function deleteMessage(deletedMessage) {
     const now = +new Date();
     try {
         await pool.query("UPDATE messages SET deleted = ? WHERE id = ?", [now, deletedMessage.id]);
-        console.log(`Set deleted flag on message ${deletedMessage.id}.`);
+        console.log(`Set deleted timestamp on message ${deletedMessage.id}.`);
     } catch (e) {
         throw e;
     }

@@ -29,26 +29,24 @@ async function execute(client, message, args) {
     }
     let q = args.join(" ");
 
+    let video;
     try {
         const filters = await ytsr.getFilters(q);
         const filter = filters.get("Type").get("Video");
         let req = await ytsr(filter.url,{limit: 1});
-
-        const video = req.items[0];
-        console.log(JSON.stringify(video));
-        const song = {
-            url: video.url,
-            title: video.title,
-            description: video.description,
-            views: video.views,
-            duration: video.duration,
-            uploadedAt: video.uploadedAt,
-        }
-        console.log(video.url);
-        await playSong(song,message.channel,message.member.voice.channel);
+        video = req.items[0];
     } catch (e) {
         throw e;
     }
+    const song = {
+        url: video.url,
+        title: video.title,
+        description: video.description,
+        views: video.views,
+        duration: video.duration,
+        uploadedAt: video.uploadedAt,
+    }
+    await playSong(song,message.channel,message.member.voice.channel);
 }
 //module export
 module.exports = {
@@ -100,7 +98,6 @@ async function playSong(song,textChannel,voiceChannel) {
     }
 }
 async function playNextSong(textChannel,voiceChannel) {
-    console.log(queue);
     if (queue.length > 0) {
         const song = queue.shift();
         try {

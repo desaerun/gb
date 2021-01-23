@@ -27,7 +27,6 @@ getCommands("./commands");
 getListenerSet("./listeners");
 
 client.once("ready", () => {
-    console.log("bot online.");
     //let guilds = client.guilds;
 
     //todo: read in first line from github_update.txt and add it to the "online" message
@@ -81,11 +80,9 @@ client.on("message", async message => {
     }
 });
 client.on("messageUpdate", async (oldMessage, newMessage) => {
-    console.log(`Message Edit triggered.`);
     await updateEditedMessage(oldMessage, newMessage);
 });
 client.on("messageDelete", async (deletedMessage) => {
-    console.log(`Message Deletion triggered: ${JSON.stringify(deletedMessage)}`);
     await deleteMessage(deletedMessage);
 });
 
@@ -160,7 +157,6 @@ function isCommand(message) {
  */
 async function runCommands(message, args) {
     const commandName = args.shift().toLowerCase();
-    console.log(`attempting to run command ${commandName}: ${JSON.stringify(client.commands.get(commandName))}`);
 
     if (client.commands.has(commandName)) {
         try {

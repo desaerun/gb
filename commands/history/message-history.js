@@ -55,7 +55,6 @@ async function execute(client, message, args) {
         embedMessage.addField(":x: Deleted:", moment(currentMessage.deleted).format(dateFormat));
     }
     if (messageHistory.length > 0) { // if the message has an edit history
-        console.log(`messageHistory: ${JSON.stringify(messageHistory)}`);
         originalContent = messageHistory[messageHistory.length - 1].oldContent;
         const mostRecentEdit = messageHistory.shift();
         embedMessage.addField(`Current Content (edited on ${moment(mostRecentEdit.editTimestamp).format(dateFormat)}):`, mostRecentEdit.newContent);

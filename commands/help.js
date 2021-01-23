@@ -97,7 +97,6 @@ function getHelpMessage(command) {
                     value += `\nNo default value`;
                 }
             }
-            console.log(value);
             fields.push({
                 name: `\`${currentArg.param}\``,
                 value: value
@@ -131,13 +130,11 @@ function generateCommandList(clientCommands) {
         for (const item of commandFiles) {
             const fullItemName = `${dirPath}/${item}`;
             if (fs.statSync(fullItemName).isDirectory()) {
-                logMessage(`${fullItemName} is a directory, recursing`);
                 const prettyDirName = uppercaseFirstLetter(item.replace("_", " "));
                 commandsText += `\n${indent(indentLevel)}**${prettyDirName}** commands:`;
                 commandsText += getCommandsText(fullItemName, clientCommands, indentLevel + 1);
             } else {
                 if (item !== path.basename(__filename) && item.endsWith(".js")) {
-                    logMessage(`${fullItemName} is a file, adding...`);
                     const commandName = item.match(/(.+)\.js/)[1];
                     if (clientCommands.get(commandName)) {
                         let currentCommand = clientCommands.get(commandName);
