@@ -40,11 +40,8 @@ client.once("ready", () => {
     if (CONFIG.VERBOSITY >= 3) {
         console.log(`Bot online. Sending Online Status message to ${client.channels.cache.get(process.env.ONLINE_STATUS_CHANNEL_ID).name}(${process.env.ONLINE_STATUS_CHANNEL_ID}).`)
     }
-    //todo: fix the bot timing out every 8 hours
-    /*
     let online_message  = `Bot status: Online.  Type: ${process.env.BUILD_ENV}\n`;
     dev_output.sendStatus(online_message, process.env.ONLINE_STATUS_CHANNEL_ID,"#21a721");
-     */
 
     //set initial bot status
     client.user.setActivity(status.params[0].default, {type: "PLAYING"})
@@ -63,7 +60,14 @@ client.once("ready", () => {
 client.on("message", async message => {
     await captureMessage(client, message, true);
 
-    const args = message.content.slice(CONFIG.PREFIX.length).split(/ +/);
+    let args = message.content.slice(CONFIG.PREFIX.length);
+    //handling for quoted args
+    //this regex matches the inside of single or double quotes, or single words.
+    const re = /(?=["'])(?:"([^"\\]*(?:\\[\s\S][^"\\]*)*)"|'([^'\\]*(?:\\[\s\S][^'\\]*)*)')|\b([^\s]+)\b/;
+    const argRe = new RegExp(re,"ig");
+
+    const matchesArr = [...args.matchAll(argRe)];
+    args = matchesArr.flatMap(a => a.slice(1,4).filter(a => a !== undefined));
 
     // Ignore my own messages
     if (message.author.bot) return;
@@ -100,15 +104,16 @@ function getCommands(dir, level = 0) {
         } else {
             if (file.endsWith(".js")) {
                 const command = require(`${current_dir}${file}`);
+                // client.commands.set(command.name, command);
 
-                if (command.names && !command.name) {
-                    command.name = command.names[0];
+                if (command.aliases && !command.name) {
+                    command.name = command.aliases.shift();
                 }
                 if (command.name) {
                     client.commands.set(command.name, command);
                 }
-                if (command.names) {
-                    for (let commandName of command.names) {
+                if (command.aliases) {
+                    for (let commandName of command.aliases) {
                         client.commands.set(commandName, command);
                     }
                 }
@@ -155,8 +160,8 @@ function isCommand(message) {
  */
 async function runCommands(message, args) {
     const commandName = args.shift().toLowerCase();
-
     console.log(`attempting to run command ${commandName}: ${JSON.stringify(client.commands.get(commandName))}`);
+
     if (client.commands.has(commandName)) {
         try {
             let command = client.commands.get(commandName);
@@ -230,7 +235,8 @@ function verifyArgTypes(command,args) {
                             break;
                         case "snowflake":
                             const re = /^\d{16}$/
-                            coercibleTypes.snowflake = args[i].test(re);
+                            const snowFlake = new RegExp(re);
+                            coercibleTypes.snowflake = snowFlake.test(args[i]);
                             break;
                         case "string":
                         case "str":
@@ -239,7 +245,6 @@ function verifyArgTypes(command,args) {
                             break;
                     }
                 }
-                console.log(coercibleTypes);
                 const isValidType = Object.values(coercibleTypes).some(element => element === true);
                 if (!isValidType) {
                     argTypeErrors[i] = `Argument **${command.params[i].param}** could not be coerced to a ${command.params[i].type} value.`;

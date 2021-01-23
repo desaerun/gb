@@ -3,6 +3,7 @@ const ytdl = require("ytdl-core-discord");
 const ytsr = require("ytsr");
 const sendLongMessage = require("../../tools/sendLongMessage");
 const {suppressUrls} = require("../../tools/utils");
+const Discord = require("discord.js");
 
 //module settings
 const name = "play";
@@ -37,7 +38,8 @@ async function execute(client, message, args) {
         console.log(JSON.stringify(video));
         const song = {
             url: video.url,
-            description: video.title,
+            title: video.title,
+            description: video.description,
             views: video.views,
             duration: video.duration,
             uploadedAt: video.uploadedAt,
@@ -80,15 +82,18 @@ async function skipSong(textChannel) {
         await textChannel.send(`There is no song currently playing.`);
         return;
     }
-    await textChannel.send(`Skipping ${suppressUrls(currentSong.song.description)}`);
+    await textChannel.send(`Skipping **${suppressUrls(currentSong.song.title)}**`);
     await playNextSong(textChannel,currentSong.voiceChannel);
+    if (!playing && queue.length === 0) {
+        await textChannel.send(`End of song queue.`);
+    }
 }
 
 async function playSong(song,textChannel,voiceChannel) {
     console.log(`playing: ${playing} | queue: ${queue}`);
     if (queue.length > 0 || playing) {
         addSongToQueue(song);
-        const addedSongMessage = await textChannel.send(suppressUrls(`Added **${song.description}** to the queue in position #${queue.length}`));
+        await textChannel.send(`Added **${suppressUrls(song.title)}** to the queue in position #${queue.length}`);
     } else {
         addSongToQueue(song);
         await playNextSong(textChannel,voiceChannel);
@@ -102,7 +107,7 @@ async function playNextSong(textChannel,voiceChannel) {
             const connection = await voiceChannel.join();
             const stream = await ytdl(song.url);
             const dispatcher = connection.play(stream, {type: "opus"});
-            await textChannel.send(`Playing **${suppressUrls(song.description)}**`);
+            await textChannel.send(`Playing **${suppressUrls(song.title)}**`);
             playing = true;
             currentSong = {
                 started: +Date.now(),
@@ -135,8 +140,12 @@ async function nowPlaying(textChannel) {
         const remaining = songLength - elapsed;
         const elapsedString = secondsToDurationString(elapsed,currentSong.song.duration.split(":").length);
         const remainingString = secondsToDurationString(remaining,currentSong.song.duration.split(":").length);
-        await textChannel.send(suppressUrls(`Currently playing: **${currentSong.song.description}** (${elapsedString}/${currentSong.song.duration}) [-${remainingString}]`));
-        await textChannel.send(generateProgressBar(40,elapsed,songLength));
+        const nowPlayingEmbed = new Discord.MessageEmbed()
+            .setTitle(":musical_note: Now Playing :musical_note:")
+            .setDescription(`[**${currentSong.song.title}**](${currentSong.song.url})`)
+            .addField("Description",currentSong.song.description)
+            .addField("Progress",generateProgressBar(21,elapsed,songLength));
+        await textChannel.send(nowPlayingEmbed);
     }
 }
 async function listQueue(textChannel) {
@@ -151,7 +160,7 @@ async function listQueue(textChannel) {
         let song = queue[i];
 
         totalDurationSeconds += durationStringToSeconds(song.duration);
-        queueMessage += suppressUrls(`\n${i+1}. **${song.description}** (${song.duration})`);
+        queueMessage += `\n${i+1}. **${suppressUrls(song.title)}** (${song.duration})`;
     }
     if (playing) {
         totalDurationSeconds += durationStringToSeconds(currentSong.song.duration);
@@ -234,7 +243,7 @@ function secondsToDurationString(seconds,precision = 2) {
     if (s <= 9) {
         s = "0" + s;
     }
-    if (i <= 9) {
+    if (i <= 9 && h > 0) {
         i = "0" + i
     }
     if (precision >= 3 || h > 0) {
@@ -282,5 +291,5 @@ function generateProgressBar(width,progress,total) {
     bar += "╣";
     bar += ` ${Math.round(percent * 10000)/100}%`;
 
-    return `\`${progressBarText}\`\n\`${bar}\``;
+    return `\`\`\`${progressBarText}\n${bar}\`\`\``;
 }

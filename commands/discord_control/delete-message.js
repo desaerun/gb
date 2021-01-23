@@ -5,7 +5,7 @@ const name = "delete-message";
 const description = "Deletes a message"
 const params = [
     {
-        name: "messageID",
+        param: "messageID",
         description: "the ID of the message",
         type: "Snowflake",
         //no default, a message ID _must_ be given
