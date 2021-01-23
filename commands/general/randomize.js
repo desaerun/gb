@@ -23,6 +23,7 @@ async function execute(client, message, args) {
 //module export
 module.exports = {
     name: name,
+    names: names,
     description: description,
     execute: execute,
     params: params,
