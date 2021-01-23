@@ -17,7 +17,7 @@ async function execute(client, message, args) {
     const trimmed = args.map((a) => a.trim());
     const text = trimmed.join("");
     const items = text.split(",");
-    return getRandomArrayMember(items);
+    await message.channel.send(getRandomArrayMember(items));
 }
 
 //module export
