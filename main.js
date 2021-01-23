@@ -106,20 +106,15 @@ function getCommands(dir, level = 0) {
                 const command = require(`${current_dir}${file}`);
                 // client.commands.set(command.name, command);
 
-                if (command.names && !command.name) {
-                    console.log(`Command ${command.names[0]} did not have a name but had "names": ${command.names}`);
-                    command.name = command.names[0];
+                if (command.aliases && !command.name) {
+                    command.name = command.aliases.shift();
                 }
                 if (command.name) {
                     client.commands.set(command.name, command);
-                    console.log(`adding command ${command.name}`);
-                    console.log(client.commands.get(command.name));
                 }
-                if (command.names) {
-                    for (let commandName of command.names) {
+                if (command.aliases) {
+                    for (let commandName of command.aliases) {
                         client.commands.set(commandName, command);
-                        console.log(`adding command from Names list: ${commandName}`);
-                        console.log(client.commands.get(commandName));
                     }
                 }
             }
