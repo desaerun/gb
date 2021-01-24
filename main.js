@@ -162,7 +162,7 @@ async function runCommands(message, args) {
             args = setArgsToDefault(command, args);
 
             let argTypeErrors;
-            [args, argTypeErrors] = verifyArgTypes(command, args);
+            [args, argTypeErrors] = coerceArgsToTypes(command, args);
             if (argTypeErrors.length > 0) {
                 const errors = argTypeErrors.join("\n");
                 await sendLongMessage(errors, message.channel);
@@ -200,7 +200,7 @@ function setArgsToDefault(command, args) {
     return args;
 }
 
-function verifyArgTypes(command, args) {
+function coerceArgsToTypes(command, args) {
     let argTypeErrors = [];
     if (command.params) {
         for (let i = 0; i < command.params.length; i++) {
@@ -216,14 +216,14 @@ function verifyArgTypes(command, args) {
                     switch (currentAllowedType.toLowerCase()) {
                         case "integer":
                         case "int":
-                            if (!isNaN(parseInt(args[i], 10))) {
-                                args[i] = parseInt(args[i], 10);
+                            if (!isNaN(parseInt(Number(args[i]), 10))) {
+                                args[i] = parseInt(Number(args[i]), 10);
                                 coercibleTypes.int = true;
                             }
                             break;
                         case "float":
-                            if (!isNaN(parseFloat(args[i]))) {
-                                args[i] = parseFloat(args[i]);
+                            if (!isNaN(parseFloat(Number(args[i])))) {
+                                args[i] = parseFloat(Number(args[i]));
                                 coercibleTypes.float = true;
                             }
                             break;
