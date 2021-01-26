@@ -35,7 +35,7 @@ client.once("ready", () => {
     let lineReader = require("readline").createInterface({input: require("fs").createReadStream("github_update.txt")});
     online_message += ``
     */
-    const nowTimeDate = moment().format("ddd, MMM DD YYYY h:mm:ss a");
+    const nowTimeDate = moment().format("ddd, MMM DD YYYY h:mm:ss a [GMT]Z");
     if (CONFIG.VERBOSITY >= 3) {
         console.log(`${nowTimeDate} - Bot online. Sending Online Status message to ${client.channels.cache.get(process.env.ONLINE_STATUS_CHANNEL_ID).name}(${process.env.ONLINE_STATUS_CHANNEL_ID}).`)
     }
@@ -218,15 +218,16 @@ function coerceArgsToTypes(command, args) {
                     switch (currentAllowedType.toLowerCase()) {
                         case "integer":
                         case "int":
-                            const n = Number(args[i]);
-                            if (!isNaN(n)) {
-                                args[i] = parseInt(Number(args[i]), 10);
+                            const intN = Number(args[i]);
+                            if (!isNaN(parseInt(intN))) {
+                                args[i] = parseInt(intN, 10);
                                 coercibleTypes.int = true;
                             }
                             break;
                         case "float":
-                            if (!isNaN(parseFloat(Number(args[i])))) {
-                                args[i] = parseFloat(Number(args[i]));
+                            const floatN = Number(args[i]);
+                            if (!isNaN(floatN)) {
+                                args[i] = parseFloat(floatN);
                                 coercibleTypes.float = true;
                             }
                             break;
