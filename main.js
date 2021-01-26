@@ -39,7 +39,7 @@ client.once("ready", () => {
     if (CONFIG.VERBOSITY >= 3) {
         console.log(`${nowTimeDate} - Bot online. Sending Online Status message to ${client.channels.cache.get(process.env.ONLINE_STATUS_CHANNEL_ID).name}(${process.env.ONLINE_STATUS_CHANNEL_ID}).`)
     }
-    let online_message = `${nowTimeDate} - Bot status: Online.  Type: ${process.env.BUILD_ENV}\n`;
+    let online_message = `${nowTimeDate}\nBot status: Online.\nType: ${process.env.BUILD_ENV}\n`;
     dev_output.sendStatus(online_message, process.env.ONLINE_STATUS_CHANNEL_ID, "#21a721");
 
     //set initial bot status
