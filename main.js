@@ -1,6 +1,8 @@
 require("dotenv").config();  // pull in ENV variables from .env file
 const CONFIG = require("./config/config");
 const Discord = require("discord.js");
+const moment = require("moment");
+
 const client = new Discord.Client({partials: ["MESSAGE"]});
 //const snowflakeToTimestamp = require("./tools/snowflakeToTimestamp");
 
@@ -33,11 +35,11 @@ client.once("ready", () => {
     let lineReader = require("readline").createInterface({input: require("fs").createReadStream("github_update.txt")});
     online_message += ``
     */
-
+    const nowTimeDate = moment().format("ddd, MMM DD YYYY h:mm:ss a");
     if (CONFIG.VERBOSITY >= 3) {
-        console.log(`Bot online. Sending Online Status message to ${client.channels.cache.get(process.env.ONLINE_STATUS_CHANNEL_ID).name}(${process.env.ONLINE_STATUS_CHANNEL_ID}).`)
+        console.log(`${nowTimeDate} - Bot online. Sending Online Status message to ${client.channels.cache.get(process.env.ONLINE_STATUS_CHANNEL_ID).name}(${process.env.ONLINE_STATUS_CHANNEL_ID}).`)
     }
-    let online_message = `Bot status: Online.  Type: ${process.env.BUILD_ENV}\n`;
+    let online_message = `${nowTimeDate} - Bot status: Online.  Type: ${process.env.BUILD_ENV}\n`;
     dev_output.sendStatus(online_message, process.env.ONLINE_STATUS_CHANNEL_ID, "#21a721");
 
     //set initial bot status
@@ -216,7 +218,8 @@ function coerceArgsToTypes(command, args) {
                     switch (currentAllowedType.toLowerCase()) {
                         case "integer":
                         case "int":
-                            if (!isNaN(parseInt(Number(args[i]), 10))) {
+                            const n = Number(args[i]);
+                            if (!isNaN(n)) {
                                 args[i] = parseInt(Number(args[i]), 10);
                                 coercibleTypes.int = true;
                             }
