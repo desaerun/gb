@@ -77,7 +77,8 @@ const percentFormat = new Intl.NumberFormat("en-US",
     });
 function getCoinId(symbol, coinsList) {
     const coin = coinsList.find(c => c.symbol === symbol).id;
-    if (coin) {
+    console.log(coinsList.find(c => c.symbol === symbol));
+    if (coin && coin.id) {
         return coin.id;
     } else {
         throw new Error("The coin could not be found.");
