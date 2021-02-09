@@ -76,7 +76,7 @@ const percentFormat = new Intl.NumberFormat("en-US",
         maximumFractionDigits: 2
     });
 function getCoinId(symbol, coinsList) {
-    const coin = coinsList.find(c => c.symbol === symbol);
+    const coin = coinsList.find(c => c.symbol === symbol.toLowerCase());
     console.log(`coin: ${coin}`);
     if (coin && coin.id) {
         return coin.id;
