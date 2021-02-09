@@ -31,6 +31,7 @@ async function execute(client, message, args) {
 
     try {
         const coinsList = await getCoinsList();
+        console.log(coinsList);
         const coinId = getCoinId(crypto,coinsList);
         const price = await getCoinPrice(coinId);
         const priceFormatted = currencyFormat.format(price);
@@ -75,7 +76,7 @@ const percentFormat = new Intl.NumberFormat("en-US",
         maximumFractionDigits: 2
     });
 function getCoinId(symbol, coinsList) {
-    const coin = coinsList.find(c => c.symbol = symbol).id;
+    const coin = coinsList.find(c => c.symbol === symbol).id;
     if (coin) {
         return coin.id;
     } else {
