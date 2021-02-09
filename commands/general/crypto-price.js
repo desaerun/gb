@@ -31,8 +31,8 @@ async function execute(client, message, args) {
 
     try {
         const coinsList = await getCoinsList();
-        console.log(coinsList);
         const coinId = getCoinId(crypto,coinsList);
+        console.log(coinId);
         const price = await getCoinPrice(coinId);
         const priceFormatted = currencyFormat.format(price);
         await message.channel.send(`Coin price: ${priceFormatted}`);
