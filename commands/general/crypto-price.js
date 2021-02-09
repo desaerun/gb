@@ -83,7 +83,7 @@ function getCoinId(symbol, coinsList) {
     }
 }
 async function getCoinsList() {
-    const cryptoCoinsListFile = "data/cryptoCoinsList.json";
+    const cryptoCoinsListFile = "./data/cryptoCoinsList.json";
     let coinsListData;
     let allowedAge = (24 * 60 * 60 * 1000); // new coin list cache is fresh if it's newer than 1 day
 
