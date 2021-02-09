@@ -88,15 +88,7 @@ async function getCoinsList() {
     let allowedAge = (24 * 60 * 60 * 1000); // new coin list cache is fresh if it's newer than 1 day
 
     //check if the coins list is already cached
-    if (!fs.existsSync(cryptoCoinsListFile))  {
-        //if not, fetch from API and write to cache
-        try {
-            coinsListData = await getAPICoinsList();
-        } catch (e) {
-            throw new Error(e);
-        }
-        fs.writeFileSync(cryptoCoinsListFile,JSON.stringify(coinsListData));
-    } else {
+    if (fs.existsSync(cryptoCoinsListFile)) {
         //if the coins list is already cached,
         //check its age
         const modified = fs.statSync(cryptoCoinsListFile).mtime.getTime();
@@ -111,6 +103,14 @@ async function getCoinsList() {
             //else just pull it from the cache
             coinsListData = JSON.parse(fs.readFileSync(cryptoCoinsListFile,"utf8"));
         }
+    } else {
+        //if not, fetch from API and write to cache
+        try {
+            coinsListData = await getAPICoinsList();
+        } catch (e) {
+            throw new Error(e);
+        }
+        fs.writeFileSync(cryptoCoinsListFile,JSON.stringify(coinsListData));
     }
     return coinsListData;
 }
@@ -144,6 +144,7 @@ async function getCoinOhlcData(coinId,vsCurrency = "usd", days = 1) {
     }
 }
 async function getCoinPrice(coinId,vsCurrency = "usd") {
+    console.log(`https://api.coingecko.com/api/v3/simple/price?ids=${coinId}&vs_currencies=${vsCurrency}`);
     try {
         const coinPriceRequest = await axios.get("https://api.coingecko.com/api/v3/simple/price",{
             params: {
