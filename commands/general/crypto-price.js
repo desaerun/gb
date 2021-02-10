@@ -19,6 +19,11 @@ const params = [
 
 //main
 async function execute(client, message, args) {
+    //todo: get coinbase data first, only fall back on coingecko if ticker is not available,
+    //or for OHLC data to draw candles
+
+    //todo: draw candlestick chart
+    //todo: make output prettier (discord embed? inline fields? include market cap/volume?)
     if (args.length === 0) {
         await message.channel.send(`You must include a crypto ticker (BTC, ETH) with this request.`);
         return;
@@ -27,8 +32,6 @@ async function execute(client, message, args) {
     //join the args to one big long comma-separated string
     let symbols = args;
     let output = [];
-    console.log(`symbols: ${symbols}`);
-
     try {
         //get the list of coins
         const coinsList = await getCoinsList();
@@ -63,16 +66,6 @@ async function execute(client, message, args) {
 
                 const updatedDateTime = moment.unix(coinData.last_updated_at).format("hh:mm:ssA [GMT]Z");
 
-                // console.log(`Coin data for ${symbol}: `, coinData);
-                // console.log(`Price: `, price);
-                // console.log(`Price, formatted: `, priceFormatted);
-                // console.log(`Price 24h ago: `, previousPrice);
-                // console.log(`Price difference: `, priceChange);
-                // console.log(`Price difference,formatted: `, priceChangeFormatted);
-                // console.log(`24h change %: `, percentChange);
-                // console.log(`24h change %, formatted: `, percentChangeFormatted);
-                // console.log(`Last updated, timestamp: `, coinData.last_updated_at);
-                // console.log(`Last updated, formatted: `, updatedDateTime);
                 output.push(`1 **${symbol}** = **${priceFormatted}** (**${priceChangeFormatted}**[**${percentChangeFormatted}**] last 24hrs) (As of ${updatedDateTime})`);
             }
         } else {
@@ -97,7 +90,6 @@ module.exports = {
 //helper functions
 async function getCoinPrices(coins,vsCurrency = "usd") {
     const coinIdsStr = Object.keys(coins).join(",");
-    console.log(`https://api.coingecko.com/api/v3/simple/price?ids=${coinIdsStr}&vs_currencies=${vsCurrency}`);
     try {
         const coinPriceRequest = await axios.get("https://api.coingecko.com/api/v3/simple/price",{
             params: {
@@ -127,7 +119,6 @@ async function getCoinPrices(coins,vsCurrency = "usd") {
 function getCoinInfo(symbol, coinsList) {
     const crypto = symbol.toLowerCase();
     const coin = coinsList.find(c => (c.symbol === crypto || c.id === crypto));
-    console.log(`symbol: ${symbol} | coin: ${JSON.stringify(coin)}`);
     if (coin && coin.id) {
         return coin;
     } else {
@@ -151,11 +142,13 @@ async function getCoinsList() {
             try {
                 coinsListData = await getAPICoinsList();
                 fs.writeFileSync(cryptoCoinsListFile,JSON.stringify(coinsListData));
+                return coinsListData;
             } catch (e)  {
                 throw new Error(e);
             }
         } else {
             //else just pull it from the cache
+            console.log("Using cached coins list.");
             return JSON.parse(fs.readFileSync(cryptoCoinsListFile,"utf8"));
         }
     } else {
@@ -166,11 +159,11 @@ async function getCoinsList() {
             throw new Error(e);
         }
         fs.writeFileSync(cryptoCoinsListFile,JSON.stringify(coinsListData));
+        return coinsListData;
     }
-    return coinsListData;
 }
 async function getAPICoinsList() {
-    console.log("Fetching coins list from API.");
+    console.log("Fetching fresh coins list from API.");
     try {
         const coinsListRequest = await axios.get("https://api.coingecko.com/api/v3/coins/list");
         if (coinsListRequest.status === 200) {
