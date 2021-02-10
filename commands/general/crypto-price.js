@@ -42,10 +42,10 @@ async function execute(client, message, args) {
             if (coin) {
                 coins[coin.id] = coin;
             } else {
-                await message.channel.send(`${symbol.toUpperCase()} is not a valid coin.`);
+                await message.channel.send(`${symbol.toUpperCase()} is not a valid coin symbol.`);
             }
         }
-        if (coins.keys().length > 0) {
+        if (Object.keys(coins).length > 0) {
             const vsCurrency = "usd";
             coins = await getCoinPrices(coins, vsCurrency);
             for (let coinData of Object.values(coins)) {
