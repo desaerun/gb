@@ -37,7 +37,11 @@ async function execute(client, message, args) {
             console.log(`symbol: ${symbol}`);
             const coin = getCoinInfo(symbol, coinsList);
             //and push it onto the coinIds array
-            coins[coin.id] = coin;
+            if (coin) {
+                coins[coin.id] = coin;
+            } else {
+                await message.channel.send(`The coin could not be found: ${symbol}`);
+            }
         }
         coins = await getCoinPrices(coins);
         for (let [coinId,coinData] of Object.entries(coins)) {
@@ -77,7 +81,7 @@ async function getCoinPrices(coins,vsCurrency = "usd") {
             console.log(JSON.stringify(coins));
             return coins;
         } else {
-            throw new Error(`HTTP status was not 200: ${coinPriceRequest.status}`);
+                throw new Error(`HTTP status was not 200: ${coinPriceRequest.status}`);
         }
     } catch (e) {
         throw new Error(`There was an unexpected error retrieving price data: ${e}`);
@@ -90,7 +94,7 @@ function getCoinInfo(symbol, coinsList) {
     if (coin && coin.id) {
         return coin;
     } else {
-        throw new Error("The coin could not be found.");
+        return false;
     }
 }
 async function getCoinsList() {
@@ -126,6 +130,7 @@ async function getCoinsList() {
     return coinsListData;
 }
 async function getAPICoinsList() {
+    console.log("Fetching coins list from API.");
     try {
         const coinsListRequest = await axios.get("https://api.coingecko.com/api/v3/coins/list");
         if (coinsListRequest.status === 200) {
