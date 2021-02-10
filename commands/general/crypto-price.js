@@ -48,24 +48,25 @@ async function execute(client, message, args) {
         const vsCurrency = "usd";
         coins = await getCoinPrices(coins,vsCurrency);
         for (let coinData of Object.values(coins)) {
-            console.log(coinData);
             const symbol = coinData.symbol.toUpperCase();
-            const priceFormatted = formatMoney(coinData[vsCurrency]);
+            console.log(`Coin data for ${symbol}: `, coinData);
+            const price = coinData[vsCurrency];
+            console.log(`Price: `, price);
+            const priceFormatted = formatMoney(price);
+            console.log(`Price, formatted: `, priceFormatted);
             const percentChange = coinData[`${vsCurrency}_24h_change`];
-            console.log(percentChange);
-            const percentChangeFormatted = percentFormat.format(percentChange);
-            console.log(percentChangeFormatted);
-            const previousPrice = coinData.price / (1 + (percentChange / 100));
-
+            console.log(`24h change %: `, percentChange);
+            const percentChangeFormatted = `${percentChange.toFixed(2)}%`;
+            console.log(`24h change %, formatted: `, percentChangeFormatted);
+            const previousPrice = coinData[vsCurrency] / (1 + (percentChange / 100));
+            console.log(`Price 24h ago: `, previousPrice);
             const priceChange = coinData[vsCurrency] - previousPrice;
+            console.log(`Price difference: `, priceChange);
             const priceChangeFormatted = formatMoney(priceChange);
+            console.log(`Price difference,formatted: `, priceChangeFormatted);
 
+            console.log(`Last updated: `, coinData.last_updated_at);
             output.push(`1 ${symbol} = **${priceFormatted}** (**${priceChangeFormatted}**[**${percentChangeFormatted}**] last 24hrs) (Last updated: ${moment(coinData.last_updated_at).format("HH:mm:ss")})`);
-            //price change: coinData.usd_24h_change
-            //24h volume: coinData.usd_24h_vol
-            //update timestamp: coinData.last_updated_at
-            //formula for calculating previous price change:
-            //priceNow - (1 + (change% / 100))
         }
     } catch (err) {
         await message.channel.send(`error fetching crypto price: ${err}`);
