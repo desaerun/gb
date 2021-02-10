@@ -49,25 +49,26 @@ async function execute(client, message, args) {
         coins = await getCoinPrices(coins,vsCurrency);
         for (let coinData of Object.values(coins)) {
             const symbol = coinData.symbol.toUpperCase();
-            console.log(`Coin data for ${symbol}: `, coinData);
             const price = coinData[vsCurrency];
-            console.log(`Price: `, price);
             const priceFormatted = formatMoney(price);
-            console.log(`Price, formatted: `, priceFormatted);
             const percentChange = coinData[`${vsCurrency}_24h_change`];
-            console.log(`24h change %: `, percentChange);
 
-            console.log(`24h change %, formatted: `, percentChangeFormatted);
             const previousPrice = coinData[vsCurrency] / (1 + (percentChange / 100));
-            console.log(`Price 24h ago: `, previousPrice);
             const priceChange = coinData[vsCurrency] - previousPrice;
             const sign = (priceChange < 0) ? "" : "+";
-            console.log(`Price difference: `, priceChange);
             const formatMaxDecPlaces = (price > 100) ? 2 : 6;
             const priceChangeFormatted = formatMoney(priceChange,2,formatMaxDecPlaces);
             const percentChangeFormatted = `${sign}${percentChange.toFixed(2)}%`;
-            console.log(`Price difference,formatted: `, priceChangeFormatted);
+
             const updatedDateTime = moment(coinData.last_updated_at).format("hh:mm:ssA [GMT]Z");
+            console.log(`Coin data for ${symbol}: `, coinData);
+            console.log(`Price: `, price);
+            console.log(`Price, formatted: `, priceFormatted);
+            console.log(`24h change %: `, percentChange);
+            console.log(`Price 24h ago: `, previousPrice);
+            console.log(`Price difference: `, priceChange);
+            console.log(`Price difference,formatted: `, priceChangeFormatted);
+            console.log(`24h change %, formatted: `, percentChangeFormatted);
             console.log(`Last updated: `, updatedDateTime);
             output.push(`1 **${symbol}** = **${priceFormatted}** (**${priceChangeFormatted}**[**${percentChangeFormatted}**] last 24hrs) (As of ${updatedDateTime})`);
         }
