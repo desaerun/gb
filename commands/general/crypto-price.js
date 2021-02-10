@@ -30,48 +30,23 @@ async function execute(client, message, args) {
         //get the list of coins
         const coinsList = await getCoinsList();
 
-        const coinIds = [];
+        let coins = {};
 
         //for each of the symbols, get the CoinGecko coin-id
         for (const symbol of symbols) {
             console.log(`symbol: ${symbol}`);
-            const coinId = getCoinId(symbol, coinsList);
+            const coin = getCoinInfo(symbol, coinsList);
             //and push it onto the coinIds array
-            coinIds.push(coinId);
+            coins[coin.id] = coin;
         }
-        const priceData = await getCoinPrices(coinIds);
-        for (let [crypto,price] of Object.entries(priceData)) {
-            crypto = crypto.toUpperCase();
-            const priceFormatted = formatMoney(price);
-            await message.channel.send(`1 ${crypto} = ${priceFormatted}`);
+        coins = await getCoinPrices(coins);
+        for (let [coinId,coinData] of Object.entries(coins)) {
+            const symbol = coinData.symbol.toUpperCase();
+            const priceFormatted = formatMoney(coinData.price);
+            await message.channel.send(`1 ${symbol} = ${priceFormatted}`);
         }
     } catch (err) {
         await message.channel.send(`error fetching crypto price: ${err}`);
-    }
-}
-async function getCoinPrices(coinIds,vsCurrency = "usd") {
-    const coinIdsStr = coinIds.join(",");
-    console.log(`https://api.coingecko.com/api/v3/simple/price?ids=${coinIdsStr}&vs_currencies=${vsCurrency}`);
-    try {
-        const coinPriceRequest = await axios.get("https://api.coingecko.com/api/v3/simple/price",{
-            params: {
-                ids: coinIdsStr,
-                vs_currencies: vsCurrency,
-            }
-        });
-        if (coinPriceRequest.status === 200) {
-            let prices = {};
-            console.log(coinPriceRequest.data);
-            for (const [coinId,coinData] of Object.entries(coinPriceRequest.data)) {
-                prices[coinId] = coinData[vsCurrency];
-            }
-            console.log(JSON.stringify(prices));
-            return prices;
-        } else {
-            throw new Error(`HTTP status was not 200: ${coinPriceRequest.status}`);
-        }
-    } catch (e) {
-        throw new Error(`There was an unexpected error retrieving price data: ${e}`);
     }
 }
 
@@ -84,28 +59,36 @@ module.exports = {
 }
 
 //helper functions
-function formatMoney(n,minPlaces = 2, maxPlaces = 8) {
-    const currencyFormat = new Intl.NumberFormat("en-US",
-        {
-            style: "currency",
-            currency: "USD",
-            minimumFractionDigits: minPlaces,
-            maximumFractionDigits: maxPlaces,
+async function getCoinPrices(coins,vsCurrency = "usd") {
+    const coinIdsStr = Object.keys(coins).join(",");
+    console.log(`https://api.coingecko.com/api/v3/simple/price?ids=${coinIdsStr}&vs_currencies=${vsCurrency}`);
+    try {
+        const coinPriceRequest = await axios.get("https://api.coingecko.com/api/v3/simple/price",{
+            params: {
+                ids: coinIdsStr,
+                vs_currencies: vsCurrency,
+            }
         });
-    return currencyFormat.format(n);
+        if (coinPriceRequest.status === 200) {
+            console.log(coinPriceRequest.data);
+            for (const [coinId,priceData] of Object.entries(coinPriceRequest.data)) {
+                coins[coinId].price = priceData[vsCurrency];
+            }
+            console.log(JSON.stringify(coins));
+            return coins;
+        } else {
+            throw new Error(`HTTP status was not 200: ${coinPriceRequest.status}`);
+        }
+    } catch (e) {
+        throw new Error(`There was an unexpected error retrieving price data: ${e}`);
+    }
 }
-const percentFormat = new Intl.NumberFormat("en-US",
-    {
-        style: "percent",
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2
-    });
-function getCoinId(symbol, coinsList) {
+function getCoinInfo(symbol, coinsList) {
     const crypto = symbol.toLowerCase();
     const coin = coinsList.find(c => (c.symbol === crypto || c.id === crypto));
-    console.log(`symbol: ${symbol} | coin: ${coin}`);
+    console.log(`symbol: ${symbol} | coin: ${JSON.stringify(coin)}`);
     if (coin && coin.id) {
-        return coin.id;
+        return coin;
     } else {
         throw new Error("The coin could not be found.");
     }
@@ -171,6 +154,23 @@ async function getCoinOhlcData(coinId,vsCurrency = "usd", days = 1) {
         throw new Error(`There was an unexpected error retrieving OHLC data from API: ${e}`);
     }
 }
+function formatMoney(n,minPlaces = 2, maxPlaces = 8) {
+    const currencyFormat = new Intl.NumberFormat("en-US",
+        {
+            style: "currency",
+            currency: "USD",
+            minimumFractionDigits: minPlaces,
+            maximumFractionDigits: maxPlaces,
+        });
+    return currencyFormat.format(n);
+}
+const percentFormat = new Intl.NumberFormat("en-US",
+    {
+        style: "percent",
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+    });
+
 async function drawCandles(ticker,range) {
     let data = await getCoinOhlcData();
 
@@ -184,3 +184,4 @@ async function drawCandles(ticker,range) {
     context.fillRect(0, 0, width, height);
 
 }
+
