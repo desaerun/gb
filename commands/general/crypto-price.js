@@ -137,24 +137,26 @@ function getCoinInfo(symbol, coinsList) {
 async function getCoinsList() {
     const cryptoCoinsListFile = "./data/cryptoCoinsList.json";
     let coinsListData;
-    let allowedAge = (24 * 60 * 60 * 1000); // new coin list cache is fresh if it's newer than 1 day
+    let allowedAgeDiff = (24 * 60 * 60 * 1000); // new coin list cache is fresh if it's newer than 1 day
+    let allowedAge = +Date.now() - allowedAgeDiff;
 
     //check if the coins list is already cached
     if (fs.existsSync(cryptoCoinsListFile)) {
         //if the coins list is already cached,
         //check its age
         const modified = fs.statSync(cryptoCoinsListFile).mtime.getTime();
-        console.log(`coins list file modified: ${modified}, max allowed age: ${+Date.now() - allowedAge}`);
-        if (modified < +Date.now() - allowedAge) {
+        console.log(`coins list file modified: ${modified}, max allowed age: ${allowedAge}`);
+        if (modified < allowedAge) {
             //if it's older than the allowed age, fetch data from API and update the cache.
             try {
                 coinsListData = await getAPICoinsList();
+                fs.writeFileSync(cryptoCoinsListFile,JSON.stringify(coinsListData));
             } catch (e)  {
                 throw new Error(e);
             }
         } else {
             //else just pull it from the cache
-            coinsListData = JSON.parse(fs.readFileSync(cryptoCoinsListFile,"utf8"));
+            return JSON.parse(fs.readFileSync(cryptoCoinsListFile,"utf8"));
         }
     } else {
         //if not, fetch from API and write to cache
