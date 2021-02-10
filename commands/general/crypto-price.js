@@ -98,7 +98,7 @@ const percentFormat = new Intl.NumberFormat("en-US",
 function getCoinId(symbol, coinsList) {
     const crypto = symbol.toLowerCase();
     const coin = coinsList.find(c => (c.symbol === crypto || c.id === crypto));
-    console.log(`coin: ${coin}`);
+    console.log(`symbol: ${symbol} | coin: ${coin}`);
     if (coin && coin.id) {
         return coin.id;
     } else {
