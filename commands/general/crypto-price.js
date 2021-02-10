@@ -61,6 +61,7 @@ async function execute(client, message, args) {
             const percentChangeFormatted = `${sign}${percentChange.toFixed(2)}%`;
 
             const updatedDateTime = moment(coinData.last_updated_at).format("hh:mm:ssA [GMT]Z");
+
             console.log(`Coin data for ${symbol}: `, coinData);
             console.log(`Price: `, price);
             console.log(`Price, formatted: `, priceFormatted);
@@ -69,7 +70,8 @@ async function execute(client, message, args) {
             console.log(`Price difference: `, priceChange);
             console.log(`Price difference,formatted: `, priceChangeFormatted);
             console.log(`24h change %, formatted: `, percentChangeFormatted);
-            console.log(`Last updated: `, updatedDateTime);
+            console.log(`Last updated, timestamp: `, coinData.last_updated_at);
+            console.log(`Last updated, formatted: `, updatedDateTime);
             output.push(`1 **${symbol}** = **${priceFormatted}** (**${priceChangeFormatted}**[**${percentChangeFormatted}**] last 24hrs) (As of ${updatedDateTime})`);
         }
     } catch (err) {
