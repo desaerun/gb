@@ -51,7 +51,9 @@ async function execute(client, message, args) {
             const symbol = coinData.symbol.toUpperCase();
             const priceFormatted = formatMoney(coinData.price);
             const percentChange = coinData[`${vsCurrency}_24hr_change`];
+            console.log(percentChange);
             const percentChangeFormatted = percentFormat.format(percentChange);
+            console.log(percentChangeFormatted);
             const previousPrice = coinData.price / (1 + (percentChange / 100));
 
             const priceChange = coinData.price - previousPrice;
