@@ -50,7 +50,7 @@ async function execute(client, message, args) {
         for (let coinData of Object.values(coins)) {
             const symbol = coinData.symbol.toUpperCase();
             const priceFormatted = formatMoney(coinData.price);
-            const percentChange = coinData[`${vsCurrency}_24hr_change`];
+            const percentChange = coinData[`${vsCurrency}_24h_change`];
             console.log(percentChange);
             const percentChangeFormatted = percentFormat.format(percentChange);
             console.log(percentChangeFormatted);
@@ -102,7 +102,6 @@ async function getCoinPrices(coins,vsCurrency = "usd") {
             for (const [coinId,priceData] of Object.entries(coinPriceRequest.data)) {
                 coins[coinId].price = priceData[vsCurrency];
             }
-            console.log(JSON.stringify(coins));
             return coins;
         } else {
                 throw new Error(`HTTP status was not 200: ${coinPriceRequest.status}`);
