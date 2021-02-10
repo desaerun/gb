@@ -17,41 +17,57 @@ const params = [
 
 //main
 async function execute(client, message, args) {
-    if (args.length < 1) {
+    if (args.length === 0) {
         await message.channel.send(`You must include a crypto ticker (BTC, ETH) with this request.`);
         return;
     }
 
-    if (args.length > 1) {
-        await message.channel.send(`You cannot make multiple requests at once. (Requested ${args.join(" ")})`);
-        return;
-    }
-
-    let crypto = args[0].toUpperCase();
+    //join the args to one big long comma-separated string
+    let symbols = args.join(",").toUpperCase();
 
     try {
+        //get the list of coins
         const coinsList = await getCoinsList();
-        const coinId = getCoinId(crypto,coinsList);
-        console.log(coinId);
-        const price = await getCoinPrice(coinId);
-        const priceFormatted = currencyFormat.format(price);
-        await message.channel.send(`Coin price: ${priceFormatted}`);
+
+        const coinIds = [];
+
+        //for each of the symbols, get the CoinGecko coin-id
+        for (const symbol of symbols) {
+            const coinId = getCoinId(symbol, coinsList);
+            //and push it onto the coinIds array
+            coinIds.push(coinId);
+        }
+        const priceData = await getCoinPrices(coinIds);
+        for (const price of priceData) {
+            const priceFormatted = formatMoney(price);
+            await message.channel.send(`1 ${crypto} = ${priceFormatted}`);
+        }
     } catch (err) {
         await message.channel.send(`error fetching crypto price: ${err}`);
     }
 }
-async function drawCandles(ticker,range) {
-    let data = await getCoinOhlcData();
-
-    let width = 400;
-    let height = 400;
-
-    const canvas = createCanvas(width,height);
-    const context = canvas.getContext("2d");
-
-    context.fillStyle = "#000";
-    context.fillRect(0, 0, width, height);
-
+async function getCoinPrices(coinIds,vsCurrency = "usd") {
+    console.log(`https://api.coingecko.com/api/v3/simple/price?ids=${coinId}&vs_currencies=${vsCurrency}`);
+    try {
+        const coinPriceRequest = await axios.get("https://api.coingecko.com/api/v3/simple/price",{
+            params: {
+                ids: coinIds,
+                vs_currencies: vsCurrency,
+            }
+        });
+        if (coinPriceRequest.status === 200) {
+            const prices = [];
+            for (const [coinId,coinData] of coinPriceRequest.data) {
+                prices[coinId] = coinData[vsCurrency];
+            }
+            console.log(JSON.stringify(prices));
+            return prices;
+        } else {
+            throw new Error(`HTTP status was not 200: ${coinPriceRequest.status}`);
+        }
+    } catch (e) {
+        throw new Error(`There was an unexpected error retrieving price data: ${e}`);
+    }
 }
 
 //module export
@@ -63,12 +79,16 @@ module.exports = {
 }
 
 //helper functions
-const currencyFormat = new Intl.NumberFormat("en-US",
-    {
-        style: "currency",
-        currency: "USD"
-    });
-
+function formatMoney(n,minPlaces = 2, maxPlaces = 8) {
+    const currencyFormat = new Intl.NumberFormat("en-US",
+        {
+            style: "currency",
+            currency: "USD",
+            minimumFractionDigits: minPlaces,
+            maximumFractionDigits: maxPlaces,
+        });
+    return currencyFormat.format(n);
+}
 const percentFormat = new Intl.NumberFormat("en-US",
     {
         style: "percent",
@@ -76,7 +96,8 @@ const percentFormat = new Intl.NumberFormat("en-US",
         maximumFractionDigits: 2
     });
 function getCoinId(symbol, coinsList) {
-    const coin = coinsList.find(c => c.symbol === symbol.toLowerCase());
+    const crypto = symbol.toLowerCase();
+    const coin = coinsList.find(c => (c.symbol === crypto || c.id === crypto));
     console.log(`coin: ${coin}`);
     if (coin && coin.id) {
         return coin.id;
@@ -145,21 +166,16 @@ async function getCoinOhlcData(coinId,vsCurrency = "usd", days = 1) {
         throw new Error(`There was an unexpected error retrieving OHLC data from API: ${e}`);
     }
 }
-async function getCoinPrice(coinId,vsCurrency = "usd") {
-    console.log(`https://api.coingecko.com/api/v3/simple/price?ids=${coinId}&vs_currencies=${vsCurrency}`);
-    try {
-        const coinPriceRequest = await axios.get("https://api.coingecko.com/api/v3/simple/price",{
-            params: {
-                ids: coinId,
-                vs_currencies: vsCurrency,
-            }
-        });
-        if (coinPriceRequest.status === 200) {
-            return coinPriceRequest.data[coinId][vsCurrency];
-        } else {
-            throw new Error(`HTTP status was not 200: ${coinPriceRequest.status}`);
-        }
-    } catch (e) {
-        throw new Error(`There was an unexpected error retrieving price data: ${e}`);
-    }
+async function drawCandles(ticker,range) {
+    let data = await getCoinOhlcData();
+
+    let width = 400;
+    let height = 400;
+
+    const canvas = createCanvas(width,height);
+    const context = canvas.getContext("2d");
+
+    context.fillStyle = "#000";
+    context.fillRect(0, 0, width, height);
+
 }
