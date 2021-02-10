@@ -45,7 +45,7 @@ async function execute(client, message, args) {
                 await message.channel.send(`${symbol.toUpperCase()} is not a valid coin.`);
             }
         }
-        if (coins.length > 0) {
+        if (coins.keys().length > 0) {
             const vsCurrency = "usd";
             coins = await getCoinPrices(coins, vsCurrency);
             for (let coinData of Object.values(coins)) {
