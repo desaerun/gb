@@ -24,6 +24,7 @@ async function execute(client, message, args) {
 
     //join the args to one big long comma-separated string
     let symbols = args.join(",").toUpperCase();
+    console.log(`symbols: ${symbols}`);
 
     try {
         //get the list of coins
@@ -33,6 +34,7 @@ async function execute(client, message, args) {
 
         //for each of the symbols, get the CoinGecko coin-id
         for (const symbol of symbols) {
+            console.log(`symbol: ${symbol}`);
             const coinId = getCoinId(symbol, coinsList);
             //and push it onto the coinIds array
             coinIds.push(coinId);
