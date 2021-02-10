@@ -37,32 +37,30 @@ async function execute(client, message, args) {
 
         //for each of the symbols, get the CoinGecko coin-id
         for (const symbol of symbols) {
-            console.log(`symbol: ${symbol}`);
             const coin = getCoinInfo(symbol, coinsList);
             //and push it onto the coinIds array
             if (coin) {
                 coins[coin.id] = coin;
             } else {
-                await message.channel.send(`The coin could not be found: ${symbol}`);
+                await message.channel.send(`${symbol.toUpperCase()} is not a valid coin.`);
             }
         }
         const vsCurrency = "usd";
         coins = await getCoinPrices(coins,vsCurrency);
         for (let coinData of Object.values(coins)) {
+            console.log(coinData);
             const symbol = coinData.symbol.toUpperCase();
-            const priceFormatted = formatMoney(coinData.price);
-            const changePercentPropertyName = `${vsCurrency}_24h_change`;
-            console.log(changePercentPropertyName);
-            const percentChange = coinData[changePercentPropertyName];
+            const priceFormatted = formatMoney(coinData[vsCurrency]);
+            const percentChange = coinData[`${vsCurrency}_24h_change`];
             console.log(percentChange);
             const percentChangeFormatted = percentFormat.format(percentChange);
             console.log(percentChangeFormatted);
             const previousPrice = coinData.price / (1 + (percentChange / 100));
 
-            const priceChange = coinData.price - previousPrice;
+            const priceChange = coinData[vsCurrency] - previousPrice;
             const priceChangeFormatted = formatMoney(priceChange);
 
-            output.push(`1 ${symbol} = **${priceFormatted}** (**${priceChangeFormatted}**[**${percentChangeFormatted}**] last 24hrs) (Last updated: ${moment(coinData.last_updated_at).format("HH:mm:ss")}`);
+            output.push(`1 ${symbol} = **${priceFormatted}** (**${priceChangeFormatted}**[**${percentChangeFormatted}**] last 24hrs) (Last updated: ${moment(coinData.last_updated_at).format("HH:mm:ss")})`);
             //price change: coinData.usd_24h_change
             //24h volume: coinData.usd_24h_vol
             //update timestamp: coinData.last_updated_at
@@ -101,9 +99,11 @@ async function getCoinPrices(coins,vsCurrency = "usd") {
             }
         });
         if (coinPriceRequest.status === 200) {
-            console.log(coinPriceRequest.data);
             for (const [coinId,priceData] of Object.entries(coinPriceRequest.data)) {
-                coins[coinId].price = priceData[vsCurrency];
+                coins[coinId] = {
+                    ...coins[coinId],
+                    ...priceData
+                }
             }
             return coins;
         } else {
