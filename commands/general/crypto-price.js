@@ -45,34 +45,38 @@ async function execute(client, message, args) {
                 await message.channel.send(`${symbol.toUpperCase()} is not a valid coin.`);
             }
         }
-        const vsCurrency = "usd";
-        coins = await getCoinPrices(coins,vsCurrency);
-        for (let coinData of Object.values(coins)) {
-            const symbol = coinData.symbol.toUpperCase();
-            const price = coinData[vsCurrency];
-            const priceFormatted = formatMoney(price);
-            const percentChange = coinData[`${vsCurrency}_24h_change`];
+        if (coins.length > 0) {
+            const vsCurrency = "usd";
+            coins = await getCoinPrices(coins, vsCurrency);
+            for (let coinData of Object.values(coins)) {
+                const symbol = coinData.symbol.toUpperCase();
+                const price = coinData[vsCurrency];
+                const priceFormatted = formatMoney(price);
+                const percentChange = coinData[`${vsCurrency}_24h_change`];
 
-            const previousPrice = coinData[vsCurrency] / (1 + (percentChange / 100));
-            const priceChange = coinData[vsCurrency] - previousPrice;
-            const sign = (priceChange < 0) ? "" : "+";
-            const formatMaxDecPlaces = (price > 100) ? 2 : 6;
-            const priceChangeFormatted = formatMoney(priceChange,2,formatMaxDecPlaces);
-            const percentChangeFormatted = `${sign}${percentChange.toFixed(2)}%`;
+                const previousPrice = coinData[vsCurrency] / (1 + (percentChange / 100));
+                const priceChange = coinData[vsCurrency] - previousPrice;
+                const sign = (priceChange < 0) ? "" : "+";
+                const formatMaxDecPlaces = (price > 100) ? 2 : 6;
+                const priceChangeFormatted = formatMoney(priceChange, 2, formatMaxDecPlaces);
+                const percentChangeFormatted = `${sign}${percentChange.toFixed(2)}%`;
 
-            const updatedDateTime = moment(coinData.last_updated_at).format("hh:mm:ssA [GMT]Z");
+                const updatedDateTime = moment.unix(coinData.last_updated_at).format("hh:mm:ssA [GMT]Z");
 
-            console.log(`Coin data for ${symbol}: `, coinData);
-            console.log(`Price: `, price);
-            console.log(`Price, formatted: `, priceFormatted);
-            console.log(`24h change %: `, percentChange);
-            console.log(`Price 24h ago: `, previousPrice);
-            console.log(`Price difference: `, priceChange);
-            console.log(`Price difference,formatted: `, priceChangeFormatted);
-            console.log(`24h change %, formatted: `, percentChangeFormatted);
-            console.log(`Last updated, timestamp: `, coinData.last_updated_at);
-            console.log(`Last updated, formatted: `, updatedDateTime);
-            output.push(`1 **${symbol}** = **${priceFormatted}** (**${priceChangeFormatted}**[**${percentChangeFormatted}**] last 24hrs) (As of ${updatedDateTime})`);
+                console.log(`Coin data for ${symbol}: `, coinData);
+                console.log(`Price: `, price);
+                console.log(`Price, formatted: `, priceFormatted);
+                console.log(`Price 24h ago: `, previousPrice);
+                console.log(`Price difference: `, priceChange);
+                console.log(`Price difference,formatted: `, priceChangeFormatted);
+                console.log(`24h change %: `, percentChange);
+                console.log(`24h change %, formatted: `, percentChangeFormatted);
+                console.log(`Last updated, timestamp: `, coinData.last_updated_at);
+                console.log(`Last updated, formatted: `, updatedDateTime);
+                output.push(`1 **${symbol}** = **${priceFormatted}** (**${priceChangeFormatted}**[**${percentChangeFormatted}**] last 24hrs) (As of ${updatedDateTime})`);
+            }
+        } else {
+            await message.channel.send("There were no valid coin symbols provided.");
         }
     } catch (err) {
         await message.channel.send(`error fetching crypto price: ${err}`);
@@ -140,6 +144,7 @@ async function getCoinsList() {
         //if the coins list is already cached,
         //check its age
         const modified = fs.statSync(cryptoCoinsListFile).mtime.getTime();
+        console.log(`coins list file modified: ${modified}, max allowed age: ${allowedAge}`);
         if (modified < +Date.now() - allowedAge) {
             //if it's older than the allowed age, fetch data from API and update the cache.
             try {
