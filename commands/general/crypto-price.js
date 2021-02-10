@@ -23,7 +23,7 @@ async function execute(client, message, args) {
     }
 
     //join the args to one big long comma-separated string
-    let symbols = args.join(",").toUpperCase();
+    let symbols = args.join(",").toUpperCase().split(",");
     console.log(`symbols: ${symbols}`);
 
     try {
