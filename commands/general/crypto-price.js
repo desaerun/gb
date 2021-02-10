@@ -60,7 +60,8 @@ async function getCoinPrices(coinIds,vsCurrency = "usd") {
         });
         if (coinPriceRequest.status === 200) {
             const prices = [];
-            for (const [coinId,coinData] of coinPriceRequest.data) {
+            console.log(coinPriceRequest.data);
+            for (const [coinId,coinData] of coinPriceRequest.data.entries()) {
                 prices[coinId] = coinData[vsCurrency];
             }
             console.log(JSON.stringify(prices));
