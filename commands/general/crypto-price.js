@@ -56,17 +56,20 @@ async function execute(client, message, args) {
             console.log(`Price, formatted: `, priceFormatted);
             const percentChange = coinData[`${vsCurrency}_24h_change`];
             console.log(`24h change %: `, percentChange);
-            const percentChangeFormatted = `${percentChange.toFixed(2)}%`;
+
             console.log(`24h change %, formatted: `, percentChangeFormatted);
             const previousPrice = coinData[vsCurrency] / (1 + (percentChange / 100));
             console.log(`Price 24h ago: `, previousPrice);
             const priceChange = coinData[vsCurrency] - previousPrice;
+            const sign = (priceChange < 0) ? "" : "+";
             console.log(`Price difference: `, priceChange);
-            const priceChangeFormatted = formatMoney(priceChange);
+            const formatMaxDecPlaces = (price > 100) ? 2 : 6;
+            const priceChangeFormatted = formatMoney(priceChange,2,formatMaxDecPlaces);
+            const percentChangeFormatted = `${sign}${percentChange.toFixed(2)}%`;
             console.log(`Price difference,formatted: `, priceChangeFormatted);
-
-            console.log(`Last updated: `, coinData.last_updated_at);
-            output.push(`1 ${symbol} = **${priceFormatted}** (**${priceChangeFormatted}**[**${percentChangeFormatted}**] last 24hrs) (Last updated: ${moment(coinData.last_updated_at).format("HH:mm:ss")})`);
+            const updatedDateTime = moment(coinData.last_updated_at).format("hh:mm:ssA [GMT]Z");
+            console.log(`Last updated: `, updatedDateTime);
+            output.push(`1 **${symbol}** = **${priceFormatted}** (**${priceChangeFormatted}**[**${percentChangeFormatted}**] last 24hrs) (As of ${updatedDateTime})`);
         }
     } catch (err) {
         await message.channel.send(`error fetching crypto price: ${err}`);
