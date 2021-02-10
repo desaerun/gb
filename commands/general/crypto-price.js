@@ -23,7 +23,7 @@ async function execute(client, message, args) {
     }
 
     //join the args to one big long comma-separated string
-    let symbols = args.join(",").toUpperCase().split(",");
+    let symbols = args;
     console.log(`symbols: ${symbols}`);
 
     try {
@@ -40,7 +40,8 @@ async function execute(client, message, args) {
             coinIds.push(coinId);
         }
         const priceData = await getCoinPrices(coinIds);
-        for (const price of priceData) {
+        for (let [crypto,price] of Object.entries(priceData)) {
+            crypto = crypto.toUpperCase();
             const priceFormatted = formatMoney(price);
             await message.channel.send(`1 ${crypto} = ${priceFormatted}`);
         }
