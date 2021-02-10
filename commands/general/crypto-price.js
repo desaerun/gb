@@ -1,6 +1,7 @@
 //imports
 const axios = require("axios");
 const fs = require("fs");
+const sendLongMessage = require("../../tools/sendLongMessage");
 const {createCanvas} = require("canvas");
 
 //module settings
@@ -24,6 +25,7 @@ async function execute(client, message, args) {
 
     //join the args to one big long comma-separated string
     let symbols = args;
+    let output = [];
     console.log(`symbols: ${symbols}`);
 
     try {
@@ -55,7 +57,7 @@ async function execute(client, message, args) {
             const priceChange = coinData.price - previousPrice;
             const priceChangeFormatted = formatMoney(priceChange);
 
-            await message.channel.send(`1 ${symbol} = **${priceFormatted}** (**${priceChangeFormatted}**[**${percentChangeFormatted}**] last 24hrs)`);
+            output.push(`1 ${symbol} = **${priceFormatted}** (**${priceChangeFormatted}**[**${percentChangeFormatted}**] last 24hrs)`);
             //price change: coinData.usd_24h_change
             //24h volume: coinData.usd_24h_vol
             //update timestamp: coinData.last_updated_at
@@ -64,6 +66,9 @@ async function execute(client, message, args) {
         }
     } catch (err) {
         await message.channel.send(`error fetching crypto price: ${err}`);
+    }
+    if (output.length > 0) {
+        await sendLongMessage(output.join("\n"));
     }
 }
 
