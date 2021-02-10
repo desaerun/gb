@@ -68,7 +68,7 @@ async function execute(client, message, args) {
         await message.channel.send(`error fetching crypto price: ${err}`);
     }
     if (output.length > 0) {
-        await sendLongMessage(output.join("\n"));
+        await sendLongMessage(output.join("\n"),message.channel);
     }
 }
 
