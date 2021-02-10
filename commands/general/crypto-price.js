@@ -1,5 +1,6 @@
 //imports
 const axios = require("axios");
+const moment = require("moment");
 const fs = require("fs");
 const sendLongMessage = require("../../tools/sendLongMessage");
 const {createCanvas} = require("canvas");
@@ -50,7 +51,9 @@ async function execute(client, message, args) {
         for (let coinData of Object.values(coins)) {
             const symbol = coinData.symbol.toUpperCase();
             const priceFormatted = formatMoney(coinData.price);
-            const percentChange = coinData[`${vsCurrency}_24h_change`];
+            const changePercentPropertyName = `${vsCurrency}_24h_change`;
+            console.log(changePercentPropertyName);
+            const percentChange = coinData[changePercentPropertyName];
             console.log(percentChange);
             const percentChangeFormatted = percentFormat.format(percentChange);
             console.log(percentChangeFormatted);
@@ -59,7 +62,7 @@ async function execute(client, message, args) {
             const priceChange = coinData.price - previousPrice;
             const priceChangeFormatted = formatMoney(priceChange);
 
-            output.push(`1 ${symbol} = **${priceFormatted}** (**${priceChangeFormatted}**[**${percentChangeFormatted}**] last 24hrs)`);
+            output.push(`1 ${symbol} = **${priceFormatted}** (**${priceChangeFormatted}**[**${percentChangeFormatted}**] last 24hrs) (Last updated: ${moment(coinData.last_updated_at).format("HH:mm:ss")}`);
             //price change: coinData.usd_24h_change
             //24h volume: coinData.usd_24h_vol
             //update timestamp: coinData.last_updated_at
