@@ -43,11 +43,24 @@ async function execute(client, message, args) {
                 await message.channel.send(`The coin could not be found: ${symbol}`);
             }
         }
-        coins = await getCoinPrices(coins);
-        for (let [coinId,coinData] of Object.entries(coins)) {
+        const vsCurrency = "usd";
+        coins = await getCoinPrices(coins,vsCurrency);
+        for (let coinData of Object.values(coins)) {
             const symbol = coinData.symbol.toUpperCase();
             const priceFormatted = formatMoney(coinData.price);
-            await message.channel.send(`1 ${symbol} = ${priceFormatted}`);
+            const percentChange = coinData[`${vsCurrency}_24hr_change`];
+            const percentChangeFormatted = percentFormat.format(percentChange);
+            const previousPrice = coinData.price / (1 + (percentChange / 100));
+
+            const priceChange = coinData.price - previousPrice;
+            const priceChangeFormatted = formatMoney(priceChange);
+
+            await message.channel.send(`1 ${symbol} = **${priceFormatted}** (**${priceChangeFormatted}**[**${percentChangeFormatted}**] last 24hrs)`);
+            //price change: coinData.usd_24h_change
+            //24h volume: coinData.usd_24h_vol
+            //update timestamp: coinData.last_updated_at
+            //formula for calculating previous price change:
+            //priceNow - (1 + (change% / 100))
         }
     } catch (err) {
         await message.channel.send(`error fetching crypto price: ${err}`);
@@ -71,6 +84,10 @@ async function getCoinPrices(coins,vsCurrency = "usd") {
             params: {
                 ids: coinIdsStr,
                 vs_currencies: vsCurrency,
+                include_market_cap: true,
+                include_24h_vol: true,
+                include_24hr_change: true,
+                include_last_updated_at: true,
             }
         });
         if (coinPriceRequest.status === 200) {
