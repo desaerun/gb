@@ -76,13 +76,16 @@ function retrieveAnswerAndContext($) {
     // Attempt to parse answer from Featured Snippet first
     [answer,context] = retrieveAnswerFromFeaturedSnippet($);
     if (answer) {
+        console.log(`An answer was found in the Featured Snippet, returning...`, answer, context);
         return [answer,context];
     }
     // If the answer was not found in the Featured Snippet, try parsing the Knowledge Panel
     [answer,context] = retrieveAnswerFromKnowledgePanel($);
     if (answer) {
+        console.log(`An answer was found in the Knowledge Panel, returning...`, answer, context);
         return [answer,context];
     }
+    console.log(`No answer was found, returning False`);
     return false;
 }
 
@@ -94,7 +97,7 @@ function retrieveAnswerAndContext($) {
  * @returns {String[]|boolean}
  */
 function retrieveAnswerFromFeaturedSnippet($) {
-
+    console.log("Attempting to find and parse the Featured Snippet");
     // Grabbing the first div with data-attrid containing a ":/" and aria-level "3"
     // should give us the Featured Snippet box if it exists
     let featuredSnippetPanel = $(`div[data-tts="answers"],div[data-attrid*=":/"][aria-level="3"],div.EfDVh.mod > div > div > div[aria-level="3"]`).first();
@@ -123,9 +126,10 @@ function retrieveAnswerFromFeaturedSnippet($) {
  * [answer, context] otherwise.
  *
  * @param $
+ * @returns {String[]|boolean}
  */
 function retrieveAnswerFromKnowledgePanel($) {
-    console.log(`$ = ${$}`);
+    console.log("Attempting to find and parse Knowledge Panel...");
     let knowledgePanel = $(`div[id="wp-tabs-container"]`);
 
     if (knowledgePanel) {
@@ -136,17 +140,15 @@ function retrieveAnswerFromKnowledgePanel($) {
             let context = knowledgePanel.find("div.kno-rdesc > div > span").first().text();
             return [answer,context];
         }
-        console.log("...but was unable to find an answer here.");
+        console.log("...but was unable to find an answer in the Knowledge Panel.");
     }
     console.log("Unable to find answer in Knowledge Panel");
     return false;
 }
 
 /**
- * Generates Embedded Discord Messages out of the first 3 search results and sends them to the
- * designated channel
+ * Generates Embedded Discord Messages out of the first 3 search results
  *
- * @param message
  * @param $
  */
 async function getSearchResultsAsEmbeddedMessages($) {
