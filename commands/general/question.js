@@ -100,7 +100,7 @@ function retrieveAnswerFromFeaturedSnippet($) {
     let featuredSnippetPanel = $(`div[data-tts="answers"],div[data-attrid*=":/"][aria-level="3"],div.EfDVh.mod > div > div > div[aria-level="3"]`).first();
 
     if (featuredSnippetPanel) {
-        console.log("Was able to find InnerDOM on Featured Snippet")
+        console.log("Was able to find Featured Snippet pane")
         // Remove some of the subtext in featured snippet
         featuredSnippetPanel.find("div.yxAsKe.kZ91ed").remove();
         featuredSnippetPanel.find("span.kX21rb").remove();
@@ -125,6 +125,7 @@ function retrieveAnswerFromFeaturedSnippet($) {
  * @param $
  */
 function retrieveAnswerFromKnowledgePanel($) {
+    console.log(`$ = ${$}`);
     let knowledgePanel = $(`div[id="wp-tabs-container"]`);
 
     if (knowledgePanel) {
