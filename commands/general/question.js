@@ -92,7 +92,7 @@ function retrieveAnswerAndContext($) {
         return [answer,context];
     }
     console.log(`No answer was found, returning False`);
-    return false;
+    return [answer,context];
 }
 
 /**
