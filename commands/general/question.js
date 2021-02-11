@@ -84,7 +84,7 @@ function retrieveAnswerAndContext($) {
         return [answer,context];
     }
     // If the answer was not found in the Featured Snippet, try parsing the Knowledge Panel
-    [answer,context] = retrieveAnswerFromKnowledgePanel($);
+    // [answer,context] = retrieveAnswerFromKnowledgePanel($);
     if (answer) {
         console.log(`An answer was found in the Knowledge Panel, returning...`, answer, context);
         return [answer,context];
