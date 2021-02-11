@@ -33,21 +33,25 @@ async function execute(client, message, args) {
             let [answer,context] = retrieveAnswerAndContext($);
 
             if (answer) {
+                console.log("An answer was found!",answer);
                 if (!context || context === answer) {
                     await message.channel.send(`${answer}`);
                 } else {
                     await message.channel.send(`**${answer}** ${context}`);
                 }
             } else {
+                console.log("No answer was found, attempting to parse search results instead");
                 // If neither the Featured Snippet nor the Knowledge Panel exist, return the first few search results
                 let results = getSearchResultsAsEmbeddedMessages($);
                 if (results) {
+                    console.log("Successfully parsed search results.");
                     await message.channel.send(`Hmm, I couldn't figure that one out. Maybe these will help:`);
 
                     for (let i = 0; i < 3 && i < results.length; i++) {
                         await message.channel.send(results[i]);
                     }
                 } else {
+                    console.log("Unable to parse the search results.");
                     // If all else fails, kindly inform the user that an answer was not found.
                     await message.channel.send(`Unable to find an answer. Please go fuck yourself.`);
                 }
