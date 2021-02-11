@@ -173,6 +173,8 @@ async function getSearchResultsAsEmbeddedMessages($) {
         let title = $(this).find("div > a > h3.LC20lb").text();
         let link = $(this).find("div > a").attr("href");
 
+        console.log(`Parsed search result:`);
+        console.log(`Description: ${description} | Title: ${title}  | link: ${link}`);
         let embedMessage = new Discord.MessageEmbed()
             .setTitle(`**${title}**`)
             .setURL(link)
@@ -182,7 +184,9 @@ async function getSearchResultsAsEmbeddedMessages($) {
     });
 
     if (results.length === 0) {
+        console.log("search results length was 0, returning false");
         return false;
     }
+    console.log(`retrieved valid search results, returning array of discord embeds, length: ${results.length}`);
     return results;
 }
