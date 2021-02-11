@@ -42,13 +42,13 @@ async function execute(client, message, args) {
             } else {
                 console.log("No answer was found, attempting to parse search results instead");
                 // If neither the Featured Snippet nor the Knowledge Panel exist, return the first few search results
-                let results = getSearchResultsAsEmbeddedMessages($);
-                if (results) {
+                let resultsEmbedsArr = getSearchResultsAsEmbeddedMessages($);
+                if (resultsEmbedsArr) {
                     console.log("Successfully parsed search results.");
                     await message.channel.send(`Hmm, I couldn't figure that one out. Maybe these will help:`);
 
-                    for (let i = 0; i < 3 && i < results.length; i++) {
-                        await message.channel.send(results[i]);
+                    for (let i = 0; i < 3 && i < resultsEmbedsArr.length; i++) {
+                        await message.channel.send(resultsEmbedsArr[i]);
                     }
                 } else {
                     console.log("Unable to parse the search results.");
@@ -80,13 +80,15 @@ function retrieveAnswerAndContext($) {
     // Attempt to parse answer from Featured Snippet first
     [answer,context] = retrieveAnswerFromFeaturedSnippet($);
     if (answer) {
-        console.log(`An answer was found in the Featured Snippet, returning...`, answer, context);
+        console.log(`An answer was found in the Featured Snippet...`, answer, context);
+        console.log(`Returning | answer: ${answer} | context: ${context}`);
         return [answer,context];
     }
     // If the answer was not found in the Featured Snippet, try parsing the Knowledge Panel
-    // [answer,context] = retrieveAnswerFromKnowledgePanel($);
+    [answer,context] = retrieveAnswerFromKnowledgePanel($);
     if (answer) {
-        console.log(`An answer was found in the Knowledge Panel, returning...`, answer, context);
+        console.log(`An answer was found in the Knowledge Panel...`, answer, context);
+        console.log(`Returning | answer: ${answer} | context: ${context}`);
         return [answer,context];
     }
     console.log(`No answer was found, returning False`);
@@ -101,6 +103,9 @@ function retrieveAnswerAndContext($) {
  * @returns {String[]|boolean}
  */
 function retrieveAnswerFromFeaturedSnippet($) {
+    let answer;
+    let context;
+
     console.log("Attempting to find and parse the Featured Snippet");
     // Grabbing the first div with data-attrid containing a ":/" and aria-level "3"
     // should give us the Featured Snippet box if it exists
@@ -112,16 +117,16 @@ function retrieveAnswerFromFeaturedSnippet($) {
         featuredSnippetPanel.find("div.yxAsKe.kZ91ed").remove();
         featuredSnippetPanel.find("span.kX21rb").remove();
 
-        let answer = featuredSnippetPanel.text();
+        answer = featuredSnippetPanel.text();
 
         if (answer) {
-            let context = $("span.hgKElc").text();
-            return [answer,context];
+            context = $("span.hgKElc").text();
         }
         console.log("..but no Answer was found in the Featured Snippet.");
     }
     console.log("Was not able to retrieve answer from Featured Snippet.");
-    return false;
+    console.log(`Returning | answer: ${answer} | context: ${context}`);
+    return [answer,context];
 }
 
 /**
@@ -133,21 +138,23 @@ function retrieveAnswerFromFeaturedSnippet($) {
  * @returns {String[]|boolean}
  */
 function retrieveAnswerFromKnowledgePanel($) {
+    let answer;
+    let context;
     console.log("Attempting to find and parse Knowledge Panel...");
     let knowledgePanel = $(`div[id="wp-tabs-container"]`);
 
     if (knowledgePanel) {
         console.log("Was able to find Knowledge Panel");
-        let answer = knowledgePanel.find("h2[data-attrid='title']").text();
+        answer = knowledgePanel.find("h2[data-attrid='title']").text();
 
         if (answer) {
-            let context = knowledgePanel.find("div.kno-rdesc > div > span").first().text();
-            return [answer,context];
+            context = knowledgePanel.find("div.kno-rdesc > div > span").first().text();
         }
         console.log("...but was unable to find an answer in the Knowledge Panel.");
     }
     console.log("Unable to find answer in Knowledge Panel");
-    return false;
+    console.log(`Returning | answer: ${answer} | context: ${context}`);
+    return [answer,context];
 }
 
 /**
