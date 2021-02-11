@@ -89,7 +89,7 @@ function retrieveAnswerAndContext($) {
 /**
  * Attempts to retrieve Google Search results contained within the "Featured Snippet" above the
  * actual search results to provide in answer. Returns false if a response is not sent to Discord,
- * true otherwise.
+ * an array containing [answer,context] otherwise.
  * @param $
  * @returns {String[]|boolean}
  */
@@ -119,9 +119,9 @@ function retrieveAnswerFromFeaturedSnippet($) {
 
 /**
  * Attempts to retrieve Google Search results contained within the "Knowledge Panel" on the right side
- * of the results page, if it exists. Returns false if a response is not sent to Discord, true otherwise.
+ * of the results page, if it exists. Returns false if a response is not sent to Discord, an array of
+ * [answer, context] otherwise.
  *
- * @param message
  * @param $
  */
 function retrieveAnswerFromKnowledgePanel($) {
@@ -132,7 +132,7 @@ function retrieveAnswerFromKnowledgePanel($) {
         let answer = knowledgePanel.find("h2[data-attrid='title']").text();
 
         if (answer) {
-            let context = innerDOM("div.kno-rdesc > div > span").first().text();
+            let context = knowledgePanel.find("div.kno-rdesc > div > span").first().text();
             return [answer,context];
         }
         console.log("...but was unable to find an answer here.");
