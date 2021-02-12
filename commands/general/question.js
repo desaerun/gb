@@ -46,8 +46,8 @@ async function execute(client, message, args) {
                 if (resultsEmbedsArr) {
                     console.log("Successfully parsed search results.");
                     await message.channel.send(`Hmm, I couldn't figure that one out. Maybe these will help:`);
-
                     for (let i = 0; i < 3 && i < resultsEmbedsArr.length; i++) {
+                        console.log(`Sending embed #${i}`);
                         await message.channel.send(resultsEmbedsArr[i]);
                     }
                 } else {
