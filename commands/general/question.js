@@ -168,7 +168,7 @@ async function getSearchResultsAsEmbeddedMessages($) {
 
     let results = [];
 
-    $("div.rc").each(function () {
+    $("div#rso > div.g").each(function () {
         let description = $(this).find("div.IsZvec > div > span").text();
         let title = $(this).find("div > a > h3.LC20lb").text();
         let link = $(this).find("div > a").attr("href");
