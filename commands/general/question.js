@@ -44,7 +44,7 @@ async function execute(client, message, args) {
                 // If neither the Featured Snippet nor the Knowledge Panel exist, return the first few search results
                 let resultsEmbedsArr = getSearchResultsAsEmbeddedMessages($);
                 if (resultsEmbedsArr) {
-                    console.log("Successfully parsed search results.");
+                    console.log(`Successfully parsed search results.  Length: ${resultsEmbedsArr.length}`);
                     await message.channel.send(`Hmm, I couldn't figure that one out. Maybe these will help:`);
                     for (let i = 0; i < 3 && i < resultsEmbedsArr.length; i++) {
                         console.log(`Sending embed #${i}`);
@@ -162,7 +162,7 @@ function retrieveAnswerFromKnowledgePanel($) {
  *
  * @param $
  */
-async function getSearchResultsAsEmbeddedMessages($) {
+function getSearchResultsAsEmbeddedMessages($) {
     // Remove the "People also ask" section as these _aren't_ the thing we want an answer to
     $("div.g.kno-kp.mnr-c.g-blk").remove();
 
