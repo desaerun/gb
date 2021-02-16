@@ -153,11 +153,16 @@ function retrieveAnswerFromKnowledgePanel($) {
         const answerText = knowledgePanel.find("div.Z0LcW.XcVN5d").text();
         if (answerText) {
             console.log("Found an answer in the Knowledge Panel.")
-            const answerContext = knowledgePanel.find("div[data-attrid='description']").first().text();
+            const kpDescription = knowledgePanel.find("div.kno-rdesc > div > span");
+            const answerContext = kpDescription.first().text();
+            const answerSourceLink = kpDescription.eq(1).find("a");
+            const answerSourceText = answerSourceLink.text();
+            const answerSourceUrl = answerSourceLink.attr("href");
             return {
                 text: answerText,
                 context: answerContext,
-                from: "",
+                from: answerSourceText,
+                fromUrl: answerSourceUrl,
             }
         } else {
             console.log("...but was unable to find an answer in the Knowledge Panel.");
