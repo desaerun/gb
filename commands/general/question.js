@@ -150,10 +150,10 @@ function retrieveAnswerFromKnowledgePanel($) {
 
     if (knowledgePanel) {
         console.log("Was able to find Knowledge Panel");
-        const answerText = knowledgePanel.find("h2[data-attrid='title']").text();
+        const answerText = knowledgePanel.find("div.Z0LcW.XcVN5d").text();
         if (answerText) {
             console.log("Found an answer in the Knowledge Panel.")
-            const answerContext = knowledgePanel.find("div.kno-rdesc > div > span").first().text();
+            const answerContext = knowledgePanel.find("div[data-attrid='description']").first().text();
             return {
                 text: answerText,
                 context: answerContext,
