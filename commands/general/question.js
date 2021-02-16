@@ -20,24 +20,31 @@ async function execute(client, message, args) {
 
     let query = args.join("+");
 
-    let googleQueryURL = `https://www.google.com/search?q=${query}`;
+    let googleQueryURL = `https://www.google.com/search`;
 
     try {
-        const response = await axios.get(googleQueryURL, {headers: {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.101 Safari/537.36"}});
+        const response = await axios.get(googleQueryURL, {
+            headers: {
+                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.101 Safari/537.36",
+            },
+            params: {
+                q: query,
+            }
+        });
         if (response.status === 200) {
 
             const $ = cheerio.load(response.data);
             // Remove "Videos" box from search results
             $("div.HD8Pae.luh4tb.cUezCb.xpd.O9g5cc.uUPGi").remove();
 
-            let [answer,context] = retrieveAnswerAndContext($);
+            let answer = retrieveAnswerAndContext($);
 
-            if (answer) {
+            if (answer.text) {
                 console.log("An answer was found!",answer);
-                if (!context || context === answer) {
-                    await message.channel.send(`${answer}`);
+                if (!answer.context || answer.context === answer) {
+                    await message.channel.send(`${answer.text}`);
                 } else {
-                    await message.channel.send(`**${answer}** ${context}`);
+                    await message.channel.send(`**${answer.text}**\n${answer.context}`);
                 }
             } else {
                 console.log("No answer was found, attempting to parse search results instead");
@@ -74,42 +81,27 @@ module.exports = {
 
 //helper functions
 function retrieveAnswerAndContext($) {
-    let answer;
-    let context;
-
     // Attempt to parse answer from Featured Snippet first
-    [answer,context] = retrieveAnswerFromFeaturedSnippet($);
-    if (answer) {
-        console.log(`An answer was found in the Featured Snippet...`, answer, context);
-        console.log(`Returning | answer: ${answer} | context: ${context}`);
-        return [answer,context];
-    }
-    // If the answer was not found in the Featured Snippet, try parsing the Knowledge Panel
-    [answer,context] = retrieveAnswerFromKnowledgePanel($);
-    if (answer) {
-        console.log(`An answer was found in the Knowledge Panel...`, answer, context);
-        console.log(`Returning | answer: ${answer} | context: ${context}`);
-        return [answer,context];
-    }
-    console.log(`No answer was found, returning False`);
-    return [answer,context];
+    return retrieveAnswerFromFeaturedSnippet($) || retrieveAnswerFromKnowledgePanel($);
 }
 
 /**
  * Attempts to retrieve Google Search results contained within the "Featured Snippet" above the
- * actual search results to provide in answer. Returns false if a response is not sent to Discord,
- * an array containing [answer,context] otherwise.
+ * actual search results to provide in answer. Returns false if no answer is found in the Featured Snippet,
+ * an object representing the answer otherwise.
  * @param $
- * @returns {String[]|boolean}
+ * @returns {{
+ *     text: String,
+ *     context: String,
+ *     from: String,
+ * }|boolean}
  */
 function retrieveAnswerFromFeaturedSnippet($) {
-    let answer;
-    let context;
-
     console.log("Attempting to find and parse the Featured Snippet");
+
     // Grabbing the first div with data-attrid containing a ":/" and aria-level "3"
     // should give us the Featured Snippet box if it exists
-    let featuredSnippetPanel = $(`div[data-tts="answers"],div[data-attrid*=":/"][aria-level="3"],div.EfDVh.mod > div > div > div[aria-level="3"]`).first();
+    let featuredSnippetPanel = $(`div.ifM9O`).first();
 
     if (featuredSnippetPanel) {
         console.log("Was able to find Featured Snippet pane")
@@ -117,58 +109,75 @@ function retrieveAnswerFromFeaturedSnippet($) {
         featuredSnippetPanel.find("div.yxAsKe.kZ91ed").remove();
         featuredSnippetPanel.find("span.kX21rb").remove();
 
-        answer = featuredSnippetPanel.text();
-
-        if (answer) {
-            context = $("span.hgKElc").text();
+        const answerText = featuredSnippetPanel.text();
+        if (answerText) {
+            const answerContext = $("span.hgKElc").text();
+            return {
+                text: featuredSnippetPanel.text(),
+                context: answerContext,
+                from: "",
+            };
+        } else {
+            console.log("..but no Answer was found in the Featured Snippet.");
+            return false;
         }
-        console.log("..but no Answer was found in the Featured Snippet.");
     }
-    console.log("Was not able to retrieve answer from Featured Snippet.");
-    console.log(`Returning | answer: ${answer} | context: ${context}`);
-    return [answer,context];
+
+    console.log(`Returning | answer: ${answer}`);
+
 }
 
 /**
  * Attempts to retrieve Google Search results contained within the "Knowledge Panel" on the right side
- * of the results page, if it exists. Returns false if a response is not sent to Discord, an array of
- * [answer, context] otherwise.
+ * of the results page, if it exists. Returns false no response is found in the Knowledge Panel, an object
+ * representing the answer otherwise.
  *
  * @param $
- * @returns {String[]|boolean}
+ * @returns {{
+ *     text: String,
+ *     context: String,
+ *     from: String,
+ * }|boolean}
  */
 function retrieveAnswerFromKnowledgePanel($) {
-    let answer;
-    let context;
     console.log("Attempting to find and parse Knowledge Panel...");
-    let knowledgePanel = $(`div[id="wp-tabs-container"]`);
+    let knowledgePanel = $(`div#wp-tabs-container`);
 
     if (knowledgePanel) {
         console.log("Was able to find Knowledge Panel");
-        answer = knowledgePanel.find("h2[data-attrid='title']").text();
-
-        if (answer) {
-            context = knowledgePanel.find("div.kno-rdesc > div > span").first().text();
+        const answerText = knowledgePanel.find("h2[data-attrid='title']").text();
+        if (answerText) {
+            console.log("Found an answer in the Knowledge Panel.")
+            const answerContext = knowledgePanel.find("div.kno-rdesc > div > span").first().text();
+            return {
+                text: answerText,
+                context: answerContext,
+                from: "",
+            }
+        } else {
+            console.log("...but was unable to find an answer in the Knowledge Panel.");
+            return false;
         }
-        console.log("...but was unable to find an answer in the Knowledge Panel.");
     }
-    console.log("Unable to find answer in Knowledge Panel");
-    console.log(`Returning | answer: ${answer} | context: ${context}`);
-    return [answer,context];
+    console.log("Unable to find Knowledge Panel");
 }
 
 /**
- * Generates Embedded Discord Messages out of the first 3 search results
+ * Generates Embedded Discord Messages out of the first n search results
  *
  * @param $
+ * @param maxSearchResults
  */
-function getSearchResultsAsEmbeddedMessages($) {
+function getSearchResultsAsEmbeddedMessages($, maxSearchResults = 3) {
     // Remove the "People also ask" section as these _aren't_ the thing we want an answer to
     $("div.g.kno-kp.mnr-c.g-blk").remove();
 
     let results = [];
 
-    $("div#rso > div.g").each(function () {
+    $("div#rso > div.g").each(function (i) {
+        if (i >= maxSearchResults) {
+            return false;
+        }
         let description = $(this).find("div.IsZvec > div > span").text();
         let title = $(this).find("div > a > h3.LC20lb").text();
         let link = $(this).find("div > a").attr("href");
