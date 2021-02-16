@@ -92,8 +92,9 @@ function retrieveAnswerAndContext($) {
  * @param $
  * @returns {{
  *     text: String,
- *     context: String,
- *     from: String,
+ *     context: String|undefined,
+ *     from: String|undefined,
+ *     fromUrl: String|undefined,
  * }|boolean}
  */
 function retrieveAnswerFromFeaturedSnippet($) {
@@ -106,14 +107,14 @@ function retrieveAnswerFromFeaturedSnippet($) {
     // should give us the Featured Snippet box if it exists
     let featuredSnippetPanel = $(`div.ifM9O`).first();
 
-
     if (featuredSnippetPanel) {
         console.log("Was able to find Featured Snippet pane")
         // Remove some of the subtext in featured snippet
         featuredSnippetPanel.find("div.yxAsKe.kZ91ed").remove();
         featuredSnippetPanel.find("span.kX21rb").remove();
 
-        const answerText = featuredSnippetPanel.find("span.hgKElc").text();
+        //1st type of Featured Snippet pane, verbose
+        let answerText = featuredSnippetPanel.find("span.hgKElc").text();
         if (answerText) {
             console.log("An answer was found in the Featured Snippet.")
             const answerSourceLink = featuredSnippetPanel.find("div.yuRUbf");
@@ -125,14 +126,19 @@ function retrieveAnswerFromFeaturedSnippet($) {
                 from: answerSourceText,
                 fromUrl: answerSourceUrl,
             };
-        } else {
-            console.log("..but no Answer was found in the Featured Snippet.");
-            return false;
         }
+
+        //2nd type of Featured Snippet pane, less info
+        answerText = featuredSnippetPanel.find("div.Z0LcW.XcVN5d").text();
+        if (answerText) {
+            return {
+                text: answerText,
+            }
+        }
+        console.log("..but no Answer was found in the Featured Snippet.");
+        return false;
     }
-
-    console.log(`Returning | answer: ${answer}`);
-
+    console.log("Unable to find the Featured Snippet pane.");
 }
 
 /**
