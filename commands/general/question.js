@@ -99,9 +99,13 @@ function retrieveAnswerAndContext($) {
 function retrieveAnswerFromFeaturedSnippet($) {
     console.log("Attempting to find and parse the Featured Snippet");
 
+    // remove the "people also ask" pane
+    $("div.g.kno-kp.mnr-c.g-blk").remove();
+
     // Grabbing the first div with data-attrid containing a ":/" and aria-level "3"
     // should give us the Featured Snippet box if it exists
     let featuredSnippetPanel = $(`div.ifM9O`).first();
+
 
     if (featuredSnippetPanel) {
         console.log("Was able to find Featured Snippet pane")
