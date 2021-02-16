@@ -113,14 +113,17 @@ function retrieveAnswerFromFeaturedSnippet($) {
         featuredSnippetPanel.find("div.yxAsKe.kZ91ed").remove();
         featuredSnippetPanel.find("span.kX21rb").remove();
 
-        const answerText = featuredSnippetPanel.text();
+        const answerText = featuredSnippetPanel.find("span.hgKElc").text();
         if (answerText) {
             console.log("An answer was found in the Featured Snippet.")
-            const answerContext = $("span.hgKElc").text();
+            const answerSourceLink = featuredSnippetPanel.find("div.yuRUbf");
+            const answerSourceText = answerSourceLink.find("h3.LC20lb.DKV0Md > span").text();
+            const answerSourceUrl = answerSourceLink.find("a").first().attr("href");
             return {
-                text: featuredSnippetPanel.text(),
-                context: answerContext,
-                from: "",
+                text: answerText,
+                context: undefined,
+                from: answerSourceText,
+                fromUrl: answerSourceUrl,
             };
         } else {
             console.log("..but no Answer was found in the Featured Snippet.");
