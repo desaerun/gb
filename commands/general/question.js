@@ -35,7 +35,7 @@ async function execute(client, message, args) {
 
             const $ = cheerio.load(response.data);
             // Remove "Videos" box from search results
-            $("div.HD8Pae.luh4tb.cUezCb.xpd.O9g5cc.uUPGi").remove();
+            $("div.HD8Pae.luh4tb.cUezCb.xpd").remove();
 
             let answer = retrieveAnswerAndContext($);
 
@@ -82,7 +82,8 @@ module.exports = {
 //helper functions
 function retrieveAnswerAndContext($) {
     // Attempt to parse answer from Featured Snippet first
-    return retrieveAnswerFromFeaturedSnippet($) || retrieveAnswerFromKnowledgePanel($);
+    return retrieveAnswerFromFeaturedSnippet($) ||
+        retrieveAnswerFromKnowledgePanel($);
 }
 
 /**
@@ -122,7 +123,6 @@ function retrieveAnswerFromFeaturedSnippet($) {
             const answerSourceUrl = answerSourceLink.find("a").first().attr("href");
             return {
                 text: answerText,
-                context: undefined,
                 from: answerSourceText,
                 fromUrl: answerSourceUrl,
             };
@@ -190,6 +190,7 @@ function retrieveAnswerFromKnowledgePanel($) {
 function getSearchResultsAsEmbeddedMessages($, maxSearchResults = 3) {
     // Remove the "People also ask" section as these _aren't_ the thing we want an answer to
     $("div.g.kno-kp.mnr-c.g-blk").remove();
+    // remove the Videos section
 
     let results = [];
 
