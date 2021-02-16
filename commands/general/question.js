@@ -111,6 +111,7 @@ function retrieveAnswerFromFeaturedSnippet($) {
 
         const answerText = featuredSnippetPanel.text();
         if (answerText) {
+            console.log("An answer was found in the Featured Snippet.")
             const answerContext = $("span.hgKElc").text();
             return {
                 text: featuredSnippetPanel.text(),
