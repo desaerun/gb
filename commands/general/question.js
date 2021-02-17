@@ -334,7 +334,7 @@ function extractTextFromPaneViaProtoSelector(pane, protoText) {
  * @param $
  * @param maxSearchResults
  */
-async function getSearchResultsAsEmbeddedMessages($, maxSearchResults = 3) {
+function getSearchResultsAsEmbeddedMessages($, maxSearchResults = 3) {
     try {
         let results = [];
 
