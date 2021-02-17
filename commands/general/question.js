@@ -18,7 +18,8 @@ const params = [
 //main
 async function execute(client, message, args) {
 
-    let query = args.join("+");
+    let query = args.join(" ");
+    let queryUriString = encodeURIComponent(query);
     let answer;
     let $;
 
@@ -32,7 +33,7 @@ async function execute(client, message, args) {
                     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.101 Safari/537.36",
                 },
                 params: {
-                    q: query,
+                    q: queryUriString,
                 }
             });
             if (response.status === 200) {
@@ -47,18 +48,23 @@ async function execute(client, message, args) {
             }
         }
         if (answer.text) {
-            console.log("An answer was found!", answer);
-            if (!answer.context || answer.context === answer.text) {
-                await message.channel.send(`${answer.text}`);
-            } else {
-                await message.channel.send(`**${answer.text}**\n${answer.context}`);
+            const answerEmbed = new Discord.MessageEmbed();
+            answerEmbed.setTitle(answer.text);
+            if (answer.context && answer.context !== answer.text) {
+                answerEmbed.setDescription(answer.context);
             }
+            if (answer.sourceText) {
+                answerEmbed.addField("\u2800",`[${answer.sourceText}](${answer.sourceUrl})`,true);
+            }
+            answerEmbed.addField("\u2800",`[More results on Google](https://www.google.com/search?q=${queryUriString})`,true);
+            console.log("An answer was found!", answer);
+            await message.channel.send(answerEmbed);
         } else {
             console.log("No answer was found, attempting to parse search results instead");
             // If neither the Featured Snippet nor the Knowledge Panel exist, return the first few search results
             let resultsEmbedsArr = getSearchResultsAsEmbeddedMessages($);
-            if (resultsEmbedsArr) {
-                console.log(`Successfully parsed search results.  Length: ${resultsEmbedsArr.length}`);
+            console.log(`Successfully parsed search results.  Length: ${resultsEmbedsArr.length}`);
+            if (resultsEmbedsArr && resultsEmbedsArr.length > 0) {
                 await message.channel.send(`Hmm, I couldn't figure that one out. Maybe these will help:`);
                 for (let i = 0; i < 3 && i < resultsEmbedsArr.length; i++) {
                     console.log(`Sending embed #${i}`);
@@ -328,7 +334,7 @@ async function getSearchResultsAsEmbeddedMessages($, maxSearchResults = 3) {
     try {
         let results = [];
 
-        //loop through search results, skip the Featured Video
+        //loop through search results
         $("div#rso > div.g").each(function (i) {
             if (i >= maxSearchResults) {
                 return false;
