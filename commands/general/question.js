@@ -37,6 +37,12 @@ async function execute(client, message, args) {
             // Remove "Videos" box from search results
             $("div.HD8Pae.luh4tb.cUezCb.xpd").remove();
 
+            //  Remove the "featured video"
+            // $("div.g.liYKde").remove();
+
+            // remove the "people also ask" pane
+            $("div.g.kno-kp.mnr-c.g-blk").remove();
+
             let answer = retrieveAnswerAndContext($);
 
             if (answer.text) {
@@ -100,9 +106,6 @@ function retrieveAnswerAndContext($) {
  */
 function retrieveAnswerFromFeaturedSnippet($) {
     console.log("Attempting to find and parse the Featured Snippet");
-
-    // remove the "people also ask" pane
-    $("div.g.kno-kp.mnr-c.g-blk").remove();
 
     // Grabbing the first div with data-attrid containing a ":/" and aria-level "3"
     // should give us the Featured Snippet box if it exists
@@ -188,27 +191,38 @@ function retrieveAnswerFromKnowledgePanel($) {
  * @param maxSearchResults
  */
 function getSearchResultsAsEmbeddedMessages($, maxSearchResults = 3) {
-    // Remove the "People also ask" section as these _aren't_ the thing we want an answer to
-    $("div.g.kno-kp.mnr-c.g-blk").remove();
-    // remove the Videos section
 
     let results = [];
 
+    //loop through search results, skip the Featured Video
     $("div#rso > div.g").each(function (i) {
         if (i >= maxSearchResults) {
             return false;
         }
-        let description = $(this).find("div.IsZvec > div > span").text();
-        let title = $(this).find("div > a > h3.LC20lb").text();
-        let link = $(this).find("div > a").attr("href");
+        let description;
+        let title;
+        let link;
 
+        //if the search result is the Featured Video, it is handled a little differently
+        if ($(this).hasClass("liYKde")) {
+            let videoInfo = $(this).find("div.FGpTBd");
+            link = videoInfo.find("h3.H1u2de > a").attr("href");
+            description = videoInfo.find("h3.LC20lb.MMgsKf > span").text();
+        } else {
+            description = $(this).find("div.IsZvec > div > span").text();
+            title = $(this).find("div > a > h3.LC20lb").text();
+            link = $(this).find("div > a").attr("href");
+        }
         console.log(`Parsed search result:`);
         console.log(`Description: ${description} | Title: ${title}  | link: ${link}`);
         let embedMessage = new Discord.MessageEmbed()
-            .setTitle(`**${title}**`)
-            .setURL(link)
+            .setURL(link);
+        if (title) {
+            embedMessage.setTitle(`**${title}**`)
             .setDescription(description);
-
+        } else if (description) {
+            embedMessage.setTitle(description);
+        }
         results.push(embedMessage);
     });
 
