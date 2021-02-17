@@ -112,7 +112,7 @@ function retrieveAnswerFromFeaturedSnippet($) {
     let featuredSnippetPanel = $(`div.ifM9O`).first();
 
     if (featuredSnippetPanel) {
-        console.log("Was able to find Featured Snippet pane")
+        console.log("Was able to find Featured Snippet pane",featuredSnippetPanel.text())
         // Remove some of the subtext in featured snippet
         featuredSnippetPanel.find("div.yxAsKe.kZ91ed").remove();
         featuredSnippetPanel.find("span.kX21rb").remove();
@@ -161,7 +161,7 @@ function retrieveAnswerFromKnowledgePanel($) {
     let knowledgePanel = $(`div#wp-tabs-container`);
 
     if (knowledgePanel) {
-        console.log("Was able to find Knowledge Panel");
+        console.log("Was able to find Knowledge Panel",knowledgePanel.html());
         const answerText = knowledgePanel.find("div.Z0LcW.XcVN5d").text();
         if (answerText) {
             console.log("Found an answer in the Knowledge Panel.")
