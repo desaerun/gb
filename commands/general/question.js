@@ -20,6 +20,7 @@ async function execute(client, message, args) {
 
     let query = args.join("+");
     let answer;
+    let $;
 
     try {
         const googleQueryUrl = "https://www.google.com/search";
@@ -35,7 +36,7 @@ async function execute(client, message, args) {
                 }
             });
             if (response.status === 200) {
-                const $ = cheerio.load(response.data);
+                $ = cheerio.load(response.data);
                 answer = await getAnswerFromGoogleSearch($);
 
                 if (JSON.stringify(answer) !== "{}" && answer.text) {
