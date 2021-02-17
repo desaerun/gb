@@ -96,7 +96,8 @@ module.exports = {
 //helper functions
 
 // selectors is a skeleton describing the expected search results from google and how to find the target DOM member.
-// The order is important, as soon as a match is found it will break the loop and stop looking for an answer.
+// The order is important, as soon as a match is found it will break the loop and stop looking for an answer in
+// any of the other panes, even if one exists.
 const selectors = {
     remove: [
         {
@@ -255,7 +256,7 @@ const selectors = {
  *     sourceUrl: a link to the sourceText document
  * }
  *
- * @param $ -- the jQuery context of the entire page
+ * @param $ -- the jQuery (cheerio) context of the entire page
  * @returns {Promise<{
  *     text: String,
  *     context: String,
@@ -293,6 +294,7 @@ async function getAnswerFromGoogleSearch($) {
                         if (paneProto.answerSourceUrl) {
                             answer.sourceUrl = pane.find(paneProto.answerSourceUrl.selector).attr("href");
                         }
+                        answer.sourcePane = paneProto.name;
                         if (answer.text) break;
                     }
                 }
