@@ -267,21 +267,36 @@ const selectors = {
 
 async function getAnswerFromGoogleSearch($) {
     try {
+        let answer = {};
+
+        //globally remove DOM objects from the entire context
         for (const removalSelector of selectors.remove) {
             $(removalSelector.selector).remove();
         }
-        let answer = {};
+
+        //loop through each type of google search result Panel, as defined in the selectors object
         for (const panelProto of selectors.panels) {
             const panel = $(panelProto.selector);
+
             if (panel.text().trim() !== "") {
+                // if there was _something_ in the resulting Panel
+
+                //if there are any sub-panes / DOM objects that need to be removed to make DOM selection easier
+                // (as defined in the selectors object), loop through and remove them all
                 if (panelProto.remove && panelProto.remove.length > 0) {
                     for (const removalSelector of panelProto.remove) {
                         panel.find(removalSelector.selector).remove();
                     }
                 }
+
+                // for each of the various "varieties" of pane (big, centered Knowledge Panel vs. small, condensed,
+                // "side" knowledge panel, for example), loop through them
                 for (const paneProto of panelProto.paneTypes) {
+
+                    // if no "sub-selector" is defined for this type of pane, just use the entire pane
                     const pane = (paneProto.selector) ? panel.find(paneProto.selector) : panel;
                     if (pane.text().trim() !== "") {
+                        //if _something_ was found inside this pane, try to extract it to the answer object properties.
                         if (paneProto.answerText) {
                             answer.text = extractTextFromPaneViaProtoSelector(pane, paneProto.answerText);
                         }
@@ -294,11 +309,19 @@ async function getAnswerFromGoogleSearch($) {
                         if (paneProto.answerSourceUrl) {
                             answer.sourceUrl = pane.find(paneProto.answerSourceUrl.selector).attr("href");
                         }
+
+                        // apply this property to track which pane ended up passing the answer back
                         answer.sourcePane = paneProto.name;
+
+                        // if there is text in the answer.text value (meaning we found some sort of answer),
+                        // break the loop.  This is why the order of the panels/panes in the selectors object
+                        // is important.
                         if (answer.text) break;
                     }
                 }
             }
+            // don't loop through any more panels if an answer has already been found.
+            // This is again why the order of the panels/panes in the selectors object is important.
             if (answer.text) break;
         }
         return answer;
@@ -380,6 +403,10 @@ function getSearchResultsAsEmbeddedMessages($, maxSearchResults = 3) {
         });
 
         if (results.length === 0) {
+            //todo: this should literally never happen; something is preventing parsing of search results,
+            // especially when there is a featured video or big non-parsed knowledge pane or info box at the top
+            // of the search results.
+            // this results in the "fuck you" message.
             console.log("search results length was 0, returning false");
             return false;
         }
