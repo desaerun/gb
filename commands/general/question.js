@@ -112,7 +112,7 @@ function retrieveAnswerFromFeaturedSnippet($) {
     let featuredSnippetPanel = $(`div.ifM9O`).first();
 
     if (featuredSnippetPanel) {
-        console.log("Was able to find Featured Snippet pane",featuredSnippetPanel.text())
+        console.log("Was able to find Featured Snippet pane");
         // Remove some of the subtext in featured snippet
         featuredSnippetPanel.find("div.yxAsKe.kZ91ed").remove();
         featuredSnippetPanel.find("span.kX21rb").remove();
@@ -161,7 +161,7 @@ function retrieveAnswerFromKnowledgePanel($) {
     let knowledgePanel = $(`div#wp-tabs-container`);
 
     if (knowledgePanel) {
-        console.log("Was able to find Knowledge Panel",knowledgePanel.html());
+        console.log("Was able to find Knowledge Panel");
         const answerText = knowledgePanel.find("div.Z0LcW.XcVN5d").text();
         if (answerText) {
             console.log("Found an answer in the Knowledge Panel.")
@@ -215,6 +215,13 @@ function getSearchResultsAsEmbeddedMessages($, maxSearchResults = 3) {
         }
         console.log(`Parsed search result:`);
         console.log(`Description: ${description} | Title: ${title}  | link: ${link}`);
+
+        //if the result is going to be blank, skip it and increase the maxSearchResults
+        //(since we can't actually modify the index)
+        if (!title && !description) {
+            maxSearchResults++;
+            return;
+        }
         let embedMessage = new Discord.MessageEmbed()
             .setURL(link);
         if (title) {
