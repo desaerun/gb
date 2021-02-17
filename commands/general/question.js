@@ -83,6 +83,9 @@ module.exports = {
 }
 
 //helper functions
+
+// selectors is a skeleton describing the expected search results from google and how to find the target DOM member.
+// The order is important, as soon as a match is found it will break the loop and stop looking for an answer.
 const selectors = {
     remove: [
         {
@@ -126,36 +129,6 @@ const selectors = {
                         prepend: "as of ",
                         selector: "div.hqAUc > span",
                     }
-                },
-            ],
-        },
-        {
-            name: "TimeDate Panel",
-            selector: "div.vk_c.vk_gy.vk_sh.card-section.sL6Rbf",
-            paneTypes: [
-                {
-                    name: "main time pane",
-                    answerText: {
-                        selector: "div.gsrt.vk_bk.dDoNo.FzvWSb.XcVN5d",
-                    },
-                    answerContext: {
-                        selector: "div.vk_gy.vk_sh,span.vk_gy.vk_sh",
-                    },
-                },
-            ],
-        },
-        {
-            name: "Duration Panel",
-            selector: "div.HwtpBd.gsrt.PZPZlf",
-            paneTypes: [
-                {
-                    name: "main duration pane",
-                    answerText: {
-                        selector: "div.Z0LcW.XcVN5d",
-                    },
-                    answerContext: {
-                        selector: "div.yxAsKe.kZ91ed",
-                    },
                 },
             ],
         },
@@ -226,7 +199,37 @@ const selectors = {
                     },
                 },
             ],
-        }
+        },
+        {
+            name: "TimeDate Panel",
+            selector: "div.vk_c.vk_gy.vk_sh.card-section.sL6Rbf",
+            paneTypes: [
+                {
+                    name: "main time pane",
+                    answerText: {
+                        selector: "div.gsrt.vk_bk.dDoNo.FzvWSb.XcVN5d",
+                    },
+                    answerContext: {
+                        selector: "div.vk_gy.vk_sh,span.vk_gy.vk_sh",
+                    },
+                },
+            ],
+        },
+        {
+            name: "Duration Panel",
+            selector: "div.HwtpBd.gsrt.PZPZlf",
+            paneTypes: [
+                {
+                    name: "main duration pane",
+                    answerText: {
+                        selector: "div.Z0LcW.XcVN5d",
+                    },
+                    answerContext: {
+                        selector: "div.yxAsKe.kZ91ed",
+                    },
+                },
+            ],
+        },
     ],
 };
 
