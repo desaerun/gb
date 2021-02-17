@@ -49,9 +49,13 @@ async function execute(client, message, args) {
         }
         if (answer.text) {
             const answerEmbed = new Discord.MessageEmbed();
-            answerEmbed.setTitle(answer.text);
-            if (answer.context && answer.context !== answer.text) {
+            if (answer.text && answer.context && answer.text !== answer.context) {
+                answerEmbed.setTitle(answer.text);
                 answerEmbed.setDescription(answer.context);
+            } else if (answer.context && answer.context !== answer.text) {
+                answerEmbed.setDescription(answer.context);
+            } else if (!answer.context || answer.context === answer.text) {
+                answerEmbed.setDescription(answer.text);
             }
             if (answer.sourceText) {
                 answerEmbed.addField("\u2800",`[${answer.sourceText}](${answer.sourceUrl})`,true);
