@@ -97,11 +97,12 @@ module.exports = {
  */
 async function getAnswer($,query,maxRetries = 3) {
     let answer;
-    for (let i = 0; i < maxRetries; i++) {
+    for (let i = 1; i <= maxRetries; i++) {
         answer = await getAnswerFromGoogleSearch($);
         if (JSON.stringify(answer) !== "{}" && answer.text) {
             break;
         }
+        console.log(`Couldn't find an answer. Attempting to retry, attempt #${i}`);
         $ = await getGoogleSearchPageAsCheerioObject(query);
     }
     return answer;
