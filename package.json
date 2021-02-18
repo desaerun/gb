@@ -27,9 +27,5 @@
     "unescape": "^1.0.1",
     "ytdl-core-discord": "^1.2.5",
     "ytsr": "^3.2.2"
-  },
-  "devDependencies": {
-    "@swc/cli": "^0.1.27",
-    "@swc/core": "^1.2.40"
   }
 }
