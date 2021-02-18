@@ -8,7 +8,7 @@ const pool = mysql.createPool({
     connectionLimit: 100,
     queueLimit: 0,
 });
-captureMessage = require("../../tools/message_db_tools/captureMessage");
+const {captureMessage} = require("../../tools/message-utils");
 
 //module settings
 const name = "cache-message-history";
@@ -18,7 +18,7 @@ const params = [
         param: "channel",
         type: `Snowflake|"this"|"self"`,
         description: "A channel ID snowflake to capture",
-        default: "current channel",
+        default: "this",
     },
     {
         param: "includeBotMessages",
@@ -89,16 +89,15 @@ async function execute(client, message, args) {
         console.log(`*************End of batch, messages.size=${messages.size}*************`);
         console.log(`(Error:  ${counts.error}|Success: ${counts.added}|Skipped: ${counts.skipped}|Bot: ${counts.bot}|No Author: ${counts.noAuthor})`);
     }
-
-    let result;
     await message.channel.send(`There have been ${counts.total} messages sent in channel #${targetChannel.name}.`);
     try {
-        [result] = pool.query(`SELECT COUNT(*) AS messageCount FROM messages WHERE channel = ?`, targetChannel.id);
+        let [result] = await pool.execute("SELECT COUNT(*) AS `messageCount` FROM `messages` WHERE `channel` = ?", [targetChannel.id]);
+        console.log(result[0]);
+        await message.channel.send(`Updated DB successfully.  Rows: ${result[0].messageCount}`);
+        await message.channel.send(`(Error:  ${counts.error}|Success: ${counts.added}|Skipped: ${counts.skipped}|Bot: ${counts.bot}|No Author: ${counts.noAuthor})`);
     } catch (e) {
-        throw e;
+        await message.channel.send(`Error occurred fetching message count: ${e}`);
     }
-    await message.channel.send(`Updated DB successfully.  Rows: ${result.messageCount}`);
-    await message.channel.send(`(Error:  ${counts.error}|Success: ${counts.added}|Skipped: ${counts.skipped}|Bot: ${counts.bot}|No Author: ${counts.noAuthor})`);
 }
 
 //module export

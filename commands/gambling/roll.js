@@ -3,6 +3,7 @@
 //module settings
 const {getRand} = require("../../tools/utils");
 const name = "roll";
+const aliases = ["dice","dieroll","die-roll","diceroll","dice-roll"];
 const description = "Rolls a die.";
 const params = [
     {
@@ -10,6 +11,7 @@ const params = [
         type: "Integer",
         description: "Lower bounds of the roll.",
         default: 1,
+        optional: true,
     },
     {
         param: "upper",
@@ -33,9 +35,9 @@ async function execute(client, message, args) {
     }
     const lower = Math.abs(args[0]);
     const upper = Math.abs(args[1]);
-    const roll = getRand(lower,upper);
+    const roll = getRand(lower, upper);
 
-    let response = "";
+    let response;
     if (regularDie) {
         response = `**${client.user.username}** rolls a **${args[1]}-sided** die:  **${roll}**`;
     } else {
@@ -52,6 +54,7 @@ async function execute(client, message, args) {
 //module export
 module.exports = {
     name: name,
+    aliases: aliases,
     description: description,
     params: params,
     execute: execute,

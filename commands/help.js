@@ -3,8 +3,7 @@ const Discord = require("discord.js");
 const CONFIG = require("../config/config");
 const fs = require("fs");
 const path = require("path");
-const logMessage = require("../tools/logMessage");
-const sendLongMessage = require("../tools/sendLongMessage");
+const {logMessage,sendLongMessage} = require("../tools/utils");
 
 //module settings
 const name = "help";
@@ -64,7 +63,7 @@ function getHelpMessage(command) {
         for (const currentArg of command.params) {
             logMessage(currentArg, 3);
             fullCommand += ` `;
-            let optionalMod = (!currentArg.default && !currentArg.required) ? "?" : "";
+            let optionalMod = (currentArg.optional) ? "?" : "";
             fullCommand += `[${optionalMod}${currentArg.param}]`;
 
             let value = `**Type**: ${currentArg.type}\n` +
@@ -91,13 +90,12 @@ function getHelpMessage(command) {
                     value += `**Default**: ${currentArg.default}`;
                 }
             } else {
-                if (currentArg.required) {
-                    value += `\n**REQUIRED**`;
+                if (currentArg.optional) {
+                    value += `\n**OPTIONAL**`;
                 } else {
-                    value += `\nNo default value`;
+                    value += `\nNo default value.`;
                 }
             }
-            console.log(value);
             fields.push({
                 name: `\`${currentArg.param}\``,
                 value: value
@@ -131,19 +129,17 @@ function generateCommandList(clientCommands) {
         for (const item of commandFiles) {
             const fullItemName = `${dirPath}/${item}`;
             if (fs.statSync(fullItemName).isDirectory()) {
-                logMessage(`${fullItemName} is a directory, recursing`);
                 const prettyDirName = uppercaseFirstLetter(item.replace("_", " "));
                 commandsText += `\n${indent(indentLevel)}**${prettyDirName}** commands:`;
                 commandsText += getCommandsText(fullItemName, clientCommands, indentLevel + 1);
             } else {
                 if (item !== path.basename(__filename) && item.endsWith(".js")) {
-                    logMessage(`${fullItemName} is a file, adding...`);
                     const commandName = item.match(/(.+)\.js/)[1];
                     if (clientCommands.get(commandName)) {
                         let currentCommand = clientCommands.get(commandName);
                         commandsText += `\n${indent(indentLevel)}\`${CONFIG.PREFIX}${currentCommand.name}\``;
-                        if (currentCommand.names) {
-                            for (const name of currentCommand.names) {
+                        if (currentCommand.aliases) {
+                            for (const name of currentCommand.aliases) {
                                 if (clientCommands.has(name)) {
                                     commandsText += `; \`${CONFIG.PREFIX}${name}\``;
                                 } else {
