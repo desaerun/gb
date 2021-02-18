@@ -23,7 +23,7 @@ async function execute(client, message, args) {
     let queryUriString = encodeURIComponent(query);
     let $;
     try {
-        $ = getGoogleSearchPageAsCheerioObject(query);
+        $ = await getGoogleSearchPageAsCheerioObject(query);
     } catch (e) {
         throw e;
     }
@@ -93,7 +93,7 @@ async function getAnswer($,query,maxRetries = 3) {
         if (JSON.stringify(answer) !== "{}" && answer.text) {
             break;
         }
-        $ = getGoogleSearchPageAsCheerioObject(query);
+        $ = await getGoogleSearchPageAsCheerioObject(query);
     }
     return answer;
 }
