@@ -20,7 +20,7 @@ const params = [
 async function execute(client, message, args) {
 
     let query = args.join(" ");
-    let queryUriString = encodeURIComponent(query);
+    let queryUriString = `https://www.google.com/search?q=${encodeURIComponent(query)}`;
     let $;
     try {
         $ = await getGoogleSearchPageAsCheerioObject(query);
@@ -44,7 +44,7 @@ async function execute(client, message, args) {
             if (answer.sourceText) {
                 answerEmbed.addField("\u2800",`[${answer.sourceText}](${answer.sourceUrl})`,true);
             }
-            answerEmbed.addField("\u2800",`[More results on Google](https://www.google.com/search?q=${queryUriString})`,true);
+            answerEmbed.addField("\u2800",`[More results on Google](${queryUriString})`,true);
             await message.channel.send(answerEmbed);
         } else {
             console.log("No answer was found, attempting to parse search results instead");
@@ -53,14 +53,23 @@ async function execute(client, message, args) {
             console.log(`Successfully parsed search results.  Length: ${resultsEmbedsArr.length}`);
             if (resultsEmbedsArr && resultsEmbedsArr.length > 0) {
                 await message.channel.send(`Hmm, I couldn't figure that one out. Maybe these will help:`);
-                for (let i = 0; i < 3 && i < resultsEmbedsArr.length; i++) {
+                const moreGoogleResultsEmbed = new Discord.MessageEmbed()
+                    .setTitle("More Results on Google")
+                    .setURL(queryUriString);
+                resultsEmbedsArr.push(moreGoogleResultsEmbed);
+                for (let i = 0; i < resultsEmbedsArr.length; i++) {
                     console.log(`Sending embed #${i}`);
                     await message.channel.send(resultsEmbedsArr[i]);
                 }
+
             } else {
                 console.log("Unable to parse the search results.");
                 // If all else fails, kindly inform the user that an answer was not found.
                 await message.channel.send(`Unable to find an answer. Please go fuck yourself.`);
+                const moreGoogleResultsEmbed = new Discord.MessageEmbed()
+                    .setTitle("Try your search on Google")
+                    .setURL(queryUriString);
+                await message.channel.send(moreGoogleResultsEmbed);
             }
         }
     } catch (err) {
