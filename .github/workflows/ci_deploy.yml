@@ -71,11 +71,11 @@ jobs:
 
             #install/update dependencies
             echo "Verifying/installing npm dependencies"
-            npm ci
+            npm ci &&
 
             #stop any running bot processes. "|| true" is to prevent script from halting if there are no processes
-            echo "Stopping pm2 process"
-            pm2 delete groidbot 2> /dev/null || true
+            echo "Stopping pm2 process" &&
+            pm2 delete groidbot 2> /dev/null || true &&
 
             #clear the logs + start the bot
             echo "Clearing logs and spawning new pm2 process"
