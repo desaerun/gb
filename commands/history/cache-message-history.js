@@ -92,7 +92,7 @@ async function execute(client, message, args) {
 
     await message.channel.send(`There have been ${counts.total} messages sent in channel #${targetChannel.name}.`);
     try {
-        let [result] = pool.execute(`SELECT COUNT(*) AS messageCount FROM messages WHERE channel = ?`, targetChannel.id);
+        let [result] = await pool.query(`SELECT COUNT(*) AS messageCount FROM messages WHERE channel = ?`, targetChannel.id);
         await message.channel.send(`Updated DB successfully.  Rows: ${result.messageCount}`);
         await message.channel.send(`(Error:  ${counts.error}|Success: ${counts.added}|Skipped: ${counts.skipped}|Bot: ${counts.bot}|No Author: ${counts.noAuthor})`);
     } catch (e) {
