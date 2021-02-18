@@ -8,7 +8,7 @@ const pool = mysql.createPool({
     connectionLimit: 100,
     queueLimit: 0,
 });
-captureMessage = require("../../tools/message-utils");
+const {captureMessage} = require("../../tools/message-utils");
 
 //module settings
 const name = "cache-message-history";
