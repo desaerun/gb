@@ -14,7 +14,7 @@ exports.getRandomArrayMember = function getRandomArrayMember(arr) {
  * @returns {number}
  */
 exports.getRand = function getRand(min, max) {
-    return Math.floor(min + (Math.random() * (max - min)));
+    return Math.floor(min + (Math.random() * (max - min + 1)));
 }
 
 exports.suppressUrls = function suppressUrls(text) {
