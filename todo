@@ -1,3 +1,11 @@
+- fix type coercion
+    -> snowflake coercion does not seem to be working
+    -> optional first argument is not being skipped over (roll.js)
+- on get-deleted-messages, move message content above date / time info.
+    -> also maybe remove user's avatar as it is somewhat redundant and looks ugly
+    -> do same for "random-message"
+        ->also fail gracefully if message content exceeds the maximum (1024) chars
+
 - crypto wallets associated with the user
     -> tipping
     -> fund raising

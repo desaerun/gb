@@ -106,8 +106,7 @@ async function playNextSong(textChannel, voiceChannel) {
         const song = queue.shift();
         try {
             const connection = await voiceChannel.join();
-            const stream = await ytdl(song.url);
-            const dispatcher = connection.play(stream, {type: "opus"});
+            const dispatcher = connection.play(await ytdl(song.url), {type: "opus"});
             playing = true;
             currentSong = {
                 started: +Date.now(),
