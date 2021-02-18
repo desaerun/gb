@@ -5,6 +5,7 @@ const Discord = require("discord.js");
 
 //module settings
 const name = "question";
+const aliases = ["q"];
 const description = "Attempts to answer your question";
 const params = [
     {
@@ -20,34 +21,17 @@ async function execute(client, message, args) {
 
     let query = args.join(" ");
     let queryUriString = encodeURIComponent(query);
-    let answer;
     let $;
-
     try {
-        const googleQueryUrl = "https://www.google.com/search";
-        const maxRetries = 3;
+        $ = getGoogleSearchPageAsCheerioObject(query);
+    } catch (e) {
+        throw e;
+    }
+    try {
+        let answer = await getAnswer($,query);
 
-        for (let i = 0; i < maxRetries; i++) {
-            const response = await axios.get(googleQueryUrl, {
-                headers: {
-                    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.101 Safari/537.36",
-                },
-                params: {
-                    q: query,
-                }
-            });
-            if (response.status === 200) {
-                $ = cheerio.load(response.data);
-                answer = await getAnswerFromGoogleSearch($);
-
-                if (JSON.stringify(answer) !== "{}" && answer.text) {
-                    break;
-                }
-            } else {
-                throw new Error(`Response from server was not HTTP 200: ${response.status}`);
-            }
-        }
         if (answer.text) {
+            console.log("An answer was found!");
             const answerEmbed = new Discord.MessageEmbed();
             if (answer.text && answer.context && answer.text !== answer.context) {
                 answerEmbed.setTitle(answer.text);
@@ -61,11 +45,10 @@ async function execute(client, message, args) {
                 answerEmbed.addField("\u2800",`[${answer.sourceText}](${answer.sourceUrl})`,true);
             }
             answerEmbed.addField("\u2800",`[More results on Google](https://www.google.com/search?q=${queryUriString})`,true);
-            console.log("An answer was found!", answer);
             await message.channel.send(answerEmbed);
         } else {
             console.log("No answer was found, attempting to parse search results instead");
-            // If neither the Featured Snippet nor the Knowledge Panel exist, return the first few search results
+            // If an answer was not able to be parsed, return the first few search results
             let resultsEmbedsArr = getSearchResultsAsEmbeddedMessages($);
             console.log(`Successfully parsed search results.  Length: ${resultsEmbedsArr.length}`);
             if (resultsEmbedsArr && resultsEmbedsArr.length > 0) {
@@ -88,12 +71,55 @@ async function execute(client, message, args) {
 //module export
 module.exports = {
     name: name,
+    aliases: aliases,
     description: description,
     params: params,
     execute: execute,
 }
 
 //helper functions
+
+/**
+ * Tries to get an answer
+ * @param $
+ * @param query
+ * @param maxRetries
+ * @returns {Promise<{text: String, context: String, sourceText: String, sourceUrl: String, sourcePane: String}>}
+ */
+async function getAnswer($,query,maxRetries = 3) {
+    let answer;
+    for (let i = 0; i < maxRetries; i++) {
+        answer = await getAnswerFromGoogleSearch($);
+        if (JSON.stringify(answer) !== "{}" && answer.text) {
+            break;
+        }
+        $ = getGoogleSearchPageAsCheerioObject(query);
+    }
+    return answer;
+}
+
+async function getGoogleSearchPageAsCheerioObject(query) {
+    let $;
+    try {
+        const googleQueryUrl = "https://www.google.com/search";
+        const response = await axios.get(googleQueryUrl, {
+            headers: {
+                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.101 Safari/537.36",
+            },
+            params: {
+                q: query,
+            }
+        });
+        if (response.status === 200) {
+            $ = cheerio.load(response.data);
+        } else {
+            throw new Error(`Response from server was not HTTP 200: ${response.status}`);
+        }
+    } catch (e) {
+        throw e;
+    }
+    return $;
+}
 
 // selectors is a skeleton describing the expected search results from google and how to find the target DOM member.
 // The order is important, as soon as a match is found it will break the loop and stop looking for an answer in
@@ -247,13 +273,14 @@ const selectors = {
 
 /**
  * Scrapes Google Search results to find the answer to the query given.  The document structure (where to look for
- * the panes, and ultimately, the answers, is given in the large "selectors" object above.  Will attempt to retry
- * maxRetries amount of times if the result is blank as sometimes Google is finicky.  Returns a promise that resolves
- * to an object of the following structure: {
+ * the panes, and ultimately, the answers, is given in the large "selectors" object above. Returns a promise
+ * that resolves to an object of the following structure:
+ * {
  *     text: the main answer text
  *     context: further context
  *     sourceText: text describing the source / article / document from which the answer was pulled
  *     sourceUrl: a link to the sourceText document
+ *     sourcePane: A name describing the pane where the answer was found.
  * }
  *
  * @param $ -- the jQuery (cheerio) context of the entire page
@@ -262,6 +289,7 @@ const selectors = {
  *     context: String,
  *     sourceText: String,
  *     sourceUrl: String,
+ *     sourcePane: String,
  * }>}
  */
 
