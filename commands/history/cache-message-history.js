@@ -8,7 +8,7 @@ const pool = mysql.createPool({
     connectionLimit: 100,
     queueLimit: 0,
 });
-captureMessage = require("../../tools/message_db_tools/captureMessage");
+captureMessage = require("../../tools/message-utils");
 
 //module settings
 const name = "cache-message-history";
@@ -92,8 +92,8 @@ async function execute(client, message, args) {
     await message.channel.send(`There have been ${counts.total} messages sent in channel #${targetChannel.name}.`);
     try {
         let [result] = await pool.execute("SELECT COUNT(*) AS `messageCount` FROM `messages` WHERE `channel` = ?", [targetChannel.id]);
-        console.log(result);
-        await message.channel.send(`Updated DB successfully.  Rows: ${result.messageCount}`);
+        console.log(result[0]);
+        await message.channel.send(`Updated DB successfully.  Rows: ${result[0].messageCount}`);
         await message.channel.send(`(Error:  ${counts.error}|Success: ${counts.added}|Skipped: ${counts.skipped}|Bot: ${counts.bot}|No Author: ${counts.noAuthor})`);
     } catch (e) {
         await message.channel.send(`Error occurred fetching message count: ${e}`);

@@ -1,8 +1,7 @@
 //imports
 const ytdl = require("ytdl-core-discord");
 const ytsr = require("ytsr");
-const sendLongMessage = require("../../tools/sendLongMessage");
-const {suppressUrls} = require("../../tools/utils");
+const {suppressUrls,sendLongMessage} = require("../../tools/utils");
 const Discord = require("discord.js");
 
 //module settings

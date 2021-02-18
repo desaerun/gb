@@ -2,21 +2,18 @@ require("dotenv").config();  // pull in ENV variables from .env file
 const CONFIG = require("./config/config");
 const Discord = require("discord.js");
 const client = new Discord.Client({partials: ["MESSAGE"]});
-//const snowflakeToTimestamp = require("./tools/snowflakeToTimestamp");
+//const {snowflakeToTimestamp} = require("./tools/utils");
 
 const cron = require("node-cron");
 
-const captureMessage = require("./tools/message_db_tools/captureMessage");
-const updateEditedMessage = require("./tools/message_db_tools/updateEditedMessage");
-const deleteMessage = require("./tools/message_db_tools/deleteMessage");
-const status = require("./commands/bot_control/set-bot-status.js");
+const {captureMessage,updateEditedMessage,deleteMessage} = require("./tools/message-utils");
+const status = require("./commands/bot_control/set-bot-status");
 
 const dev_output = require("./dev_output");
 dev_output.setClient(client);
 
 const fs = require("fs");
-const sendLongMessage = require("./tools/sendLongMessage");
-const {getRandomArrayMember} = require("./tools/utils");
+const {getRandomArrayMember,sendLongMessage} = require("./tools/utils");
 
 client.commands = new Discord.Collection();
 client.listenerSet = new Discord.Collection();

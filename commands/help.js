@@ -3,8 +3,7 @@ const Discord = require("discord.js");
 const CONFIG = require("../config/config");
 const fs = require("fs");
 const path = require("path");
-const logMessage = require("../tools/logMessage");
-const sendLongMessage = require("../tools/sendLongMessage");
+const {logMessage,sendLongMessage} = require("../tools/utils");
 
 //module settings
 const name = "help";
