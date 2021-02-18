@@ -1,11 +1,3 @@
-module.exports = {
-    insertNewMessage: insertNewMessage,
-    captureMessage: captureMessage,
-    deleteMessage: deleteMessage,
-    updateEditedMessage: updateEditedMessage,
-    convertEmbedToText: convertEmbedToText,
-};
-
 const {snowflakeToTimestamp,logMessage} = require("./utils");
 
 //mysql
@@ -173,7 +165,7 @@ convertEmbedToText = function convertEmbedToText(embed) {
     return textEmbed;
 }
 
-async function addMessageEdit(oldMessage, newMessage) {
+addMessageEdit = async function addMessageEdit(oldMessage, newMessage) {
     let oldMessageContent = oldMessage.content;
     let newMessageContent = newMessage.content;
     for (const embed of oldMessage.embeds) {
@@ -194,3 +186,11 @@ async function addMessageEdit(oldMessage, newMessage) {
         throw error;
     }
 }
+
+module.exports = {
+    insertNewMessage: insertNewMessage,
+    captureMessage: captureMessage,
+    deleteMessage: deleteMessage,
+    updateEditedMessage: updateEditedMessage,
+    convertEmbedToText: convertEmbedToText,
+};
