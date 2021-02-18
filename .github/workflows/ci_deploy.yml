@@ -71,7 +71,7 @@ jobs:
 
             #install/update dependencies
             echo "Verifying/installing npm dependencies"
-            npm install
+            npm ci
 
             #stop any running bot processes. "|| true" is to prevent script from halting if there are no processes
             echo "Stopping pm2 process"
@@ -79,5 +79,4 @@ jobs:
 
             #clear the logs + start the bot
             echo "Clearing logs and spawning new pm2 process"
-            pm2 flush
-            npm start
+            pm2 flush && npm start
