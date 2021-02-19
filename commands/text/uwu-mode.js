@@ -1,5 +1,5 @@
 //imports
-const {uwuify} = require("./uwu");
+const {uwuify} = require("../../tools/uwuify");
 const {sendMessage} = require("../../tools/sendMessage");
 
 //module settings
@@ -14,6 +14,7 @@ const params = [
 
 //main
 async function execute(client,message,args) {
+    let newNick;
     if (!args[0]) {
         uwuMode = !uwuMode;
     } else {
@@ -23,6 +24,7 @@ async function execute(client,message,args) {
             case "yes":
             case "on": {
                 uwuMode = true;
+                newNick = uwuify(message.guild.me.displayName);
                 break;
             }
             case "false":
@@ -30,6 +32,7 @@ async function execute(client,message,args) {
             case "no":
             case "off": {
                 uwuMode = false;
+                newNick = normalNickname;
                 break;
             }
             default: {
@@ -37,12 +40,9 @@ async function execute(client,message,args) {
             }
         }
     }
-    if (uwuMode) {
-        await sendMessage("uwu-mode turned on!", message.channel);
-    } else {
-        await sendMessage("uwu-mode turned off.", message.channel);
-    }
-    await message.guild.me.setNickname(uwuify(message.guild.me.displayName));
+    const onOff = (uwuMode) ? "on!" : "off.";
+    await sendMessage(`uwu-mode turned ${onOff}!`, message.channel);
+    await message.guild.me.setNickname(newNick);
     return uwuMode;
 }
 

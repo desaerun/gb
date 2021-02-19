@@ -10,7 +10,7 @@ const description = "Flips a coin.";
 async function execute(client, message) {
     const roll = getRand(0, 2);
     const side = (roll === 0) ? "Heads" : "Tails";
-    await sendMessage(`**${client.user.displayName}** flips a coin. It's **${side}**!`, message.channel);
+    await sendMessage(`**${message.guild.me.displayName}** flips a coin. It's **${side}**!`, message.channel);
     return true;
 }
 
