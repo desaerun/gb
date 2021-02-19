@@ -12,7 +12,7 @@ const status = require("./commands/bot_control/set-bot-status");
 const dev_output = require("./dev_output");
 dev_output.setClient(client);
 global.uwuMode = false;
-global.normalNickname = client.user.username;
+global.normalNickname = "asdf";
 
 const fs = require("fs");
 const {getRandomArrayMember, sendMessage} = require("./tools/utils");
@@ -24,6 +24,7 @@ getCommands("./commands");
 getListenerSet("./listeners");
 
 client.once("ready", () => {
+    normalNickname = client.user.username;
     //let guilds = client.guilds;
 
     //todo: read in first line from github_update.txt and add it to the "online" message
