@@ -1,6 +1,6 @@
 //imports
 const axios = require("axios");
-const {sendMessage} = require("../../tools/utils");
+const {sendMessage} = require("../../tools/sendMessage");
 
 //module settings
 const name = "crypto-price";

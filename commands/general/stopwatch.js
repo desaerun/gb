@@ -1,6 +1,6 @@
 //imports
 const prettyMilliseconds = require("pretty-ms");
-const {sendMessage} = require("../../tools/utils");
+const {sendMessage} = require("../../tools/sendMessage");
 
 //globals
 const stopwatchMap = new Map();

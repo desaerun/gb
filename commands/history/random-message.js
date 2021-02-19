@@ -2,7 +2,7 @@
 const Discord = require("discord.js");
 const locutus = require("locutus");
 const moment = require("moment");
-const {sendMessage} = require("../../tools/utils");
+const {sendMessage} = require("../../tools/sendMessage");
 
 //mysql
 const mysql = require("mysql2/promise");

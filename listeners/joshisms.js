@@ -1,6 +1,6 @@
 //imports
 const CONFIG = require("../config/config");
-const {sendMessage} = require("../tools/utils");
+const {sendMessage} = require("../tools/sendMessage");
 
 //module config
 const name = "joshisms";

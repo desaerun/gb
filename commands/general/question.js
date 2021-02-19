@@ -2,7 +2,7 @@
 const axios = require("axios");
 const cheerio = require("cheerio");
 const Discord = require("discord.js");
-const {sendMessage} = require("../../tools/utils");
+const {sendMessage} = require("../../tools/sendMessage");
 
 //module settings
 const name = "question";

@@ -1,7 +1,7 @@
 //imports
 const axios = require("axios");
 const decode = require("unescape");
-const {sendMessage} = require("../../tools/utils");
+const {sendMessage} = require("../../tools/sendMessage");
 
 //module settings
 const name = "reddit";

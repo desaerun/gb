@@ -1,7 +1,7 @@
 //imports
 const readline = require("readline");
 const fs = require("fs");
-const {sendMessage} = require("../../tools/utils");
+const {sendMessage} = require("../../tools/sendMessage");
 
 //module settings
 const name = "print-log";

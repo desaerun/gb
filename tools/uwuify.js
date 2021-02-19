@@ -6,7 +6,7 @@ const {getRandomArrayMember} = require("./utils");
  * @param replacementsFreqBase the frequency to replace the text
  * @returns {string} The uwu-ified text
  */
-exports.uwuify = function uwuify(text, replacementsFreqBase = 1) {
+function uwuify(text, replacementsFreqBase = 1) {
     //trim whitespace
     text = text.trim();
     if (text.length === 0) {
@@ -155,3 +155,17 @@ exports.uwuify = function uwuify(text, replacementsFreqBase = 1) {
     //join everything back together and return
     return words.join(" ");
 }
+exports.uwuify = uwuify;
+
+    /**
+ * Uwuifies the text only if Uwu-mode is on, otherwise returns the text unchanged.
+ * @param text
+ * @returns {string|*}
+ */
+function uwuifyIfUwuMode(text) {
+    if (uwuMode) {
+        return uwuify(text);
+    }
+    return text;
+}
+exports.uwuifyIfUwuMode = uwuifyIfUwuMode;

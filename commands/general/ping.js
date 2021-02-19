@@ -1,6 +1,6 @@
 //imports
 const Discord = require("discord.js");
-const {sendMessage} = require("../../tools/utils");
+const {sendMessage} = require("../../tools/sendMessage");
 
 //module settings
 const name = "ping";

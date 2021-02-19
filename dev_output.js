@@ -6,7 +6,7 @@
 
 const stackTrace = require("stack-trace");
 const Discord = require("discord.js");
-const {sendMessage} = require("./tools/utils");
+const {sendMessage} = require("./tools/sendMessage");
 
 module.exports = {
     setClient: function (client) {
