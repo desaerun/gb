@@ -23,7 +23,6 @@ async function execute(client,message,args) {
             case "yes":
             case "on": {
                 uwuMode = true;
-                await sendMessage("uwu-mode turned on!", message.channel);
                 break;
             }
             case "false":
@@ -31,7 +30,6 @@ async function execute(client,message,args) {
             case "no":
             case "off": {
                 uwuMode = false;
-                await sendMessage("uwu-mode turned off.", message.channel);
                 break;
             }
             default: {
@@ -39,7 +37,12 @@ async function execute(client,message,args) {
             }
         }
     }
-    await message.guild.me.setNickname(uwuify(message.guild.me.nickname));
+    if (uwuMode) {
+        await sendMessage("uwu-mode turned on!", message.channel);
+    } else {
+        await sendMessage("uwu-mode turned off.", message.channel);
+    }
+    await message.guild.me.setNickname(uwuify(message.guild.me.displayName));
     return uwuMode;
 }
 
