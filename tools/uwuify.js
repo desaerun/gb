@@ -1,3 +1,5 @@
+const {getRandomArrayMember} = require("./utils");
+
 /**
  * Uwu-ifies text
  * @param text The text to uwu-ify
