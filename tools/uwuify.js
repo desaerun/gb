@@ -1,4 +1,4 @@
-const {getRandomArrayMember} = require("./utils");
+const {getRandomArrayMember,isUrl} = require("./utils");
 
 /**
  * Uwu-ifies text
@@ -96,6 +96,9 @@ function uwuify(text, replacementsFreqBase = 1) {
     //it should be replacing 100% of the message by 85% of the way through.
     const replacementsFreqIncrement = (1 - frequency.replacements) / (words.length / 100 * 85);
     for (let i = 0, replacementsFreqCurrent = replacementsFreqBase; i < words.length; i++, replacementsFreqCurrent += replacementsFreqIncrement) {
+        if (isUrl(words[i])) {
+            continue;
+        }
         if (i > words.length / 7 || replacementsFreqBase === 1) {
             if (Math.random() < replacementsFreqCurrent) {
 
