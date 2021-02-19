@@ -3,7 +3,7 @@ const Discord = require("discord.js");
 const CONFIG = require("../config/config");
 const fs = require("fs");
 const path = require("path");
-const {logMessage,sendLongMessage} = require("../tools/utils");
+const {logMessage, sendMessage} = require("../tools/utils");
 
 //module settings
 const name = "help";
@@ -20,7 +20,7 @@ const params = [
 async function execute(client, message, args) {
     if (args.length === 0) {
         try {
-            await sendLongMessage(generateCommandList(client.commands), message.channel);
+            await sendMessage(generateCommandList(client.commands), message.channel);
         } catch (e) {
             throw e;
         }
@@ -29,9 +29,9 @@ async function execute(client, message, args) {
     const helpWithCommand = args[0].match(/^-?([\w-_]+)$/)[1];
     if (client.commands.has(helpWithCommand)) {
         const embedMessage = getHelpMessage(client.commands.get(helpWithCommand));
-        await message.channel.send(embedMessage);
+        await sendMessage(embedMessage, message.channel);
     } else {
-        await message.channel.send(`The command \`${helpWithCommand}\` does not exist.  Type \`${CONFIG.PREFIX}${name}\` for a commands list.`);
+        await sendMessage(`The command \`${helpWithCommand}\` does not exist.  Type \`${CONFIG.PREFIX}${name}\` for a commands list.`, message.channel);
     }
 }
 

@@ -1,5 +1,6 @@
 //imports
 const axios = require("axios");
+const {sendMessage} = require("../../tools/utils");
 
 //module settings
 const name = "crypto-price";
@@ -16,12 +17,12 @@ const params = [
 //main
 async function execute(client, message, args) {
     if (args.length < 1) {
-        await message.channel.send(`You must include a crypto ticker (BTC, ETH) with this request.`);
+        await sendMessage(`You must include a crypto ticker (BTC, ETH) with this request.`, message.channel);
         return;
     }
 
     if (args.length > 1) {
-        await message.channel.send(`You cannot make multiple requests at once. (Requested ${args})`);
+        await sendMessage(`You cannot make multiple requests at once. (Requested ${args})`, message.channel);
         return;
     }
 
@@ -39,12 +40,12 @@ async function execute(client, message, args) {
             let priceDiffFormatted = (priceDiff < 0 ? "" : "+") + currencyFormat.format(priceDiff);
             let percDiffFormatted = (priceDiff < 0 ? "" : "+") + percentFormat.format(percDiff);
 
-            await message.channel.send(`1 ${crypto} = **${curPriceFormatted}** (**${priceDiffFormatted}**[**${percDiffFormatted}**] last 24hrs)`);
+            await sendMessage(`1 ${crypto} = **${curPriceFormatted}** (**${priceDiffFormatted}**[**${percDiffFormatted}**] last 24hrs)`, message.channel);
         } else {
             throw new Error(`Request returned status code ${response.status}`);
         }
     } catch (err) {
-        await message.channel.send(`error fetching crypto price: ${err}`);
+        await sendMessage(`error fetching crypto price: ${err}`, message.channel);
     }
 }
 

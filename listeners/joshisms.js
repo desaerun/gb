@@ -1,5 +1,6 @@
 //imports
 const CONFIG = require("../config/config");
+const {sendMessage} = require("../tools/utils");
 
 //module config
 const name = "joshisms";
@@ -13,7 +14,7 @@ async function listen(client, message) {
     for (let key of wordResponseMap.keys()) {
         if (key.test(message.content)) {
             let response = wordResponseMap.get(key);
-            await message.channel.send(response);
+            await sendMessage(response, message.channel);
             return true;
         }
     }

@@ -1,4 +1,5 @@
 //imports
+const {sendMessage} = require("../../tools/utils");
 
 //module settings
 const name = "test-embed-suppress";
@@ -6,7 +7,7 @@ const description = "tries sending a message that should have an embed, but supp
 
 //main
 async function execute(client, message) {
-    const sentMessage = (await message.channel.send("http://google.com")).suppressEmbeds(true);
+    await sendMessage("https://google.com", message.channel, true);
 }
 
 //module export

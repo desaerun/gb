@@ -1,4 +1,4 @@
-const {snowflakeToTimestamp,logMessage} = require("./utils");
+const {snowflakeToTimestamp, logMessage} = require("./utils");
 
 //mysql
 const mysql = require("mysql2/promise");
@@ -41,12 +41,12 @@ insertNewMessage = async function insertNewMessage(message, lastEditTimestamp = 
         timestamp: snowflakeToTimestamp(message.id),
         lastEditTimestamp: lastEditTimestamp,
     }
-    logMessage(`Guild: ${JSON.stringify(message.guild)}...${JSON.stringify(guild_values)}`,4);
-    logMessage(`Channel: ${JSON.stringify(message.channel)}...${JSON.stringify(channel_values)}`,4);
-    logMessage(`Author: ${JSON.stringify(message.author)}...${JSON.stringify(author_values)}`,4);
-    logMessage(`Cached Author:${JSON.stringify(message.guild.members.cache.get(author_values.id))}`,4);
-    logMessage(`Message: ${JSON.stringify(message)}...${JSON.stringify(message_values)}`,4);
-    logMessage(`Attachments: ${JSON.stringify(message.attachments)}`,4);
+    logMessage(`Guild: ${JSON.stringify(message.guild)}...${JSON.stringify(guild_values)}`, 4);
+    logMessage(`Channel: ${JSON.stringify(message.channel)}...${JSON.stringify(channel_values)}`, 4);
+    logMessage(`Author: ${JSON.stringify(message.author)}...${JSON.stringify(author_values)}`, 4);
+    logMessage(`Cached Author:${JSON.stringify(message.guild.members.cache.get(author_values.id))}`, 4);
+    logMessage(`Message: ${JSON.stringify(message)}...${JSON.stringify(message_values)}`, 4);
+    logMessage(`Attachments: ${JSON.stringify(message.attachments)}`, 4);
 
     // await pool.query("START TRANSACTION;");
     try {
@@ -86,7 +86,7 @@ insertNewMessage = async function insertNewMessage(message, lastEditTimestamp = 
     return 1; // added
 }
 
-captureMessage = async function captureMessage (client, message, includeBotMessages = false) {
+captureMessage = async function captureMessage(client, message, includeBotMessages = false) {
     try {
         let [rows] = await pool.execute("SELECT * FROM messages WHERE id = ?", [message.id]);
         if (rows.length === 0) { // if message doesn't already exist in DB

@@ -1,4 +1,5 @@
 //imports
+const {sendMessage} = require("../../tools/utils");
 
 // mysql
 const mysql = require("mysql2/promise");
@@ -30,11 +31,11 @@ async function execute(client, message, args) {
     try {
         [rows] = await pool.query(query);
     } catch (e) {
-        await message.channel.send(`MySQL error: ${e}`);
+        await sendMessage(`MySQL error: ${e}`, message.channel);
         throw e;
     }
     for (let row of rows) {
-        await message.channel.send(`\`\`\`${JSON.stringify(row)}\`\`\``);
+        await sendMessage(`\`\`\`${JSON.stringify(row)}\`\`\``, message.channel);
     }
 }
 

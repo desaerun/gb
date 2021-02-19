@@ -1,4 +1,5 @@
 //imports
+const {sendMessage} = require("../../tools/utils");
 const {getRand} = require("../../tools/utils");
 
 //module settings
@@ -9,7 +10,7 @@ const description = "Flips a coin.";
 async function execute(client, message) {
     const roll = getRand(0, 2);
     const side = (roll === 0) ? "Heads" : "Tails";
-    await message.channel.send(`**${client.user.username}** flips a coin. It's **${side}**!`);
+    await sendMessage(`**${client.user.username}** flips a coin. It's **${side}**!`, message.channel);
     return true;
 }
 

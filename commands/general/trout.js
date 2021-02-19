@@ -1,4 +1,5 @@
 //imports
+const {sendMessage} = require("../../tools/utils");
 
 //module settings
 const name = "trout";
@@ -15,7 +16,7 @@ const params = [
 //main
 async function execute(client, message, args) {
     args[0] = args.length > 0 ? args[0] : params[0].default;
-    await message.channel.send(`**${message.author.username}** slaps **${args.join(" ")}** with a large trout.`);
+    await sendMessage(`**${message.author.username}** slaps **${args.join(" ")}** with a large trout.`, message.channel);
 }
 
 //module export

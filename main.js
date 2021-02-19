@@ -6,14 +6,14 @@ const client = new Discord.Client({partials: ["MESSAGE"]});
 
 const cron = require("node-cron");
 
-const {captureMessage,updateEditedMessage,deleteMessage} = require("./tools/message-utils");
+const {captureMessage, updateEditedMessage, deleteMessage} = require("./tools/message-utils");
 const status = require("./commands/bot_control/set-bot-status");
 
 const dev_output = require("./dev_output");
 dev_output.setClient(client);
 
 const fs = require("fs");
-const {getRandomArrayMember,sendLongMessage} = require("./tools/utils");
+const {getRandomArrayMember, sendMessage} = require("./tools/utils");
 
 client.commands = new Discord.Collection();
 client.listenerSet = new Discord.Collection();
@@ -46,7 +46,7 @@ client.once("ready", () => {
     cron.schedule("* * * * *", () => {
         //todo: make command to add/remove guild/channel combos to historical messages cron
         //client.commands.get("random-message").execute(client,"","1 year ago",CONFIG.channel_primularies_id);
-    })
+    });
 
 });
 
@@ -162,16 +162,16 @@ async function runCommands(message, args) {
             [args, argTypeErrors] = verifyArgTypes(command, args);
             if (argTypeErrors.length > 0) {
                 const errors = argTypeErrors.join("\n");
-                await sendLongMessage(errors, message.channel);
+                await sendMessage(errors, message.channel);
                 return false;
             }
             command.execute(client, message, args);
 
         } catch (err) {
-            dev_output.sendTrace(err, CONFIG.CHANNEL_DEV_ID);
+            await dev_output.sendTrace(err, CONFIG.CHANNEL_DEV_ID);
         }
     } else {
-        await message.channel.send(`\`${commandName}\` is not a valid command. Type \`${CONFIG.PREFIX}help\` to get a list of commands.`);
+        await sendMessage(`\`${commandName}\` is not a valid command. Type \`${CONFIG.PREFIX}help\` to get a list of commands.`, message.channel);
     }
 }
 
@@ -256,7 +256,7 @@ async function parseWithListeners(message) {
             if (await listener.listen(client, message)) return;
         }
     } catch (err) {
-        dev_output.sendTrace(err, CONFIG.CHANNEL_DEV_ID);
+        await dev_output.sendTrace(err, CONFIG.CHANNEL_DEV_ID);
     }
 }
 

@@ -1,4 +1,6 @@
 //imports
+const {captureMessage} = require("../../tools/message-utils");
+const {sendMessage} = require("../../tools/utils");
 // mysql
 const mysql = require("mysql2/promise");
 const db = require("../../config/db");
@@ -8,7 +10,6 @@ const pool = mysql.createPool({
     connectionLimit: 100,
     queueLimit: 0,
 });
-const {captureMessage} = require("../../tools/message-utils");
 
 //module settings
 const name = "cache-message-history";
@@ -39,14 +40,14 @@ async function execute(client, message, args) {
         } else if (message.guild.channels.cache.get(args[0])) {
             targetChannel = message.guild.channels.cache.get(args[0]);
         } else {
-            await message.channel.send(`The specified channel ID was not found.`);
+            await sendMessage(`The specified channel ID was not found.`, message.channel);
             return false;
         }
     }
     if (args.length === 2) {
         includeBotMessages = args[1];
     }
-    await message.channel.send(`Caching messages from "${message.guild.name}".#${targetChannel.name} to DB...`);
+    await sendMessage(`Caching messages from "${message.guild.name}".#${targetChannel.name} to DB...`, message.channel);
     console.log(`Retrieving list of messages...`);
 
     let messages = await targetChannel.messages.fetch({limit: 100});
@@ -89,14 +90,14 @@ async function execute(client, message, args) {
         console.log(`*************End of batch, messages.size=${messages.size}*************`);
         console.log(`(Error:  ${counts.error}|Success: ${counts.added}|Skipped: ${counts.skipped}|Bot: ${counts.bot}|No Author: ${counts.noAuthor})`);
     }
-    await message.channel.send(`There have been ${counts.total} messages sent in channel #${targetChannel.name}.`);
+    await sendMessage(`There have been ${counts.total} messages sent in channel #${targetChannel.name}.`, message.channel);
     try {
         let [result] = await pool.execute("SELECT COUNT(*) AS `messageCount` FROM `messages` WHERE `channel` = ?", [targetChannel.id]);
         console.log(result[0]);
-        await message.channel.send(`Updated DB successfully.  Rows: ${result[0].messageCount}`);
-        await message.channel.send(`(Error:  ${counts.error}|Success: ${counts.added}|Skipped: ${counts.skipped}|Bot: ${counts.bot}|No Author: ${counts.noAuthor})`);
+        await sendMessage(`Updated DB successfully.  Rows: ${result[0].messageCount}`, message.channel);
+        await sendMessage(`(Error:  ${counts.error}|Success: ${counts.added}|Skipped: ${counts.skipped}|Bot: ${counts.bot}|No Author: ${counts.noAuthor})`, message.channel);
     } catch (e) {
-        await message.channel.send(`Error occurred fetching message count: ${e}`);
+        await sendMessage(`Error occurred fetching message count: ${e}`, message.channel);
     }
 }
 

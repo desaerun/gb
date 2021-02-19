@@ -1,9 +1,10 @@
 //imports
+const {sendMessage} = require("../../tools/utils");
+const {getRand} = require("../../tools/utils");
 
 //module settings
-const {getRand} = require("../../tools/utils");
 const name = "roll";
-const aliases = ["dice","dieroll","die-roll","diceroll","dice-roll"];
+const aliases = ["dice", "dieroll", "die-roll", "diceroll", "dice-roll"];
 const description = "Rolls a die.";
 const params = [
     {
@@ -44,7 +45,7 @@ async function execute(client, message, args) {
         response = `**${client.user.username}** rolls between **${args[0]}** and **${args[1]}**:  **${roll}**`;
     }
     try {
-        await message.channel.send(response);
+        await sendMessage(response, message.channel);
     } catch (e) {
         throw e;
     }
