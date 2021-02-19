@@ -1,6 +1,5 @@
 //imports
-const {getRandomArrayMember} = require("../../tools/utils.js");
-const sendLongMessage = require("../../tools/sendLongMessage");
+const {getRandomArrayMember,sendLongMessage} = require("../../tools/utils.js");
 
 //module settings
 const name = "uwu";

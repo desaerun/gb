@@ -5,7 +5,6 @@ const moment = require("moment");
 // mysql
 const mysql = require("mysql2/promise");
 const db = require("../../config/db");
-const logMessage = require("../../tools/logMessage");
 const pool = mysql.createPool({
     ...db,
     waitForConnections: true,

@@ -1,8 +1,7 @@
 //imports
 const ytdl = require("ytdl-core-discord");
 const ytsr = require("ytsr");
-const sendLongMessage = require("../../tools/sendLongMessage");
-const {suppressUrls} = require("../../tools/utils");
+const {suppressUrls,sendLongMessage} = require("../../tools/utils");
 const Discord = require("discord.js");
 
 //module settings
@@ -107,8 +106,7 @@ async function playNextSong(textChannel, voiceChannel) {
         const song = queue.shift();
         try {
             const connection = await voiceChannel.join();
-            const stream = await ytdl(song.url);
-            const dispatcher = connection.play(stream, {type: "opus"});
+            const dispatcher = connection.play(await ytdl(song.url), {type: "opus"});
             playing = true;
             currentSong = {
                 started: +Date.now(),
