@@ -1,5 +1,6 @@
 const CONFIG = require("../config/config");
 const Discord = require("discord.js");
+const {uwuify} = require("./uwuify");
 
 /**
  * Gets a random member from an array.
@@ -61,8 +62,7 @@ exports.logMessage = function (message, minVerbosity = 3) {
         console.log(message);
     }
 }
-const {uwuify} = require("./uwuify");
-let uwuMode = true;
+
 
 /**
  * Uwuifies the text only if Uwu-mode is on, otherwise returns the text unchanged.
@@ -75,7 +75,6 @@ function uwuifyIfUwuMode(text) {
     }
     return text;
 }
-
 exports.uwuifyIfUwuMode = uwuifyIfUwuMode;
 
 /**
