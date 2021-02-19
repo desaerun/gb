@@ -2,18 +2,23 @@ require("dotenv").config();  // pull in ENV variables from .env file
 const CONFIG = require("./config/config");
 const Discord = require("discord.js");
 const client = new Discord.Client({partials: ["MESSAGE"]});
-//const {snowflakeToTimestamp} = require("./tools/utils");
+//const snowflakeToTimestamp = require("./tools/snowflakeToTimestamp");
+const play = require("./commands/youtube/play");
 
 const cron = require("node-cron");
 
-const {captureMessage,updateEditedMessage,deleteMessage} = require("./tools/message-utils");
-const status = require("./commands/bot_control/set-bot-status");
+const captureMessage = require("./tools/message_db_tools/captureMessage");
+const updateEditedMessage = require("./tools/message_db_tools/updateEditedMessage");
+const deleteMessage = require("./tools/message_db_tools/deleteMessage");
+const status = require("./commands/bot_control/set-bot-status.js");
 
 const dev_output = require("./dev_output");
 dev_output.setClient(client);
 
 const fs = require("fs");
-const {getRandomArrayMember,sendLongMessage} = require("./tools/utils");
+const logMessage = require("./tools/logMessage");
+const sendLongMessage = require("./tools/sendLongMessage");
+const {getRandomArrayMember} = require("./tools/utils");
 
 client.commands = new Discord.Collection();
 client.listenerSet = new Discord.Collection();
@@ -22,6 +27,7 @@ getCommands("./commands");
 getListenerSet("./listeners");
 
 client.once("ready", () => {
+    console.log("bot online.");
     //let guilds = client.guilds;
 
     //todo: read in first line from github_update.txt and add it to the "online" message
@@ -34,8 +40,11 @@ client.once("ready", () => {
     if (CONFIG.VERBOSITY >= 3) {
         console.log(`Bot online. Sending Online Status message to ${client.channels.cache.get(process.env.ONLINE_STATUS_CHANNEL_ID).name}(${process.env.ONLINE_STATUS_CHANNEL_ID}).`)
     }
-    let online_message = `Bot status: Online.  Type: ${process.env.BUILD_ENV}\n`;
-    dev_output.sendStatus(online_message, process.env.ONLINE_STATUS_CHANNEL_ID, "#21a721");
+    //todo: fix the bot timing out every 8 hours
+    /*
+    let online_message  = `Bot status: Online.  Type: ${process.env.BUILD_ENV}\n`;
+    dev_output.sendStatus(online_message, process.env.ONLINE_STATUS_CHANNEL_ID,"#21a721");
+     */
 
     //set initial bot status
     client.user.setActivity(status.params[0].default, {type: "PLAYING"})
@@ -54,14 +63,7 @@ client.once("ready", () => {
 client.on("message", async message => {
     await captureMessage(client, message, true);
 
-    let args = message.content.slice(CONFIG.PREFIX.length);
-    //handling for quoted args
-    //this regex matches the inside of single or double quotes, or single words.
-    const re = /(?=["'])(?:"([^"\\]*(?:\\[\s\S][^"\\]*)*)"|'([^'\\]*(?:\\[\s\S][^'\\]*)*)')|\b([^\s]+)\b/;
-    const argRe = new RegExp(re, "ig");
-
-    const matchesArr = [...args.matchAll(argRe)];
-    args = matchesArr.flatMap(a => a.slice(1, 4).filter(a => a !== undefined));
+    const args = message.content.slice(CONFIG.PREFIX.length).split(/ +/);
 
     // Ignore my own messages
     if (message.author.bot) return;
@@ -75,9 +77,11 @@ client.on("message", async message => {
     }
 });
 client.on("messageUpdate", async (oldMessage, newMessage) => {
+    console.log(`Message Edit triggered.`);
     await updateEditedMessage(oldMessage, newMessage);
 });
 client.on("messageDelete", async (deletedMessage) => {
+    console.log(`Message Deletion triggered: ${JSON.stringify(deletedMessage)}`);
     await deleteMessage(deletedMessage);
 });
 
@@ -98,15 +102,20 @@ function getCommands(dir, level = 0) {
                 const command = require(`${current_dir}${file}`);
                 // client.commands.set(command.name, command);
 
-                if (command.aliases && !command.name) {
-                    command.name = command.aliases.shift();
+                if (command.names && !command.name) {
+                    console.log(`Command ${command.names[0]} did not have a name but had "names": ${command.names}`);
+                    command.name = command.names[0];
                 }
                 if (command.name) {
                     client.commands.set(command.name, command);
+                    console.log(`adding command ${command.name}`);
+                    console.log(client.commands.get(command.name));
                 }
-                if (command.aliases) {
-                    for (let commandName of command.aliases) {
+                if (command.names) {
+                    for (let commandName of command.names) {
                         client.commands.set(commandName, command);
+                        console.log(`adding command from Names list: ${commandName}`);
+                        console.log(client.commands.get(commandName));
                     }
                 }
             }
@@ -153,16 +162,17 @@ function isCommand(message) {
 async function runCommands(message, args) {
     const commandName = args.shift().toLowerCase();
 
+    console.log(`attempting to run command ${commandName}: ${JSON.stringify(client.commands.get(commandName))}`);
     if (client.commands.has(commandName)) {
         try {
             let command = client.commands.get(commandName);
             args = setArgsToDefault(command, args);
 
-            let argTypeErrors;
-            [args, argTypeErrors] = verifyArgTypes(command, args);
+            let argTypeErrors = [];
+            [args,argTypeErrors] = verifyArgTypes(command,args);
             if (argTypeErrors.length > 0) {
                 const errors = argTypeErrors.join("\n");
-                await sendLongMessage(errors, message.channel);
+                await sendLongMessage(errors,message.channel);
                 return false;
             }
             command.execute(client, message, args);
@@ -185,7 +195,7 @@ async function runCommands(message, args) {
 function setArgsToDefault(command, args) {
     if (command.params) {
         for (let i = 0; i < command.params.length; i++) {
-            if (!(args[i]) && command.params[i].default && !command.params[i].optional) {
+            if (!(args[i]) && command.params[i].default) {
                 if (Array.isArray(command.params[i].default)) {
                     args[i] = getRandomArrayMember(command.params[i].default);
                 } else {
@@ -197,7 +207,7 @@ function setArgsToDefault(command, args) {
     return args;
 }
 
-function verifyArgTypes(command, args) {
+function verifyArgTypes(command,args) {
     let argTypeErrors = [];
     if (command.params) {
         for (let i = 0; i < command.params.length; i++) {
@@ -226,8 +236,7 @@ function verifyArgTypes(command, args) {
                             break;
                         case "snowflake":
                             const re = /^\d{16}$/
-                            const snowFlake = new RegExp(re);
-                            coercibleTypes.snowflake = snowFlake.test(args[i]);
+                            coercibleTypes.snowflake = args[i].test(re);
                             break;
                         case "string":
                         case "str":
@@ -236,6 +245,7 @@ function verifyArgTypes(command, args) {
                             break;
                     }
                 }
+                console.log(coercibleTypes);
                 const isValidType = Object.values(coercibleTypes).some(element => element === true);
                 if (!isValidType) {
                     argTypeErrors[i] = `Argument **${command.params[i].param}** could not be coerced to a ${command.params[i].type} value.`;
@@ -243,7 +253,7 @@ function verifyArgTypes(command, args) {
             }
         }
     }
-    return [args, argTypeErrors];
+    return [args,argTypeErrors];
 }
 
 /**
