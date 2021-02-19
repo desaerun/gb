@@ -15,9 +15,6 @@ const params = [
 //main
 async function execute(client, message, args) {
     args[0] = Math.abs(args[0]);
-    if (args[0] === 0) {
-        await message.channel.send("Cannot deal 0 cards.");
-    }
 
     //build a deck
     const suits = [

@@ -1,5 +1,6 @@
 //imports
-const {getRandomArrayMember,sendLongMessage} = require("../../tools/utils.js");
+const {getRandomArrayMember} = require("../../tools/utils.js");
+const sendLongMessage = require("../../tools/sendLongMessage");
 
 //module settings
 const name = "uwu";
@@ -29,9 +30,9 @@ const params = [
 ];
 
 //main
-async function execute(client, message, args) {
+async function execute(client, message, args, replacementsFreqBase = 1) {
     const uwuText = uwuify(args.join(" "));
-    await sendLongMessage(uwuText, message.channel);
+    await sendLongMessage(uwuText,message.channel);
     message.delete();
 }
 
@@ -52,7 +53,7 @@ module.exports = {
  * @param replacementsFreqBase the frequency to replace the text
  * @returns {string} The uwu-ified text
  */
-function uwuify(text, replacementsFreqBase = 1) {
+function uwuify(text,replacementsFreqBase = 1) {
     //trim whitespace
     text = text.trim();
     if (text.length === 0) {
@@ -137,10 +138,16 @@ function uwuify(text, replacementsFreqBase = 1) {
 
     //calculate how much the replacement increment should increase by
     //it should be replacing 100% of the message by 85% of the way through.
-    const replacementsFreqIncrement = (1 - frequency.replacements) / (words.length / 100 * 85);
-    for (let i = 0, replacementsFreqCurrent = replacementsFreqBase; i < words.length; i++, replacementsFreqCurrent += replacementsFreqIncrement) {
+    console.log(`Frequency base: ${frequency.replacements}`);
+    const replacementsFreqIncrement = (1-frequency.replacements) / (words.length / 100 * 85);
+    console.log(`Frequency increment: ${replacementsFreqIncrement}`);
+    for (let i=0,replacementsFreqCurrent = replacementsFreqBase;i<words.length;i++,replacementsFreqCurrent+=replacementsFreqIncrement) {
+        const percentMessageParsed = ((i + 1) / words.length * 100).toFixed(2);
+        console.log(`word ${i}(${percentMessageParsed}% of msg) (${words[i]}): Current replacement frequency: ${(Math.round(replacementsFreqCurrent*10000)/100)}%`);
+
         if (i > words.length / 7 || replacementsFreqBase === 1) {
             if (Math.random() < replacementsFreqCurrent) {
+                console.log(`performing uwu transform`);
 
                 //replace characters one word at a time
                 for (const [re, replacement] of replacements) {
@@ -193,7 +200,11 @@ function uwuify(text, replacementsFreqBase = 1) {
                     i++;
                     cooldownCounter.faces = i;
                 }
+            } else {
+                console.log(`skipping due to random frequency check`);
             }
+        } else {
+            console.log(`skipping due to not being far enough into the text`);
         }
     }
 

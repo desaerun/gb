@@ -1,8 +1,8 @@
 //imports
 const ytdl = require("ytdl-core-discord");
 const ytsr = require("ytsr");
-const {suppressUrls,sendLongMessage} = require("../../tools/utils");
-const Discord = require("discord.js");
+const sendLongMessage = require("../../tools/sendLongMessage");
+const {suppressUrls} = require("../../tools/utils");
 
 //module settings
 const name = "play";
@@ -28,26 +28,26 @@ async function execute(client, message, args) {
     }
     let q = args.join(" ");
 
-    let video;
     try {
         const filters = await ytsr.getFilters(q);
         const filter = filters.get("Type").get("Video");
-        let req = await ytsr(filter.url, {limit: 1});
-        video = req.items[0];
+        let req = await ytsr(filter.url,{limit: 1});
+
+        const video = req.items[0];
+        console.log(JSON.stringify(video));
+        const song = {
+            url: video.url,
+            description: video.title,
+            views: video.views,
+            duration: video.duration,
+            uploadedAt: video.uploadedAt,
+        }
+        console.log(video.url);
+        await playSong(song,message.channel,message.member.voice.channel);
     } catch (e) {
         throw e;
     }
-    const song = {
-        url: video.url,
-        title: video.title,
-        description: video.description,
-        views: video.views,
-        duration: video.duration,
-        uploadedAt: video.uploadedAt,
-    }
-    await playSong(song, message.channel, message.member.voice.channel);
 }
-
 //module export
 module.exports = {
     name: name,
@@ -59,62 +59,57 @@ module.exports = {
     skipSong: skipSong,
     clearQueue: clearQueue,
     nowPlaying: nowPlaying,
-    playNextSong: playNextSong,
 }
 
 //helper functions
 function addSongToQueue(song) {
     queue.push(song);
 }
-
 async function stopPlaying(textChannel) {
     if (!playing) {
         await textChannel.send("There is no song currently playing.");
         return;
     }
-    textChannel.send("Stopping current song.");
+    textChannel.send("Stopping current song.")
     currentSong.voiceChannel.leave();
-    queue.unshift(currentSong);
     currentSong = {};
     playing = false;
 }
-
 async function skipSong(textChannel) {
     if (!playing) {
         await textChannel.send(`There is no song currently playing.`);
         return;
     }
-    await textChannel.send(`Skipping **${suppressUrls(currentSong.song.title)}**`);
-    await playNextSong(textChannel, currentSong.voiceChannel);
-    if (!playing && queue.length === 0) {
-        await textChannel.send(`End of song queue.`);
-    }
+    await textChannel.send(`Skipping ${suppressUrls(currentSong.song.description)}`);
+    await playNextSong(textChannel,currentSong.voiceChannel);
 }
 
-async function playSong(song, textChannel, voiceChannel) {
+async function playSong(song,textChannel,voiceChannel) {
+    console.log(`playing: ${playing} | queue: ${queue}`);
     if (queue.length > 0 || playing) {
         addSongToQueue(song);
-        await textChannel.send(`Added **${suppressUrls(song.title)}** to the queue in position #${queue.length}`);
+        const addedSongMessage = await textChannel.send(suppressUrls(`Added **${song.description}** to the queue in position #${queue.length}`));
     } else {
         addSongToQueue(song);
-        await playNextSong(textChannel, voiceChannel);
+        await playNextSong(textChannel,voiceChannel);
     }
 }
-
-async function playNextSong(textChannel, voiceChannel) {
+async function playNextSong(textChannel,voiceChannel) {
+    console.log(queue);
     if (queue.length > 0) {
         const song = queue.shift();
         try {
             const connection = await voiceChannel.join();
             const stream = await ytdl(song.url);
             const dispatcher = connection.play(stream, {type: "opus"});
+            await textChannel.send(`Playing **${suppressUrls(song.description)}**`);
             playing = true;
             currentSong = {
                 started: +Date.now(),
                 voiceChannel: voiceChannel,
                 song: song,
             };
-            await nowPlaying(textChannel, false);
+
             dispatcher.on("finish", () => {
                 if (queue.length > 0) {
                     playNextSong(textChannel, voiceChannel);
@@ -133,22 +128,17 @@ async function playNextSong(textChannel, voiceChannel) {
         voiceChannel.leave();
     }
 }
-
-async function nowPlaying(textChannel, showProgressBar = true) {
+async function nowPlaying(textChannel) {
     if (playing) {
         const songLength = durationStringToSeconds(currentSong.song.duration);
         const elapsed = (+Date.now() - currentSong.started) / 1000;
-        const nowPlayingEmbed = new Discord.MessageEmbed()
-            .setTitle(":musical_note: Now Playing :musical_note:")
-            .setDescription(`[**${currentSong.song.title}**](${currentSong.song.url})`)
-            .addField("Description", currentSong.song.description);
-        if (showProgressBar) {
-            nowPlayingEmbed.addField("Progress", generateProgressBar(21, elapsed, songLength));
-        }
-        await textChannel.send(nowPlayingEmbed);
+        const remaining = songLength - elapsed;
+        const elapsedString = secondsToDurationString(elapsed,currentSong.song.duration.split(":").length);
+        const remainingString = secondsToDurationString(remaining,currentSong.song.duration.split(":").length);
+        await textChannel.send(suppressUrls(`Currently playing: **${currentSong.song.description}** (${elapsedString}/${currentSong.song.duration}) [-${remainingString}]`));
+        await textChannel.send(generateProgressBar(40,elapsed,songLength));
     }
 }
-
 async function listQueue(textChannel) {
     await nowPlaying(textChannel);
     if (queue.length === 0) {
@@ -161,19 +151,27 @@ async function listQueue(textChannel) {
         let song = queue[i];
 
         totalDurationSeconds += durationStringToSeconds(song.duration);
-        queueMessage += `\n${i + 1}. **${suppressUrls(song.title)}** (${song.duration})`;
+        queueMessage += suppressUrls(`\n${i+1}. **${song.description}** (${song.duration})`);
     }
     if (playing) {
         totalDurationSeconds += durationStringToSeconds(currentSong.song.duration);
     }
-    const totalDurationString = secondsToDurationString(totalDurationSeconds, 3);
+    const totalDurationString = secondsToDurationString(totalDurationSeconds,3);
     queueMessage += `\nTotal duration: ${totalDurationString}`;
-    await sendLongMessage(queueMessage, textChannel, true);
+    await sendLongMessage(queueMessage,textChannel,true);
 }
-
 async function clearQueue(textChannel) {
     queue = [];
     await textChannel.send("Song queue cleared.");
+}
+
+/**
+ * Computes the number of seconds since the given timestamp
+ * @param started - the reference timestamp
+ * @returns {number}
+ */
+function elapsed(started) {
+    return (+Date.now() / 1000) - started;
 }
 
 /**
@@ -182,8 +180,18 @@ async function clearQueue(textChannel) {
  * @param elapsed - the number of seconds that have elapsed
  * @returns {number}
  */
-function timeRemaining(duration, elapsed) {
+function timeRemaining(duration,elapsed) {
     return duration - elapsed;
+}
+
+/**
+ * returns the remaining duration, given a duration in seconds and the number of seconds elapsed
+ * @param duration
+ * @param elapsed
+ * @returns {string}
+ */
+function timeRemainingString(duration,elapsed) {
+    return secondsToDurationString(duration - elapsed);
 }
 
 /**
@@ -194,7 +202,7 @@ function timeRemaining(duration, elapsed) {
 function durationStringToSeconds(durationString) {
     let durationHours = 0;
     let durationMinutes = 0;
-    let durationSeconds;
+    let durationSeconds = 0;
     const durationParts = durationString.split(":");
     if (durationParts.length === 3) {
         [durationHours, durationMinutes, durationSeconds] = durationParts;
@@ -218,7 +226,7 @@ function durationStringToSeconds(durationString) {
  * @param precision - 2 or 3, 3 will print hours as well even if there is 0 hours
  * @returns {string}
  */
-function secondsToDurationString(seconds, precision = 2) {
+function secondsToDurationString(seconds,precision = 2) {
     let h = Math.floor(seconds / 3600);
     let i = Math.floor(seconds % 3600 / 60);
     let s = Math.floor(seconds % 3600 % 60);
@@ -226,7 +234,7 @@ function secondsToDurationString(seconds, precision = 2) {
     if (s <= 9) {
         s = "0" + s;
     }
-    if ((i <= 9 && h > 0) || precision >= 3) {
+    if (i <= 9) {
         i = "0" + i
     }
     if (precision >= 3 || h > 0) {
@@ -242,16 +250,16 @@ function secondsToDurationString(seconds, precision = 2) {
  * @param progress
  * @param total
  */
-function generateProgressBar(width, progress, total) {
+function generateProgressBar(width,progress,total) {
     const percent = progress / total;
     const barPosition = Math.round(width * percent);
     const currentProgressText = secondsToDurationString(progress);
     let currentProgressTextPosition = barPosition - (currentProgressText.length / 2);
     currentProgressTextPosition = Math.round(currentProgressTextPosition <= 0 ? 0 : currentProgressTextPosition);
-    let remainingDurationText = `[-${secondsToDurationString(timeRemaining(total, progress))}]`;
+    let remainingDurationText = `[-${secondsToDurationString(timeRemaining(total,progress))}]`;
     const remainingDurationPosition = Math.round(barPosition + ((width - barPosition) / 2) - (remainingDurationText.length / 2));
     let progressBarText = "";
-    for (let i = 1; i <= width - 1; i++) {
+    for (let i = 1;i <= width-1; i++) {
         if (i === currentProgressTextPosition) {
             progressBarText += currentProgressText;
             i += currentProgressText.length;
@@ -272,7 +280,7 @@ function generateProgressBar(width, progress, total) {
         bar += "═"
     }
     bar += "╣";
-    bar += ` ${Math.round(percent * 10000) / 100}%`;
+    bar += ` ${Math.round(percent * 10000)/100}%`;
 
-    return `\`\`\`${progressBarText}\n${bar}\`\`\``;
+    return `\`${progressBarText}\`\n\`${bar}\``;
 }

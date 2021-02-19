@@ -1,5 +1,5 @@
 //imports
-const {logMessage} = require("../../tools/utils");
+const logMessage = require("../../tools/logMessage");
 
 //module settings
 const name = "is-birk-online";
