@@ -7,6 +7,9 @@ const {getRandomArrayMember} = require("./utils");
  * @returns {string} The uwu-ified text
  */
 function uwuify(text, replacementsFreqBase = 1) {
+    if (text && text.length === 0) {
+        return "";
+    }
     //trim whitespace
     text = text.trim();
     if (text.length === 0) {
