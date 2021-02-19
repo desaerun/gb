@@ -47,7 +47,7 @@ module.exports = {
                     name: "Bot Message:",
                     value: message
                 })
-            await sendMessage(response,this.client.channels.cache.get(channel_ids));
+            await sendMessage(response, this.client.channels.cache.get(channel_ids));
         }
     }
 }

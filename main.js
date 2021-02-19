@@ -15,7 +15,8 @@ global.uwuMode = false;
 global.normalNickname = "asdf";
 
 const fs = require("fs");
-const {getRandomArrayMember, sendMessage} = require("./tools/utils");
+const {getRandomArrayMember} = require("./tools/utils");
+const {sendMessage} = require("./tools/sendMessage");
 
 client.commands = new Discord.Collection();
 client.listenerSet = new Discord.Collection();

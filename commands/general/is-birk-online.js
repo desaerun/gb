@@ -1,5 +1,5 @@
 //imports
-const {sendMessage} = require("../../tools/utils");
+const {sendMessage} = require("../../tools/sendMessage");
 const {logMessage} = require("../../tools/utils");
 
 //module settings

@@ -1,4 +1,4 @@
-const {getRandomArrayMember,isUrl} = require("./utils");
+const {getRandomArrayMember, isUrl} = require("./utils");
 
 /**
  * Uwu-ifies text
@@ -161,9 +161,10 @@ function uwuify(text, replacementsFreqBase = 1) {
     //join everything back together and return
     return words.join(" ");
 }
+
 exports.uwuify = uwuify;
 
-    /**
+/**
  * Uwuifies the text only if Uwu-mode is on, otherwise returns the text unchanged.
  * @param text
  * @returns {string|*}
@@ -174,4 +175,5 @@ function uwuifyIfUwuMode(text) {
     }
     return text;
 }
+
 exports.uwuifyIfUwuMode = uwuifyIfUwuMode;

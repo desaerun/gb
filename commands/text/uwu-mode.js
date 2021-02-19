@@ -8,12 +8,12 @@ const description = "Toggles uwu-mode";
 const params = [
     {
         param: "setting",
-        type: String|Boolean,
+        type: String | Boolean,
     },
 ];
 
 //main
-async function execute(client,message,args) {
+async function execute(client, message, args) {
     let newNick;
     if (!args[0]) {
         uwuMode = !uwuMode;

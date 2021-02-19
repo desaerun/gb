@@ -1,6 +1,7 @@
 //imports
 const {captureMessage} = require("../../tools/message-db-utils");
-const {sendMessage} = require("../../tools/utils");
+const {sendMessage} = require("../../tools/sendMessage");
+
 // mysql
 const mysql = require("mysql2/promise");
 const db = require("../../config/db");
