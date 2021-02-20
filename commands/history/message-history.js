@@ -41,8 +41,8 @@ async function execute(client, message, args) {
             "    m.timestamp," +
             "    m.lastEditTimestamp," +
             "    m.deleted," +
-            "    a.displayName AS author_displayName" +
-            "    a.avatarURL AS author_avatarURL," +
+            "    a.displayName AS author_displayName," +
+            "    a.avatarURL AS author_avatarURL" +
             " FROM" +
             "    messages m" +
             " LEFT JOIN authors a ON" +
