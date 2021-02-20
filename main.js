@@ -209,6 +209,7 @@ function coerceArgsToTypes(command, args) {
                     int: false,
                     string: false,
                     float: false,
+                    boolean: false,
                     snowflake: false,
                 };
                 for (const currentAllowedType of allowedTypes) {
@@ -216,7 +217,7 @@ function coerceArgsToTypes(command, args) {
                         case "integer":
                         case "int":
                             const intN = Number(args[i]);
-                            if (!isNaN(parseInt(intN))) {
+                            if (!isNaN(parseInt(intN,10))) {
                                 args[i] = parseInt(intN, 10);
                                 coercibleTypes.int = true;
                             }
@@ -226,6 +227,12 @@ function coerceArgsToTypes(command, args) {
                             if (!isNaN(floatN)) {
                                 args[i] = parseFloat(floatN);
                                 coercibleTypes.float = true;
+                            }
+                            break;
+                        case "boolean":
+                        case "bool":
+                            if (args[i].toLowerCase() === "true" || args[i].toLowerCase() === "false") {
+                                coercibleTypes.booleana = true;
                             }
                             break;
                         case "snowflake":
