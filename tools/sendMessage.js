@@ -30,13 +30,17 @@ exports.sendMessage = async function sendMessage(input, target, suppressEmbeds =
         for (const field of input.fields) {
             field.name = uwuifyIfUwuMode(field.name);
             field.value = uwuifyIfUwuMode(field.value);
+            if (field.value && field.value.length > 1024) {
+                field.value = field.value.substr(0,510) + "..." + field.value.substr(-510);
+            }
         }
+        let output;
         try {
-            await target.send(input);
+            output = await target.send(input);
         } catch (e) {
-            await target.send(`Failed to send embedded message: ${e}`);
+            output = await target.send(`Failed to send embedded message: ${e}`);
         }
-        return;
+        return output;
     }
     if (suppressEmbeds) {
         const urlRegex = '((?!mailto:)(?:(?:http|https|ftp)://)(?:\\S+(?::\\S*)?@)?(?:(?:(?:[1-9]\\d?|1\\d\\d|2[01]\\d|22[0-3])(?:\\.(?:1?\\d{1,2}|2[0-4]\\d|25[0-5])){2}(?:\\.(?:[0-9]\\d?|1\\d\\d|2[0-4]\\d|25[0-4]))|(?:(?:[a-z\\u00a1-\\uffff0-9]+-?)*[a-z\\u00a1-\\uffff0-9]+)(?:\\.(?:[a-z\\u00a1-\\uffff0-9]+-?)*[a-z\\u00a1-\\uffff0-9]+)*(?:\\.(?:[a-z\\u00a1-\\uffff]{2,})))|localhost)(?::\\d{2,5})?(?:(/|\\?|#)[^\\s]*)?)';

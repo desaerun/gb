@@ -127,6 +127,7 @@ function uwuify(text, replacementsFreqBase = 1) {
                 //add random stutters
                 if (
                     Math.random() < frequency.stutters &&
+                    /[a-z]/i.test(words[i].charAt(0)) && //don't apply a stutter if the first char is not a letter
                     i - cooldownCounter.stutters > cooldowns.stutters
                 ) {
                     const stutterChar = words[i][0];
