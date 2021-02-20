@@ -122,13 +122,11 @@ async function execute(client, message, args, forceGuildID = null, forceChannelI
         for (const messageRow of selectedMessages) {
             let humanTimedate = moment(messageRow.timestamp).format("dddd, MMMM Do YYYY @ hh:mm:ss a");
             let embedMessage = new Discord.MessageEmbed()
-                .setAuthor(messageRow.author_displayName, messageRow.author_avatarURL)
-                .setThumbnail(messageRow.author_avatarURL)
-                .setTitle(humanTimedate)
-                .setDescription(`[**Jump to Message**](https://discord.com/channels/${messageRow.guild}/${messageRow.channel}/${messageRow.id})`);
+                .setAuthor(messageRow.author_displayName, messageRow.author_avatarURL);
             if (messageRow.content) {
                 embedMessage.addField("\u200b", messageRow.content)
             }
+            embedMessage.addField(humanTimedate,`[**Jump to Message**](https://discord.com/channels/${messageRow.guild}/${messageRow.channel}/${messageRow.id})`);
             if (messageRow.attachmentURL) {
                 embedMessage.setImage(messageRow.attachmentURL);
             }
