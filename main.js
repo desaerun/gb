@@ -236,7 +236,7 @@ function coerceArgsToTypes(command, args) {
                             }
                             break;
                         case "snowflake":
-                            const re = /^\d{16}$/
+                            const re = /^\d{18}$/
                             const snowFlake = new RegExp(re);
                             coercibleTypes.snowflake = snowFlake.test(args[i]);
                             break;
