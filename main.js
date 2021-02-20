@@ -232,7 +232,7 @@ function coerceArgsToTypes(command, args) {
                         case "boolean":
                         case "bool":
                             if (args[i].toLowerCase() === "true" || args[i].toLowerCase() === "false") {
-                                coercibleTypes.booleana = true;
+                                coercibleTypes.boolean = true;
                             }
                             break;
                         case "snowflake":
