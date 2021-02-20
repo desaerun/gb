@@ -69,15 +69,11 @@ jobs:
             echo "Writing update log file"
             echo -e "$(date '+%d/%m/%Y %H:%M:%S%Z'): Changes made by: ${{ github.actor }} in ${{ env.github_branch }}-$(echo \"${{ github.sha }}\" | cut -c 2-9)\n$(cat /var/log/groidbot.log)" > /var/log/groidbot.log
 
-            #install/update dependencies
-            echo "Verifying/installing npm dependencies"
-            npm install
-
             #stop any running bot processes. "|| true" is to prevent script from halting if there are no processes
             echo "Stopping pm2 process"
             pm2 delete groidbot 2> /dev/null || true
 
+            #install/update dependencies
             #clear the logs + start the bot
-            echo "Clearing logs and spawning new pm2 process"
-            pm2 flush
-            npm start
+            echo "Verifying/installing npm dependencies, clearing logs and spawning new pm2 process"
+            npm ci && pm2 flush && npm start

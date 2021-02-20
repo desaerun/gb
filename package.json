@@ -11,7 +11,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@discordjs/opus": "latest",
+    "@discordjs/opus": "^0.3.3",
     "axios": "^0.21.0",
     "cheerio": "^1.0.0-rc.5",
     "coffeescript": "^2.5.1",
@@ -19,19 +19,13 @@
     "dotenv": "^8.2.0",
     "locutus": "^2.0.14",
     "moment": "^2.29.1",
-    "mysql": "latest",
     "mysql2": "^2.2.5",
     "node-cron": "^2.0.3",
     "pretty-ms": "^7.0.1",
     "stack-trace": "0.0.10",
     "typescript": "^4.1.3",
     "unescape": "^1.0.1",
-    "ytdl-core": "^4.0.0",
     "ytdl-core-discord": "^1.2.5",
     "ytsr": "^3.2.2"
-  },
-  "devDependencies": {
-    "@swc/cli": "^0.1.27",
-    "@swc/core": "^1.2.40"
   }
 }
