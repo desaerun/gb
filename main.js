@@ -1,6 +1,8 @@
 require("dotenv").config();  // pull in ENV variables from .env file
 const CONFIG = require("./config/config");
 const Discord = require("discord.js");
+const moment = require("moment");
+
 const client = new Discord.Client({partials: ["MESSAGE"]});
 //const {snowflakeToTimestamp} = require("./tools/utils");
 
@@ -15,6 +17,7 @@ global.uwuMode = false;
 global.normalNickname = "asdf";
 
 const fs = require("fs");
+const os = require("os");
 const {getRandomArrayMember} = require("./tools/utils");
 const {sendMessage} = require("./tools/sendMessage");
 
@@ -34,11 +37,11 @@ client.once("ready", () => {
     let lineReader = require("readline").createInterface({input: require("fs").createReadStream("github_update.txt")});
     online_message += ``
     */
-
+    const nowTimeDate = moment().format("ddd, MMM DD YYYY h:mm:ss a [GMT]Z");
     if (CONFIG.VERBOSITY >= 3) {
-        console.log(`Bot online. Sending Online Status message to ${client.channels.cache.get(process.env.ONLINE_STATUS_CHANNEL_ID).name}(${process.env.ONLINE_STATUS_CHANNEL_ID}).`)
+        console.log(`${nowTimeDate} - Bot online. Sending Online Status message to ${client.channels.cache.get(process.env.ONLINE_STATUS_CHANNEL_ID).name}(${process.env.ONLINE_STATUS_CHANNEL_ID}).`)
     }
-    let online_message = `Bot status: Online.  Type: ${process.env.BUILD_ENV}\n`;
+    let online_message = `${nowTimeDate}\nBot status: Online.\nHostname: ${os.hostname()}\n`;
     dev_output.sendStatus(online_message, process.env.ONLINE_STATUS_CHANNEL_ID, "#21a721");
 
     //set initial bot status
@@ -163,7 +166,7 @@ async function runCommands(message, args) {
             args = setArgsToDefault(command, args);
 
             let argTypeErrors;
-            [args, argTypeErrors] = verifyArgTypes(command, args);
+            [args, argTypeErrors] = coerceArgsToTypes(command, args);
             if (argTypeErrors.length > 0) {
                 const errors = argTypeErrors.join("\n");
                 await sendMessage(errors, message.channel);
@@ -201,7 +204,7 @@ function setArgsToDefault(command, args) {
     return args;
 }
 
-function verifyArgTypes(command, args) {
+function coerceArgsToTypes(command, args) {
     let argTypeErrors = [];
     if (command.params) {
         for (let i = 0; i < command.params.length; i++) {
@@ -211,25 +214,34 @@ function verifyArgTypes(command, args) {
                     int: false,
                     string: false,
                     float: false,
+                    boolean: false,
                     snowflake: false,
                 };
                 for (const currentAllowedType of allowedTypes) {
                     switch (currentAllowedType.toLowerCase()) {
                         case "integer":
                         case "int":
-                            if (!isNaN(parseInt(args[i], 10))) {
-                                args[i] = parseInt(args[i], 10);
+                            const intN = Number(args[i]);
+                            if (!isNaN(parseInt(intN,10))) {
+                                args[i] = parseInt(intN, 10);
                                 coercibleTypes.int = true;
                             }
                             break;
                         case "float":
-                            if (!isNaN(parseFloat(args[i]))) {
-                                args[i] = parseFloat(args[i]);
+                            const floatN = Number(args[i]);
+                            if (!isNaN(floatN)) {
+                                args[i] = parseFloat(floatN);
                                 coercibleTypes.float = true;
                             }
                             break;
+                        case "boolean":
+                        case "bool":
+                            if (args[i].toLowerCase() === "true" || args[i].toLowerCase() === "false") {
+                                coercibleTypes.booleana = true;
+                            }
+                            break;
                         case "snowflake":
-                            const re = /^\d{16}$/
+                            const re = /^\d{16,21}$/
                             const snowFlake = new RegExp(re);
                             coercibleTypes.snowflake = snowFlake.test(args[i]);
                             break;
