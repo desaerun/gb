@@ -177,3 +177,37 @@ function uwuifyIfUwuMode(text) {
 }
 
 exports.uwuifyIfUwuMode = uwuifyIfUwuMode;
+
+/**
+ * generates all the permutations possible of replacing the W's in a string with L's or R's (attempt to un-uwuify
+ * the string).  Returns an array with the permutations.
+ * @param word
+ * @returns {String[]}
+ */
+function generateUwuPermutations(word) {
+    let permutations = [];
+
+    let replacements = ["l","r"];
+    let chars = [...word];
+    let indices = [];
+
+    // get index of all the "w"s in the string
+    let idx = chars.indexOf("w");
+    while (idx !== -1) {
+        indices.push(idx);
+        idx = chars.indexOf("w",idx+1);
+    }
+
+    //generate the permutations
+    //for ever W in the string
+    for (let i = 0; i < indices.length; i++) {
+        //try each replacement
+        for (let j = 0; j < replacements.length; j++) {
+            chars[indices[i]] = replacements[j];
+            const permutation = chars.join("");
+            permutations.push(permutation);
+        }
+    }
+    return permutations;
+}
+exports.generateUwuPermutations = generateUwuPermutations;

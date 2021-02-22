@@ -18,6 +18,7 @@ global.normalNickname = "asdf";
 
 const fs = require("fs");
 const os = require("os");
+const {generateUwuPermutations} = require("./tools/uwuify");
 const {getRandomArrayMember} = require("./tools/utils");
 const {sendMessage} = require("./tools/sendMessage");
 
@@ -162,10 +163,7 @@ async function runCommands(message, args) {
 
     //support for uwu-ified command names
     if (uwuMode) {
-        const possibleUwuCommandNames = [
-            commandName.replace("w", "l"),
-            commandName.replace("w", "r"),
-        ];
+        const possibleUwuCommandNames = generateUwuPermutations(commandName);
         for (const possibleUwuCommandName of possibleUwuCommandNames) {
             if (client.commands.has(possibleUwuCommandName)) {
                 commandName = possibleUwuCommandName;
