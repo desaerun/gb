@@ -1,7 +1,7 @@
 //imports
 const os = require("os");
 const prettyMilliseconds = require("pretty-ms");
-const {sendLongMessage} = require("../../tools/utils");
+const {sendMessage} = require("../../tools/sendMessage");
 
 //module settings
 const name = "os-info";
@@ -99,7 +99,7 @@ async function execute(client, message, args) {
     }
 
     output += "```";
-    await sendLongMessage(output,message.channel);
+    await sendMessage(output,message.channel);
 }
 
 //module export
