@@ -1,6 +1,8 @@
 //imports
 const {sendMessage} = require("../../tools/sendMessage");
-const {getRand} = require("../../tools/utils");
+const {getRandomInt} = require("../../tools/utils");
+
+//module settings
 
 //module settings
 const name = "roll";
@@ -36,7 +38,7 @@ async function execute(client, message, args) {
     }
     const lower = Math.abs(args[0]);
     const upper = Math.abs(args[1]);
-    const roll = getRand(lower, upper);
+    const roll = getRandomInt(lower, upper);
 
     let response;
     if (regularDie) {
