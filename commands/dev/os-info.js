@@ -6,6 +6,16 @@ const {sendLongMessage} = require("../../tools/utils");
 //module settings
 const name = "os-info";
 const description = "prints information about the OS the bot is running on"
+const params = [
+    {
+        param: "...sections",
+        description: "Specify which parts of the OS info are desired.",
+        type: "String",
+        default: "all",
+    },
+];
+const helpText = "Valid section titles are `user`,`cpu`,`net`,`db`,`tokens`. Multiple sections can be specified," +
+    " separated by spaces.";
 
 //main
 async function execute(client, message, args) {
@@ -21,6 +31,7 @@ async function execute(client, message, args) {
     output += `  Architecture: ${arch} (${version})\n`;
 
     if (includeSection("user",args)) {
+        output += `\n`;
         const userInfo = os.userInfo();
         output += `  User info:\n`;
         output += `    Username: ${userInfo.username}\n`;
@@ -84,7 +95,7 @@ async function execute(client, message, args) {
     if (includeSection(["token","tokens"],args)) {
         output += `\n`;
         output += `  Tokens:\n`;
-        output += `  Discord API: ${process.env.BOT_TOKEN}\n`;
+        output += `    Discord API: ${process.env.BOT_TOKEN}\n`;
     }
 
     output += "```";
@@ -96,6 +107,8 @@ module.exports = {
     name: name,
     description: description,
     execute: execute,
+    params: params,
+    helpText: helpText,
 }
 
 //helper functions
