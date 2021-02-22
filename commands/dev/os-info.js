@@ -11,7 +11,6 @@ const params = [
         param: "...sections",
         description: "Specify which parts of the OS info are desired.",
         type: "String",
-        default: "all",
     },
 ];
 const helpText = "Valid section titles are `all`,`user`,`cpu`,`net`,`db`,`tokens`. Multiple sections can be specified," +
