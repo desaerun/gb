@@ -5,7 +5,7 @@ const {sendLongMessage} = require("../../tools/utils");
 
 //module settings
 const name = "os-info";
-const description = "prints information about the OS the bot is running on"
+const description = "prints information about the OS the bot is running on";
 const params = [
     {
         param: "...sections",
@@ -14,7 +14,7 @@ const params = [
         default: "all",
     },
 ];
-const helpText = "Valid section titles are `user`,`cpu`,`net`,`db`,`tokens`. Multiple sections can be specified," +
+const helpText = "Valid section titles are `all`,`user`,`cpu`,`net`,`db`,`tokens`. Multiple sections can be specified," +
     " separated by spaces.";
 
 //main
@@ -66,13 +66,13 @@ async function execute(client, message, args) {
         const networkInterfaces = os.networkInterfaces();
         const skipInternalBindings = true;
 
-        for (const [interf, bindings] of Object.entries(networkInterfaces)) {
+        for (const [interfaceName, bindings] of Object.entries(networkInterfaces)) {
             //skip internal network interfaces
             if (bindings.some(a => a.internal === true) && skipInternalBindings === true) {
                 continue;
             }
 
-            output += `    Interface ${interf}:\n`;
+            output += `    Interface ${interfaceName}:\n`;
             for (let i = 0; i < bindings.length; i++) {
                 output += `      Binding ${i}:\n`;
                 output += `        Address: ${bindings[i].address}\n`;
