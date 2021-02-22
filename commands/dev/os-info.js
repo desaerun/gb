@@ -99,7 +99,7 @@ async function execute(client, message, args) {
     }
 
     output += "```";
-    await sendMessage(output,message.channel);
+    await sendMessage(output,message.channel,false,true);
 }
 
 //module export
