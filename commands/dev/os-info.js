@@ -9,9 +9,9 @@ const description = "prints information about the OS the bot is running on"
 
 //main
 async function execute(client, message) {
-    let output;
+    let output = "";
     output += `OS info:\n`;
-    output += ` Uptime: ${prettyMilliseconds(os.uptime * 1000)}`;
+    output += ` Uptime: ${prettyMilliseconds(os.uptime * 1000)}\n`;
 
     output += `  Hostname: ${os.hostname()}\n`;
 
@@ -22,22 +22,21 @@ async function execute(client, message) {
 
     output += `  Home path: \`${os.homedir()}\`\n`;
 
+    output += `\n`;
     //cpu info
     output += `  CPUs:\n`
     const cpus = os.cpus();
     for (let i = 0; i < cpus.length; i++) {
         const cpu = cpus[i];
-        output += `${i}: ${cpu.model}\n`;
+        output += `    ${i}: ${cpu.model}\n`;
     }
 
-
-
-
-    output += `  Memory: \`${os.freemem()}B/${os.totalmem()}B\`\n`;
+    output += `\n`;
+    output += `  Memory (free / total): \`${os.freemem()}B/${os.totalmem()}B\`\n`;
 
     output += `  Network interfaces:\n`;
     const networkInterfaces = os.networkInterfaces();
-    const skipInternalBindings = false;
+    const skipInternalBindings = true;
 
     for (const [interf,bindings] of Object.entries(networkInterfaces)) {
         //skip internal network interfaces
