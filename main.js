@@ -161,13 +161,15 @@ async function runCommands(message, args) {
     let commandName = args.shift().toLowerCase();
 
     //support for uwu-ified command names
-    const possibleUwuCommandNames = [
-        commandName.replace("w","l"),
-        commandName.replace("w","r"),
-    ];
-    for (const possibleUwuCommandName of possibleUwuCommandNames) {
-        if (client.commands.has(possibleUwuCommandName)) {
-            commandName = possibleUwuCommandName;
+    if (uwuMode) {
+        const possibleUwuCommandNames = [
+            commandName.replace("w", "l"),
+            commandName.replace("w", "r"),
+        ];
+        for (const possibleUwuCommandName of possibleUwuCommandNames) {
+            if (client.commands.has(possibleUwuCommandName)) {
+                commandName = possibleUwuCommandName;
+            }
         }
     }
 
