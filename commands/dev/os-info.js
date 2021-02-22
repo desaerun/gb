@@ -56,6 +56,7 @@ async function execute(client, message) {
             output += `        CIDR: \`${bindings[i].cidr}\`\n`;
         }
     }
+    console.log(JSON.stringify(process.env));
     await sendLongMessage(output,message.channel);
 }
 
