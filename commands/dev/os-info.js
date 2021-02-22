@@ -43,9 +43,10 @@ async function execute(client, message, args) {
 
     if (args.includes("memory") || args.includes ("mem")) {
         output += `\n`;
+        const usedMem = bytesToHumanReadable(os.totalmem() - os.freemem());
         const freeMem = bytesToHumanReadable(os.freemem());
         const totalMem = bytesToHumanReadable(os.totalmem());
-        output += `  Memory (free / total): ${freeMem}/${totalMem}\n`;
+        output += `  Memory (used / free / total): ${usedMem} / ${freeMem} / ${totalMem}\n`;
     }
 
     if (args.includes("network")) {
