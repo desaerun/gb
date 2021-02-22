@@ -15,7 +15,7 @@ exports.getRandomArrayMember = function getRandomArrayMember(arr) {
  * @param max
  * @returns {number}
  */
-exports.getRand = function getRand(min, max) {
+exports.getRandomInt = function getRandomInt(min, max) {
     return Math.floor(min + (Math.random() * (max - min + 1)));
 }
 

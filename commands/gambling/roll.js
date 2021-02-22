@@ -1,7 +1,7 @@
 //imports
 
 //module settings
-const {getRand} = require("../../tools/utils");
+const {getRandomInt} = require("../../tools/utils");
 const name = "roll";
 const aliases = ["dice","dieroll","die-roll","diceroll","dice-roll"];
 const description = "Rolls a die.";
@@ -35,7 +35,7 @@ async function execute(client, message, args) {
     }
     const lower = Math.abs(args[0]);
     const upper = Math.abs(args[1]);
-    const roll = getRand(lower, upper);
+    const roll = getRandomInt(lower, upper);
 
     let response;
     if (regularDie) {
