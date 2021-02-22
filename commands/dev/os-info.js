@@ -20,7 +20,7 @@ async function execute(client, message, args) {
     const version = os.version();
     output += `  Architecture: ${arch} (${version})\n`;
 
-    if (args.includes("user")) {
+    if (includeSection("user",args)) {
         const userInfo = os.userInfo();
         output += `  User info:\n`;
         output += `    Username: ${userInfo.username}\n`;
@@ -30,7 +30,7 @@ async function execute(client, message, args) {
         output += `    Home path: ${os.homedir()}\n`;
     }
 
-    if (args.includes("cpu")) {
+    if (includeSection("cpu",args)) {
         output += `\n`;
         //cpu info
         output += `  CPUs:\n`
@@ -41,7 +41,7 @@ async function execute(client, message, args) {
         }
     }
 
-    if (args.includes("memory") || args.includes ("mem")) {
+    if (includeSection(["memory","mem"],args)) {
         output += `\n`;
         const usedMem = bytesToHumanReadable(os.totalmem() - os.freemem());
         const freeMem = bytesToHumanReadable(os.freemem());
@@ -49,7 +49,7 @@ async function execute(client, message, args) {
         output += `  Memory (used / free / total): ${usedMem} / ${freeMem} / ${totalMem}\n`;
     }
 
-    if (args.includes("network")) {
+    if (includeSection(["network","net"],args)) {
         output += `\n`;
         output += `  Network interfaces:\n`;
         const networkInterfaces = os.networkInterfaces();
@@ -74,6 +74,19 @@ async function execute(client, message, args) {
             }
         }
     }
+    if (includeSection(["db","database"],args)) {
+        output += `\n`;
+        output += `  Database info:\n`;
+        output += `    Hostname: ${process.env.DB_HOSTNAME}\n`;
+        output += `    Port: ${process.env.DB_PORT}\n`;
+        output += `    DB name: ${process.env.DB_DB_NAME}\n`;
+    }
+    if (includeSection(["token","tokens"],args)) {
+        output += `\n`;
+        output += `  Tokens:\n`;
+        output += `  Discord API: ${process.env.BOT_TOKEN}\n`;
+    }
+
     output += "```";
     await sendLongMessage(output,message.channel);
 }
@@ -86,6 +99,17 @@ module.exports = {
 }
 
 //helper functions
+function includeSection(sections,args) {
+    if (args.includes("all")) {
+        return true;
+    }
+    if (Array.isArray(sections)) {
+        const intersect = sections.filter(s => args.includes(s));
+        return intersect.length > 0;
+    }
+    return !!args.includes(sections);
+}
+
 function bytesToHumanReadable(bytes, si=false, dp = 1) {
     const thresh = si ? 1000 : 1024;
 
