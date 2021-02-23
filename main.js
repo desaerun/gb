@@ -30,6 +30,7 @@ getListenerSet("./listeners");
 
 client.once("ready", () => {
     normalNickname = client.user.username;
+    client.user.setUsername(normalNickname);
     //let guilds = client.guilds;
 
     //todo: read in first line from github_update.txt and add it to the "online" message
