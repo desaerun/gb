@@ -99,6 +99,9 @@ function uwuify(text, replacementsFreqBase = 1) {
         if (isUrl(words[i])) {
             continue;
         }
+        if (words[i].startsWith(":") && words[i].endsWith(":")) {
+            continue;
+        }
         if (i > words.length / 7 || replacementsFreqBase === 1) {
             if (Math.random() < replacementsFreqCurrent) {
 
