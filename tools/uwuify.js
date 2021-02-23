@@ -179,13 +179,13 @@ function uwuifyIfUwuMode(text) {
 exports.uwuifyIfUwuMode = uwuifyIfUwuMode;
 
 /**
- * generates all the permutations possible of replacing the W's in a string with L's or R's (attempt to un-uwuify
- * the string).  Returns an array with the permutations.
+ * generates all the combinations possible of replacing the W's in a string with L's or R's (attempt to un-uwuify
+ * the string).  Returns an array with the combinations.
  * @param word
  * @returns {String[]}
  */
-function generateUwuPermutations(word) {
-    let permutations = [];
+function generateUwuCombinations(word) {
+    let combinations = [];
 
     let replacements = ["l","r"];
     let chars = [...word];
@@ -198,16 +198,17 @@ function generateUwuPermutations(word) {
         idx = chars.indexOf("w",idx+1);
     }
 
-    //generate the permutations
+    //generate the combinations
     //for ever W in the string
     for (let i = 0; i < indices.length; i++) {
         //try each replacement
         for (let j = 0; j < replacements.length; j++) {
             chars[indices[i]] = replacements[j];
             const permutation = chars.join("");
-            permutations.push(permutation);
+            combinations.push(permutation);
         }
     }
-    return permutations;
+    console.log(combinations);
+    return combinations;
 }
-exports.generateUwuPermutations = generateUwuPermutations;
+exports.generateUwuCombinations = generateUwuCombinations;
