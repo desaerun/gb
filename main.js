@@ -32,9 +32,7 @@ client.once("ready", () => {
     normalNickname = client.user.username;
     let guildIds = client.guilds.cache.map(guild => guild.id);
     for (const guildId of guildIds) {
-        client.guilds.cache.get(guildId).me.setNickname(normalNickname)
-            .then(console.log())
-            .catch(console.err());
+        client.guilds.cache.get(guildId).me.setNickname(normalNickname);
     }
 
     //todo: read in first line from github_update.txt and add it to the "online" message
