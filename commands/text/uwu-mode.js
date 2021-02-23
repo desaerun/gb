@@ -26,6 +26,7 @@ async function execute(client, message, args) {
             case "enable": {
                 uwuMode = true;
                 newNick = uwuify(message.guild.member(client.user).displayName);
+                console.log(message.guild.member(client.user).displayName);
                 break;
             }
             case "false":
@@ -35,6 +36,7 @@ async function execute(client, message, args) {
             case "disable": {
                 uwuMode = false;
                 newNick = normalNickname;
+                console.log(normalNickname);
                 break;
             }
             default: {
