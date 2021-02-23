@@ -25,8 +25,6 @@ async function execute(client, message, args) {
             case "on":
             case "enable": {
                 uwuMode = true;
-                newNick = uwuify(message.guild.me.displayName);
-                console.log(`new nick: ${newNick}`);
                 break;
             }
             case "false":
@@ -35,8 +33,6 @@ async function execute(client, message, args) {
             case "off":
             case "disable": {
                 uwuMode = false;
-                newNick = normalNickname;
-                console.log(`switching back to normal nick: ${normalNickname}`);
                 break;
             }
             default: {
@@ -44,8 +40,17 @@ async function execute(client, message, args) {
             }
         }
     }
-    const onOff = (uwuMode) ? "on!" : "off.";
+    let onOff;
+    if (uwuMode) {
+        onOff = "on!";
+        newNick = uwuify(message.guild.me.displayName);
+    } else {
+        onOff = "off.";
+        newNick = normalNickname;
+    }
+    console.log(`switching nickname: ${newNick}`);
     await message.guild.me.setNickname(newNick);
+
     await sendMessage(`uwu-mode turned ${onOff}`, message.channel);
     return uwuMode;
 }
