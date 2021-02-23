@@ -30,8 +30,10 @@ getListenerSet("./listeners");
 
 client.once("ready", () => {
     normalNickname = client.user.username;
-    client.user.setUsername(normalNickname);
-    //let guilds = client.guilds;
+    let guilds = client.guilds.cache;
+    for (const guild of guilds) {
+        guild.me.setNickname(normalNickname);
+    }
 
     //todo: read in first line from github_update.txt and add it to the "online" message
     //todo: make the linux server print a line about recovering to the github_update.txt file when it recovers or is started manually

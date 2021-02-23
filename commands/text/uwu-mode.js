@@ -25,8 +25,8 @@ async function execute(client, message, args) {
             case "on":
             case "enable": {
                 uwuMode = true;
-                newNick = uwuify(message.guild.member(client.user).displayName);
-                console.log(message.guild.member(client.user).displayName);
+                newNick = uwuify(message.guild.me.displayName);
+                console.log(message.guild.me.displayName);
                 break;
             }
             case "false":
@@ -46,7 +46,7 @@ async function execute(client, message, args) {
     }
     const onOff = (uwuMode) ? "on!" : "off.";
     await sendMessage(`uwu-mode turned ${onOff}`, message.channel);
-    await message.guild.member(client.user).setNickname(newNick);
+    await message.guild.me.setNickname(newNick);
     return uwuMode;
 }
 
