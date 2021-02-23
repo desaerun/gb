@@ -233,7 +233,7 @@ function coerceArgsToTypes(command, args) {
                         case "integer":
                         case "int":
                             const intN = Number(args[i]);
-                            if (!isNaN(parseInt(intN,10))) {
+                            if (!isNaN(parseInt(intN, 10))) {
                                 args[i] = parseInt(intN, 10);
                                 coercibleTypes.int = true;
                             }

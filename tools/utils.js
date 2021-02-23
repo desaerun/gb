@@ -66,3 +66,18 @@ exports.isUrl = function isUrl(text) {
     const rE = new RegExp(urlRegex, "i");
     return rE.test(text);
 }
+
+/**
+ * generates the n-fold Cartesian product of a set of arrays.
+ * @param arrays -- the arrays to merge
+ * @returns {String[]}
+ */
+exports.cartesianProduct = function cartesianProduct(...arrays) {
+    return arrays.reduce((acc, val) => {
+        return acc.map(el => {
+            return val.map(element => {
+                return el.concat([element]);
+            });
+        }).reduce((acc, val) => acc.concat(val), []);
+    }, [[]]);
+}

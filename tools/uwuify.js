@@ -1,4 +1,4 @@
-const {getRandomArrayMember, isUrl} = require("./utils");
+const {cartesianProduct, getRandomArrayMember, isUrl} = require("./utils");
 
 /**
  * Uwu-ifies text
@@ -187,28 +187,32 @@ exports.uwuifyIfUwuMode = uwuifyIfUwuMode;
 function generateUwuCombinations(word) {
     let combinations = [];
 
-    let replacements = ["l","r"];
-    let chars = [...word];
+    let replacements = ["l", "r"];
+    let chars = [...word]; // chars is an array of chars for word
     let indices = [];
 
     // get index of all the "w"s in the string
     let idx = chars.indexOf("w");
     while (idx !== -1) {
         indices.push(idx);
-        idx = chars.indexOf("w",idx+1);
+        idx = chars.indexOf("w", idx + 1);
     }
+    //indices now contains the indices in chars array where w's exist
+    // e.g. "wow" -- indices = [0,2];
 
-    //generate the combinations
-    //for ever W in the string
+    let sets = [];
     for (let i = 0; i < indices.length; i++) {
-        //try each replacement
-        for (let j = 0; j < replacements.length; j++) {
-            chars[indices[i]] = replacements[j];
-            const permutation = chars.join("");
-            combinations.push(permutation);
-        }
+        sets.push([chars[indices[i]], ...replacements]);
     }
-    console.log(combinations);
+    let replacementCombos = cartesianProduct(...sets);
+
+    for (let i = 0; i < replacementCombos.length; i++) {
+        let _chars = chars;
+        for (let j = 0; j < indices.length; j++) {
+            _chars[indices[j]] = replacementCombos[i][j];
+        }
+        combinations.push(_chars.join(""));
+    }
     return combinations;
 }
 exports.generateUwuCombinations = generateUwuCombinations;

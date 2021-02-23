@@ -29,7 +29,7 @@ async function execute(client, message, args) {
     const version = os.version();
     output += `  Architecture: ${arch} (${version})\n`;
 
-    if (includeSection("user",args)) {
+    if (includeSection("user", args)) {
         output += `\n`;
         const userInfo = os.userInfo();
         output += `  User info:\n`;
@@ -40,7 +40,7 @@ async function execute(client, message, args) {
         output += `    Home path: ${os.homedir()}\n`;
     }
 
-    if (includeSection("cpu",args)) {
+    if (includeSection("cpu", args)) {
         output += `\n`;
         //cpu info
         output += `  CPUs:\n`
@@ -51,7 +51,7 @@ async function execute(client, message, args) {
         }
     }
 
-    if (includeSection(["memory","mem"],args)) {
+    if (includeSection(["memory", "mem"], args)) {
         output += `\n`;
         const usedMem = bytesToHumanReadable(os.totalmem() - os.freemem());
         const freeMem = bytesToHumanReadable(os.freemem());
@@ -59,7 +59,7 @@ async function execute(client, message, args) {
         output += `  Memory (used / free / total): ${usedMem} / ${freeMem} / ${totalMem}\n`;
     }
 
-    if (includeSection(["network","net"],args)) {
+    if (includeSection(["network", "net"], args)) {
         output += `\n`;
         output += `  Network interfaces:\n`;
         const networkInterfaces = os.networkInterfaces();
@@ -84,21 +84,21 @@ async function execute(client, message, args) {
             }
         }
     }
-    if (includeSection(["db","database"],args)) {
+    if (includeSection(["db", "database"], args)) {
         output += `\n`;
         output += `  Database info:\n`;
         output += `    Hostname: ${process.env.DB_HOSTNAME}\n`;
         output += `    Port: ${process.env.DB_PORT}\n`;
         output += `    DB name: ${process.env.DB_DB_NAME}\n`;
     }
-    if (includeSection(["token","tokens"],args)) {
+    if (includeSection(["token", "tokens"], args)) {
         output += `\n`;
         output += `  Tokens:\n`;
         output += `    Discord API: ${process.env.BOT_TOKEN}\n`;
     }
 
     output += "```";
-    await sendMessage(output,message.channel,false,true);
+    await sendMessage(output, message.channel, false, true);
 }
 
 //module export
@@ -111,7 +111,7 @@ module.exports = {
 }
 
 //helper functions
-function includeSection(sections,args) {
+function includeSection(sections, args) {
     if (args.includes("all")) {
         return true;
     }
@@ -122,7 +122,7 @@ function includeSection(sections,args) {
     return !!args.includes(sections);
 }
 
-function bytesToHumanReadable(bytes, si=false, dp = 1) {
+function bytesToHumanReadable(bytes, si = false, dp = 1) {
     const thresh = si ? 1000 : 1024;
 
     if (Math.abs(bytes) < thresh) {
@@ -133,7 +133,7 @@ function bytesToHumanReadable(bytes, si=false, dp = 1) {
         ? ['kB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB']
         : ['KiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB', 'ZiB', 'YiB'];
     let u = -1;
-    const r = 10**dp;
+    const r = 10 ** dp;
 
     do {
         bytes /= thresh;

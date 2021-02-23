@@ -3,7 +3,7 @@ const {uwuifyIfUwuMode} = require("./uwuify");
 
 /**
  * Splits a message into [chunkSize] parts.  Discord does not allow messages > 2000 characters, for example.
- * Does not break works.
+ * Does not break words.
  * @param input
  * @param target -- the Discord.js Channel/User object to send to
  * @param suppressEmbeds -- whether or not auto-generated Embeds should be suppressed
@@ -16,7 +16,7 @@ exports.sendMessage = async function sendMessage(input, target, suppressEmbeds =
         if (forceNormalText) {
             for (const field of input.fields) {
                 if (field.value && field.value.length > 1024) {
-                    field.value = field.value.substr(0,510) + "..." + field.value.substr(-510);
+                    field.value = field.value.substr(0, 510) + "..." + field.value.substr(-510);
                 }
             }
             let output;
@@ -45,8 +45,11 @@ exports.sendMessage = async function sendMessage(input, target, suppressEmbeds =
         for (const field of input.fields) {
             field.name = uwuifyIfUwuMode(field.name);
             field.value = uwuifyIfUwuMode(field.value);
+
+            //if the value field is longer than allowed, take the first and last half of the characters and insert
+            // "..." between them.
             if (field.value && field.value.length > 1024) {
-                field.value = field.value.substr(0,510) + "..." + field.value.substr(-510);
+                field.value = field.value.substr(0, 510) + "..." + field.value.substr(-510);
             }
         }
         let output;
