@@ -45,7 +45,7 @@ async function execute(client, message, args) {
         })
         .setFooter("Just another discord bot");
 
-    await message.channel.send(response);
+    await sendMessage(response, message.channel);
 }
 
 //module export

@@ -1,9 +1,10 @@
 //imports
 const Discord = require("discord.js");
+const {sendMessage} = require("../../tools/sendMessage");
 
 //module settings
 const name = "ping";
-const aliases = ["p"];
+const names = ["p"];
 const description = "this is a ping command";
 
 //main
@@ -16,13 +17,13 @@ async function execute(client, message) {
         .addField("Latency", `${latency} ms`)
         .addField("API", `${client.ws.ping} ms`);
 
-    await message.channel.send(embedMessage);
+    await sendMessage(embedMessage, message.channel);
 }
 
 //module export
 module.exports = {
     name: name,
-    aliases: aliases,
+    names: names,
     description: description,
     execute: execute,
 }

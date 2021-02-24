@@ -1,6 +1,7 @@
 //imports
 const Discord = require("discord.js");
 const moment = require("moment");
+const {sendMessage} = require("../../tools/sendMessage");
 
 // mysql
 const mysql = require("mysql2/promise");
@@ -67,7 +68,7 @@ async function execute(client, message, args) {
         throw e;
     }
     try {
-        await message.channel.send(`${deletedMessages[0].author_displayName}'s last ${numMessages} deleted messages:`);
+        await sendMessage(`${deletedMessages[0].author_displayName}'s last ${numMessages} deleted messages:`, message.channel);
     } catch (e) {
         console.error("There was an error sending the embed message:", e);
         throw e;
@@ -85,7 +86,7 @@ async function execute(client, message, args) {
             embedMessage.setImage(deletedMessage.attachmentURL);
         }
         try {
-            await message.channel.send(embedMessage);
+            await sendMessage(embedMessage, message.channel);
         } catch (e) {
             console.error("There was an error sending the embed message:", e);
             return false;

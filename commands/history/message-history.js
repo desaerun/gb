@@ -1,10 +1,12 @@
 //imports
 const Discord = require("discord.js");
 const moment = require("moment");
+const {sendMessage} = require("../../tools/sendMessage");
 
 // mysql
 const mysql = require("mysql2/promise");
 const db = require("../../config/db");
+const logMessage = require("../../tools/logMessage");
 const pool = mysql.createPool({
     ...db,
     waitForConnections: true,
@@ -17,7 +19,7 @@ const name = "message-history";
 const description = "Retrieves history for the specified message ID.";
 const params = [
     {
-        param: "messageID",
+        name: "messageID",
         description: "The ID of the message",
         type: "Snowflake",
         //no default, a message ID must be given
@@ -27,7 +29,7 @@ const params = [
 //main
 async function execute(client, message, args) {
     if (args.length !== 1) {
-        await message.channel.send(`You must provide the message ID.`)
+        await sendMessage(`You must provide the message ID.`, message.channel);
         return false;
     }
     let messageID = args[0];
@@ -66,7 +68,7 @@ async function execute(client, message, args) {
         throw e;
     }
     if (dbMessageResult.length === 0) {
-        await message.channel.send(`That message ID does not exist.`);
+        await sendMessage(`That message ID does not exist.`, message.channel);
         return false;
     }
     const dateFormat = "dddd, MMMM Do YYYY @ hh:mm:ss a";
@@ -79,6 +81,7 @@ async function execute(client, message, args) {
         embedMessage.addField(":x: Deleted:", moment(currentMessage.deleted).format(dateFormat));
     }
     if (messageHistory.length > 0) { // if the message has an edit history
+        console.log(`messageHistory: ${JSON.stringify(messageHistory)}`);
         originalContent = messageHistory[messageHistory.length - 1].oldContent;
         const mostRecentEdit = messageHistory.shift();
         embedMessage.addField(`Current Content (edited on ${moment(mostRecentEdit.editTimestamp).format(dateFormat)}):`, mostRecentEdit.newContent);
@@ -89,7 +92,7 @@ async function execute(client, message, args) {
             }
             embedMessage.addField(`Original Content (posted ${moment(currentMessage.timestamp).format(dateFormat)}):`, originalContent);
             try {
-                await message.channel.send(embedMessage);
+                await sendMessage(embedMessage, message.channel);
             } catch (e) {
                 throw e;
             }
@@ -100,7 +103,7 @@ async function execute(client, message, args) {
                 embedMessage.addField(`Edit on ${formattedDatetime}:`, messageHistory[currentMessagePointer].newContent);
             }
             try {
-                await message.channel.send(embedMessage);
+                await sendMessage(embedMessage, message.channel);
             } catch (e) {
                 throw e;
             }
@@ -117,7 +120,7 @@ async function execute(client, message, args) {
                     furtherEdits.addField(`Original Content (posted ${moment(currentMessage.timestamp).format(dateFormat)}):`, originalContent);
                 }
                 try {
-                    await message.channel.send(furtherEdits);
+                    await sendMessage(furtherEdits, message.channel);
                 } catch (e) {
                     throw e;
                 }
@@ -126,7 +129,7 @@ async function execute(client, message, args) {
     } else {
         embedMessage.addField(`Original Content (posted ${moment(currentMessage.timestamp).format(dateFormat)}):`, originalContent);
         try {
-            await message.channel.send(embedMessage);
+            await sendMessage(embedMessage, message.channel);
         } catch (e) {
             throw e;
         }

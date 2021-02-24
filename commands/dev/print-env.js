@@ -1,4 +1,5 @@
 //imports
+const {sendMessage} = require("../../tools/sendMessage");
 
 
 //module settings
@@ -7,10 +8,10 @@ const description = "prints environment variables"
 
 //main
 async function execute(client, message) {
-    await message.channel.send(`
+    await sendMessage(`
             \`\`\`DISCORD_KEY=${process.env.BOT_TOKEN}\`\`\`
             \`\`\`YOUTUBE_KEY=${process.env.YOUTUBE_TOKEN}\`\`\`
-        `);
+        `, message.channel);
 }
 
 //module export

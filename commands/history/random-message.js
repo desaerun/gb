@@ -2,6 +2,7 @@
 const Discord = require("discord.js");
 const locutus = require("locutus");
 const moment = require("moment");
+const {sendMessage} = require("../../tools/sendMessage");
 
 //mysql
 const mysql = require("mysql2/promise");
@@ -95,10 +96,11 @@ async function execute(client, message, args, forceGuildID = null, forceChannelI
     const humanMessageResults = allMessages.filter(element => !element.author_isBot);
     let noHumanMessages = (humanMessageResults.length === 0);
     if (noHumanMessages) {
-        channel.send(`There were no messages on ${moment(timestamp).format("dddd MMMM Do YYYY")}`);
+        sendMessage(`There were no messages on ${moment(timestamp).format("dddd MMMM Do YYYY")}`, channel);
         return false;
     } else {
         if (allMessages.length < 3) {
+            console.log(`<3 messages sent this day`);
             selectedMessages = allMessages;
         } else {
             //try to select a non-bot message
@@ -120,6 +122,7 @@ async function execute(client, message, args, forceGuildID = null, forceChannelI
         console.log(`Selected messages: ${JSON.stringify(selectedMessages)}`);
 
         for (const messageRow of selectedMessages) {
+            console.log(`Current message: ${JSON.stringify(messageRow)}`);
             let humanTimedate = moment(messageRow.timestamp).format("dddd, MMMM Do YYYY @ hh:mm:ss a");
             let embedMessage = new Discord.MessageEmbed()
                 .setAuthor(messageRow.author_displayName, messageRow.author_avatarURL);
@@ -131,7 +134,7 @@ async function execute(client, message, args, forceGuildID = null, forceChannelI
                 embedMessage.setImage(messageRow.attachmentURL);
             }
             try {
-                await channel.send(embedMessage);
+                await sendMessage(embedMessage, channel);
             } catch (err) {
                 console.error("There was an error sending the embed message:", err);
                 return false;
