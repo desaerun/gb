@@ -46,31 +46,31 @@ async function execute(client, message, args) {
                 answerEmbed.addField("\u2800",`[${answer.sourceText}](${answer.sourceUrl})`,true);
             }
             answerEmbed.addField("\u2800",`[More results on Google](${queryUriString})`,true);
-            await message.channel.send(answerEmbed);
+            await sendMessage(answerEmbed,message.channel);
         } else {
             console.log("No answer was found, attempting to parse search results instead");
             // If an answer was not able to be parsed, return the first few search results
             let resultsEmbedsArr = getSearchResultsAsEmbeddedMessages($);
             console.log(`Successfully parsed search results.  Length: ${resultsEmbedsArr.length}`);
             if (resultsEmbedsArr && resultsEmbedsArr.length > 0) {
-                await message.channel.send(`Hmm, I couldn't figure that one out. Maybe these will help:`);
+                await sendMessage(`Hmm, I couldn't figure that one out. Maybe these will help:`,message.channel);
                 const moreGoogleResultsEmbed = new Discord.MessageEmbed()
                     .setTitle("More Results on Google")
                     .setURL(queryUriString);
                 resultsEmbedsArr.push(moreGoogleResultsEmbed);
                 for (let i = 0; i < resultsEmbedsArr.length; i++) {
                     console.log(`Sending embed #${i}`);
-                    await message.channel.send(resultsEmbedsArr[i]);
+                    await sendMessage(resultsEmbedsArr[i],message.channel);
                 }
 
             } else {
                 console.log("Unable to parse the search results.");
                 // If all else fails, kindly inform the user that an answer was not found.
-                await message.channel.send(`Unable to find an answer. Please go fuck yourself.`);
+                await sendMessage(`Unable to find an answer. Please go fuck yourself.`,message.channel);
                 const moreGoogleResultsEmbed = new Discord.MessageEmbed()
                     .setTitle("Try your search on Google")
                     .setURL(queryUriString);
-                await message.channel.send(moreGoogleResultsEmbed);
+                await sendMessage(moreGoogleResultsEmbed,message.channel);
             }
         }
     } catch (err) {
@@ -284,7 +284,7 @@ const selectors = {
 
 /**
  * Scrapes Google Search results to find the answer to the query given.  The document structure (where to look for
- * the panes, and ultimately, the answers, is given in the large "selectors" object above. Returns a promise
+ * the panes, and ultimately, the answers, is given in the large "selectors" object above. Returns a Promise
  * that resolves to an object of the following structure:
  * {
  *     text: the main answer text
