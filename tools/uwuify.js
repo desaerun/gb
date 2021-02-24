@@ -218,4 +218,5 @@ function generateUwuCombinations(word) {
     }
     return combinations;
 }
+
 exports.generateUwuCombinations = generateUwuCombinations;
