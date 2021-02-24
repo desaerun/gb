@@ -48,7 +48,6 @@ async function execute(client, message, args) {
         onOff = "off.";
         newNick = normalNickname;
     }
-    console.log(`switching nickname: ${newNick}`);
     await message.guild.me.setNickname(newNick);
 
     await sendMessage(`uwu-mode turned ${onOff}`, message.channel);
