@@ -8,15 +8,19 @@ const client = new Discord.Client({partials: ["MESSAGE"]});
 
 const cron = require("node-cron");
 
-const {captureMessage,updateEditedMessage,deleteMessage} = require("./tools/message-utils");
+const {captureMessage, updateEditedMessage, deleteMessage} = require("./tools/message-db-utils");
 const status = require("./commands/bot_control/set-bot-status");
 
 const dev_output = require("./dev_output");
 dev_output.setClient(client);
+global.uwuMode = false;
+global.normalNickname = "asdf";
 
 const fs = require("fs");
 const os = require("os");
-const {getRandomArrayMember,sendLongMessage} = require("./tools/utils");
+const {generateUwuCombinations} = require("./tools/uwuify");
+const {getRandomArrayMember} = require("./tools/utils");
+const {sendMessage} = require("./tools/sendMessage");
 
 client.commands = new Discord.Collection();
 client.listenerSet = new Discord.Collection();
@@ -25,7 +29,11 @@ getCommands("./commands");
 getListenerSet("./listeners");
 
 client.once("ready", () => {
-    //let guilds = client.guilds;
+    normalNickname = client.user.username;
+    let guildIds = client.guilds.cache.map(guild => guild.id);
+    for (const guildId of guildIds) {
+        client.guilds.cache.get(guildId).me.setNickname(normalNickname);
+    }
 
     //todo: read in first line from github_update.txt and add it to the "online" message
     //todo: make the linux server print a line about recovering to the github_update.txt file when it recovers or is started manually
@@ -49,7 +57,7 @@ client.once("ready", () => {
     cron.schedule("* * * * *", () => {
         //todo: make command to add/remove guild/channel combos to historical messages cron
         //client.commands.get("random-message").execute(client,"","1 year ago",CONFIG.channel_primularies_id);
-    })
+    });
 
 });
 
@@ -154,7 +162,17 @@ function isCommand(message) {
  * @param args
  */
 async function runCommands(message, args) {
-    const commandName = args.shift().toLowerCase();
+    let commandName = args.shift().toLowerCase();
+
+    //support for uwu-ified command names
+    if (uwuMode) {
+        const possibleUwuCommandNames = generateUwuCombinations(commandName);
+        for (const possibleUwuCommandName of possibleUwuCommandNames) {
+            if (client.commands.has(possibleUwuCommandName)) {
+                commandName = possibleUwuCommandName;
+            }
+        }
+    }
 
     if (client.commands.has(commandName)) {
         try {
@@ -165,16 +183,16 @@ async function runCommands(message, args) {
             [args, argTypeErrors] = coerceArgsToTypes(command, args);
             if (argTypeErrors.length > 0) {
                 const errors = argTypeErrors.join("\n");
-                await sendLongMessage(errors, message.channel);
+                await sendMessage(errors, message.channel);
                 return false;
             }
             command.execute(client, message, args);
 
         } catch (err) {
-            dev_output.sendTrace(err, CONFIG.CHANNEL_DEV_ID);
+            await dev_output.sendTrace(err, CONFIG.CHANNEL_DEV_ID);
         }
     } else {
-        await message.channel.send(`\`${commandName}\` is not a valid command. Type \`${CONFIG.PREFIX}help\` to get a list of commands.`);
+        await sendMessage(`\`${commandName}\` is not a valid command. Type \`${CONFIG.PREFIX}help\` to get a list of commands.`, message.channel);
     }
 }
 
@@ -218,7 +236,7 @@ function coerceArgsToTypes(command, args) {
                         case "integer":
                         case "int":
                             const intN = Number(args[i]);
-                            if (!isNaN(parseInt(intN,10))) {
+                            if (!isNaN(parseInt(intN, 10))) {
                                 args[i] = parseInt(intN, 10);
                                 coercibleTypes.int = true;
                             }
@@ -268,7 +286,7 @@ async function parseWithListeners(message) {
             if (await listener.listen(client, message)) return;
         }
     } catch (err) {
-        dev_output.sendTrace(err, CONFIG.CHANNEL_DEV_ID);
+        await dev_output.sendTrace(err, CONFIG.CHANNEL_DEV_ID);
     }
 }
 

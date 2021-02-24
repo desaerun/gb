@@ -61,43 +61,23 @@ exports.logMessage = function (message, minVerbosity = 3) {
     }
 }
 
+exports.isUrl = function isUrl(text) {
+    const urlRegex = '((?!mailto:)(?:(?:http|https|ftp)://)(?:\\S+(?::\\S*)?@)?(?:(?:(?:[1-9]\\d?|1\\d\\d|2[01]\\d|22[0-3])(?:\\.(?:1?\\d{1,2}|2[0-4]\\d|25[0-5])){2}(?:\\.(?:[0-9]\\d?|1\\d\\d|2[0-4]\\d|25[0-4]))|(?:(?:[a-z\\u00a1-\\uffff0-9]+-?)*[a-z\\u00a1-\\uffff0-9]+)(?:\\.(?:[a-z\\u00a1-\\uffff0-9]+-?)*[a-z\\u00a1-\\uffff0-9]+)*(?:\\.(?:[a-z\\u00a1-\\uffff]{2,})))|localhost)(?::\\d{2,5})?(?:(/|\\?|#)[^\\s]*)?)';
+    const rE = new RegExp(urlRegex, "i");
+    return rE.test(text);
+}
+
 /**
- * Splits a message into [chunkSize] parts.  Discord does not allow messages > 2000 characters, for example.
- * Does not break works.
- * @param text
- * @param channel -- the Discord.js Channel object to send to
- * @param suppressEmbeds -- whether or not auto-generated Embeds should be suppressed
- * @param chunkSize -- the maximum size of each message
- * @returns {Promise<void>}
+ * generates the n-fold Cartesian product of a set of arrays.
+ * @param arrays -- the arrays to merge
+ * @returns {String[]}
  */
-exports.sendLongMessage = async function sendLongMessage(text, channel, suppressEmbeds = false, chunkSize = 2000) {
-    if (suppressEmbeds) {
-        var urlRegex = '((?!mailto:)(?:(?:http|https|ftp)://)(?:\\S+(?::\\S*)?@)?(?:(?:(?:[1-9]\\d?|1\\d\\d|2[01]\\d|22[0-3])(?:\\.(?:1?\\d{1,2}|2[0-4]\\d|25[0-5])){2}(?:\\.(?:[0-9]\\d?|1\\d\\d|2[0-4]\\d|25[0-4]))|(?:(?:[a-z\\u00a1-\\uffff0-9]+-?)*[a-z\\u00a1-\\uffff0-9]+)(?:\\.(?:[a-z\\u00a1-\\uffff0-9]+-?)*[a-z\\u00a1-\\uffff0-9]+)*(?:\\.(?:[a-z\\u00a1-\\uffff]{2,})))|localhost)(?::\\d{2,5})?(?:(/|\\?|#)[^\\s]*)?)';
-        var url = new RegExp(urlRegex, "ig");
-        text = text.replace(url, "<$1>");
-    }
-    const words = text.split(" ");
-    let chunkWords = [];
-    for (let i = 0; i < words.length; i++) {
-        const msgChunk = chunkWords.join(" ");
-        if (msgChunk.length + words[i].length >= chunkSize) {
-            try {
-                await channel.send(msgChunk);
-            } catch (e) {
-                throw e;
-            }
-            chunkWords = [];
-            i--;
-        } else {
-            chunkWords.push(words[i]);
-        }
-    }
-    if (chunkWords.length > 0) {
-        const msgChunk = chunkWords.join(" ");
-        try {
-            await channel.send(msgChunk);
-        } catch (e) {
-            throw e;
-        }
-    }
+exports.cartesianProduct = function cartesianProduct(...arrays) {
+    return arrays.reduce((acc, val) => {
+        return acc.map(el => {
+            return val.map(element => {
+                return el.concat([element]);
+            });
+        }).reduce((acc, val) => acc.concat(val), []);
+    }, [[]]);
 }

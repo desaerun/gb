@@ -1,6 +1,7 @@
 //imports
 const readline = require("readline");
 const fs = require("fs");
+const {sendMessage} = require("../../tools/sendMessage");
 
 //module settings
 const name = "print-log";
@@ -19,7 +20,7 @@ async function execute(client, message, args) {
     if (args[0]) {
         args[0] = Math.abs(parseInt(args[0], 10));
         if (isNaN(args[0])) {
-            await message.channel.send(`You must provide a valid ${params[0].type} input for ${params[0].param}.`);
+            await sendMessage(`You must provide a valid ${params[0].type} input for ${params[0].param}.`, message.channel);
             return;
         }
     }
@@ -45,10 +46,10 @@ async function execute(client, message, args) {
         const chunkSize = 1994;
         const logText = await readLog(logFile.file, args[0]);
 
-        await message.channel.send(`Contents of ${logFile.name} log file:`);
+        await sendMessage(`Contents of ${logFile.name} log file:`, message.channel);
         for (let i = 0; i < logText.length; i += chunkSize) {
             const currentChunk = logText.substr(i, chunkSize);
-            await message.channel.send(`\`\`\`${currentChunk}\`\`\``);
+            await sendMessage(`\`\`\`${currentChunk}\`\`\``, message.channel);
         }
     }
 }

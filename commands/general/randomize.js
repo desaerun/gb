@@ -1,5 +1,7 @@
 //imports
+const {sendMessage} = require("../../tools/sendMessage");
 const {getRandomArrayMember} = require("../../tools/utils");
+
 //module settings
 const name = "randomize";
 const aliases = ["random", "wandom", "wandomize"];
@@ -17,7 +19,7 @@ async function execute(client, message, args) {
     const text = args.join(" ");
     let choices = text.split(",");
     choices.map((a) => a.trim);
-    await message.channel.send(getRandomArrayMember(choices));
+    await sendMessage(getRandomArrayMember(choices), message.channel);
 }
 
 //module export

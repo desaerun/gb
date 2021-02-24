@@ -1,9 +1,12 @@
 //imports
+const {sendMessage} = require("../../tools/sendMessage");
+const {getRandomInt} = require("../../tools/utils");
 
 //module settings
-const {getRandomInt} = require("../../tools/utils");
+
+//module settings
 const name = "roll";
-const aliases = ["dice","dieroll","die-roll","diceroll","dice-roll"];
+const aliases = ["dice", "dieroll", "die-roll", "diceroll", "dice-roll"];
 const description = "Rolls a die.";
 const params = [
     {
@@ -39,12 +42,12 @@ async function execute(client, message, args) {
 
     let response;
     if (regularDie) {
-        response = `**${client.user.username}** rolls a **${args[1]}-sided** die:  **${roll}**`;
+        response = `**${message.guild.me.displayName}** rolls a **${args[1]}-sided** die:  **${roll}**`;
     } else {
-        response = `**${client.user.username}** rolls between **${args[0]}** and **${args[1]}**:  **${roll}**`;
+        response = `**${message.guild.me.displayName}** rolls between **${args[0]}** and **${args[1]}**:  **${roll}**`;
     }
     try {
-        await message.channel.send(response);
+        await sendMessage(response, message.channel);
     } catch (e) {
         throw e;
     }
