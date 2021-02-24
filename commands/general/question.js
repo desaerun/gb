@@ -2,6 +2,7 @@
 const axios = require("axios");
 const cheerio = require("cheerio");
 const Discord = require("discord.js");
+const fs = require("fs");
 const {sendMessage} = require("../../tools/sendMessage");
 
 //module settings
@@ -32,7 +33,6 @@ async function execute(client, message, args) {
         let answer = await getAnswer($,query);
 
         if (answer.text) {
-            console.log("An answer was found!");
             const answerEmbed = new Discord.MessageEmbed();
             if (answer.text && answer.context && answer.text !== answer.context) {
                 answerEmbed.setTitle(answer.text);
@@ -44,6 +44,7 @@ async function execute(client, message, args) {
             }
             if (answer.sourceText) {
                 answerEmbed.addField("\u2800",`[${answer.sourceText}](${answer.sourceUrl})`,true);
+                answerEmbed.addField("\u2800",`\u2800`,true);
             }
             answerEmbed.addField("\u2800",`[More results on Google](${queryUriString})`,true);
             await sendMessage(answerEmbed,message.channel);
@@ -52,12 +53,10 @@ async function execute(client, message, args) {
             // If an answer was not able to be parsed, return the first few search results
             let resultsEmbedsArr = getSearchResultsAsEmbeddedMessages($);
             console.log(`Successfully parsed search results.  Length: ${resultsEmbedsArr.length}`);
+            let moreGoogleResultsText;
             if (resultsEmbedsArr && resultsEmbedsArr.length > 0) {
                 await sendMessage(`Hmm, I couldn't figure that one out. Maybe these will help:`,message.channel);
-                const moreGoogleResultsEmbed = new Discord.MessageEmbed()
-                    .setTitle("More Results on Google")
-                    .setURL(queryUriString);
-                resultsEmbedsArr.push(moreGoogleResultsEmbed);
+                moreGoogleResultsText = "More Results on Google";
                 for (let i = 0; i < resultsEmbedsArr.length; i++) {
                     console.log(`Sending embed #${i}`);
                     await sendMessage(resultsEmbedsArr[i],message.channel);
@@ -65,13 +64,18 @@ async function execute(client, message, args) {
 
             } else {
                 console.log("Unable to parse the search results.");
+                // write the html of the page to a file to try to figure out why it couldn't parse the search
+                // results page
+                fs.writeFileSync(`./logs/questionResults/googleSearchResultsPage-${+Date.now()}.html`,$.html());
+
                 // If all else fails, kindly inform the user that an answer was not found.
                 await sendMessage(`Unable to find an answer. Please go fuck yourself.`,message.channel);
-                const moreGoogleResultsEmbed = new Discord.MessageEmbed()
-                    .setTitle("Try your search on Google")
-                    .setURL(queryUriString);
-                await sendMessage(moreGoogleResultsEmbed,message.channel);
+                moreGoogleResultsText = "Try your search on Google";
             }
+            const moreGoogleResultsEmbed = new Discord.MessageEmbed()
+                .setTitle(moreGoogleResultsText)
+                .setURL(queryUriString);
+            await sendMessage(moreGoogleResultsEmbed,message.channel);
         }
     } catch (err) {
         await sendMessage(`Error encountered while attempting to answer your question: ${err}`, message.channel);
@@ -90,11 +94,25 @@ module.exports = {
 //helper functions
 
 /**
- * Tries to get an answer
- * @param $
- * @param query
- * @param maxRetries
- * @returns {Promise<{text: String, context: String, sourceText: String, sourceUrl: String, sourcePane: String}>}
+ * Tries to get an answer, attempts maxRetries times before returning a blank object.
+ * Returns a Promise that resolves to an object of the following structure:
+ * {
+ *     text: the main answer text
+ *     context: further context
+ *     sourceText: title of the source / article / document from which the answer was pulled
+ *     sourceUrl: a link to the sourceText document
+ *     sourcePane: A name describing the pane where the answer was found.
+ * }
+ * @param $ -- the Cheerio object representing the entire Google search results page.
+ * @param query -- the question that was queried for
+ * @param maxRetries -- how many times to attempt to retry if the answer is not found
+ * @returns {Promise<{
+ *     text: String,
+ *     context: String,
+ *     sourceText: String,
+ *     sourceUrl: String,
+ *     sourcePane: String
+ * }>}
  */
 async function getAnswer($,query,maxRetries = 3) {
     let answer;
@@ -109,6 +127,12 @@ async function getAnswer($,query,maxRetries = 3) {
     return answer;
 }
 
+/**
+ * Queries the Google search results page and returns the entire page as a Promise that resolves to a
+ * Cheerio (node jQuery) object.
+ * @param query -- What to search for.
+ * @returns {Promise<cheerio.Root|jQuery|HTMLElement>}
+ */
 async function getGoogleSearchPageAsCheerioObject(query) {
     let $;
     try {
@@ -289,7 +313,7 @@ const selectors = {
  * {
  *     text: the main answer text
  *     context: further context
- *     sourceText: text describing the source / article / document from which the answer was pulled
+ *     sourceText: title of the source / article / document from which the answer was pulled
  *     sourceUrl: a link to the sourceText document
  *     sourcePane: A name describing the pane where the answer was found.
  * }
@@ -303,7 +327,6 @@ const selectors = {
  *     sourcePane: String,
  * }>}
  */
-
 async function getAnswerFromGoogleSearch($) {
     try {
         let answer = {};
@@ -421,8 +444,6 @@ function getSearchResultsAsEmbeddedMessages($, maxSearchResults = 3) {
                 title = $(this).find("div > a > h3.LC20lb").text();
                 link = $(this).find("div > a").attr("href");
             }
-            console.log(`Parsed search result:`);
-            console.log(`Description: ${description} | Title: ${title}  | link: ${link}`);
 
             //if the result is going to be blank, skip it and increase the maxSearchResults
             //(since we can't actually modify the index)
