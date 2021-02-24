@@ -100,6 +100,7 @@ async function execute(client, message, args, forceGuildID = null, forceChannelI
         return false;
     } else {
         if (allMessages.length < 3) {
+            console.log(`<3 messages sent this day`);
             selectedMessages = allMessages;
         } else {
             //try to select a non-bot message
@@ -121,6 +122,7 @@ async function execute(client, message, args, forceGuildID = null, forceChannelI
         console.log(`Selected messages: ${JSON.stringify(selectedMessages)}`);
 
         for (const messageRow of selectedMessages) {
+            console.log(`Current message: ${JSON.stringify(messageRow)}`);
             let humanTimedate = moment(messageRow.timestamp).format("dddd, MMMM Do YYYY @ hh:mm:ss a");
             let embedMessage = new Discord.MessageEmbed()
                 .setAuthor(messageRow.author_displayName, messageRow.author_avatarURL)

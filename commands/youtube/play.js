@@ -73,7 +73,7 @@ async function stopPlaying(textChannel) {
         await sendMessage("There is no song currently playing.", textChannel);
         return;
     }
-    sendMessage("Stopping current song.", textChannel);
+    await sendMessage("Stopping current song.", textChannel);
     currentSong.voiceChannel.leave();
     queue.unshift(currentSong);
     currentSong = {};
