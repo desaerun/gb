@@ -7,7 +7,7 @@ const description = "removes Birk as a primulary groid.  Only use in extreme cir
 
 //main
 async function execute(client, message) {
-    await message.channel.send(`Removing <@${CONFIG.MEMBERS.BIRK.ID}> as a primulary groid.`);
+    await sendMessage(`Removing <@${CONFIG.MEMBERS.BIRK.ID}> as a primulary groid.`, message.channel);
 }
 
 //module export

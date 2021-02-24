@@ -1,6 +1,7 @@
 //imports
 const axios = require("axios");
 const decode = require("unescape");
+const {sendMessage} = require("../../tools/sendMessage");
 
 //module settings
 const name = "reddit";
@@ -41,17 +42,17 @@ async function execute(client, message, args) {
         if (response.status === 200) {
 
             if (!response.data.data.children) {
-                await message.channel.send(`I wasn't able to find a post from the subreddit /r/${subreddit}.`);
+                await sendMessage(`I wasn't able to find a post from the subreddit /r/${subreddit}.`, message.channel);
                 return;
             }
 
             const desiredPostData = response.data.data.children[0].data;
 
             const fullMessage = buildMessageFromPostJSON(desiredPostData);
-            await message.channel.send(fullMessage);
+            await sendMessage(fullMessage, message.channel);
         }
     } catch (err) {
-        await message.channel.send(`Error encountered while requesting data from Reddit: ${err}`);
+        await sendMessage(`Error encountered while requesting data from Reddit: ${err}`, message.channel);
     }
 }
 

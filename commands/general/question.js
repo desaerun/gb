@@ -2,6 +2,7 @@
 const axios = require("axios");
 const cheerio = require("cheerio");
 const Discord = require("discord.js");
+const {sendMessage} = require("../../tools/sendMessage");
 
 //module settings
 const name = "question";
@@ -46,13 +47,13 @@ async function execute(client, message, args) {
             }
 
             // If all else fails, kindly inform the user that an answer was not found.
-            await message.channel.send(`Unable to find an answer. Please go fuck yourself.`);
+            await sendMessage(`Unable to find an answer. Please go fuck yourself.`, message.channel);
 
         } else {
             throw new Error(`Request returned status code ${response.status}`);
         }
     } catch (err) {
-        await message.channel.send(`Error encountered while attempting to answer your question: ${err}`);
+        await sendMessage(`Error encountered while attempting to answer your question: ${err}`, message.channel);
     }
 }
 
@@ -94,10 +95,10 @@ async function retrieveAnswerFromFeaturedSnippet(message, cheerioDOM) {
             let context = cheerioDOM("span.hgKElc").text();
 
             if (!context || answer === context) {
-                await message.channel.send(answer);
+                await sendMessage(answer, message.channel);
                 return true;
             } else {
-                await message.channel.send(`**${answer}**\n${context}`);
+                await sendMessage(`**${answer}**\n${context}`, message.channel);
                 return true;
             }
         }
@@ -124,10 +125,10 @@ async function retrieveAnswerFromKnowledgePanel(message, cheerioDOM) {
         if (answer) {
             let context = innerDOM("div.kno-rdesc > div > span").first().text();
             if (!context || answer === context) {
-                await message.channel.send(answer);
+                await sendMessage(answer, message.channel);
                 return true;
             } else {
-                await message.channel.send(`**${answer}**\n${context}`);
+                await sendMessage(`**${answer}**\n${context}`, message.channel);
                 return true;
             }
         }
@@ -167,10 +168,10 @@ async function sendSearchResultsAsEmbeddedMessage(message, cheerioDOM) {
         return false;
     }
 
-    await message.channel.send(`Hmm, I couldn't figure that one out. Maybe these will help:`);
+    await sendMessage(`Hmm, I couldn't figure that one out. Maybe these will help:`, message.channel);
 
     for (let i = 0; i < 3 && i < results.length; i++) {
-        await message.channel.send(results[i]);
+        await sendMessage(results[i], message.channel);
     }
 
     return true;

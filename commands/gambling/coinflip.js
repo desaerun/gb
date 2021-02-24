@@ -1,15 +1,16 @@
 //imports
-const {getRand} = require("../../tools/utils");
+const {getRandomInt} = require("../../tools/utils");
+const {sendMessage} = require("../../tools/sendMessage");
 
 //module settings
 const name = "coinflip";
 const description = "Flips a coin.";
 
 //main
-async function execute(client, message, args) {
-    const roll = getRand(0,1);
-    const side = (roll === 1) ? "Heads" : "Tails";
-    await message.channel.send(`**${client.user.username}** flips a coin. It's **${side}**!`);
+async function execute(client, message) {
+    const roll = getRandomInt(0, 1);
+    const side = (roll === 0) ? "Heads" : "Tails";
+    await sendMessage(`**${message.guild.me.displayName}** flips a coin. It's **${side}**!`, message.channel);
     return true;
 }
 

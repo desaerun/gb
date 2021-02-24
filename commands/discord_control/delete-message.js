@@ -15,7 +15,7 @@ const params = [
 //main
 async function execute(client, message, args) {
     if (args.length !== 1) {
-        await message.channel.send(`You must provide the message ID.`)
+        await sendMessage(`You must provide the message ID.`, message.channel);
         return false;
     }
     let messageID = args[0];
@@ -27,7 +27,7 @@ async function execute(client, message, args) {
     } catch (e) {
         throw e;
     } finally {
-        await message.channel.send(`Message ${messageID} in channel "${targetMessage.guild.name}".#${targetMessage.channel.name} deleted.`)
+        await sendMessage(`Message ${messageID} in channel "${targetMessage.guild.name}".#${targetMessage.channel.name} deleted.`, message.channel);
     }
 }
 

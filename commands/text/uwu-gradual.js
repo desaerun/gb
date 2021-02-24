@@ -1,5 +1,4 @@
 //imports
-const sendLongMessage = require("../../tools/sendLongMessage");
 const {getRandomArrayMember} = require("../../tools/utils.js");
 const uwu = require("./uwu");
 
@@ -33,8 +32,8 @@ async function execute(client, message, args) {
     }
     const freq = parseFloat(args.shift()); //shift the frequency amount off the beginning of the array
     const text = args.join(" ");
-    const uwuText = uwu.uwuify(text,freq);
-    await sendLongMessage(uwuText,message.channel);
+    const uwuText = uwu.uwuify(text, freq);
+    await message.channel.send(uwuText);
     message.delete();
 }
 
