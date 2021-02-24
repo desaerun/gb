@@ -2,6 +2,7 @@
 const axios = require("axios");
 const cheerio = require("cheerio");
 const Discord = require("discord.js");
+const {sendMessage} = require("../../tools/sendMessage");
 
 //module settings
 const name = "question";
@@ -73,7 +74,7 @@ async function execute(client, message, args) {
             }
         }
     } catch (err) {
-        await message.channel.send(`Error encountered while attempting to answer your question: ${err}`);
+        await sendMessage(`Error encountered while attempting to answer your question: ${err}`, message.channel);
     }
 }
 

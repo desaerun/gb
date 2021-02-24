@@ -1,8 +1,8 @@
 //imports
 const ytdl = require("ytdl-core-discord");
 const ytsr = require("ytsr");
-const sendLongMessage = require("../../tools/sendLongMessage");
 const {suppressUrls} = require("../../tools/utils");
+const {sendMessage} = require("../../tools/sendMessage")
 const Discord = require("discord.js");
 
 //module settings
@@ -24,7 +24,7 @@ let currentSong = {};
 
 async function execute(client, message, args) {
     if (!message.member.voice.channel) {
-        await message.channel.send(`You must be in a voice channel to use this command.`);
+        await sendMessage(`You must be in a voice channel to use this command.`, message.channel);
         return false;
     }
     let q = args.join(" ");
@@ -70,10 +70,10 @@ function addSongToQueue(song) {
 
 async function stopPlaying(textChannel) {
     if (!playing) {
-        await textChannel.send("There is no song currently playing.");
+        await sendMessage("There is no song currently playing.", textChannel);
         return;
     }
-    textChannel.send("Stopping current song.");
+    await sendMessage("Stopping current song.", textChannel);
     currentSong.voiceChannel.leave();
     queue.unshift(currentSong);
     currentSong = {};
@@ -82,20 +82,20 @@ async function stopPlaying(textChannel) {
 
 async function skipSong(textChannel) {
     if (!playing) {
-        await textChannel.send(`There is no song currently playing.`);
+        await sendMessage(`There is no song currently playing.`, textChannel);
         return;
     }
-    await textChannel.send(`Skipping **${suppressUrls(currentSong.song.title)}**`);
+    await sendMessage(`Skipping **${suppressUrls(currentSong.song.title)}**`, textChannel);
     await playNextSong(textChannel, currentSong.voiceChannel);
     if (!playing && queue.length === 0) {
-        await textChannel.send(`End of song queue.`);
+        await sendMessage(`End of song queue.`, textChannel);
     }
 }
 
 async function playSong(song, textChannel, voiceChannel) {
     if (queue.length > 0 || playing) {
         addSongToQueue(song);
-        await textChannel.send(`Added **${suppressUrls(song.title)}** to the queue in position #${queue.length}`);
+        await sendMessage(`Added **${suppressUrls(song.title)}** to the queue in position #${queue.length}`, textChannel);
     } else {
         addSongToQueue(song);
         await playNextSong(textChannel, voiceChannel);
@@ -107,8 +107,7 @@ async function playNextSong(textChannel, voiceChannel) {
         const song = queue.shift();
         try {
             const connection = await voiceChannel.join();
-            const stream = await ytdl(song.url);
-            const dispatcher = connection.play(stream, {type: "opus"});
+            const dispatcher = connection.play(await ytdl(song.url), {type: "opus"});
             playing = true;
             currentSong = {
                 started: +Date.now(),
@@ -146,14 +145,14 @@ async function nowPlaying(textChannel, showProgressBar = true) {
         if (showProgressBar) {
             nowPlayingEmbed.addField("Progress", generateProgressBar(21, elapsed, songLength));
         }
-        await textChannel.send(nowPlayingEmbed);
+        await sendMessage(nowPlayingEmbed, textChannel);
     }
 }
 
 async function listQueue(textChannel) {
     await nowPlaying(textChannel);
     if (queue.length === 0) {
-        await textChannel.send("There are no songs currently in queue.");
+        await sendMessage("There are no songs currently in queue.", textChannel);
         return;
     }
     let totalDurationSeconds = 0;
@@ -169,12 +168,12 @@ async function listQueue(textChannel) {
     }
     const totalDurationString = secondsToDurationString(totalDurationSeconds, 3);
     queueMessage += `\nTotal duration: ${totalDurationString}`;
-    await sendLongMessage(queueMessage, textChannel, true);
+    await sendMessage(queueMessage, textChannel, true);
 }
 
 async function clearQueue(textChannel) {
     queue = [];
-    await textChannel.send("Song queue cleared.");
+    await sendMessage("Song queue cleared.", textChannel);
 }
 
 /**
