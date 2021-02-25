@@ -41,7 +41,38 @@ async function execute(client, message, args) {
     let deletedMessages;
     let fields;
     try {
-        [deletedMessages,fields] = await pool.query("SELECT" +
+        const query = "SELECT" +
+        "    m.id," +
+        "    m.content," +
+        "    m.guild," +
+        "    m.channel," +
+        "    m.author," +
+        "    m.timestamp," +
+        "    m.deleted," +
+        "    a.url AS attachmentURL," +
+        "    author.displayName AS author_displayName," +
+        "    author.avatarURL AS author_avatarURL," +
+        "    author.isBot AS author_isBot" +
+        " FROM" +
+        "    messages m" +
+        " LEFT JOIN attachments a ON" +
+        "    m.id = a.messageId" +
+        " LEFT JOIN authors author ON" +
+        "    m.author=author.id" +
+        " WHERE" +
+        "    m.author = ?" +
+        " AND" +
+        "    m.channel = ?" +
+        " AND" +
+        "    m.deleted IS NOT NULL" +
+        " AND" +
+        "    m.deletedBy = ?" +
+        " ORDER BY" +
+        "    m.timestamp" +
+        " DESC" +
+        " LIMIT ?";
+        [deletedMessages] = await pool.query(query, [userId, message.channel.id, "user", +numMessages]);
+        let query_included = "SELECT" +
             "    m.id," +
             "    m.content," +
             "    m.guild," +
@@ -60,19 +91,20 @@ async function execute(client, message, args) {
             " LEFT JOIN authors author ON" +
             "    m.author=author.id" +
             " WHERE" +
-            "    m.author = ?" +
+            `    m.author = ${userId}` +
             " AND" +
-            "    m.channel = ?" +
+            `    m.channel = ${message.channel.id}` +
             " AND" +
             "    m.deleted IS NOT NULL" +
             " AND" +
-            "    m.deletedBy = ?" +
+            "    m.deletedBy = 'user'" +
             " ORDER BY" +
             "    m.timestamp" +
             " DESC" +
-            " LIMIT ?", [userId, message.channel.id, "user", +numMessages]);
+            ` LIMIT ${+numMessages}`;
         console.log(userId, message.channel.id, "user", +numMessages);
-        console.log(deletedMessages,fields);
+        console.log(query_included);
+        console.log(deletedMessages);
     } catch (e) {
         throw e;
     }
