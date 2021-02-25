@@ -426,7 +426,7 @@ function getSearchResultsAsEmbeddedMessages($, maxSearchResults = 3) {
         let results = [];
 
         //loop through search results
-        $("div#rso > div.g").each(function (i) {
+        $("div#rso").find("div.g").each(function (i) {
             if (i >= maxSearchResults) {
                 return false;
             }
