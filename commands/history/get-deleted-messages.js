@@ -88,6 +88,7 @@ async function execute(client, message, args) {
             if (deletedMessage.content) {
                 deletedMessageEmbed.addField("\u200b", deletedMessage.content)
             }
+            deletedMessageEmbed.addField("\u200b","\u200b"); //spacer
             deletedMessageEmbed.addField("Posted:", moment(deletedMessage.timestamp).format("dddd, MMMM Do YYYY @ hh:mm:ss a"));
             deletedMessageEmbed.addField("Deleted:", moment(deletedMessage.deleted).format("dddd, MMMM Do YYYY @ hh:mm:ss a"))
             if (deletedMessage.attachmentURL) {
