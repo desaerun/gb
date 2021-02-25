@@ -6,7 +6,6 @@ const {sendMessage} = require("../../tools/sendMessage");
 // mysql
 const mysql = require("mysql2/promise");
 const db = require("../../config/db");
-const logMessage = require("../../tools/logMessage");
 const pool = mysql.createPool({
     ...db,
     waitForConnections: true,
@@ -98,7 +97,8 @@ async function execute(client, message, args) {
             }
         } else {
             //in case there are more edits than can fit in the MessageEmbed (it only supports 10 fields total)
-            for (var currentMessagePointer = 0; (currentMessage.deleted && currentMessagePointer < 7) || (!currentMessage.deleted && currentMessagePointer < 8); currentMessagePointer++) {
+            let currentMessagePointer = 0;
+            for (; (currentMessage.deleted && currentMessagePointer < 7) || (!currentMessage.deleted && currentMessagePointer < 8); currentMessagePointer++) {
                 let formattedDatetime = moment(messageHistory[currentMessagePointer].editTimestamp).format(dateFormat);
                 embedMessage.addField(`Edit on ${formattedDatetime}:`, messageHistory[currentMessagePointer].newContent);
             }
@@ -111,7 +111,8 @@ async function execute(client, message, args) {
             for (; currentMessagePointer < messageHistory.length - 1; currentMessagePointer += internalMessagePointer) {
                 const furtherEdits = new Discord.MessageEmbed()
                     .setURL(`https://discord.com/channels/${currentMessage.guild}/${currentMessage.channel}/${messageID}`);
-                for (var internalMessagePointer = 0; internalMessagePointer < 9 && messageHistory.length - 1 - (currentMessagePointer + internalMessagePointer) >= 0; internalMessagePointer++) {
+                let internalMessagePointer = 0;
+                for (; internalMessagePointer < 9 && messageHistory.length - 1 - (currentMessagePointer + internalMessagePointer) >= 0; internalMessagePointer++) {
                     let pointer = currentMessagePointer + internalMessagePointer;
                     let formattedDatetime = moment(messageHistory[pointer].editTimestamp).format(dateFormat);
                     furtherEdits.addField(`Edit on ${formattedDatetime}:`, messageHistory[pointer].newContent);
