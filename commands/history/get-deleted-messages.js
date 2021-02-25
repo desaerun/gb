@@ -33,14 +33,15 @@ const params = [
 
 //main
 async function execute(client, message, args) {
-    let userID = args[0];
+    let userId = args[0];
     if (message.mentions.users.first()) {
-        userID = message.mentions.users.first().id;
+        userId = message.mentions.users.first().id;
     }
     const numMessages = args[1] ? args[1] : params[1].default;
     let deletedMessages;
+    let fields;
     try {
-        [deletedMessages] = await pool.query("SELECT" +
+        [deletedMessages,fields] = await pool.query("SELECT" +
             "    m.id," +
             "    m.content," +
             "    m.guild," +
@@ -69,7 +70,8 @@ async function execute(client, message, args) {
             " ORDER BY" +
             "    m.timestamp" +
             " DESC" +
-            " LIMIT ?", [userID, message.channel.id, "user", +numMessages]);
+            " LIMIT ?", [userId, message.channel.id, "user", +numMessages]);
+        console.log(deletedMessages,fields);
     } catch (e) {
         throw e;
     }
@@ -100,7 +102,7 @@ async function execute(client, message, args) {
             }
         }
     } else {
-        await sendMessage("That user does not have any deleted messages in this channel.")
+        await sendMessage("That user does not have any deleted messages in this channel.", message.channel);
     }
 }
 
