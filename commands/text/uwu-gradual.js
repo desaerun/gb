@@ -1,5 +1,6 @@
 //imports
 const {getRandomArrayMember} = require("../../tools/utils.js");
+const {setDeletedBy} = require("../../tools/message-db-utils");
 const uwu = require("./uwu");
 
 //module settings
@@ -35,6 +36,7 @@ async function execute(client, message, args) {
     const uwuText = uwu.uwuify(text, freq);
     await message.channel.send(uwuText);
     message.delete();
+    await setDeletedBy(message,"uwu");
 }
 
 //module export

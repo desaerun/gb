@@ -154,13 +154,13 @@ exports.deleteMessage = deleteMessage;
 
 /**
  * sets the deletedBy field in the DB for the message ID given.
- * @param id -- the ID of the message to set the flag for.
+ * @param message -- A Discord.Message representing the message
  * @param deletedBy -- A "reason" or "source" of the deletion.
  * @returns {Promise<void>}
  */
-setDeletedBy = async function setDeletedBy(id,deletedBy) {
+setDeletedBy = async function setDeletedBy(message,deletedBy) {
     try {
-        await pool.query("UPDATE messages SET deletedBy = ? WHERE id = ?",[deletedBy, id]);
+        await pool.query("UPDATE messages SET deletedBy = ? WHERE id = ?",[deletedBy, message.id]);
     } catch (e) {
         throw e;
     }
