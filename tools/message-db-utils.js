@@ -161,7 +161,6 @@ exports.deleteMessageFromDb = deleteMessageFromDb;
 setDeletedBy = async function setDeletedBy(message,deletedBy) {
     try {
         await pool.query("UPDATE messages SET deletedBy = ? WHERE id = ?",[deletedBy, message.id]);
-        console.log(`UPDATE messages SET deletedBy = ${deletedBy} WHERE id = ${message.id}`);
     } catch (e) {
         throw e;
     }
