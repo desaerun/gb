@@ -53,8 +53,8 @@ async function execute(client, message, args, forceGuildID = null, forceChannelI
     console.log(`utcOffset: ${utcOffset}|offsetMs: ${offsetMs}`);
 
     //calculate midnight on both ends of the day provided
-    timestamp -= timestamp % (24 * 60 * 60 * 1000); //subtract minutes since midnight
     timestamp += offsetMs; // add the UTC offset
+    timestamp -= timestamp % (24 * 60 * 60 * 1000); //subtract minutes since midnight
 
 
     let end_timestamp = timestamp + (24 * 60 * 60 * 1000) - 1; //get 11:59:59.999 at the end of that day
