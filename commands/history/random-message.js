@@ -45,19 +45,17 @@ async function execute(client, message, args, forceGuildID = null, forceChannelI
 
     //convert string to timestamp using php-esque "strtotime"
     //https://www.php.net/manual/en/function.strtotime.php
-    let timestamp = locutus.php.datetime.strtotime(arg_str) * 1000;
+    let locutusTs = locutus.php.datetime.strtotime(arg_str) * 1000;
 
-    // adjust the timestamp to UTC
-    let utcOffset = moment(timestamp).utcOffset();
-    let offsetMs = utcOffset * 60 * 1000;
-    console.log(`utcOffset: ${utcOffset}|offsetMs: ${offsetMs}`);
+    //create a date object out of the timestamp extracted
+    let dateObj = new Date(locutusTs);
+    //set the time to the most recent Midnight
+    dateObj.setHours(0,0,0,0);
+    // convert back to a timestamp
+    let timestamp = dateObj.getTime();
+    //get 11:59:59.999 at the end of that day
+    let end_timestamp = timestamp + (24 * 60 * 60 * 1000) - 1;
 
-    //calculate midnight on both ends of the day provided
-    timestamp += offsetMs; // add the UTC offset
-    timestamp -= timestamp % (24 * 60 * 60 * 1000); //subtract minutes since midnight
-
-
-    let end_timestamp = timestamp + (24 * 60 * 60 * 1000) - 1; //get 11:59:59.999 at the end of that day
     console.log(`Selecting messages between (${timestamp})${moment(timestamp).format("MMMM Do YYYY HH:mm:ss a")} and (${end_timestamp})${moment(end_timestamp).format("MMMM Do YYYY HH:mm:ss a")}`);
     console.log(`${timestamp} :: ${end_timestamp}`);
 
@@ -122,7 +120,6 @@ async function execute(client, message, args, forceGuildID = null, forceChannelI
         }
 
         for (const messageRow of selectedMessages) {
-            console.log(`Current message: ${JSON.stringify(messageRow)}`);
             let humanTimedate = moment(messageRow.timestamp).format("dddd, MMMM Do YYYY @ hh:mm:ss a");
             let embedMessage = new Discord.MessageEmbed()
                 .setAuthor(messageRow.author_displayName, messageRow.author_avatarURL);
