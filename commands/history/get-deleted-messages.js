@@ -59,11 +59,15 @@ async function execute(client, message, args) {
             " LEFT JOIN authors author ON" +
             "    m.author=author.id" +
             " WHERE" +
-            "    m.deleted IS NOT NULL and m.author = ?" +
+            "    m.author = ?" +
+            " AND" +
+            "    m.deleted IS NOT NULL" +
+            " AND" +
+            "    m.deletedBy = ?" +
             " ORDER BY" +
             "    m.timestamp" +
             " DESC" +
-            " LIMIT ?", [userID, +numMessages]);
+            " LIMIT ?", [userID, "user", +numMessages]);
     } catch (e) {
         throw e;
     }
@@ -74,19 +78,19 @@ async function execute(client, message, args) {
         throw e;
     }
     for (const deletedMessage of deletedMessages) {
-        let embedMessage = new Discord.MessageEmbed()
+        let deletedMessageEmbed = new Discord.MessageEmbed()
             .setAuthor(deletedMessage.author_displayName, deletedMessage.author_avatarURL)
             .setFooter(`Message ID: ${deletedMessage.id}`);
         if (deletedMessage.content) {
-            embedMessage.addField("\u200b", deletedMessage.content)
+            deletedMessageEmbed.addField("\u200b", deletedMessage.content)
         }
-        embedMessage.addField("Posted:", moment(deletedMessage.timestamp).format("dddd, MMMM Do YYYY @ hh:mm:ss a"));
-        embedMessage.addField("Deleted:", moment(deletedMessage.deleted).format("dddd, MMMM Do YYYY @ hh:mm:ss a"))
+        deletedMessageEmbed.addField("Posted:", moment(deletedMessage.timestamp).format("dddd, MMMM Do YYYY @ hh:mm:ss a"));
+        deletedMessageEmbed.addField("Deleted:", moment(deletedMessage.deleted).format("dddd, MMMM Do YYYY @ hh:mm:ss a"))
         if (deletedMessage.attachmentURL) {
-            embedMessage.setImage(deletedMessage.attachmentURL);
+            deletedMessageEmbed.setImage(deletedMessage.attachmentURL);
         }
         try {
-            await sendMessage(embedMessage, message.channel);
+            await sendMessage(deletedMessageEmbed, message.channel);
         } catch (e) {
             console.error("There was an error sending the embed message:", e);
             return false;

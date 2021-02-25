@@ -11,6 +11,13 @@ const pool = mysql.createPool({
     queueLimit: 0,
 });
 
+/**
+ * Inserts a new message into the Database.  Also inserts and/or updates the Channel, Guild, and Author tables with
+ * information from the message.
+ * @param message -- a Discord.Message object representing the message.
+ * @param lastEditTimestamp -- the timestamp the message was last edited.
+ * @returns {Boolean} -- Returns true if successful.
+ */
 insertNewMessage = async function insertNewMessage(message, lastEditTimestamp = null) {
     const author = message.guild.members.cache.get(message.author.id);
     let guild_values = {
@@ -65,6 +72,7 @@ insertNewMessage = async function insertNewMessage(message, lastEditTimestamp = 
     logMessage(`Successfully inserted author ${author_values.id}`, 4);
     logMessage(`Successfully inserted message ${message_values.id}`, 4);
     let i = 1;
+    //realistically, messages can only have one attachment
     for (let attachment of message.attachments) {
         const attachment_data = attachment[1];
         let attachment_values = {
@@ -80,13 +88,27 @@ insertNewMessage = async function insertNewMessage(message, lastEditTimestamp = 
         };
         pool.query("INSERT INTO attachments SET ? ON DUPLICATE KEY UPDATE ?", [attachment_values, attachment_values], (err) => {
             if (err) throw err;
-            console.log(`Successfully inserted attachment ${attachment_values.id} (${i} of ${message.attachments.size})`);
+            logMessage(`Successfully inserted attachment ${attachment_values.id} (${i} of ${message.attachments.size})`,4);
             i++;
         });
     }
-    return 1; // added
+    return true; // added
 }
+exports.insertNewMessage = insertNewMessage;
 
+/**
+ * This function is called every time a message is posted, or when running the cache message history command.
+ * Scrapes information about the message and adds it to the DB.
+ * @param client -- A Discord.Client object representing the bot
+ * @param message -- The message to be parsed
+ * @param includeBotMessages -- Whether or not Bot messages should be added to the DB or skipped over.
+ * @returns {Promise<number>} -- A status code:
+ * 1: Successfully added,
+ * 2: Skipped,
+ * 3: Bot Message that was skipped over
+ * 4: Author is no longer a part of the Discord Guild that is being parsed.  This would cause an error with
+ * several functions, so these messages are skipped over.
+ */
 captureMessage = async function captureMessage(client, message, includeBotMessages = false) {
     try {
         let [rows] = await pool.execute("SELECT * FROM messages WHERE id = ?", [message.id]);
@@ -113,18 +135,45 @@ captureMessage = async function captureMessage(client, message, includeBotMessag
         console.log(err);
     }
 }
+exports.captureMessage = captureMessage;
 
+/**
+ * Updates the DB with information about when a message was deleted.
+ * @param deletedMessage
+ * @returns {Promise<void>}
+ */
 deleteMessage = async function deleteMessage(deletedMessage) {
-    console.log(`Deleted message: ${JSON.stringify(deletedMessage)}`);
     const now = +new Date();
     try {
-        await pool.query("UPDATE messages SET deleted = ? WHERE id = ?", [now, deletedMessage.id]);
-        console.log(`Set deleted timestamp on message ${deletedMessage.id}.`);
+        await pool.query("UPDATE messages SET deleted = ?, deletedBy = 'user' WHERE id = ?", [now, deletedMessage.id]);
     } catch (e) {
         throw e;
     }
 }
+exports.deleteMessage = deleteMessage;
 
+/**
+ * sets the deletedBy field in the DB for the message ID given.
+ * @param id -- the ID of the message to set the flag for.
+ * @param deletedBy -- A "reason" or "source" of the deletion.
+ * @returns {Promise<void>}
+ */
+setDeletedBy = async function setDeletedBy(id,deletedBy) {
+    try {
+        await pool.query("UPDATE messages SET deletedBy = ? WHERE id = ?",[deletedBy, id]);
+    } catch (e) {
+        throw e;
+    }
+}
+exports.setDeletedBy = setDeletedBy;
+
+/**
+ * Retrieves the message if it is a partial before passing it along to the addMessageEdit function,
+ * where it will be stored in the DB.
+ * @param oldMessage
+ * @param newMessage
+ * @returns {Promise<void>}
+ */
 updateEditedMessage = async function updateEditedMessage(oldMessage, newMessage) {
     insertNewMessage(newMessage, Date.now());
     if (oldMessage.partial) {
@@ -138,7 +187,14 @@ updateEditedMessage = async function updateEditedMessage(oldMessage, newMessage)
         await addMessageEdit(oldMessage, newMessage);
     }
 }
+exports.updateEditedMessage = updateEditedMessage;
 
+/**
+ * Converts a Discord embedded message into a big chunk of text, for storing in DB purposes or including
+ * the text into another embed.
+ * @param embed -- the Discord.MessageEmbed object
+ * @returns {string} -- a string representing the embed object
+ */
 convertEmbedToText = function convertEmbedToText(embed) {
     let textEmbed = "";
     textEmbed += "\n\n";
@@ -165,7 +221,14 @@ convertEmbedToText = function convertEmbedToText(embed) {
     }
     return textEmbed;
 }
+exports.convertEmbedToText = convertEmbedToText;
 
+/**
+ * Adds a message edit entry to the DB
+ * @param oldMessage -- A Discord.Message object representing the message prior to editing
+ * @param newMessage -- A Discord.Message object representing the message after editing
+ * @returns {Promise<void>}
+ */
 addMessageEdit = async function addMessageEdit(oldMessage, newMessage) {
     let oldMessageContent = oldMessage.content;
     let newMessageContent = newMessage.content;
@@ -187,11 +250,3 @@ addMessageEdit = async function addMessageEdit(oldMessage, newMessage) {
         throw error;
     }
 }
-
-module.exports = {
-    insertNewMessage: insertNewMessage,
-    captureMessage: captureMessage,
-    deleteMessage: deleteMessage,
-    updateEditedMessage: updateEditedMessage,
-    convertEmbedToText: convertEmbedToText,
-};
