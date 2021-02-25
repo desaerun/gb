@@ -35,8 +35,8 @@ async function execute(client, message, args) {
     const text = args.join(" ");
     const uwuText = uwu.uwuify(text, freq);
     await message.channel.send(uwuText);
-    message.delete();
     await setDeletedBy(message,"uwu");
+    message.delete();
 }
 
 //module export

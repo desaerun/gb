@@ -142,15 +142,15 @@ exports.captureMessage = captureMessage;
  * @param deletedMessage
  * @returns {Promise<void>}
  */
-deleteMessage = async function deleteMessage(deletedMessage) {
+deleteMessageFromDb = async function deleteMessageFromDb(deletedMessage) {
     const now = +new Date();
     try {
-        await pool.query("UPDATE messages SET deleted = ?, deletedBy = 'user' WHERE id = ?", [now, deletedMessage.id]);
+        await pool.query("UPDATE messages SET deleted = ? WHERE id = ?", [now, deletedMessage.id]);
     } catch (e) {
         throw e;
     }
 }
-exports.deleteMessage = deleteMessage;
+exports.deleteMessageFromDb = deleteMessageFromDb;
 
 /**
  * sets the deletedBy field in the DB for the message ID given.
@@ -161,6 +161,7 @@ exports.deleteMessage = deleteMessage;
 setDeletedBy = async function setDeletedBy(message,deletedBy) {
     try {
         await pool.query("UPDATE messages SET deletedBy = ? WHERE id = ?",[deletedBy, message.id]);
+        console.log(`UPDATE messages SET deletedBy = ${deletedBy} WHERE id = ${message.id}`);
     } catch (e) {
         throw e;
     }
