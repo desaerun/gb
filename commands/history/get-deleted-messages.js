@@ -71,6 +71,7 @@ async function execute(client, message, args) {
             "    m.timestamp" +
             " DESC" +
             " LIMIT ?", [userId, message.channel.id, "user", +numMessages]);
+        console.log(userId, message.channel.id, "user", +numMessages);
         console.log(deletedMessages,fields);
     } catch (e) {
         throw e;
