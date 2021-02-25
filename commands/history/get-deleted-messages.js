@@ -27,7 +27,7 @@ const params = [
         param: "numMessages",
         type: "Integer",
         description: "The number of messages to retrieve",
-        default: 5,
+        default: 3,
     },
 ];
 
