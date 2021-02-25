@@ -39,7 +39,6 @@ async function execute(client, message, args) {
     }
     const numMessages = args[1] ? args[1] : params[1].default;
     let deletedMessages;
-    let fields;
     try {
         const query = "SELECT" +
         "    m.id," +
@@ -72,39 +71,6 @@ async function execute(client, message, args) {
         " DESC" +
         " LIMIT ?";
         [deletedMessages] = await pool.query(query, [userId, message.channel.id, "user", +numMessages]);
-        let query_included = "SELECT" +
-            "    m.id," +
-            "    m.content," +
-            "    m.guild," +
-            "    m.channel," +
-            "    m.author," +
-            "    m.timestamp," +
-            "    m.deleted," +
-            "    a.url AS attachmentURL," +
-            "    author.displayName AS author_displayName," +
-            "    author.avatarURL AS author_avatarURL," +
-            "    author.isBot AS author_isBot" +
-            " FROM" +
-            "    messages m" +
-            " LEFT JOIN attachments a ON" +
-            "    m.id = a.messageId" +
-            " LEFT JOIN authors author ON" +
-            "    m.author=author.id" +
-            " WHERE" +
-            `    m.author = ${userId}` +
-            " AND" +
-            `    m.channel = ${message.channel.id}` +
-            " AND" +
-            "    m.deleted IS NOT NULL" +
-            " AND" +
-            "    m.deletedBy = 'user'" +
-            " ORDER BY" +
-            "    m.timestamp" +
-            " DESC" +
-            ` LIMIT ${+numMessages}`;
-        console.log(userId, message.channel.id, "user", +numMessages);
-        console.log(query_included);
-        console.log(deletedMessages);
     } catch (e) {
         throw e;
     }
