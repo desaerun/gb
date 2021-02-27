@@ -93,7 +93,7 @@ async function execute(client, message, args) {
     if (includeSection(["token", "tokens"], args)) {
         fields.push(``);
         fields.push(`  Tokens:`);
-        fields.push(`    Discord API: ${process.env.BOT_TOKEN.substr(0,6)}...${process.env.BOT_TOKEN.substring(-6)}`);
+        fields.push(`    Discord API: ${process.env.BOT_TOKEN.substr(0,6)}...${process.env.BOT_TOKEN.substr(-6)}`);
     }
 
     const output = "```" + fields.join("\n") + "```";
