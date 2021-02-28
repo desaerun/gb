@@ -19,37 +19,31 @@ exports.sendMessage = async function sendMessage(input, target, suppressEmbeds =
                     field.value = field.value.substr(0, 510) + "..." + field.value.substr(-510);
                 }
             }
-            let output;
-            try {
-                output = await target.send(input);
-            } catch (e) {
-                output = await target.send(`Failed to send embedded message: ${e}`);
+        } else {
+            if (input.content) {
+                input.content = uwuifyIfUwuMode(input.content);
             }
-            return output;
-        }
-        if (input.content) {
-            input.content = uwuifyIfUwuMode(input.content);
-        }
-        if (input.title) {
-            input.title = uwuifyIfUwuMode(input.title);
-        }
-        if (input.description) {
-            input.description = uwuifyIfUwuMode(input.description);
-        }
-        if (input.footer && input.footer.text) {
-            input.footer.text = uwuifyIfUwuMode(input.footer.text);
-        }
-        if (input.author && input.author.name) {
-            input.author.name = uwuifyIfUwuMode(input.author.name);
-        }
-        for (const field of input.fields) {
-            field.name = uwuifyIfUwuMode(field.name);
-            field.value = uwuifyIfUwuMode(field.value);
+            if (input.title) {
+                input.title = uwuifyIfUwuMode(input.title);
+            }
+            if (input.description) {
+                input.description = uwuifyIfUwuMode(input.description);
+            }
+            if (input.footer && input.footer.text) {
+                input.footer.text = uwuifyIfUwuMode(input.footer.text);
+            }
+            if (input.author && input.author.name) {
+                input.author.name = uwuifyIfUwuMode(input.author.name);
+            }
+            for (const field of input.fields) {
+                field.name = uwuifyIfUwuMode(field.name);
+                field.value = uwuifyIfUwuMode(field.value);
 
-            //if the value field is longer than allowed, take the first and last half of the characters and insert
-            // "..." between them.
-            if (field.value && field.value.length > 1024) {
-                field.value = field.value.substr(0, 510) + "..." + field.value.substr(-510);
+                //if the value field is longer than allowed, take the first and last half of the characters and insert
+                // "..." between them.
+                if (field.value && field.value.length > 1024) {
+                    field.value = field.value.substr(0, 510) + "..." + field.value.substr(-510);
+                }
             }
         }
         let output;

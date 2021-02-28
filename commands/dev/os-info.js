@@ -13,55 +13,54 @@ const params = [
         type: "String",
     },
 ];
-const helpText = "Valid section titles are `all`,`user`,`cpu`,`net`,`db`,`tokens`. Multiple sections can be specified," +
-    " separated by spaces.";
+const helpText = "Valid section titles are `all`,`user`,`cpu`,`net`,`db`,`tokens`. Multiple sections can be " +
+    "specified, separated by spaces.";
 
 //main
 async function execute(client, message, args) {
-    let output = "```";
-    output += `OS info:\n`;
-    output += ` Uptime: ${prettyMilliseconds(os.uptime * 1000)}\n`;
-
-    output += `  Hostname: ${os.hostname()}\n`;
+    let fields = [];
+    fields.push(`OS info:`);
+    fields.push(` Uptime: ${prettyMilliseconds(os.uptime * 1000)}`);
+    fields.push(`  Hostname: ${os.hostname()}`);
 
     //architecture info
     const arch = os.arch();
     const version = os.version();
-    output += `  Architecture: ${arch} (${version})\n`;
+    fields.push(`  Architecture: ${arch} (${version})`);
 
     if (includeSection("user", args)) {
-        output += `\n`;
+        fields.push(``);
         const userInfo = os.userInfo();
-        output += `  User info:\n`;
-        output += `    Username: ${userInfo.username}\n`;
-        output += `    UID: ${userInfo.uid}\n`;
-        output += `    GID: ${userInfo.gid}\n`;
-        output += `    Shell: ${userInfo.shell}\n`;
-        output += `    Home path: ${os.homedir()}\n`;
+        fields.push(`  User info:`);
+        fields.push(`    Username: ${userInfo.username}`);
+        fields.push(`    UID: ${userInfo.uid}`);
+        fields.push(`    GID: ${userInfo.gid}`);
+        fields.push(`    Shell: ${userInfo.shell}`);
+        fields.push(`    Home path: ${os.homedir()}`);
     }
 
     if (includeSection("cpu", args)) {
-        output += `\n`;
+        fields.push(``);
         //cpu info
-        output += `  CPUs:\n`
+        fields.push(`  CPUs:`);
         const cpus = os.cpus();
         for (let i = 0; i < cpus.length; i++) {
             const cpu = cpus[i];
-            output += `    ${i}: ${cpu.model}\n`;
+            fields.push(`    ${i}: ${cpu.model}`);
         }
     }
 
     if (includeSection(["memory", "mem"], args)) {
-        output += `\n`;
+        fields.push(``);
         const usedMem = bytesToHumanReadable(os.totalmem() - os.freemem());
         const freeMem = bytesToHumanReadable(os.freemem());
         const totalMem = bytesToHumanReadable(os.totalmem());
-        output += `  Memory (used / free / total): ${usedMem} / ${freeMem} / ${totalMem}\n`;
+        fields.push(`  Memory (used / free / total): ${usedMem} / ${freeMem} / ${totalMem}`);
     }
 
     if (includeSection(["network", "net"], args)) {
-        output += `\n`;
-        output += `  Network interfaces:\n`;
+        fields.push(``);
+        fields.push(`  Network interfaces:`);
         const networkInterfaces = os.networkInterfaces();
         const skipInternalBindings = true;
 
@@ -71,33 +70,33 @@ async function execute(client, message, args) {
                 continue;
             }
 
-            output += `    Interface ${interfaceName}:\n`;
+            fields.push(`    Interface ${interfaceName}:`);
             for (let i = 0; i < bindings.length; i++) {
-                output += `      Binding ${i}:\n`;
-                output += `        Address: ${bindings[i].address}\n`;
-                output += `        Netmask: ${bindings[i].netmask}\n`;
-                output += `        Family: ${bindings[i].family}\n`;
-                output += `        MAC Address: ${bindings[i].mac}\n`;
-                output += `        Address: ${bindings[i].address}\n`;
-                output += `        Internal: ${bindings[i].internal}\n`;
-                output += `        CIDR: ${bindings[i].cidr}\n`;
+                fields.push(`      Binding ${i}:`);
+                fields.push(`        Address: ${bindings[i].address}`);
+                fields.push(`        Netmask: ${bindings[i].netmask}`);
+                fields.push(`        Family: ${bindings[i].family}`);
+                fields.push(`        MAC Address: ${bindings[i].mac}`);
+                fields.push(`        Address: ${bindings[i].address}`);
+                fields.push(`        Internal: ${bindings[i].internal}`);
+                fields.push(`        CIDR: ${bindings[i].cidr}`);
             }
         }
     }
     if (includeSection(["db", "database"], args)) {
-        output += `\n`;
-        output += `  Database info:\n`;
-        output += `    Hostname: ${process.env.DB_HOSTNAME}\n`;
-        output += `    Port: ${process.env.DB_PORT}\n`;
-        output += `    DB name: ${process.env.DB_DB_NAME}\n`;
+        fields.push(``);
+        fields.push(`  Database info:`);
+        fields.push(`    Hostname: ${process.env.DB_HOSTNAME}`);
+        fields.push(`    Port: ${process.env.DB_PORT}`);
+        fields.push(`    DB name: ${process.env.DB_DB_NAME}`);
     }
     if (includeSection(["token", "tokens"], args)) {
-        output += `\n`;
-        output += `  Tokens:\n`;
-        output += `    Discord API: ${process.env.BOT_TOKEN}\n`;
+        fields.push(``);
+        fields.push(`  Tokens:`);
+        fields.push(`    Discord API: ${process.env.BOT_TOKEN.substr(0,6)}...${process.env.BOT_TOKEN.substr(-6)}`);
     }
 
-    output += "```";
+    const output = "```" + fields.join("\n") + "```";
     await sendMessage(output, message.channel, false, true);
 }
 

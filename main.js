@@ -8,7 +8,7 @@ const client = new Discord.Client({partials: ["MESSAGE"]});
 
 const cron = require("node-cron");
 
-const {captureMessage, updateEditedMessage, deleteMessage} = require("./tools/message-db-utils");
+const {captureMessage, updateEditedMessage, deleteMessageFromDb} = require("./tools/message-db-utils");
 const status = require("./commands/bot_control/set-bot-status");
 
 const dev_output = require("./dev_output");
@@ -89,7 +89,7 @@ client.on("messageUpdate", async (oldMessage, newMessage) => {
     await updateEditedMessage(oldMessage, newMessage);
 });
 client.on("messageDelete", async (deletedMessage) => {
-    await deleteMessage(deletedMessage);
+    await deleteMessageFromDb(deletedMessage);
 });
 
 /**
@@ -251,7 +251,7 @@ function coerceArgsToTypes(command, args) {
                         case "boolean":
                         case "bool":
                             if (args[i].toLowerCase() === "true" || args[i].toLowerCase() === "false") {
-                                coercibleTypes.booleana = true;
+                                coercibleTypes.boolean = true;
                             }
                             break;
                         case "snowflake":

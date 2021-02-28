@@ -45,18 +45,17 @@ async function execute(client, message, args, forceGuildID = null, forceChannelI
 
     //convert string to timestamp using php-esque "strtotime"
     //https://www.php.net/manual/en/function.strtotime.php
-    let timestamp = locutus.php.datetime.strtotime(arg_str) * 1000;
+    let locutusTs = locutus.php.datetime.strtotime(arg_str) * 1000;
 
-    // adjust the timestamp to UTC
-    let utcOffset = moment(timestamp).utcOffset();
-    let offsetMs = -utcOffset * 60 * 1000;
-    console.log(`utcOffset: ${utcOffset}|offsetMs: ${offsetMs}`);
+    //create a date object out of the timestamp extracted
+    let dateObj = new Date(locutusTs);
+    //set the time to the most recent Midnight
+    dateObj.setHours(0,0,0,0);
+    // convert back to a timestamp
+    let timestamp = dateObj.getTime();
+    //get 11:59:59.999 at the end of that day
+    let end_timestamp = timestamp + (24 * 60 * 60 * 1000) - 1;
 
-    //calculate midnight on both ends of the day provided
-    timestamp -= timestamp % (24 * 60 * 60 * 1000); //subtract minutes since midnight
-    timestamp += offsetMs; // add the UTC offset
-
-    let end_timestamp = timestamp + (24 * 60 * 60 * 1000) - 1; //get 11:59:59.999 at the end of that day
     console.log(`Selecting messages between (${timestamp})${moment(timestamp).format("MMMM Do YYYY HH:mm:ss a")} and (${end_timestamp})${moment(end_timestamp).format("MMMM Do YYYY HH:mm:ss a")}`);
     console.log(`${timestamp} :: ${end_timestamp}`);
 
@@ -96,7 +95,7 @@ async function execute(client, message, args, forceGuildID = null, forceChannelI
     const humanMessageResults = allMessages.filter(element => !element.author_isBot);
     let noHumanMessages = (humanMessageResults.length === 0);
     if (noHumanMessages) {
-        sendMessage(`There were no messages on ${moment(timestamp).format("dddd MMMM Do YYYY")}`, channel);
+        await sendMessage(`There were no messages on ${moment(timestamp).format("dddd MMMM Do YYYY")}`, channel);
         return false;
     } else {
         if (allMessages.length < 3) {
@@ -119,19 +118,16 @@ async function execute(client, message, args, forceGuildID = null, forceChannelI
             let last = randomHumanMessageIndex + 2;
             selectedMessages = allMessages.slice(first, last).reverse();
         }
-        console.log(`Selected messages: ${JSON.stringify(selectedMessages)}`);
 
         for (const messageRow of selectedMessages) {
-            console.log(`Current message: ${JSON.stringify(messageRow)}`);
             let humanTimedate = moment(messageRow.timestamp).format("dddd, MMMM Do YYYY @ hh:mm:ss a");
             let embedMessage = new Discord.MessageEmbed()
-                .setAuthor(messageRow.author_displayName, messageRow.author_avatarURL)
-                .setThumbnail(messageRow.author_avatarURL)
-                .setTitle(humanTimedate)
-                .setDescription(`[**Jump to Message**](https://discord.com/channels/${messageRow.guild}/${messageRow.channel}/${messageRow.id})`);
+                .setAuthor(messageRow.author_displayName, messageRow.author_avatarURL);
             if (messageRow.content) {
                 embedMessage.addField("\u200b", messageRow.content)
             }
+            embedMessage.addField("\u200b","\u200b");
+            embedMessage.addField(humanTimedate,`[**Jump to Message**](https://discord.com/channels/${messageRow.guild}/${messageRow.channel}/${messageRow.id})`);
             if (messageRow.attachmentURL) {
                 embedMessage.setImage(messageRow.attachmentURL);
             }

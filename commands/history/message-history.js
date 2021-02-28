@@ -34,8 +34,33 @@ async function execute(client, message, args) {
     let messageID = args[0];
     let dbMessageResult, currentMessage, messageHistory;
     try {
-        [dbMessageResult] = await pool.query("SELECT m.guild,m.channel,m.content,m.timestamp,m.lastEditTimestamp,m.deleted,a.displayName AS author_displayName FROM messages m LEFT JOIN authors a ON m.author = a.id WHERE m.id = ? LIMIT 1", messageID);
-        [messageHistory] = await pool.query("SELECT * FROM messageEdits WHERE messageId = ? ORDER BY editTimestamp DESC", messageID);
+        [dbMessageResult] = await pool.query(
+            "SELECT" +
+            "    m.guild," +
+            "    m.channel," +
+            "    m.content," +
+            "    m.timestamp," +
+            "    m.lastEditTimestamp," +
+            "    m.deleted," +
+            "    a.displayName AS author_displayName," +
+            "    a.avatarURL AS author_avatarURL" +
+            " FROM" +
+            "    messages m" +
+            " LEFT JOIN authors a ON" +
+            "    m.author = a.id" +
+            " WHERE" +
+            "    m.id = ?" +
+            " LIMIT 1", messageID);
+        [messageHistory] = await pool.query(
+            "SELECT" +
+            "    *" +
+            " FROM" +
+            "    messageEdits" +
+            " WHERE" +
+            "    messageId = ?" +
+            " ORDER BY" +
+            "    editTimestamp" +
+            " DESC", messageID);
 
         currentMessage = dbMessageResult[0];
     } catch (e) {
@@ -48,8 +73,8 @@ async function execute(client, message, args) {
     const dateFormat = "dddd, MMMM Do YYYY @ hh:mm:ss a";
     const embedMessage = new Discord.MessageEmbed()
         .setTitle(`Message History for ${messageID}`)
+        .setAuthor(currentMessage.author_displayName, currentMessage.author_avatarURL)
         .setURL(`https://discord.com/channels/${currentMessage.guild}/${currentMessage.channel}/${messageID}`)
-        .setDescription(`Posted by: **${currentMessage.author_displayName}**`);
     let originalContent = currentMessage.content;
     if (currentMessage.deleted) {
         embedMessage.addField(":x: Deleted:", moment(currentMessage.deleted).format(dateFormat));
