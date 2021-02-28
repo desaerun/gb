@@ -29,6 +29,8 @@ getCommands("./commands");
 getListenerSet("./listeners");
 
 client.once("ready", () => {
+
+    //set bot nickname in all guilds to its "normal" nickname
     normalNickname = client.user.username;
     let guildIds = client.guilds.cache.map(guild => guild.id);
     for (const guildId of guildIds) {
@@ -63,7 +65,15 @@ client.once("ready", () => {
 
 //handling for when messages are sent
 client.on("message", async message => {
-    await captureMessage(client, message, true);
+    //capture messages to DB
+    if (message.channel.type === "text") {
+        await captureMessage(client, message, true);
+    } else if (message.channel.type === "dm") {
+        //separate method to capture DMs
+    }
+
+    // Ignore my own messages
+    if (message.author.bot) return;
 
     let args = message.content.slice(CONFIG.PREFIX.length);
     //handling for quoted args
@@ -74,8 +84,7 @@ client.on("message", async message => {
     const matchesArr = [...args.matchAll(argRe)];
     args = matchesArr.flatMap(a => a.slice(1, 4).filter(a => a !== undefined));
 
-    // Ignore my own messages
-    if (message.author.bot) return;
+
 
     // Attempt to parse commands
     if (isCommand(message)) {
