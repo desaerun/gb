@@ -206,22 +206,22 @@ convertEmbedToText = function convertEmbedToText(embed) {
     let textEmbedLines = [];
     textEmbedLines.push(``);
     textEmbedLines.push(`\\*\\*\\*\\*\\*\\*\\*\\*\\*\\*\\*\\*\\*\\*\\*`);
-    textEmbedLines += "\\*\\*\\*\\*\\**Embedded Content*\\*\\*\\*\\*\\*";
+    textEmbedLines.push("\\*\\*\\*\\*\\**Embedded Content*\\*\\*\\*\\*\\*");
     if (embed.title) {
         if (embed.url) {
-            textEmbedLines.push(`[**${embed.title}**](${embed.url})`)
+            textEmbedLines.push(`[**${embed.title}**](${embed.url})`);
         }
-        textEmbedLines.push(`${embed.title}`)
+        textEmbedLines.push(`${embed.title}`);
     }
     if (embed.description) {
-        textEmbedLines.push(`${embed.description}`)
+        textEmbedLines.push(`${embed.description}`);
     }
     for (const field of embed.fields) {
-        textEmbedLines.push(`**${field.name}**`)
-        textEmbedLines.push(`    ${field.value}`)
+        textEmbedLines.push(`**${field.name}**`);
+        textEmbedLines.push(`    ${field.value}`);
     }
     if (embed.author && embed.author.name) {
-        textEmbedLines.push(`${embed.author.name}`)
+        textEmbedLines.push(`${embed.author.name}`);
     }
     if (embed.timestamp) {
         const formattedTimestamp = moment(embed.timestamp).format("MMM Do YYYY h:mm:ssa [GMT]Z");
