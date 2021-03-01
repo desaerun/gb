@@ -324,7 +324,7 @@ async function sendOnlineMessage(client) {
     logMessage(`${nowTimeDate} - Bot online. Sending Online Status message to ${onlineStatusChannel.name}(${onlineStatusChannel.id}).`, 3);
     let response = new Discord.MessageEmbed()
         .setAuthor(`${client.user.username}`, `${client.user.displayAvatarURL()}`)
-        .setColor("#0d23c8")
+        .setColor("#0dc858")
         .addFields({
             name: "Bot Message:",
             value: `${nowTimeDate}
@@ -335,5 +335,5 @@ async function sendOnlineMessage(client) {
 }
 
 async function setInitialActivity(client) {
-    await setBotStatus.execute(client, "", getRandomArrayMember(setBotStatus.params[0].default));
+    await client.user.setActivity(getRandomArrayMember(setBotStatus.params[0].default), {type: "PLAYING"});
 }
