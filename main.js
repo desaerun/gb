@@ -265,7 +265,7 @@ async function incomingMessageHandler(message) {
         await captureMessage(client, message, true);
     } else if (message.channel.type === "dm") {
         sendMessage("We do not currently support bot commands via Direct Message.", message.channel);
-        return;
+        return true;
     }
 
     // Ignore my own messages
