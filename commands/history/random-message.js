@@ -50,7 +50,7 @@ async function execute(client, message, args, forceGuildID = null, forceChannelI
     //create a date object out of the timestamp extracted
     let dateObj = new Date(locutusTs);
     //set the time to the most recent Midnight
-    dateObj.setHours(0,0,0,0);
+    dateObj.setHours(0, 0, 0, 0);
     // convert back to a timestamp
     let timestamp = dateObj.getTime();
     //get 11:59:59.999 at the end of that day
@@ -126,8 +126,8 @@ async function execute(client, message, args, forceGuildID = null, forceChannelI
             if (messageRow.content) {
                 embedMessage.addField("\u200b", messageRow.content)
             }
-            embedMessage.addField("\u200b","\u200b");
-            embedMessage.addField(humanTimedate,`[**Jump to Message**](https://discord.com/channels/${messageRow.guild}/${messageRow.channel}/${messageRow.id})`);
+            embedMessage.addField("\u200b", "\u200b");
+            embedMessage.addField(humanTimedate, `[**Jump to Message**](https://discord.com/channels/${messageRow.guild}/${messageRow.channel}/${messageRow.id})`);
             if (messageRow.attachmentURL) {
                 embedMessage.setImage(messageRow.attachmentURL);
             }

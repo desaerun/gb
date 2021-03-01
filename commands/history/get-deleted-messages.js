@@ -41,35 +41,35 @@ async function execute(client, message, args) {
     let deletedMessages;
     try {
         const query = "SELECT" +
-        "    m.id," +
-        "    m.content," +
-        "    m.guild," +
-        "    m.channel," +
-        "    m.author," +
-        "    m.timestamp," +
-        "    m.deleted," +
-        "    a.url AS attachmentURL," +
-        "    author.displayName AS author_displayName," +
-        "    author.avatarURL AS author_avatarURL," +
-        "    author.isBot AS author_isBot" +
-        " FROM" +
-        "    messages m" +
-        " LEFT JOIN attachments a ON" +
-        "    m.id = a.messageId" +
-        " LEFT JOIN authors author ON" +
-        "    m.author=author.id" +
-        " WHERE" +
-        "    m.author = ?" +
-        " AND" +
-        "    m.channel = ?" +
-        " AND" +
-        "    m.deleted IS NOT NULL" +
-        " AND" +
-        "    m.deletedBy = ?" +
-        " ORDER BY" +
-        "    m.timestamp" +
-        " DESC" +
-        " LIMIT ?";
+            "    m.id," +
+            "    m.content," +
+            "    m.guild," +
+            "    m.channel," +
+            "    m.author," +
+            "    m.timestamp," +
+            "    m.deleted," +
+            "    a.url AS attachmentURL," +
+            "    author.displayName AS author_displayName," +
+            "    author.avatarURL AS author_avatarURL," +
+            "    author.isBot AS author_isBot" +
+            " FROM" +
+            "    messages m" +
+            " LEFT JOIN attachments a ON" +
+            "    m.id = a.messageId" +
+            " LEFT JOIN authors author ON" +
+            "    m.author=author.id" +
+            " WHERE" +
+            "    m.author = ?" +
+            " AND" +
+            "    m.channel = ?" +
+            " AND" +
+            "    m.deleted IS NOT NULL" +
+            " AND" +
+            "    m.deletedBy = ?" +
+            " ORDER BY" +
+            "    m.timestamp" +
+            " DESC" +
+            " LIMIT ?";
         [deletedMessages] = await pool.query(query, [userId, message.channel.id, "user", +numMessages]);
     } catch (e) {
         throw e;
@@ -88,7 +88,7 @@ async function execute(client, message, args) {
             if (deletedMessage.content) {
                 deletedMessageEmbed.addField("\u200b", deletedMessage.content)
             }
-            deletedMessageEmbed.addField("\u200b","\u200b"); //spacer
+            deletedMessageEmbed.addField("\u200b", "\u200b"); //spacer
             deletedMessageEmbed.addField("Posted:", moment(deletedMessage.timestamp).format("dddd, MMMM Do YYYY @ hh:mm:ss a"));
             deletedMessageEmbed.addField("Deleted:", moment(deletedMessage.deleted).format("dddd, MMMM Do YYYY @ hh:mm:ss a"))
             if (deletedMessage.attachmentURL) {

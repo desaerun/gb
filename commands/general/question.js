@@ -30,7 +30,7 @@ async function execute(client, message, args) {
         throw e;
     }
     try {
-        let answer = await getAnswer($,query);
+        let answer = await getAnswer($, query);
 
         if (answer.text) {
             const answerEmbed = new Discord.MessageEmbed();
@@ -43,11 +43,11 @@ async function execute(client, message, args) {
                 answerEmbed.setDescription(answer.text);
             }
             if (answer.sourceText) {
-                answerEmbed.addField("\u2800",`[${answer.sourceText}](${answer.sourceUrl})`,true);
-                answerEmbed.addField("\u2800",`\u2800`,true);
+                answerEmbed.addField("\u2800", `[${answer.sourceText}](${answer.sourceUrl})`, true);
+                answerEmbed.addField("\u2800", `\u2800`, true);
             }
-            answerEmbed.addField("\u2800",`[More results on Google](${queryUriString})`,true);
-            await sendMessage(answerEmbed,message.channel);
+            answerEmbed.addField("\u2800", `[More results on Google](${queryUriString})`, true);
+            await sendMessage(answerEmbed, message.channel);
         } else {
             console.log("No answer was found, attempting to parse search results instead");
             // If an answer was not able to be parsed, return the first few search results
@@ -55,27 +55,27 @@ async function execute(client, message, args) {
             console.log(`Successfully parsed search results.  Length: ${resultsEmbedsArr.length}`);
             let moreGoogleResultsText;
             if (resultsEmbedsArr && resultsEmbedsArr.length > 0) {
-                await sendMessage(`Hmm, I couldn't figure that one out. Maybe these will help:`,message.channel);
+                await sendMessage(`Hmm, I couldn't figure that one out. Maybe these will help:`, message.channel);
                 moreGoogleResultsText = "More Results on Google";
                 for (let i = 0; i < resultsEmbedsArr.length; i++) {
                     console.log(`Sending embed #${i}`);
-                    await sendMessage(resultsEmbedsArr[i],message.channel);
+                    await sendMessage(resultsEmbedsArr[i], message.channel);
                 }
 
             } else {
                 console.log("Unable to parse the search results.");
                 // write the html of the page to a file to try to figure out why it couldn't parse the search
                 // results page
-                fs.writeFileSync(`./logs/questionResults/googleSearchResultsPage-${+Date.now()}.html`,$.html());
+                fs.writeFileSync(`./logs/questionResults/googleSearchResultsPage-${+Date.now()}.html`, $.html());
 
                 // If all else fails, kindly inform the user that an answer was not found.
-                await sendMessage(`Unable to find an answer. Please go fuck yourself.`,message.channel);
+                await sendMessage(`Unable to find an answer. Please go fuck yourself.`, message.channel);
                 moreGoogleResultsText = "Try your search on Google";
             }
             const moreGoogleResultsEmbed = new Discord.MessageEmbed()
                 .setTitle(moreGoogleResultsText)
                 .setURL(queryUriString);
-            await sendMessage(moreGoogleResultsEmbed,message.channel);
+            await sendMessage(moreGoogleResultsEmbed, message.channel);
         }
     } catch (err) {
         await sendMessage(`Error encountered while attempting to answer your question: ${err}`, message.channel);
@@ -114,7 +114,7 @@ module.exports = {
  *     sourcePane: String
  * }>}
  */
-async function getAnswer($,query,maxRetries = 3) {
+async function getAnswer($, query, maxRetries = 3) {
     let answer;
     for (let i = 1; i <= maxRetries; i++) {
         answer = await getAnswerFromGoogleSearch($);
