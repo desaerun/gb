@@ -335,5 +335,5 @@ async function sendOnlineMessage(client) {
 }
 
 async function setInitialActivity(client) {
-    await setBotStatus.execute(client, "", "");
+    await setBotStatus.execute(client, "", getRandomArrayMember(setBotStatus.params[0].default));
 }
