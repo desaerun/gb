@@ -63,15 +63,15 @@ jobs:
             git reset --hard origin/${{ env.github_branch }}
 
             #create log if it doesnt exist
-            touch /var/log/gb.log
+            touch log/gb.log
 
             #print a line to the log file
             echo "Writing update log file"
-            echo -e "$(date '+%d/%m/%Y %H:%M:%S%Z'): Changes made by: ${{ github.actor }} in ${{ env.github_branch }}-$(echo \"${{ github.sha }}\" | cut -c 2-9)\n$(cat /var/log/gb.log)" > /var/log/gb.log
+            echo -e "$(date '+%Y/%m/%d %H:%M:%S%Z'): Changes made by: ${{ github.actor }} in ${{ env.github_branch }}-$(echo \"${{ github.sha }}\" | cut -c 2-9)\n$(cat log/gb.log)" > log/gb.log
 
             #stop any running bot processes. "|| true" is to prevent script from halting if there are no processes
             echo "Stopping pm2 process"
-            pm2 delete gb 2> /dev/null || true
+            pm2 delete gb || true 2> /dev/null
 
             #install/update dependencies
             #clear the logs + start the bot

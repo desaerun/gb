@@ -9,7 +9,7 @@ const {sendMessage} = require("./sendMessage");
 
 const sendTrace = async function sendTrace(client, errorMessage, outputChannelIds) {
     let channelIds = [];
-    if (outputChannelIds && outputChannelIds.isArray()) {
+    if (outputChannelIds && Array.isArray(outputChannelIds)) {
         channelIds = outputChannelIds;
     } else {
         channelIds.push(outputChannelIds);
