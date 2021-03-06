@@ -254,7 +254,7 @@ async function parseWithListeners(client, message) {
             if (await listener.listen(client, message)) return;
         }
     } catch (err) {
-        await sendTrace(err, CONFIG.CHANNEL_DEV_ID);
+        await sendTrace(client, err, CONFIG.CHANNEL_DEV_ID);
     }
 }
 
