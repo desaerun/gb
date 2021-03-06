@@ -27,19 +27,19 @@ async function execute(client, message, args) {
     const logFiles = [
         {
             name: "bot",
-            file: "/var/log/groidbot.log",
+            file: "/var/log/gb.log",
         },
         {
             name: "pm2 status",
-            file: "/home/groidbot/.pm2/pm2.log",
+            file: "/home/gb/.pm2/pm2.log",
         },
         {
             name: "pm2 stdout",
-            file: "/home/groidbot/.pm2/logs/groidbot-out.log",
+            file: "/home/gb/.pm2/logs/gb-out.log",
         },
         {
             name: "pm2 error",
-            file: "/home/groidbot/.pm2/logs/groidbot-error.log",
+            file: "/home/gb/.pm2/logs/gb-error.log",
         },
     ];
     for (const logFile of logFiles) {

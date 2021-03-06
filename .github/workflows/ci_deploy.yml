@@ -43,19 +43,19 @@ jobs:
             echo "Deploying from branch \"${{ env.github_branch }}\""
 
             #make dir if it doesnt exist
-            mkdir -p /opt/groidbot
+            mkdir -p /opt/gb
 
             #change working directory into /opt
             cd /opt
 
             #clone the branch, overriding any changes (only if it doesnt already exist)
-            git clone --branch ${{ env.github_branch }} git@github.com:desaerun/groidbot.git 2>/dev/null
+            git clone --branch ${{ env.github_branch }} git@github.com:desaerun/gb.git 2>/dev/null
 
-            #change working directory into /opt/groidbot
-            cd groidbot
+            #change working directory into /opt/gb
+            cd gb
 
             #copy the .env file stored in ~/.env to the project directory
-            cp ~/groidbot/.env .env
+            cp ~/gb/.env .env
 
             #reset branch to have latest version from github
             echo "resetting branch"
@@ -63,15 +63,15 @@ jobs:
             git reset --hard origin/${{ env.github_branch }}
 
             #create log if it doesnt exist
-            touch /var/log/groidbot.log
+            touch /var/log/gb.log
 
             #print a line to the log file
             echo "Writing update log file"
-            echo -e "$(date '+%d/%m/%Y %H:%M:%S%Z'): Changes made by: ${{ github.actor }} in ${{ env.github_branch }}-$(echo \"${{ github.sha }}\" | cut -c 2-9)\n$(cat /var/log/groidbot.log)" > /var/log/groidbot.log
+            echo -e "$(date '+%d/%m/%Y %H:%M:%S%Z'): Changes made by: ${{ github.actor }} in ${{ env.github_branch }}-$(echo \"${{ github.sha }}\" | cut -c 2-9)\n$(cat /var/log/gb.log)" > /var/log/gb.log
 
             #stop any running bot processes. "|| true" is to prevent script from halting if there are no processes
             echo "Stopping pm2 process"
-            pm2 delete groidbot 2> /dev/null || true
+            pm2 delete gb 2> /dev/null || true
 
             #install/update dependencies
             #clear the logs + start the bot
