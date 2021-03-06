@@ -22,4 +22,4 @@ const sendTrace = async function sendTrace(client, errorMessage, outputChannelId
     }
 }
 
-exports.sendTraace = sendTrace;
+exports.sendTrace = sendTrace;
