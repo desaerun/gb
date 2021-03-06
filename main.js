@@ -9,9 +9,8 @@ const cron = require("node-cron");
 const {captureMessage, updateEditedMessage, deleteMessageFromDb} = require("./tools/message-db-utils");
 const setBotStatus = require("./commands/bot_control/set-bot-status");
 const {sendTrace} = require("./tools/devOutput");
-const {logMessage} = require("./tools/utils");
+const {logMessage,getRandomArrayMember} = require("./tools/utils");
 const {generateUwuCombinations} = require("./tools/uwuify");
-const {getRandomArrayMember} = require("./tools/utils");
 const {sendMessage} = require("./tools/sendMessage");
 
 
@@ -280,7 +279,7 @@ async function incomingMessageHandler(message) {
         await runCommands(message, args);
         // Otherwise pass to listeners
     } else {
-        await parseWithListeners(message);
+        await parseWithListeners(client,message);
     }
 }
 
