@@ -9,16 +9,20 @@ const {sendMessage} = require("./sendMessage");
 
 const sendTrace = async function sendTrace(client, errorMessage, outputChannelIds) {
     let channelIds = [];
-    if (outputChannelIds.isArray()) {
+    if (outputChannelIds && outputChannelIds.isArray()) {
         channelIds = outputChannelIds;
     } else {
         channelIds.push(outputChannelIds);
     }
-    let errorText = stackTrace.get().toString();
-    for (let channelId of channelIds) {
-        let channel = this.client.channels.cache.get(channelId);
-        await sendMessage(`Error Generated: \`\`\`${errorMessage}\`\`\``, channel);
-        await sendMessage(`Stack Trace: \`\`\`${errorText}\`\`\``, channel);
+    const errorText = stackTrace.get().toString();
+    if (channelIds.length > 0) {
+        for (const channelId of channelIds) {
+            const channel = this.client.channels.cache.get(channelId);
+            await sendMessage(`Error Generated: \`\`\`${errorMessage}\`\`\``, channel);
+            await sendMessage(`Stack Trace: \`\`\`${errorText}\`\`\``, channel);
+        }
+    } else {
+        console.log(errorMessage, errorText);
     }
 }
 
