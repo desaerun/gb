@@ -7,7 +7,9 @@ const description = "test listener";
 
 //main
 async function listen(client, message) {
-    if (message.content.match(/^[\s]*\btest\b[\s]*$/i)) {
+    const rEStr = /^[\s]*\btest\b[\s]*$/i;
+    const rE = new RegExp(rEStr);
+    if (rE.test(message.content)) {
         await sendMessage(`this is an test listener response`, message.channel);
         return true;
     }
