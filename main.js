@@ -337,5 +337,5 @@ async function sendOnlineMessage(client) {
 }
 
 async function setInitialActivity(client) {
-    await client.user.setActivity(getRandomArrayMember(setBotStatus.params[0].default), {type: "PLAYING"});
+    await client.user.setActivity(getRandomArrayMember(setBotStatus.params[0].default), {type: getRandomArrayMember(["STREAMING","PLAYING"])});
 }
