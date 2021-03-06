@@ -7,7 +7,7 @@
 const stackTrace = require("stack-trace");
 const {sendMessage} = require("./sendMessage");
 
-async function sendTrace(client, errorMessage, outputChannelIds) {
+const sendTrace = async function sendTrace(client, errorMessage, outputChannelIds) {
     let channelIds = [];
     if (outputChannelIds.isArray()) {
         channelIds = outputChannelIds;
