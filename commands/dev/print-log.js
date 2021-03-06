@@ -27,7 +27,7 @@ async function execute(client, message, args) {
     const logFiles = [
         {
             name: "bot",
-            file: "/var/log/gb.log",
+            file: "./log/gb.log",
         },
         {
             name: "pm2 status",
@@ -35,21 +35,25 @@ async function execute(client, message, args) {
         },
         {
             name: "pm2 stdout",
-            file: "/home/gb/.pm2/logs/gb-out.log",
+            file: "/home/gb/.pm2/log/gb-out.log",
         },
         {
             name: "pm2 error",
-            file: "/home/gb/.pm2/logs/gb-error.log",
+            file: "/home/gb/.pm2/log/gb-error.log",
         },
     ];
     for (const logFile of logFiles) {
-        const chunkSize = 1994;
-        const logText = await readLog(logFile.file, args[0]);
+        try {
+            const chunkSize = 1994;
+            const logText = await readLog(logFile.file, args[0]);
 
-        await sendMessage(`Contents of ${logFile.name} log file:`, message.channel);
-        for (let i = 0; i < logText.length; i += chunkSize) {
-            const currentChunk = logText.substr(i, chunkSize);
-            await sendMessage(`\`\`\`${currentChunk}\`\`\``, message.channel);
+            await sendMessage(`Contents of ${logFile.name} log file:`, message.channel);
+            for (let i = 0; i < logText.length; i += chunkSize) {
+                const currentChunk = logText.substr(i, chunkSize);
+                await sendMessage(`\`\`\`${currentChunk}\`\`\``, message.channel);
+            }
+        } catch (e) {
+            sendMessage(`Error occurred reading logfile \`${logFile.file}\`: ${e}`, message.channel);
         }
     }
 }
@@ -68,26 +72,46 @@ module.exports = {
  *
  * @param file
  * @param numLines
- * @returns {Promise<unknown>}
+ * @returns {String}
  */
-function readLog(file, numLines = 10) {
-    return new Promise(function (resolve, reject) {
-        let lineReader = readline.createInterface({
-            input: fs.createReadStream(file),
+async function readLog(file, numLines = 10) {
+    let lines = [];
+    try {
+        const fileStream = fs.createReadStream(file);
+        const rl = readline.createInterface({
+            input: fileStream,
+            crlfDelay: Infinity,
         });
 
-        let lines = [];
+        let i = 0;
+        for await (const line of rl) {
+            if (++i === numLines) {
+                break;
+            }
+            lines.push(line);
+        }
+    } catch (e) {
+        throw e;
+    }
+    return lines.join("\n");
 
-        lineReader
-            .on("line", function (line) {
-                let length = lines.push(line);
-
-                if (length === numLines) {
-                    lineReader.close();
-                }
-            })
-            .on("close", () => {
-                resolve(lines.join("\n"));
-            })
-    });
+    // return new Promise(function (resolve, reject) {
+    //     let lineReader = readline.createInterface({
+    //         input: fs.createReadStream(file),
+    //     });
+    //
+    //     let lines = [];
+    //
+    //     lineReader
+    //         .on("line", function (line) {
+    //             let length = lines.push(line);
+    //
+    //             if (length === numLines) {
+    //                 lineReader.close();
+    //             }
+    //         })
+    //         .on("close", () => {
+    //             resolve(lines.join("\n"));
+    //         })
+    // });
 }

@@ -127,7 +127,7 @@ function isCommand(message) {
  * @param message
  * @param args
  */
-async function runCommands(message, args) {
+async function runCommands(client, message, args) {
     let commandName = args.shift().toLowerCase();
 
     //support for uwu-ified command names
@@ -155,7 +155,7 @@ async function runCommands(message, args) {
             command.execute(client, message, args);
 
         } catch (err) {
-            await sendTrace(err, CONFIG.CHANNEL_DEV_ID);
+            await sendTrace(client, err, CONFIG.CHANNEL_DEV_ID);
         }
     } else {
         await sendMessage(`\`${commandName}\` is not a valid command. Type \`${CONFIG.PREFIX}help\` to get a list of commands.`, message.channel);
@@ -276,7 +276,7 @@ async function incomingMessageHandler(message) {
 
     // Attempt to parse commands
     if (isCommand(message)) {
-        await runCommands(message, args);
+        await runCommands(client, message, args);
         // Otherwise pass to listeners
     } else {
         await parseWithListeners(client,message);
