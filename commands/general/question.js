@@ -66,7 +66,7 @@ async function execute(client, message, args) {
                 console.log("Unable to parse the search results.");
                 // write the html of the page to a file to try to figure out why it couldn't parse the search
                 // results page
-                fs.writeFileSync(`./logs/questionResults/googleSearchResultsPage-${+Date.now()}.html`, $.html());
+                fs.writeFileSync(`./log/questionResults/googleSearchResultsPage-${+Date.now()}.html`, $.html());
 
                 // If all else fails, kindly inform the user that an answer was not found.
                 await sendMessage(`Unable to find an answer. Please go fuck yourself.`, message.channel);
