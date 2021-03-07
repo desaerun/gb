@@ -1,6 +1,7 @@
 //imports
 const readline = require("readline");
 const fs = require("fs");
+const {touchFileSync} = require("../../tools/utils");
 const {sendMessage} = require("../../tools/sendMessage");
 
 //module settings
@@ -16,14 +17,7 @@ const params = [
 ];
 
 //main
-async function execute(client, message, args) {
-    if (args[0]) {
-        args[0] = Math.abs(parseInt(args[0], 10));
-        if (isNaN(args[0])) {
-            await sendMessage(`You must provide a valid ${params[0].type} input for ${params[0].param}.`, message.channel);
-            return;
-        }
-    }
+const execute = async function (client, message, args) {
     const logFiles = [
         {
             name: "bot",
@@ -31,15 +25,15 @@ async function execute(client, message, args) {
         },
         {
             name: "pm2 status",
-            file: "~/.pm2/pm2.log",
+            file: "/home/gb/.pm2/pm2.log",
         },
         {
             name: "pm2 stdout",
-            file: "~/.pm2/log/gb-out.log",
+            file: "/home/gb/.pm2/logs/gb-out.log",
         },
         {
             name: "pm2 error",
-            file: "~/.pm2/log/gb-error.log",
+            file: "/home/gb/.pm2/logs/gb-error.log",
         },
     ];
     for (const logFile of logFiles) {
@@ -76,6 +70,10 @@ module.exports = {
  */
 async function readLog(file, numLines = 10) {
     let lines = [];
+
+    //"touch" the file (create it if it does not exist, if it does exist update the Modified time)
+    //touchFileSync(file);
+
     try {
         const fileStream = fs.createReadStream(file);
         const rl = readline.createInterface({
@@ -90,10 +88,10 @@ async function readLog(file, numLines = 10) {
             }
             lines.push(line);
         }
+        return lines.join("\n");
     } catch (e) {
         throw e;
     }
-    return lines.join("\n");
 
     // return new Promise(function (resolve, reject) {
     //     let lineReader = readline.createInterface({
