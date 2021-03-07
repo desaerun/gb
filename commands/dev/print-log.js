@@ -42,7 +42,7 @@ const execute = async function (client, message, args) {
             const logText = await readLog(logFile.file, args[0]);
 
             await sendMessage(`Contents of ${logFile.name} log file:`, message.channel);
-            if (logText.length > 0) {
+            if (logText.length === 0) {
                 await sendMessage(`\`\`\`Empty file\`\`\``, message.channel);
             } else {
                 for (let i = 0; i < logText.length; i += chunkSize) {
