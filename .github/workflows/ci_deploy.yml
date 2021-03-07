@@ -18,7 +18,6 @@ jobs:
           echo "ssh_host=${{ secrets.SSH_HOST_PROD }}" >> $GITHUB_ENV
           echo "ssh_port=${{ secrets.SSH_PORT_PROD }}" >> $GITHUB_ENV
           echo "ssh_user=${{ secrets.SSH_USER_PROD }}" >> $GITHUB_ENV
-          echo "ssh_key=${{ secrets.SSH_KEY }}" >> $GITHUB_ENV
       - name: Set env to production
         if: "endsWith(github.ref, '/staging')"
         run: |
@@ -26,7 +25,6 @@ jobs:
           echo "ssh_host=${{ secrets.SSH_HOST_DEV }}" >> $GITHUB_ENV
           echo "ssh_port=${{ secrets.SSH_PORT_DEV }}" >> $GITHUB_ENV
           echo "ssh_user=${{ secrets.SSH_USER_DEV }}" >> $GITHUB_ENV
-          echo "ssh_key=${{ secrets.SSH_KEY }}" >> $GITHUB_ENV
       - name: Set env to development
         if: "!endsWith(github.ref, '/main') && !endsWith(github.ref, '/staging')"
         run: |
@@ -34,7 +32,6 @@ jobs:
           echo "ssh_host=${{ secrets.SSH_HOST_DEV }}" >> $GITHUB_ENV
           echo "ssh_port=${{ secrets.SSH_PORT_DEV }}" >> $GITHUB_ENV
           echo "ssh_user=${{ secrets.SSH_USER_DEV }}" >> $GITHUB_ENV
-          echo "ssh_key=${{ secrets.SSH_KEY }}" >> $GITHUB_ENV
       - name: output github env
         run: echo "$GITHUB_ENV"
       - name: Deploy NodeJS app
@@ -44,7 +41,7 @@ jobs:
           host: ${{ env.ssh_host }}
           port: ${{ env.ssh_port }}
           username: ${{ env.ssh_user }}
-          key: ${{ env.ssh_key }}
+          key: ${{ secrets.SSH_KEY }}
           script: |
             echo "Deploying from branch \"${{ env.github_branch }}\""
 
