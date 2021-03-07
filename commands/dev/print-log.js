@@ -31,15 +31,15 @@ async function execute(client, message, args) {
         },
         {
             name: "pm2 status",
-            file: "/home/gb/.pm2/pm2.log",
+            file: "~/.pm2/pm2.log",
         },
         {
             name: "pm2 stdout",
-            file: "/home/gb/.pm2/log/gb-out.log",
+            file: "~/.pm2/log/gb-out.log",
         },
         {
             name: "pm2 error",
-            file: "/home/gb/.pm2/log/gb-error.log",
+            file: "~/.pm2/log/gb-error.log",
         },
     ];
     for (const logFile of logFiles) {
