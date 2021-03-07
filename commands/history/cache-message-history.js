@@ -31,7 +31,7 @@ const params = [
 ];
 
 //main
-async function execute(client, message, args) {
+const execute = async function (client, message, args) {
     let targetChannel = message.channel;
     let includeBotMessages = false;
     //if command is called with arg, check if it's a channel ID;

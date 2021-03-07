@@ -27,7 +27,7 @@ const params = [
 ];
 
 //main
-async function execute(client, message, args, forceGuildID = null, forceChannelID = null) {
+const execute = async function (client, message, args, forceGuildID = null, forceChannelID = null) {
     let channel = null;
     if ((forceGuildID || forceChannelID) && (forceGuildID ^ forceChannelID)) {
         console.log("forceGuildID or forceChannelID was defined, but not both.");

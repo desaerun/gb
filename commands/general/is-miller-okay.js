@@ -6,7 +6,7 @@ const name = "is-miller-okay";
 const description = "Reports on Miller's status";
 
 //main
-async function execute(client, message) {
+const execute = async function (client, message) {
     await sendMessage(`Yes`, message.channel);
 }
 

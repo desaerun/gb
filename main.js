@@ -124,6 +124,7 @@ function isCommand(message) {
 
 /**
  * Searches client.commands for the parsed command, and executes if the command is valid
+ * @param client
  * @param message
  * @param args
  */

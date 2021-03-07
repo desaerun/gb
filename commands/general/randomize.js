@@ -15,7 +15,7 @@ const params = [
 ]
 
 //main
-async function execute(client, message, args) {
+const execute = async function (client, message, args) {
     const text = args.join(" ");
     let choices = text.split(",");
     choices.map((a) => a.trim);

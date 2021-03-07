@@ -19,7 +19,7 @@ const params = [
 const helpText = "If this command is called with no arguments, a list of active stopwatches is printed.";
 
 //main
-async function execute(client, message, args) {
+const execute = async function (client, message, args) {
 
     if (args.length === 0) {
 

@@ -17,7 +17,7 @@ const helpText = "Valid section titles are `all`,`user`,`cpu`,`net`,`db`,`tokens
     "specified, separated by spaces.";
 
 //main
-async function execute(client, message, args) {
+const execute = async function (client, message, args) {
     let fields = [];
     fields.push(`OS info:`);
     fields.push(` Uptime: ${prettyMilliseconds(os.uptime * 1000)}`);

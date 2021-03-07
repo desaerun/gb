@@ -32,7 +32,7 @@ const params = [
 ];
 
 //main
-async function execute(client, message, args) {
+const execute = async function (client, message, args) {
     let userId = args[0];
     if (message.mentions.users.first()) {
         userId = message.mentions.users.first().id;

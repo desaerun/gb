@@ -5,7 +5,7 @@ const name = "throw-exception";
 const description = "Throws a test exception";
 
 //main
-function execute() {
+const execute = function () {
     throw new Error("This is a test error");
 }
 
