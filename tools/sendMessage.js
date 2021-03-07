@@ -11,7 +11,7 @@ const {uwuifyIfUwuMode} = require("./uwuify");
  * @param chunkSize -- the maximum size of each message
  * @returns {Promise<void>}
  */
-exports.sendMessage = async function sendMessage(input, target, suppressEmbeds = false, forceNormalText = false, chunkSize = 2000) {
+exports.sendMessage = async function (input, target, suppressEmbeds = false, forceNormalText = false, chunkSize = 2000) {
     if (input instanceof Discord.MessageEmbed) {
         if (forceNormalText) {
             for (const field of input.fields) {

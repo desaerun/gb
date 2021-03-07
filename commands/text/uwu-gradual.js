@@ -22,7 +22,7 @@ const params = [
 ]
 
 //main
-async function execute(client, message, args) {
+const execute = async function (client, message, args) {
     if (!args[0] || (args[0] && isNaN(parseFloat(args[0])))) {
         args.unshift(params[0].default);
     } else if (args[0] >= 1) {

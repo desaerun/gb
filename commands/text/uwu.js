@@ -30,7 +30,7 @@ const params = [
 ];
 
 //main
-async function execute(client, message, args) {
+const execute = async function (client, message, args) {
     const uwuText = uwuify(args.join(" "));
     await message.channel.send(uwuText);
     await setDeletedBy(message, "uwu");

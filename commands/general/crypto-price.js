@@ -15,7 +15,7 @@ const params = [
 ];
 
 //main
-async function execute(client, message, args) {
+const execute = async function (client, message, args) {
     if (args.length < 1) {
         await sendMessage(`You must include a crypto ticker (BTC, ETH) with this request.`, message.channel);
         return;

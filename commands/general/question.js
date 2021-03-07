@@ -19,7 +19,7 @@ const params = [
 ];
 
 //main
-async function execute(client, message, args) {
+const execute = async function (client, message, args) {
 
     let query = args.join(" ");
     let queryUriString = `https://www.google.com/search?q=${encodeURIComponent(query)}`;

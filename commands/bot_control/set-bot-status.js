@@ -19,7 +19,7 @@ const params = [
 ];
 
 //main
-async function execute(client, message, args) {
+const execute = async function (client, message, args) {
     let arg_string = args.join(" ");
     await client.user.setActivity(arg_string, {type: "PLAYING"});
 }

@@ -24,7 +24,7 @@ const params = [
 ];
 
 //main
-async function execute(client, message, args) {
+const execute = async function (client, message, args) {
     //todo: make this exclusive to devs
     let query = args.join(" ");
     let rows;
