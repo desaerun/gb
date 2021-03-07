@@ -9,7 +9,7 @@ const cron = require("node-cron");
 const {captureMessage, updateEditedMessage, deleteMessageFromDb} = require("./tools/message-db-utils");
 const setBotStatus = require("./commands/bot_control/set-bot-status");
 const {sendTrace} = require("./tools/devOutput");
-const {logMessage,getRandomArrayMember} = require("./tools/utils");
+const {logMessage, getRandomArrayMember} = require("./tools/utils");
 const {generateUwuCombinations} = require("./tools/uwuify");
 const {sendMessage} = require("./tools/sendMessage");
 
@@ -279,7 +279,7 @@ async function incomingMessageHandler(message) {
         await runCommands(client, message, args);
         // Otherwise pass to listeners
     } else {
-        await parseWithListeners(client,message);
+        await parseWithListeners(client, message);
     }
 }
 
@@ -336,5 +336,5 @@ async function sendOnlineMessage(client) {
 }
 
 async function setInitialActivity(client) {
-    await client.user.setActivity(getRandomArrayMember(setBotStatus.params[0].default), {type: getRandomArrayMember(["STREAMING","PLAYING"])});
+    await client.user.setActivity(getRandomArrayMember(setBotStatus.params[0].default), {type: getRandomArrayMember(["STREAMING", "PLAYING"])});
 }

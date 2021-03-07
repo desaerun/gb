@@ -104,9 +104,9 @@ exports.touchFileSync = function (file) {
  */
 exports.touchFile = function (file) {
     const now = new Date();
-    fs.utimes(file,now,now, err => {
+    fs.utimes(file, now, now, err => {
         if (err) {
-            fs.open(file, 'w',(err, fd) => {
+            fs.open(file, 'w', (err, fd) => {
                 if (err) throw err;
                 fs.close(fd, err => {
                     if (err) throw err;
