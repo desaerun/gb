@@ -7,7 +7,7 @@ const names = ["skip"];
 const description = "Plays the next song in the queue.";
 
 //main
-async function execute(client, message) {
+const execute = async function (client, message) {
     await skipSong(message.channel);
 }
 

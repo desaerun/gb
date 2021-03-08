@@ -25,7 +25,7 @@ const params = [
 ];
 
 //main
-async function execute(client, message, args) {
+const execute = async function (client, message, args) {
     let regularDie = false;
     if (!args || args.length < 2) {
         if (args.length === 1) {

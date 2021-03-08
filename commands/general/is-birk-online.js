@@ -7,7 +7,7 @@ const name = "is-birk-online";
 const description = "Reports on Birk's status";
 
 //main
-async function execute(client, message) {
+const execute = async function (client, message) {
     let birk;
     try {
         const birkID = "97542223641464832";

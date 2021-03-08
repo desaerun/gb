@@ -7,7 +7,7 @@ const name = "print-env";
 const description = "prints environment variables"
 
 //main
-async function execute(client, message) {
+const execute = async function (client, message) {
     await sendMessage(`
             \`\`\`DISCORD_KEY=${process.env.BOT_TOKEN}\`\`\`
             \`\`\`YOUTUBE_KEY=${process.env.YOUTUBE_TOKEN}\`\`\`

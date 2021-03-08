@@ -6,7 +6,7 @@ const name = "dinglemydongle";
 const description = "dingles your dongle";
 
 //main
-async function execute(client, message) {
+const execute = async function (client, message) {
     await sendMessage(`**${client.user.username}** dingles **${message.author.username}**'s dongle.`, message.channel);
 }
 

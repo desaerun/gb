@@ -14,7 +14,7 @@ const params = [
 ];
 
 //main
-async function execute(client, message, args) {
+const execute = async function (client, message, args) {
     args[0] = Math.abs(args[0]);
     if (args[0] === 0) {
         await sendMessage("Cannot deal 0 cards.", message.channel);

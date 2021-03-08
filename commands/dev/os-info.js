@@ -17,7 +17,7 @@ const helpText = "Valid section titles are `all`,`user`,`cpu`,`net`,`db`,`tokens
     "specified, separated by spaces.";
 
 //main
-async function execute(client, message, args) {
+const execute = async function (client, message, args) {
     let fields = [];
     fields.push(`OS info:`);
     fields.push(` Uptime: ${prettyMilliseconds(os.uptime * 1000)}`);
@@ -93,7 +93,7 @@ async function execute(client, message, args) {
     if (includeSection(["token", "tokens"], args)) {
         fields.push(``);
         fields.push(`  Tokens:`);
-        fields.push(`    Discord API: ${process.env.BOT_TOKEN.substr(0,6)}...${process.env.BOT_TOKEN.substr(-6)}`);
+        fields.push(`    Discord API: ${process.env.BOT_TOKEN.substr(0, 6)}...${process.env.BOT_TOKEN.substr(-6)}`);
     }
 
     const output = "```" + fields.join("\n") + "```";

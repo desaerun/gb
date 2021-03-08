@@ -27,7 +27,7 @@ const params = [
 const helpText = "This is sample help text";
 
 //main
-async function execute(client, message, args) {
+const execute = async function (client, message, args) {
 
     let subreddit = args[0];
     // Strip down to only content after "/" chars in case the user selected "r/youtubehaiku", for example

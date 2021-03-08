@@ -6,7 +6,7 @@ const name = "clear-queue";
 const description = "Clears the song queue.";
 
 //main
-async function execute(client, message) {
+const execute = async function (client, message) {
     await clearQueue(message.channel);
 }
 

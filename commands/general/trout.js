@@ -14,7 +14,7 @@ const params = [
 ];
 
 //main
-async function execute(client, message, args) {
+const execute = async function (client, message, args) {
     args[0] = args.length > 0 ? args[0] : params[0].default;
     await sendMessage(`**${message.author.username}** slaps **${args.join(" ")}** with a large trout.`, message.channel);
 }

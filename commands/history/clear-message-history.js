@@ -14,7 +14,7 @@ const name = "clear-message-history";
 const description = "Clears all message history from db";
 
 //main
-async function execute(client, message) {
+const execute = async function (client, message) {
     try {
         await pool.query("DELETE FROM messages WHERE deleted IS NULL");
     } catch (e) {
