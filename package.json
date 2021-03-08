@@ -1,11 +1,11 @@
 {
-  "name": "groidbot",
+  "name": "gb",
   "version": "1.3.0",
   "private": true,
   "description": "",
   "main": "main.js",
   "scripts": {
-    "start": "echo -e \"$(date '+%d/%m/%Y %H:%M:%S%Z'): Starting groidbot...\n$(cat /var/log/groidbot.log)\" > /var/log/groidbot.log & pm2 start main.js --name \"groidbot\""
+    "start": "echo -e \"$(date '+%d/%m/%Y %H:%M:%S%Z'): Starting gb...\n$(cat /var/log/gb.log)\" > /var/log/gb.log & pm2 start main.js --name \"gb\""
   },
   "keywords": [],
   "author": "",

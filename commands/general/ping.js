@@ -8,7 +8,7 @@ const names = ["p"];
 const description = "this is a ping command";
 
 //main
-async function execute(client, message) {
+const execute = async function (client, message) {
     let latency = Date.now() - message.createdTimestamp;
 
     let embedMessage = new Discord.MessageEmbed()

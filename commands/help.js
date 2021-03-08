@@ -18,7 +18,7 @@ const params = [
 ];
 
 //main
-async function execute(client, message, args) {
+const execute = async function (client, message, args) {
     if (args.length === 0) {
         try {
             await sendMessage(generateCommandList(client.commands), message.channel);

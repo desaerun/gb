@@ -6,7 +6,7 @@ const name = "queue";
 const description = "Lists the songs in the queue.";
 
 //main
-async function execute(client, message) {
+const execute = async function (client, message) {
     await listQueue(message.channel);
 }
 

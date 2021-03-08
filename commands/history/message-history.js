@@ -26,7 +26,7 @@ const params = [
 ];
 
 //main
-async function execute(client, message, args) {
+const execute = async function (client, message, args) {
     if (args.length !== 1) {
         await sendMessage(`You must provide the message ID.`, message.channel);
         return false;

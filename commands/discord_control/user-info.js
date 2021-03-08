@@ -1,6 +1,7 @@
 //imports
 const Discord = require("discord.js");
 const moment = require("moment");
+const {sendMessage} = require("../../tools/sendMessage");
 
 //module settings
 const name = "user-info";
@@ -15,7 +16,7 @@ const params = [
 ];
 
 //main
-async function execute(client, message, args) {
+const execute = async function (client, message, args) {
     let user = message.mentions.members.first() || message.guild.members.cache.get(args[0]) || message.guild.member(message.author);
     const response = new Discord.MessageEmbed()
         // .setColor("#DAF7A6")

@@ -1,6 +1,7 @@
 //imports
 const readline = require("readline");
 const fs = require("fs");
+const {touchFileSync} = require("../../tools/utils");
 const {sendMessage} = require("../../tools/sendMessage");
 
 //module settings
@@ -16,40 +17,41 @@ const params = [
 ];
 
 //main
-async function execute(client, message, args) {
-    if (args[0]) {
-        args[0] = Math.abs(parseInt(args[0], 10));
-        if (isNaN(args[0])) {
-            await sendMessage(`You must provide a valid ${params[0].type} input for ${params[0].param}.`, message.channel);
-            return;
-        }
-    }
+const execute = async function (client, message, args) {
     const logFiles = [
         {
             name: "bot",
-            file: "/var/log/groidbot.log",
+            file: "./log/gb.log",
         },
         {
             name: "pm2 status",
-            file: "/home/groidbot/.pm2/pm2.log",
+            file: "/home/gb/.pm2/pm2.log",
         },
         {
             name: "pm2 stdout",
-            file: "/home/groidbot/.pm2/logs/groidbot-out.log",
+            file: "/home/gb/.pm2/logs/gb-out.log",
         },
         {
             name: "pm2 error",
-            file: "/home/groidbot/.pm2/logs/groidbot-error.log",
+            file: "/home/gb/.pm2/logs/gb-error.log",
         },
     ];
     for (const logFile of logFiles) {
-        const chunkSize = 1994;
-        const logText = await readLog(logFile.file, args[0]);
+        try {
+            const chunkSize = 1994;
+            const logText = await readLog(logFile.file, args[0]);
 
-        await sendMessage(`Contents of ${logFile.name} log file:`, message.channel);
-        for (let i = 0; i < logText.length; i += chunkSize) {
-            const currentChunk = logText.substr(i, chunkSize);
-            await sendMessage(`\`\`\`${currentChunk}\`\`\``, message.channel);
+            await sendMessage(`Contents of ${logFile.name} log file:`, message.channel);
+            if (logText.length === 0) {
+                await sendMessage(`\`\`\`Empty file\`\`\``, message.channel);
+            } else {
+                for (let i = 0; i < logText.length; i += chunkSize) {
+                    const currentChunk = logText.substr(i, chunkSize);
+                    await sendMessage(`\`\`\`${currentChunk}\`\`\``, message.channel);
+                }
+            }
+        } catch (e) {
+            sendMessage(`Error occurred reading logfile \`${logFile.file}\`: ${e}`, message.channel);
         }
     }
 }
@@ -68,26 +70,50 @@ module.exports = {
  *
  * @param file
  * @param numLines
- * @returns {Promise<unknown>}
+ * @returns {String}
  */
-function readLog(file, numLines = 10) {
-    return new Promise(function (resolve, reject) {
-        let lineReader = readline.createInterface({
-            input: fs.createReadStream(file),
+async function readLog(file, numLines = 10) {
+    let lines = [];
+
+    //"touch" the file (create it if it does not exist, if it does exist update the Modified time)
+    //touchFileSync(file);
+
+    try {
+        const fileStream = fs.createReadStream(file);
+        const rl = readline.createInterface({
+            input: fileStream,
+            crlfDelay: Infinity,
         });
 
-        let lines = [];
+        let i = 0;
+        for await (const line of rl) {
+            if (++i === numLines) {
+                break;
+            }
+            lines.push(line);
+        }
+        return lines.join("\n");
+    } catch (e) {
+        throw e;
+    }
 
-        lineReader
-            .on("line", function (line) {
-                let length = lines.push(line);
-
-                if (length === numLines) {
-                    lineReader.close();
-                }
-            })
-            .on("close", () => {
-                resolve(lines.join("\n"));
-            })
-    });
+    // return new Promise(function (resolve, reject) {
+    //     let lineReader = readline.createInterface({
+    //         input: fs.createReadStream(file),
+    //     });
+    //
+    //     let lines = [];
+    //
+    //     lineReader
+    //         .on("line", function (line) {
+    //             let length = lines.push(line);
+    //
+    //             if (length === numLines) {
+    //                 lineReader.close();
+    //             }
+    //         })
+    //         .on("close", () => {
+    //             resolve(lines.join("\n"));
+    //         })
+    // });
 }

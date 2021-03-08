@@ -22,7 +22,7 @@ let queue = [];
 let playing = false;
 let currentSong = {};
 
-async function execute(client, message, args) {
+const execute = async function (client, message, args) {
     if (!message.member.voice.channel) {
         await sendMessage(`You must be in a voice channel to use this command.`, message.channel);
         return false;

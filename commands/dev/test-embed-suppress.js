@@ -6,7 +6,7 @@ const name = "test-embed-suppress";
 const description = "tries sending a message that should have an embed, but suppresses it";
 
 //main
-async function execute(client, message) {
+const execute = async function (client, message) {
     await sendMessage("https://google.com", message.channel, true);
 }
 

@@ -6,7 +6,7 @@ const name = "stop";
 const description = "stops playing the current audio";
 
 //main
-async function execute(client, message) {
+const execute = async function (client, message) {
     await stopPlaying(message.channel);
 }
 
