@@ -50,16 +50,16 @@ const execute = async function (client, message, args) {
     }
     await sendMessage(`Caching messages from "${message.guild.name}".#${targetChannel.name} to DB...`, message.channel);
     console.log(`Retrieving list of messages...`);
+    let counts = {
+        error: 0,
+        added: 0,
+        bot: 0,
+        noAuthor: 0,
+        skipped: 0,
+        total: 0,
+    }
     try {
         let messages = await targetChannel.messages.fetch({limit: 100});
-        let counts = {
-            error: 0,
-            added: 0,
-            bot: 0,
-            noAuthor: 0,
-            skipped: 0,
-            total: 0,
-        }
         while (messages.size > 0) {
             console.log(`*************Start of batch, messages.size=${messages.size}**************`);
             let last = messages.last().id;
