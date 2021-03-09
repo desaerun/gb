@@ -29,7 +29,7 @@ const execute = async function (client, message, args) {
             let tickerData = response.data;
 
             let priceDiff = tickerData.c - tickerData.pc;
-            let percDiff = priceDiff / tickerData.o;
+            let percDiff = priceDiff / tickerData.pc;
 
             let curPriceFormatted = currencyFormat.format(tickerData.c);
             let priceDiffFormatted = (priceDiff < 0 ? "" : "+") + currencyFormat.format(priceDiff);
