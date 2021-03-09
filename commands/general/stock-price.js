@@ -36,14 +36,6 @@ const execute = async function (client, message, args) {
     }
 }
 
-//module export
-module.exports = {
-    name: name,
-    description: description,
-    params: params,
-    execute: execute,
-}
-
 //helper functions
 const getTickerData = async function (ticker) {
     const token = "c13ockf48v6qin45qo40";
@@ -58,7 +50,6 @@ const getTickerData = async function (ticker) {
         await sendMessage(`error fetching stock price: ${err}`, message.channel);
     }
 }
-exports.getTickerData = getTickerData;
 
 const currencyFormat = new Intl.NumberFormat("en-US",
     {
@@ -72,3 +63,12 @@ const percentFormat = new Intl.NumberFormat("en-US",
         minimumFractionDigits: 2,
         maximumFractionDigits: 2
     })
+
+//module export
+module.exports = {
+    name: name,
+    description: description,
+    params: params,
+    execute: execute,
+    getTickerData: getTickerData,
+}
