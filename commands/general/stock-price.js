@@ -58,6 +58,7 @@ const getTickerData = async function (ticker) {
         await sendMessage(`error fetching stock price: ${err}`, message.channel);
     }
 }
+exports.getTickerData = getTickerData;
 
 const currencyFormat = new Intl.NumberFormat("en-US",
     {
