@@ -22,23 +22,15 @@ const execute = async function (client, message, args) {
     }
 
     let ticker = args[0].toUpperCase();
-    const token = "c13ockf48v6qin45qo40";
     try {
-        const response = await axios.get(`https://finnhub.io/api/v1/quote?symbol=${ticker}&token=${token}`);
-        if (response.status === 200) {
-            let tickerData = response.data;
+        const tickerData = await getTickerData(ticker);
+        let priceDiff = tickerData.c - tickerData.pc;
+        let percDiff = priceDiff / tickerData.pc;
 
-            let priceDiff = tickerData.c - tickerData.pc;
-            let percDiff = priceDiff / tickerData.pc;
-
-            let curPriceFormatted = currencyFormat.format(tickerData.c);
-            let priceDiffFormatted = (priceDiff < 0 ? "" : "+") + currencyFormat.format(priceDiff);
-            let percDiffFormatted = (priceDiff < 0 ? "" : "+") + percentFormat.format(percDiff);
-
-            await sendMessage(`${ticker} = **${curPriceFormatted}** (**${priceDiffFormatted}**[**${percDiffFormatted}**] last 24hrs)`, message.channel);
-        } else {
-            throw new Error(`Request returned status code ${response.status}`);
-        }
+        let curPriceFormatted = currencyFormat.format(tickerData.c);
+        let priceDiffFormatted = (priceDiff < 0 ? "" : "+") + currencyFormat.format(priceDiff);
+        let percDiffFormatted = (priceDiff < 0 ? "" : "+") + percentFormat.format(percDiff);
+        await sendMessage(`${ticker} = **${curPriceFormatted}** (**${priceDiffFormatted}**[**${percDiffFormatted}**] today)`, message.channel);
     } catch (err) {
         await sendMessage(`error fetching stock price: ${err}`, message.channel);
     }
@@ -53,6 +45,20 @@ module.exports = {
 }
 
 //helper functions
+const getTickerData = async function (ticker) {
+    const token = "c13ockf48v6qin45qo40";
+    try {
+        const response = await axios.get(`https://finnhub.io/api/v1/quote?symbol=${ticker}&token=${token}`);
+        if (response.status === 200) {
+            return response.data;
+        } else {
+            throw new Error(`Request returned status code ${response.status}`);
+        }
+    } catch (err) {
+        await sendMessage(`error fetching stock price: ${err}`, message.channel);
+    }
+}
+
 const currencyFormat = new Intl.NumberFormat("en-US",
     {
         style: "currency",
