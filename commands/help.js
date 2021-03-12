@@ -123,13 +123,18 @@ function getHelpMessage(command) {
     if (command.helpText) {
         fields.push({
             name: "Information",
-            value: command.helpText
+            value: command.helpText,
         });
     }
     if (command.examples) {
+        let wrappedExamples = [];
+        //wrap the examples in backticks for Discord code formatting
+        for (const example of command.examples) {
+            wrappedExamples.push(`\`${example}\``);
+        }
         fields.push({
             name: "Examples:",
-            value: command.examples.join("\n"),
+            value: wrappedExamples.join("\n"),
         });
     }
 
@@ -152,7 +157,7 @@ function generateCommandList(clientCommands) {
     response.push("List of commands: ");
 
     //special case for the HELP file
-    response.push(`${CONFIG.PREFIX}_${name}_: ${description}`);
+    response.push(`\`${CONFIG.PREFIX}${name}\`: ${description}`);
     response.push(getCommandsText(dirPath, clientCommands));
     response.push("");
     response.push(`Type \`${CONFIG.PREFIX}${name} [command]\` for more detailed help information about specific commands.`);
