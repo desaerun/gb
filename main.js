@@ -112,6 +112,7 @@ async function runCommands(client, message, args) {
             let command = client.commands.get(commandName);
             args = setArgsToDefault(command, args);
 
+            console.log(`args after setting args to default: ${args}`);
             let argTypeErrors;
             [args, argTypeErrors] = coerceArgsToTypes(command, args);
             if (argTypeErrors.length > 0) {
@@ -119,6 +120,7 @@ async function runCommands(client, message, args) {
                 await sendMessage(errors, message.channel);
                 return false;
             }
+            console.log(`about to run ${commandName} with these args: ${args}`);
             command.execute(client, message, args);
 
         } catch (e) {
