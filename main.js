@@ -133,6 +133,7 @@ function isCommand(message) {
  * @param args
  */
 async function runCommands(client, message, args) {
+    console.log(`args @ runCommands: ${args}`);
     let commandName = args.shift().toLowerCase();
 
     //support for uwu-ified command names
