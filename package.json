@@ -5,13 +5,14 @@
   "description": "",
   "main": "main.js",
   "scripts": {
-    "start": "echo -e \"$(date '+%d/%m/%Y %H:%M:%S%Z'): Starting gb...\n$(cat log/gb.log)\" > log/gb.log & pm2 start main.js --name \"gb\""
+    "start": "echo -e \"$(date '+%d/%m/%Y %H:%M:%S%Z'): Starting gb...\n$(cat /var/log/gb.log)\" > /var/log/gb.log & pm2 start main.js --name \"gb\""
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
     "@discordjs/opus": "^0.3.3",
+    "async-exit-hook": "^2.0.1",
     "axios": "^0.21.0",
     "cheerio": "^1.0.0-rc.5",
     "coffeescript": "^2.5.1",
