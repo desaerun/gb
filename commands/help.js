@@ -14,6 +14,7 @@ const params = [
         param: "commandName",
         type: "string",
         description: "A string representing the name of the command you need help with",
+        optional: true,
     }
 ];
 
