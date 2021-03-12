@@ -20,8 +20,22 @@ global.normalNickname = "asdf";
 
 const client = new Discord.Client({partials: ["MESSAGE"]});
 
-// const cleanup = require("node-cleanup");
-// cleanup( processExitHandler);
+const exitHook = require("async-exit-hook");
+exitHook(() => {
+    sendMessageToBotStatusChannel(`The bot has received a request to terminate and will restart.`)
+        .then(() => {
+            console.log("SIGINT or SIGKILL received.");
+        });
+});
+exitHook.unhandledRejectionHandler((err,callback) => {
+    sendMessageToBotStatusChannel(`The bot has experienced an uncaught exception: ${err}`)
+        .then(() => {
+            console.error(`Uncaught exception error:  ${err}`);
+            if (err.stack) {
+                console.error(err.stack);
+            }
+        });
+});
 
 client.commands = new Discord.Collection();
 client.listenerSet = new Discord.Collection();
@@ -299,32 +313,11 @@ async function messageDeleteHandler(deletedMessage) {
 async function shardErrorHandler(error) {
     console.error("possible shard error was caught: ", error);
 }
-process.on("SIGTERM",async () => {
-    await processExitHandler(null,"SIGTERM");
-});
-process.on("SIGINT",async () => {
-    await processExitHandler(null,"SIGINT");
-});
-process.on("uncaughtException", async function(e) {
-    await processExitHandler(2,null);
-})
 
 async function sendMessageToBotStatusChannel(message) {
     const outputChannel = client.channels.cache.get(process.env.ONLINE_STATUS_CHANNEL_ID);
     await sendMessage(message,outputChannel);
 }
-
-async function processExitHandler (exitCode,signal) {
-    console.log(`Exit code: ${exitCode} | Signal: ${signal}`);
-    if (signal && (signal === "SIGINT" || signal === "SIGTERM")) {
-        console.log("Got SIGINT or SIGTERM");
-        await sendMessageToBotStatusChannel(`The bot has received a request to terminate and will restart.`);
-    } else {
-        await sendMessageToBotStatusChannel(`The bot has experienced an error and will restart.`);
-    }
-    process.exit(2);
-}
-
 
 function parseQuotedArgs(args) {
     //handling for quoted args
