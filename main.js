@@ -229,6 +229,7 @@ function coerceArgsToTypes(command, args) {
                     snowflake: false,
                 };
                 for (const currentAllowedType of allowedTypes) {
+                    console.log(`Currently processing allowed type: ${currentAllowedType}`);
                     switch (currentAllowedType.toLowerCase()) {
                         case "integer":
                         case "int":
