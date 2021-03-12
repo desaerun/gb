@@ -36,7 +36,7 @@ const execute = async function (client, message, args) {
         let req = await ytsr(filter.url, {limit: 1});
         video = req.items[0];
     } catch (e) {
-        throw e;
+        await sendMessage(`Could not fetch video file: ${e}`,message.channel);
     }
     const song = {
         url: video.url,
@@ -125,7 +125,8 @@ async function playNextSong(textChannel, voiceChannel) {
                 }
             });
         } catch (e) {
-            throw e;
+            await sendMessage(`Failed to play song ${song.title}: ${e}`, textChannel);
+            playing = false;
         }
     } else {
         playing = false;
@@ -140,8 +141,10 @@ async function nowPlaying(textChannel, showProgressBar = true) {
         const elapsed = (+Date.now() - currentSong.started) / 1000;
         const nowPlayingEmbed = new Discord.MessageEmbed()
             .setTitle(":musical_note: Now Playing :musical_note:")
-            .setDescription(`[**${currentSong.song.title}**](${currentSong.song.url})`)
-            .addField("Description", currentSong.song.description);
+            .setDescription(`[**${currentSong.song.title}**](${currentSong.song.url})`);
+        if (currentSong.song.description) {
+            nowPlayingEmbed.addField("Description", currentSong.song.description);
+        }
         if (showProgressBar) {
             nowPlayingEmbed.addField("Progress", generateProgressBar(21, elapsed, songLength));
         }
@@ -156,23 +159,28 @@ async function listQueue(textChannel) {
         return;
     }
     let totalDurationSeconds = 0;
-    let queueMessage = "Songs in queue:";
+    let queueMessageArr = [];
+    queueMessageArr.push("Songs in queue:");
     for (let i = 0; i < queue.length; i++) {
         let song = queue[i];
 
         totalDurationSeconds += durationStringToSeconds(song.duration);
-        queueMessage += `\n${i + 1}. **${suppressUrls(song.title)}** (${song.duration})`;
+        queueMessageArr.push(`${i + 1}. **${suppressUrls(song.title)}** (${song.duration})`);
     }
     if (playing) {
         totalDurationSeconds += durationStringToSeconds(currentSong.song.duration);
     }
     const totalDurationString = secondsToDurationString(totalDurationSeconds, 3);
-    queueMessage += `\nTotal duration: ${totalDurationString}`;
+    queueMessageArr.push(`Total duration: ${totalDurationString}`);
+    let queueMessage = queueMessageArr.join("\n");
     await sendMessage(queueMessage, textChannel, true);
 }
 
 async function clearQueue(textChannel) {
     queue = [];
+    if (!playing) {
+        currentSong = {};
+    }
     await sendMessage("Song queue cleared.", textChannel);
 }
 
