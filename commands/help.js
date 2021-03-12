@@ -78,8 +78,7 @@ function getHelpMessage(command) {
             fullCommand += ` [${optionalMod}${currentArg.param}]`;
 
             let paramText = [];
-            paramText.push(`**Type**: ${currentArg.type}`);
-            paramText.push(`**Description**: ${currentArg.description}`);
+            paramText.push(currentArg.description);
             paramText.push("");
             if (currentArg.default) {
                 if (Array.isArray(currentArg.default)) {
@@ -110,7 +109,7 @@ function getHelpMessage(command) {
                 }
             }
             fields.push({
-                name: `\`${currentArg.param}\``,
+                name: `\`${currentArg.param}\` ${currentArg.type}`,
                 value: paramText.join("\n"),
             });
         }
