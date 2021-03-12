@@ -61,6 +61,74 @@ client.login(process.env.BOT_TOKEN);
 
 // HELPER FUNCTIONS
 
+async function incomingMessageHandler(message) {
+    //capture messages to DB
+    if (message.channel.type === "text") {
+        await captureMessage(client, message, true);
+    } else if (message.channel.type === "dm") {
+        if (message.author.bot) return;
+        await sendMessage("Sorry, I do not currently support bot commands via Direct Message.", message.channel);
+        return true;
+    }
+
+    // Ignore my own messages
+    if (message.author.bot) return;
+
+    // Attempt to parse commands
+    if (isCommand(message)) {
+        let args = message.content.slice(CONFIG.PREFIX.length);
+        args = parseQuotedArgs(args);
+
+        await runCommands(client, message, args);
+        // Otherwise pass to listeners
+    } else {
+        await parseWithListeners(client, message);
+    }
+}
+
+/**
+ * Searches client.commands for the parsed command, and executes if the command is valid
+ * @param client
+ * @param message
+ * @param args
+ */
+async function runCommands(client, message, args) {
+    console.log(`args @ runCommands: ${args}`);
+    let commandName = args.shift().toLowerCase();
+    console.log(`commandName: ${commandName}`);
+    //support for uwu-ified command names
+    if (uwuMode) {
+        const possibleUwuCommandNames = generateUwuCombinations(commandName);
+        for (const possibleUwuCommandName of possibleUwuCommandNames) {
+            if (client.commands.has(possibleUwuCommandName)) {
+                commandName = possibleUwuCommandName;
+            }
+        }
+    }
+    console.log(`commandName after uwu function: ${commandName}`);
+
+    if (client.commands.has(commandName)) {
+        try {
+            let command = client.commands.get(commandName);
+            args = setArgsToDefault(command, args);
+
+            let argTypeErrors;
+            [args, argTypeErrors] = coerceArgsToTypes(command, args);
+            if (argTypeErrors.length > 0) {
+                const errors = argTypeErrors.join("\n");
+                await sendMessage(errors, message.channel);
+                return false;
+            }
+            command.execute(client, message, args);
+
+        } catch (e) {
+            await sendMessage(`There was an error running the command: ${e}`, message.channel);
+        }
+    } else {
+        await sendMessage(`\`${commandName}\` is not a valid command. Type \`${CONFIG.PREFIX}help\` to get a list of commands.`, message.channel);
+    }
+}
+
 /**
  * Gets all command .js files from /commands
  * @param client
@@ -124,48 +192,6 @@ function getListenerSet(client, dir, level = 0) {
 function isCommand(message) {
     const check = new RegExp(`^${CONFIG.PREFIX}([^-+]+)`);
     return check.test(message.content);
-}
-
-/**
- * Searches client.commands for the parsed command, and executes if the command is valid
- * @param client
- * @param message
- * @param args
- */
-async function runCommands(client, message, args) {
-    console.log(`args @ runCommands: ${args}`);
-    let commandName = args.shift().toLowerCase();
-
-    //support for uwu-ified command names
-    if (uwuMode) {
-        const possibleUwuCommandNames = generateUwuCombinations(commandName);
-        for (const possibleUwuCommandName of possibleUwuCommandNames) {
-            if (client.commands.has(possibleUwuCommandName)) {
-                commandName = possibleUwuCommandName;
-            }
-        }
-    }
-
-    if (client.commands.has(commandName)) {
-        try {
-            let command = client.commands.get(commandName);
-            args = setArgsToDefault(command, args);
-
-            let argTypeErrors;
-            [args, argTypeErrors] = coerceArgsToTypes(command, args);
-            if (argTypeErrors.length > 0) {
-                const errors = argTypeErrors.join("\n");
-                await sendMessage(errors, message.channel);
-                return false;
-            }
-            command.execute(client, message, args);
-
-        } catch (e) {
-            await sendMessage(`There was an error running the command: ${e}`, message.channel);
-        }
-    } else {
-        await sendMessage(`\`${commandName}\` is not a valid command. Type \`${CONFIG.PREFIX}help\` to get a list of commands.`, message.channel);
-    }
 }
 
 /**
@@ -248,6 +274,7 @@ function coerceArgsToTypes(command, args) {
     return [args, argTypeErrors];
 }
 
+
 /**
  * Attempts to execute from the set of listeners on any given message that is not a command
  * @param client
@@ -260,32 +287,6 @@ async function parseWithListeners(client, message) {
         }
     } catch (e) {
         await sendMessage(`There was an error parsing listeners: ${e}`, message.channel);
-    }
-}
-
-
-async function incomingMessageHandler(message) {
-    //capture messages to DB
-    if (message.channel.type === "text") {
-        await captureMessage(client, message, true);
-    } else if (message.channel.type === "dm") {
-        if (message.author.bot) return;
-        await sendMessage("Sorry, I do not currently support bot commands via Direct Message.", message.channel);
-        return true;
-    }
-
-    // Ignore my own messages
-    if (message.author.bot) return;
-
-    // Attempt to parse commands
-    if (isCommand(message)) {
-        let args = message.content.slice(CONFIG.PREFIX.length);
-        args = parseQuotedArgs(args);
-
-        await runCommands(client, message, args);
-    // Otherwise pass to listeners
-    } else {
-        await parseWithListeners(client, message);
     }
 }
 
