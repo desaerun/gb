@@ -61,6 +61,7 @@ module.exports = {
     clearQueue: clearQueue,
     nowPlaying: nowPlaying,
     playNextSong: playNextSong,
+    resumePlaying: resumePlaying,
 }
 
 //helper functions
@@ -73,7 +74,8 @@ async function stopPlaying(textChannel) {
         await sendMessage("There is no song currently playing.", textChannel);
         return;
     }
-    await sendMessage("Stopping current song.", textChannel);
+    await sendMessage("Stopping current song.  The song has been added back to the top of the queue." +
+        "Use `-resume` to resume playing.", textChannel);
     console.log(`Queue: ${JSON.stringify(queue)}`);
     currentSong.voiceChannel.leave();
     console.log(`Unshifting current song back on to queue array`);
@@ -81,6 +83,18 @@ async function stopPlaying(textChannel) {
     console.log(`Queue after unshift: ${JSON.stringify(queue)}`);
     currentSong = {};
     playing = false;
+}
+
+async function resumePlaying(textChannel,voiceChannel) {
+    if (queue.length === 0) {
+        await sendMessage("There are no songs in the queue.");
+        return;
+    }
+    if (playing) {
+        await sendMessage("A song is already playing!");
+        return;
+    }
+    await playNextSong(textChannel, voiceChannel);
 }
 
 async function skipSong(textChannel) {
@@ -152,6 +166,8 @@ async function nowPlaying(textChannel, showProgressBar = true) {
             nowPlayingEmbed.addField("Progress", generateProgressBar(21, elapsed, songLength));
         }
         await sendMessage(nowPlayingEmbed, textChannel);
+    } else {
+        await sendMessage("There is no song currently playing.");
     }
 }
 
