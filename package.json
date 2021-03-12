@@ -5,7 +5,7 @@
   "description": "",
   "main": "main.js",
   "scripts": {
-    "start": "echo -e \"$(date '+%d/%m/%Y %H:%M:%S%Z'): Starting gb...\n$(cat /var/log/gb.log)\" > /var/log/gb.log & pm2 start main.js --name \"gb\""
+    "start": "echo -e \"$(date '+%d/%m/%Y %H:%M:%S%Z'): Starting gb...\n$(cat log/gb.log)\" > log/gb.log & pm2 start main.js --name \"gb\""
   },
   "keywords": [],
   "author": "",
