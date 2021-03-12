@@ -322,7 +322,7 @@ async function processExitHandler (exitCode,signal) {
     } else {
         await sendMessageToBotStatusChannel(`The bot has experienced an error and will restart.`);
     }
-    process.kill(process.pid,"SIGINT");
+    process.exit(2);
 }
 
 
