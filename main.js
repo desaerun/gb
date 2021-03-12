@@ -160,7 +160,7 @@ async function runCommands(client, message, args) {
             command.execute(client, message, args);
 
         } catch (e) {
-            await sendMessage(`There was an error running the command: ${e}`);
+            await sendMessage(`There was an error running the command: ${e}`, message.channel);
         }
     } else {
         await sendMessage(`\`${commandName}\` is not a valid command. Type \`${CONFIG.PREFIX}help\` to get a list of commands.`, message.channel);
