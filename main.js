@@ -159,8 +159,8 @@ async function runCommands(client, message, args) {
             }
             command.execute(client, message, args);
 
-        } catch (err) {
-            await sendTrace(client, err, CONFIG.CHANNEL_DEV_ID);
+        } catch (e) {
+            await sendMessage(`There was an error running the command: ${e}`);
         }
     } else {
         await sendMessage(`\`${commandName}\` is not a valid command. Type \`${CONFIG.PREFIX}help\` to get a list of commands.`, message.channel);
@@ -257,8 +257,8 @@ async function parseWithListeners(client, message) {
         for (const listener of client.listenerSet.values()) {
             if (await listener.listen(client, message)) return;
         }
-    } catch (err) {
-        await sendTrace(client, err, CONFIG.CHANNEL_DEV_ID);
+    } catch (e) {
+        await sendMessage(`There was an error parsing listeners: ${e}`, message.channel);
     }
 }
 
@@ -276,13 +276,13 @@ async function incomingMessageHandler(message) {
     // Ignore my own messages
     if (message.author.bot) return;
 
-    let args = message.content.slice(CONFIG.PREFIX.length);
-    args = parseQuotedArgs(args);
-
     // Attempt to parse commands
     if (isCommand(message)) {
+        let args = message.content.slice(CONFIG.PREFIX.length);
+        args = parseQuotedArgs(args);
+
         await runCommands(client, message, args);
-        // Otherwise pass to listeners
+    // Otherwise pass to listeners
     } else {
         await parseWithListeners(client, message);
     }
