@@ -92,7 +92,7 @@ const execute = async function (client, message, args) {
             console.log(`(Error:  ${counts.error}|Success: ${counts.added}|Skipped: ${counts.skipped}|Bot: ${counts.bot}|No Author: ${counts.noAuthor})`);
         }
     } catch (e) {
-        await message.channel.send(`There was an error fetching the messages: ${e}`);
+        await sendMessage(`There was an error fetching the messages: ${e}`,message.channel);
     }
     await sendMessage(`There have been ${counts.total} messages sent in channel #${targetChannel.name}.`, message.channel);
     try {

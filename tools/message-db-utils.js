@@ -225,7 +225,7 @@ convertEmbedToText = function convertEmbedToText(embed) {
     }
     if (embed.timestamp) {
         const formattedTimestamp = moment(embed.timestamp).format("MMM Do YYYY h:mm:ssa [GMT]Z");
-        textEmbedLines += `at ${formattedTimestamp}`;
+        textEmbedLines.push(`at ${formattedTimestamp}`);
     }
     textEmbedLines.push(`\\*\\*\\*\\*\\*\\*\\*\\*\\*\\*\\*\\*\\*\\*\\*`);
 
