@@ -74,11 +74,11 @@ async function stopPlaying(textChannel) {
         return;
     }
     await sendMessage("Stopping current song.", textChannel);
-    console.log(`Queue: ${queue}`);
+    console.log(`Queue: ${JSON.stringify(queue)}`);
     currentSong.voiceChannel.leave();
     console.log(`Unshifting current song back on to queue array`);
     queue.unshift(currentSong);
-    console.log(`Queue after unshift: ${queue}`);
+    console.log(`Queue after unshift: ${JSON.stringify(queue)}`);
     currentSong = {};
     playing = false;
 }
@@ -156,7 +156,7 @@ async function nowPlaying(textChannel, showProgressBar = true) {
 }
 
 async function listQueue(textChannel) {
-    console.log(`Queue: ${queue}`);
+    console.log(`Queue: ${JSON.stringify(queue)}`);
     await nowPlaying(textChannel);
     if (queue.length === 0) {
         await sendMessage("There are no songs currently in queue.", textChannel);
