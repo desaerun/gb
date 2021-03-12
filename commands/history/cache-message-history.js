@@ -1,6 +1,7 @@
 //imports
 const {captureMessage} = require("../../tools/message-db-utils");
 const {sendMessage} = require("../../tools/sendMessage");
+const {isAdmin} = require("../../tools/utils");
 
 // mysql
 const mysql = require("mysql2/promise");
@@ -32,6 +33,10 @@ const params = [
 
 //main
 const execute = async function (client, message, args) {
+    if (!isAdmin(message.member)) {
+        await sendMessage("You do not have the authority to perform that function.");
+        return false;
+    }
     let targetChannel = message.channel;
     let includeBotMessages = false;
     //if command is called with arg, check if it's a channel ID;

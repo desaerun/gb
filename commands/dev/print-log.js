@@ -1,7 +1,7 @@
 //imports
 const readline = require("readline");
 const fs = require("fs");
-const {touchFileSync} = require("../../tools/utils");
+const {isAdmin} = require("../../tools/utils");
 const {sendMessage} = require("../../tools/sendMessage");
 
 //module settings
@@ -18,6 +18,10 @@ const params = [
 
 //main
 const execute = async function (client, message, args) {
+    if (!isAdmin(message.member)) {
+        await sendMessage("You do not have the authority to perform that function.");
+        return false;
+    }
     const logFiles = [
         {
             name: "bot",
