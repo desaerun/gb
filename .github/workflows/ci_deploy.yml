@@ -74,7 +74,7 @@ jobs:
 
             #stop any running bot processes. "|| true" is to prevent script from halting if there are no processes
             echo "Stopping pm2 process"
-            pm2 delete gb || true 2> /dev/null
+            pm2 delete gb 2> /dev/null || true
 
             #install/update dependencies
             #clear the logs + start the bot
