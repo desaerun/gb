@@ -85,13 +85,16 @@ function getHelpMessage(command) {
             const paramTextRemainingLength = 1024 - paramText.join("\n").length;
             if (currentArg.default) {
                 if (Array.isArray(currentArg.default)) {
-                    const defaultsList = currentArg.default.join("\n\n");
+                    const defaultsListLength = currentArg.default.join("\n\n").length;
                     let modifiedDefaults = [];
-                    if (defaultsList.length > paramTextRemainingLength) {
+                    if (defaultsListLength > paramTextRemainingLength) {
                         const defaultsSizeEach = paramTextRemainingLength / currentArg.default.length;
                         for (const currentDefault of currentArg.default) {
+                            //using JSON.stringify wraps Strings in quotes but leaves numbers alone
                             if (currentDefault.length > defaultsSizeEach - 5) {
-                                modifiedDefaults.push(JSON.stringify(currentDefault.substr(0, defaultsSizeEach - 5) + "..."));
+                                modifiedDefaults.push(
+                                    JSON.stringify(currentDefault.substr(0, defaultsSizeEach - 5) + "...")
+                                );
                             } else {
                                 modifiedDefaults.push(JSON.stringify(currentDefault));
                             }
