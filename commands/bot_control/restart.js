@@ -21,16 +21,16 @@ const examples = [
 //main
 const execute = async function (client, message, args) {
     if (!isAdmin(message.member)) {
-        await sendMessage("You do not have the authority to perform that function.");
+        await sendMessage("You do not have the authority to perform that function.", message.channel);
         return false;
     }
     console.log(`argument given to restart function: "${args[0]}"`);
-    if (args[0] && (args[0].toLowerCase() === "force" || args[0] === "true")) {
-        console.log(`toLowerCase: "${args[0].toLowerCase()}"`);
-        await sendMessage(`Killing bot process forcefully.`, message.channel);
-        process.exit(2);
-        return true;
-    }
+    // if (args[0] && (args[0].toLowerCase() === "force" || args[0] === "true")) {
+    //     console.log(`toLowerCase: "${args[0].toLowerCase()}"`);
+    //     await sendMessage(`Killing bot process forcefully.`, message.channel);
+    //     process.exit(2);
+    //     return true;
+    // }
     await sendMessage(`Asking bot to restart nicely.`, message.channel);
     process.kill(process.pid,'SIGTERM');
     return true;
