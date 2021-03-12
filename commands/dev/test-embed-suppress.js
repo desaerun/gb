@@ -1,17 +1,13 @@
 //imports
 const {sendMessage} = require("../../tools/sendMessage");
 
-
 //module settings
-const name = "print-env";
-const description = "prints environment variables"
+const name = "test-embed-suppress";
+const description = "tries sending a message that should have an embed, but suppresses it";
 
 //main
 const execute = async function (client, message) {
-    await sendMessage(`
-            \`\`\`DISCORD_KEY=${process.env.BOT_TOKEN}\`\`\`
-            \`\`\`YOUTUBE_KEY=${process.env.YOUTUBE_TOKEN}\`\`\`
-        `, message.channel);
+    await sendMessage("https://google.com", message.channel, true);
 }
 
 //module export

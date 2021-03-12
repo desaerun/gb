@@ -84,15 +84,6 @@ exports.cartesianProduct = function (...arrays) {
 }
 
 /**
- * Checks whether or not the user is an administrator.
- * @param user
- * @returns {boolean}
- */
-exports.isAdmin = function (user) {
-    return user.hasPermission("ADMINISTRATOR");
-}
-
-/**
  * Synchronously "touch"es a file (linux command).  This will create the file if it does not exists,
  * if it does exist it will simply update the Modified time on the file.
  * @param file -- the path of the file
