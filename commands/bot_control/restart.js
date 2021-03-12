@@ -24,7 +24,9 @@ const execute = async function (client, message, args) {
         await sendMessage("You do not have the authority to perform that function.");
         return false;
     }
+    console.log(`argument given to restart function: "${args[0]}"`);
     if (args[0] && (args[0].toLowerCase() === "force" || args[0] === "true")) {
+        console.log(`toLowerCase: "${args[0].toLowerCase()}"`);
         await sendMessage(`Killing bot process forcefully.`, message.channel);
         process.exit(2);
         return true;
