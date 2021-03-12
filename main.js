@@ -19,6 +19,17 @@ global.uwuMode = false;
 global.normalNickname = "asdf";
 
 const client = new Discord.Client({partials: ["MESSAGE"]});
+
+const cleanup = require("node-cleanup");
+cleanup(async (exitCode,signal) => {
+    console.log(`Exit code: ${exitCode} | Signal: ${signal}`);
+    if (signal && signal === "SIGINT") {
+        await sendMessage(`The bot has received a request to terminate and will restart.`, client.channels.cache.get(process.env.ONLINE_STATUS_CHANNEL_ID));
+    }
+    await sendMessage(`The bot has experienced an error and will restart.`);
+    cleanup.uninstall();
+});
+
 client.commands = new Discord.Collection();
 client.listenerSet = new Discord.Collection();
 
@@ -265,7 +276,7 @@ async function incomingMessageHandler(message) {
         await captureMessage(client, message, true);
     } else if (message.channel.type === "dm") {
         if (message.author.bot) return;
-        sendMessage("Sorry, I do not currently support bot commands via Direct Message.", message.channel);
+        await sendMessage("Sorry, I do not currently support bot commands via Direct Message.", message.channel);
         return true;
     }
 
@@ -295,6 +306,11 @@ async function messageDeleteHandler(deletedMessage) {
 async function shardErrorHandler(error) {
     console.error("possible shard error was caught: ", error);
 }
+
+async function processExitHandler() {
+    await sendMessage(`The `)
+}
+
 
 function parseQuotedArgs(args) {
     //handling for quoted args
