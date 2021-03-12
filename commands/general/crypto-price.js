@@ -8,7 +8,7 @@ const description = "Retrieves crypto prices from Coinbase API (in USD)";
 const params = [
     {
         param: "cryptoTicker",
-        type: "string",
+        type: "String",
         description: "a crypto ticker (BTC, ETH)",
         default: "BTC",
     }
