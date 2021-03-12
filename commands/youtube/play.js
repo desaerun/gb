@@ -11,7 +11,7 @@ const description = "play audio from a youtube file";
 const params = [
     {
         param: "youtubeQuery",
-        type: "string",
+        type: "String",
         description: "The query to be searched on youtube",
         default: "L4D2 jockey sounds",
     }

@@ -12,7 +12,7 @@ const description = "Prints a message telling users how to get a list of command
 const params = [
     {
         param: "commandName",
-        type: "string",
+        type: "String",
         description: "A string representing the name of the command you need help with",
         optional: true,
     }
@@ -88,9 +88,9 @@ function getHelpMessage(command) {
                         const defaultsSizeEach = 900 / currentArg.default.length;
                         for (const currentDefault of currentArg.default) {
                             if (currentDefault.length > defaultsSizeEach - 3) {
-                                modifiedDefaults.push(currentDefault.substr(0, defaultsSizeEach - 3) + "...");
+                                modifiedDefaults.push(JSON.stringify(currentDefault.substr(0, defaultsSizeEach - 3) + "..."));
                             } else {
-                                modifiedDefaults.push(currentDefault);
+                                modifiedDefaults.push(JSON.stringify(currentDefault));
                             }
                         }
                     } else {
