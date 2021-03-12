@@ -21,14 +21,12 @@ const examples = [
 
 //main
 const execute = async function (client, message, args) {
-    console.log(`arguments given to restart function: "${args}"`);
     if (!isAdmin(message.member)) {
         await sendMessage("You do not have the authority to perform that function.", message.channel);
         return false;
     }
     if (args[0] && (args[0].toLowerCase() === "force" || args[0] === "true")) {
-        console.log(`toLowerCase: "${args[0].toLowerCase()}"`);
-        await sendMessage(`Killing bot process forcefully in 10 seconds.`, message.channel);
+        await sendMessage(`Killing bot process forcefully in 10 seconds.  Bot will restart.`, message.channel);
         setTimeout(() => {
             process.exit(2);
         }, 10000);
