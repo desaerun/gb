@@ -80,15 +80,18 @@ function getHelpMessage(command) {
             let paramText = [];
             paramText.push(currentArg.description);
             paramText.push("");
+
+            // discord fields can only be 1024 chars long at most
+            const paramTextRemainingLength = 1024 - paramText.join("\n").length;
             if (currentArg.default) {
                 if (Array.isArray(currentArg.default)) {
-                    const defaultsList = currentArg.default.join("\n");
+                    const defaultsList = currentArg.default.join("\n\n");
                     let modifiedDefaults = [];
-                    if (defaultsList.length > 900) {
-                        const defaultsSizeEach = 900 / currentArg.default.length;
+                    if (defaultsList.length > paramTextRemainingLength) {
+                        const defaultsSizeEach = paramTextRemainingLength / currentArg.default.length;
                         for (const currentDefault of currentArg.default) {
-                            if (currentDefault.length > defaultsSizeEach - 3) {
-                                modifiedDefaults.push(JSON.stringify(currentDefault.substr(0, defaultsSizeEach - 3) + "..."));
+                            if (currentDefault.length > defaultsSizeEach - 5) {
+                                modifiedDefaults.push(JSON.stringify(currentDefault.substr(0, defaultsSizeEach - 5) + "..."));
                             } else {
                                 modifiedDefaults.push(JSON.stringify(currentDefault));
                             }
