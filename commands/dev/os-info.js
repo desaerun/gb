@@ -20,7 +20,7 @@ const helpText = "Valid section titles are `all`,`user`,`cpu`,`net`,`db`,`tokens
 //main
 const execute = async function (client, message, args) {
     if (!isAdmin(message.member)) {
-        await sendMessage("You do not have the authority to perform that function.");
+        await sendMessage("You do not have the authority to perform that function.", message.channel);
         return false;
     }
     let fields = [];

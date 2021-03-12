@@ -23,7 +23,7 @@ const params = [
 //main
 const execute = async function (client, message, args) {
     if (!isAdmin(message.member)) {
-        await sendMessage("You do not have the authority to perform that function.");
+        await sendMessage("You do not have the authority to perform that function.", message.channel);
         return false;
     }
     let arg_string = args.join(" ");
