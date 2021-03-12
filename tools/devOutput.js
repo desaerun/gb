@@ -7,7 +7,7 @@
 const stackTrace = require("stack-trace");
 const {sendMessage} = require("./sendMessage");
 
-exports.sendTrace = async function (client, errorMessage, outputChannelIds) {
+const sendTrace = async function sendTrace(client, errorMessage, outputChannelIds) {
     let channelIds = [];
     if (outputChannelIds && Array.isArray(outputChannelIds)) {
         channelIds = outputChannelIds;
@@ -17,7 +17,7 @@ exports.sendTrace = async function (client, errorMessage, outputChannelIds) {
     const errorText = stackTrace.get().toString();
     if (channelIds.length > 0) {
         for (const channelId of channelIds) {
-            const channel = client.channels.cache.get(channelId);
+            const channel = this.client.channels.cache.get(channelId);
             await sendMessage(`Error Generated: \`\`\`${errorMessage}\`\`\``, channel);
             await sendMessage(`Stack Trace: \`\`\`${errorText}\`\`\``, channel);
         }
@@ -25,3 +25,5 @@ exports.sendTrace = async function (client, errorMessage, outputChannelIds) {
         console.log(errorMessage, errorText);
     }
 }
+
+exports.sendTrace = sendTrace;
