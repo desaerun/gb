@@ -21,7 +21,7 @@ global.normalNickname = "asdf";
 const client = new Discord.Client({partials: ["MESSAGE"]});
 
 const exitHook = require("async-exit-hook");
-exitHook(() => {
+exitHook((callback) => {
     sendMessageToBotStatusChannel(`The bot has received a request to terminate and will restart.`)
         .then(() => {
             console.log("SIGINT or SIGKILL received.");
@@ -29,12 +29,7 @@ exitHook(() => {
 });
 exitHook.unhandledRejectionHandler((err,callback) => {
     sendMessageToBotStatusChannel(`The bot has experienced an uncaught exception: ${err}`)
-        .then(() => {
-            console.error(`Uncaught exception error:  ${err}`);
-            if (err.stack) {
-                console.error(err.stack);
-            }
-        });
+        .then();
 });
 
 client.commands = new Discord.Collection();
