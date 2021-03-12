@@ -10,6 +10,7 @@ const params = [
         param: "force",
         description: "forces the bot to restart rather than sending SIGTERM.",
         type: "String|Boolean",
+        default: "",
         optional: true,
     }
 ];
