@@ -17,7 +17,7 @@ const sendTrace = async function sendTrace(client, errorMessage, outputChannelId
     const errorText = stackTrace.get().toString();
     if (channelIds.length > 0) {
         for (const channelId of channelIds) {
-            const channel = this.client.channels.cache.get(channelId);
+            const channel = client.channels.cache.get(channelId);
             await sendMessage(`Error Generated: \`\`\`${errorMessage}\`\`\``, channel);
             await sendMessage(`Stack Trace: \`\`\`${errorText}\`\`\``, channel);
         }
