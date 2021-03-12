@@ -55,6 +55,16 @@ module.exports = {
  */
 function getHelpMessage(command) {
     let fields = [];
+    if (command.aliases) {
+        let aliasList = [];
+        for (const alias of command.aliases) {
+            aliasList.push(`\`${alias}\``);
+        }
+        fields.push({
+            name: "Aliases:",
+            value: aliasList.join(" "),
+        });
+    }
     fields.push({
         name: "Description",
         value: command.description
@@ -63,13 +73,13 @@ function getHelpMessage(command) {
     if (command.params) {
         for (const currentArg of command.params) {
             logMessage(currentArg, 3);
-            fullCommand += ` `;
             let optionalMod = (currentArg.optional) ? "?" : "";
-            fullCommand += `[${optionalMod}${currentArg.param}]`;
+            fullCommand += ` [${optionalMod}${currentArg.param}]`;
 
-            let value = `**Type**: ${currentArg.type}\n` +
-                `**Description**: ${currentArg.description}\n\n`;
-
+            let value = [];
+            value.push(`**Type**: ${currentArg.type}`);
+            value.push(`**Description**: ${currentArg.description}`);
+            value.push("");
             if (currentArg.default) {
                 if (Array.isArray(currentArg.default)) {
                     const defaultsList = currentArg.default.join("\n");
@@ -86,20 +96,21 @@ function getHelpMessage(command) {
                     } else {
                         modifiedDefaults = currentArg.default;
                     }
-                    value += `**Default randomized from the following**:\n${modifiedDefaults.join("\n\n")}`;
+                    value.push(`**Default randomized from the following**:`);
+                    value.push(modifiedDefaults.join("\n\n"));
                 } else {
-                    value += `**Default**: ${currentArg.default}`;
+                    value.push(`**Default**: ${currentArg.default}`);
                 }
             } else {
                 if (currentArg.optional) {
-                    value += `\n**OPTIONAL**`;
+                    value.push(`**OPTIONAL**`);
                 } else {
-                    value += `\nNo default value.`;
+                    value.push(`No default value.`);
                 }
             }
             fields.push({
                 name: `\`${currentArg.param}\``,
-                value: value
+                value: value.join("\n"),
             });
         }
     }
@@ -109,58 +120,61 @@ function getHelpMessage(command) {
             value: command.helpText
         });
     }
+    if (command.examples) {
+        fields.push({
+            name: "Examples:",
+            value: command.examples.join("\n"),
+        });
+    }
 
-    return new Discord.MessageEmbed()
-        .setTitle(`**${command.name}**`)
-        .setDescription(`\`${fullCommand}\``)
-        .addFields(fields);
+    // return new Discord.MessageEmbed()
+    //     .setTitle(`**${command.name}**`)
+    //     .setDescription(`\`${fullCommand}\``)
+    //     .addFields(fields);
+    return new Discord.MessageEmbed({
+        title: `**${command.name}**`,
+        description: `\`${fullCommand}\``,
+        fields: fields,
+    });
 }
 
 function generateCommandList(clientCommands) {
     let dirPath = "./commands";
 
+    let response = [];
 
-    let response = "List of commands: ";
+    response.push("List of commands: ");
+
     //special case for the HELP file
-    response += `\n${CONFIG.PREFIX}_${name}_: ${description}`;
+    response.push(`${CONFIG.PREFIX}_${name}_: ${description}`);
+    response.push(getCommandsText(dirPath, clientCommands));
+    response.push("");
+    response.push(`Type \`${CONFIG.PREFIX}${name} [command]\` for more detailed help information about specific commands.`);
+    return response.join("\n");
+}
 
-    function getCommandsText(dirPath, clientCommands, indentLevel = 0) {
-        let commandsText = "";
-        const commandFiles = fs.readdirSync(dirPath);
-        for (const item of commandFiles) {
-            const fullItemName = `${dirPath}/${item}`;
-            if (fs.statSync(fullItemName).isDirectory()) {
-                const prettyDirName = uppercaseFirstLetter(item.replace("_", " "));
-                commandsText += `\n${indent(indentLevel)}**${prettyDirName}** commands:`;
-                commandsText += getCommandsText(fullItemName, clientCommands, indentLevel + 1);
-            } else {
-                if (item !== path.basename(__filename) && item.endsWith(".js")) {
-                    const commandName = item.match(/(.+)\.js/)[1];
-                    if (clientCommands.get(commandName)) {
-                        let currentCommand = clientCommands.get(commandName);
-                        commandsText += `\n${indent(indentLevel)}\`${CONFIG.PREFIX}${currentCommand.name}\``;
-                        if (currentCommand.aliases) {
-                            for (const name of currentCommand.aliases) {
-                                if (clientCommands.has(name)) {
-                                    commandsText += `; \`${CONFIG.PREFIX}${name}\``;
-                                } else {
-                                    console.log(`${name} does not exist in client.commands`);
-                                }
-                            }
-                        }
-                        commandsText += `: ${currentCommand.description}`;
-                    } else {
-                        console.log(`${commandName} does not exist in client.commands`);
-                    }
+function getCommandsText(dirPath, clientCommands, indentLevel = 0) {
+    let commandsTextArr = [];
+    const commandFiles = fs.readdirSync(dirPath);
+    for (const item of commandFiles) {
+        const fullItemName = `${dirPath}/${item}`;
+        if (fs.statSync(fullItemName).isDirectory()) {
+            const prettyDirName = uppercaseFirstLetter(item.replace("_", " "));
+            commandsTextArr.push(`${indent(indentLevel)}**${prettyDirName}** commands:`);
+            commandsTextArr.push(getCommandsText(fullItemName, clientCommands, indentLevel + 1));
+        } else {
+            if (item !== path.basename(__filename) && item.endsWith(".js")) {
+                const commandName = item.match(/(.+)\.js/)[1];
+                if (clientCommands.get(commandName)) {
+                    let currentCommand = clientCommands.get(commandName);
+                    commandsTextArr.push(`${indent(indentLevel)}\`${CONFIG.PREFIX}${currentCommand.name}\`: ${currentCommand.description}`);
+                } else {
+                    console.log(`${commandName} does not exist in client.commands`);
                 }
             }
         }
-        return commandsText;
     }
-
-    response += getCommandsText(dirPath, clientCommands);
-    response += `\n\nType \`${CONFIG.PREFIX}${name} [command]\` for more detailed help information about specific commands.`;
-    return response;
+    return commandsTextArr.join("\n");
 }
 
 function uppercaseFirstLetter(str) {
