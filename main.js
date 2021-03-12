@@ -20,8 +20,8 @@ global.normalNickname = "asdf";
 
 const client = new Discord.Client({partials: ["MESSAGE"]});
 
-const cleanup = require("node-cleanup");
-cleanup( processExitHandler);
+// const cleanup = require("node-cleanup");
+// cleanup( processExitHandler);
 
 client.commands = new Discord.Collection();
 client.listenerSet = new Discord.Collection();
@@ -299,18 +299,30 @@ async function messageDeleteHandler(deletedMessage) {
 async function shardErrorHandler(error) {
     console.error("possible shard error was caught: ", error);
 }
+process.on("SIGTERM",async () => {
+    await processExitHandler(null,"SIGTERM");
+});
+process.on("SIGINT",async () => {
+    await processExitHandler(null,"SIGINT");
+});
+process.on("uncaughtException", async function(e) {
+    await processExitHandler(2,null);
+})
+
+async function sendMessageToBotStatusChannel(message) {
+    const outputChannel = client.channels.cache.get(process.env.ONLINE_STATUS_CHANNEL_ID);
+    await sendMessage(message,outputChannel);
+}
 
 async function processExitHandler (exitCode,signal) {
-    const outputChannel = client.channels.cache.get(process.env.ONLINE_STATUS_CHANNEL_ID);
     console.log(`Exit code: ${exitCode} | Signal: ${signal}`);
     if (signal && (signal === "SIGINT" || signal === "SIGTERM")) {
         console.log("Got SIGINT or SIGTERM");
         await sendMessage(`The bot has received a request to terminate and will restart.`, outputChannel);
-        process.kill(process.pid, signal);
-        return false;
+    } else {
+        await sendMessage(`The bot has experienced an error and will restart.`, outputChannel);
     }
-    await sendMessage(`The bot has experienced an error and will restart.`, outputChannel);
-    return false;
+    process.kill(process.pid,"SIGINT");
 }
 
 
