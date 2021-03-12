@@ -74,7 +74,7 @@ function addSongToQueue(song) {
 }
 
 /**
- * Adds a song to the top of the queue array.
+ * Adds a song to the top of the queue.
  * @param song - the object with song information, from ytsr
  */
 function addSongToTopOfQueue(song) {
@@ -91,7 +91,7 @@ async function stopPlaying(textChannel) {
         await sendMessage("There is no song currently playing.", textChannel);
         return;
     }
-    await sendMessage("Stopping current song.  The song has been added back to the top of the queue." +
+    await sendMessage("Stopping current song.  The song has been added back to the top of the queue. " +
         "Use `-resume` to resume playing.", textChannel);
     currentSong.voiceChannel.leave();
     addSongToTopOfQueue(currentSong.song);
@@ -106,12 +106,12 @@ async function stopPlaying(textChannel) {
  * @returns {Promise<void>}
  */
 async function resumePlaying(textChannel, voiceChannel) {
-    if (queue.length === 0) {
-        await sendMessage("There are no songs in the queue.", textChannel);
-        return;
-    }
     if (playing) {
         await sendMessage("A song is already playing!", textChannel);
+        return;
+    }
+    if (queue.length === 0) {
+        await sendMessage("There are no songs in the queue.", textChannel);
         return;
     }
     await playNextSong(textChannel, voiceChannel);
