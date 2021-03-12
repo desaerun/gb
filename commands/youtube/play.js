@@ -74,6 +74,14 @@ function addSongToQueue(song) {
 }
 
 /**
+ * Adds a song to the top of the queue array.
+ * @param song - the object with song information, from ytsr
+ */
+function addSongToTopOfQueue(song) {
+    queue.unshift(song);
+}
+
+/**
  * Stops playing the current song and puts it back at the top of the queue.
  * @param textChannel - the object representing the Discord text channel that messages should be sent to.
  * @returns {Promise<void>}
@@ -85,11 +93,8 @@ async function stopPlaying(textChannel) {
     }
     await sendMessage("Stopping current song.  The song has been added back to the top of the queue." +
         "Use `-resume` to resume playing.", textChannel);
-    console.log(`Queue: ${JSON.stringify(queue)}`);
     currentSong.voiceChannel.leave();
-    console.log(`Unshifting current song back on to queue array`);
-    queue.unshift(currentSong.song);
-    console.log(`Queue after unshift: ${JSON.stringify(queue)}`);
+    addSongToTopOfQueue(currentSong.song);
     currentSong = {};
     playing = false;
 }
@@ -137,11 +142,13 @@ async function skipSong(textChannel) {
  * @returns {Promise<void>}
  */
 async function playSong(song, textChannel, voiceChannel) {
-    if (queue.length > 0 || playing) {
-        addSongToQueue(song);
-        await sendMessage(`Added **${suppressUrls(song.title)}** to the queue in position #${queue.length}`, textChannel);
+    if (queue.length > 0 && !playing) {
+        addSongToTopOfQueue(song);
     } else {
         addSongToQueue(song);
+        await sendMessage(`Added **${suppressUrls(song.title)}** to the queue in position #${queue.length}`, textChannel);
+    }
+    if (!playing) {
         await playNextSong(textChannel, voiceChannel);
     }
 }
@@ -216,8 +223,9 @@ async function nowPlaying(textChannel, showProgressBar = true) {
  * @returns {Promise<void>}
  */
 async function listQueue(textChannel) {
-    console.log(`Queue: ${JSON.stringify(queue)}`);
-    await nowPlaying(textChannel);
+    if (playing) {
+        await nowPlaying(textChannel);
+    }
     if (queue.length === 0) {
         await sendMessage("There are no songs currently in queue.", textChannel);
         return;
