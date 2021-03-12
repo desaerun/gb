@@ -28,12 +28,14 @@ const execute = async function (client, message, args) {
     }
     if (args[0] && (args[0].toLowerCase() === "force" || args[0] === "true")) {
         console.log(`toLowerCase: "${args[0].toLowerCase()}"`);
-        await sendMessage(`Killing bot process forcefully.`, message.channel);
-        process.exit(2);
+        await sendMessage(`Killing bot process forcefully in 10 seconds.`, message.channel);
+        setTimeout(() => {
+            process.exit(2);
+        }, 10000);
         return true;
     }
     await sendMessage(`Asking bot to restart nicely.`, message.channel);
-    process.kill(process.pid,'SIGTERM');
+    process.kill(process.pid, 'SIGTERM');
     return true;
 }
 
