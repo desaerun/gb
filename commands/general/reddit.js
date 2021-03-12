@@ -9,7 +9,7 @@ const description = "Retrieves the top post of the day from the selected subredd
 const params = [
     {
         param: "subreddit",
-        type: "string",
+        type: "String",
         description: "A string representing the subreddit name",
         default: [
             "YoutubeHaiku",

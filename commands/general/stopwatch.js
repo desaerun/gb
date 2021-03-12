@@ -11,8 +11,9 @@ const description = "Use -stopwatch {name} to time something! Once to start, aga
 const params = [
     {
         param: "stopwatchName",
-        type: "string",
+        type: "String",
         description: "A name for the thing being timed",
+        optional: true,
         // no default, as we'll print a list of active stopwatches
     }
 ];

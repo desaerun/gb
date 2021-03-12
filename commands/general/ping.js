@@ -4,7 +4,7 @@ const {sendMessage} = require("../../tools/sendMessage");
 
 //module settings
 const name = "ping";
-const names = ["p"];
+const aliases = ["p"];
 const description = "this is a ping command";
 
 //main
@@ -23,7 +23,7 @@ const execute = async function (client, message) {
 //module export
 module.exports = {
     name: name,
-    names: names,
+    aliases: aliases,
     description: description,
     execute: execute,
 }

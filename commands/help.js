@@ -12,8 +12,9 @@ const description = "Prints a message telling users how to get a list of command
 const params = [
     {
         param: "commandName",
-        type: "string",
+        type: "String",
         description: "A string representing the name of the command you need help with",
+        optional: true,
     }
 ];
 
@@ -55,6 +56,16 @@ module.exports = {
  */
 function getHelpMessage(command) {
     let fields = [];
+    if (command.aliases) {
+        let aliasList = [];
+        for (const alias of command.aliases) {
+            aliasList.push(`\`${alias}\``);
+        }
+        fields.push({
+            name: "Aliases:",
+            value: aliasList.join(" "),
+        });
+    }
     fields.push({
         name: "Description",
         value: command.description
@@ -63,43 +74,49 @@ function getHelpMessage(command) {
     if (command.params) {
         for (const currentArg of command.params) {
             logMessage(currentArg, 3);
-            fullCommand += ` `;
             let optionalMod = (currentArg.optional) ? "?" : "";
-            fullCommand += `[${optionalMod}${currentArg.param}]`;
+            fullCommand += ` [${optionalMod}${currentArg.param}]`;
 
-            let value = `**Type**: ${currentArg.type}\n` +
-                `**Description**: ${currentArg.description}\n\n`;
+            let paramText = [];
+            paramText.push(currentArg.description);
+            paramText.push("");
 
+            // discord fields can only be 1024 chars long at most
+            const paramTextRemainingLength = 1024 - paramText.join("\n").length;
             if (currentArg.default) {
                 if (Array.isArray(currentArg.default)) {
-                    const defaultsList = currentArg.default.join("\n");
+                    const defaultsListLength = currentArg.default.join("\n\n").length;
                     let modifiedDefaults = [];
-                    if (defaultsList.length > 900) {
-                        const defaultsSizeEach = 900 / currentArg.default.length;
+                    if (defaultsListLength > paramTextRemainingLength) {
+                        const defaultsSizeEach = paramTextRemainingLength / currentArg.default.length;
                         for (const currentDefault of currentArg.default) {
-                            if (currentDefault.length > defaultsSizeEach - 3) {
-                                modifiedDefaults.push(currentDefault.substr(0, defaultsSizeEach - 3) + "...");
+                            //using JSON.stringify wraps Strings in quotes but leaves numbers alone
+                            if (currentDefault.length > defaultsSizeEach - 5) {
+                                modifiedDefaults.push(
+                                    JSON.stringify(currentDefault.substr(0, defaultsSizeEach - 5) + "...")
+                                );
                             } else {
-                                modifiedDefaults.push(currentDefault);
+                                modifiedDefaults.push(JSON.stringify(currentDefault));
                             }
                         }
                     } else {
                         modifiedDefaults = currentArg.default;
                     }
-                    value += `**Default randomized from the following**:\n${modifiedDefaults.join("\n\n")}`;
+                    paramText.push(`**Default randomized from the following**:`);
+                    paramText.push(modifiedDefaults.join("\n\n"));
                 } else {
-                    value += `**Default**: ${currentArg.default}`;
+                    paramText.push(`**Default**: ${currentArg.default}`);
                 }
             } else {
                 if (currentArg.optional) {
-                    value += `\n**OPTIONAL**`;
+                    paramText.push(`**OPTIONAL**`);
                 } else {
-                    value += `\nNo default value.`;
+                    paramText.push(`No default value.`);
                 }
             }
             fields.push({
-                name: `\`${currentArg.param}\``,
-                value: value
+                name: `\`${currentArg.param}\` ${currentArg.type}`,
+                value: paramText.join("\n"),
             });
         }
     }
@@ -109,58 +126,61 @@ function getHelpMessage(command) {
             value: command.helpText
         });
     }
+    if (command.examples) {
+        fields.push({
+            name: "Examples:",
+            value: command.examples.join("\n"),
+        });
+    }
 
-    return new Discord.MessageEmbed()
-        .setTitle(`**${command.name}**`)
-        .setDescription(`\`${fullCommand}\``)
-        .addFields(fields);
+    // return new Discord.MessageEmbed()
+    //     .setTitle(`**${command.name}**`)
+    //     .setDescription(`\`${fullCommand}\``)
+    //     .addFields(fields);
+    return new Discord.MessageEmbed({
+        title: `**${command.name}**`,
+        description: `\`${fullCommand}\``,
+        fields: fields,
+    });
 }
 
 function generateCommandList(clientCommands) {
     let dirPath = "./commands";
 
+    let response = [];
 
-    let response = "List of commands: ";
+    response.push("List of commands: ");
+
     //special case for the HELP file
-    response += `\n${CONFIG.PREFIX}_${name}_: ${description}`;
+    response.push(`${CONFIG.PREFIX}_${name}_: ${description}`);
+    response.push(getCommandsText(dirPath, clientCommands));
+    response.push("");
+    response.push(`Type \`${CONFIG.PREFIX}${name} [command]\` for more detailed help information about specific commands.`);
+    return response.join("\n");
+}
 
-    function getCommandsText(dirPath, clientCommands, indentLevel = 0) {
-        let commandsText = "";
-        const commandFiles = fs.readdirSync(dirPath);
-        for (const item of commandFiles) {
-            const fullItemName = `${dirPath}/${item}`;
-            if (fs.statSync(fullItemName).isDirectory()) {
-                const prettyDirName = uppercaseFirstLetter(item.replace("_", " "));
-                commandsText += `\n${indent(indentLevel)}**${prettyDirName}** commands:`;
-                commandsText += getCommandsText(fullItemName, clientCommands, indentLevel + 1);
-            } else {
-                if (item !== path.basename(__filename) && item.endsWith(".js")) {
-                    const commandName = item.match(/(.+)\.js/)[1];
-                    if (clientCommands.get(commandName)) {
-                        let currentCommand = clientCommands.get(commandName);
-                        commandsText += `\n${indent(indentLevel)}\`${CONFIG.PREFIX}${currentCommand.name}\``;
-                        if (currentCommand.aliases) {
-                            for (const name of currentCommand.aliases) {
-                                if (clientCommands.has(name)) {
-                                    commandsText += `; \`${CONFIG.PREFIX}${name}\``;
-                                } else {
-                                    console.log(`${name} does not exist in client.commands`);
-                                }
-                            }
-                        }
-                        commandsText += `: ${currentCommand.description}`;
-                    } else {
-                        console.log(`${commandName} does not exist in client.commands`);
-                    }
+function getCommandsText(dirPath, clientCommands, indentLevel = 0) {
+    let commandsTextArr = [];
+    const commandFiles = fs.readdirSync(dirPath);
+    for (const item of commandFiles) {
+        const fullItemName = `${dirPath}/${item}`;
+        if (fs.statSync(fullItemName).isDirectory()) {
+            const prettyDirName = uppercaseFirstLetter(item.replace("_", " "));
+            commandsTextArr.push(`${indent(indentLevel)}**${prettyDirName}** commands:`);
+            commandsTextArr.push(getCommandsText(fullItemName, clientCommands, indentLevel + 1));
+        } else {
+            if (item !== path.basename(__filename) && item.endsWith(".js")) {
+                const commandName = item.match(/(.+)\.js/)[1];
+                if (clientCommands.get(commandName)) {
+                    let currentCommand = clientCommands.get(commandName);
+                    commandsTextArr.push(`${indent(indentLevel)}\`${CONFIG.PREFIX}${currentCommand.name}\`: ${currentCommand.description}`);
+                } else {
+                    console.log(`${commandName} does not exist in client.commands`);
                 }
             }
         }
-        return commandsText;
     }
-
-    response += getCommandsText(dirPath, clientCommands);
-    response += `\n\nType \`${CONFIG.PREFIX}${name} [command]\` for more detailed help information about specific commands.`;
-    return response;
+    return commandsTextArr.join("\n");
 }
 
 function uppercaseFirstLetter(str) {

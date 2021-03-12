@@ -7,7 +7,7 @@ const description = "trout-slap command";
 const params = [
     {
         param: "name",
-        type: "string",
+        type: "String",
         description: "Name of the person to be trout-slapped",
         default: "ur mum",
     }
