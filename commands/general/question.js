@@ -12,7 +12,7 @@ const description = "Attempts to answer your question";
 const params = [
     {
         param: "question",
-        type: tring",
+        type: "String",
         description: "A question that the bot will attempt to answer",
         default: "boobies",
     }
