@@ -77,7 +77,7 @@ async function stopPlaying(textChannel) {
     console.log(`Queue: ${JSON.stringify(queue)}`);
     currentSong.voiceChannel.leave();
     console.log(`Unshifting current song back on to queue array`);
-    queue.unshift(currentSong);
+    queue.unshift(currentSong.song);
     console.log(`Queue after unshift: ${JSON.stringify(queue)}`);
     currentSong = {};
     playing = false;
