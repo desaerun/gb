@@ -55,7 +55,7 @@ const execute = async function (client, message, args) {
                 }
             }
         } catch (e) {
-            sendMessage(`Error occurred reading logfile \`${logFile.file}\`: ${e}`, message.channel);
+            await sendMessage(`Error occurred reading logfile \`${logFile.file}\`: ${e}`, message.channel);
         }
     }
 }
