@@ -76,10 +76,10 @@ function getHelpMessage(command) {
             let optionalMod = (currentArg.optional) ? "?" : "";
             fullCommand += ` [${optionalMod}${currentArg.param}]`;
 
-            let value = [];
-            value.push(`**Type**: ${currentArg.type}`);
-            value.push(`**Description**: ${currentArg.description}`);
-            value.push("");
+            let paramText = [];
+            paramText.push(`**Type**: ${currentArg.type}`);
+            paramText.push(`**Description**: ${currentArg.description}`);
+            paramText.push("");
             if (currentArg.default) {
                 if (Array.isArray(currentArg.default)) {
                     const defaultsList = currentArg.default.join("\n");
@@ -96,21 +96,21 @@ function getHelpMessage(command) {
                     } else {
                         modifiedDefaults = currentArg.default;
                     }
-                    value.push(`**Default randomized from the following**:`);
-                    value.push(modifiedDefaults.join("\n\n"));
+                    paramText.push(`**Default randomized from the following**:`);
+                    paramText.push(modifiedDefaults.join("\n\n"));
                 } else {
-                    value.push(`**Default**: ${currentArg.default}`);
+                    paramText.push(`**Default**: ${currentArg.default}`);
                 }
             } else {
                 if (currentArg.optional) {
-                    value.push(`**OPTIONAL**`);
+                    paramText.push(`**OPTIONAL**`);
                 } else {
-                    value.push(`No default value.`);
+                    paramText.push(`No default value.`);
                 }
             }
             fields.push({
                 name: `\`${currentArg.param}\``,
-                value: value.join("\n"),
+                value: paramText.join("\n"),
             });
         }
     }
