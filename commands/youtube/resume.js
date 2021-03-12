@@ -1,5 +1,5 @@
 //imports
-const {playNextSong} = require("./play");
+const {resumePlaying} = require("./play");
 const {sendMessage} = require("../../tools/sendMessage")
 
 //module settings
@@ -12,7 +12,7 @@ const execute = async function (client, message, args) {
         await sendMessage(`You must be in a voice channel to use this command.`, message.channel);
         return false;
     }
-    await playNextSong(message.channel, message.member.voice.channel);
+    await resumePlaying(message.channel, message.member.voice.channel);
 }
 
 //module export

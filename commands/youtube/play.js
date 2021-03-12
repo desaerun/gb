@@ -108,11 +108,13 @@ async function stopPlaying(textChannel) {
 async function resumePlaying(textChannel, voiceChannel) {
     if (queue.length === 0) {
         await sendMessage("There are no songs in the queue.");
-    } else if (playing) {
-        await sendMessage("A song is already playing!");
-    } else {
-        await playNextSong(textChannel, voiceChannel);
+        return;
     }
+    if (playing) {
+        await sendMessage("A song is already playing!");
+        return;
+    }
+    await playNextSong(textChannel, voiceChannel);
 }
 
 /**
