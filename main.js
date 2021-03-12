@@ -20,17 +20,8 @@ global.normalNickname = "asdf";
 
 const client = new Discord.Client({partials: ["MESSAGE"]});
 
-const exitHook = require("async-exit-hook");
-exitHook((callback) => {
-    sendMessageToBotStatusChannel(`The bot has received a request to terminate and will restart.`)
-        .then(() => {
-            console.log("SIGINT or SIGKILL received.");
-        });
-});
-exitHook.unhandledRejectionHandler((err,callback) => {
-    sendMessageToBotStatusChannel(`The bot has experienced an uncaught exception: ${err}`)
-        .then();
-});
+//exit handler
+require("./tools/exitHandler").init(client);
 
 client.commands = new Discord.Collection();
 client.listenerSet = new Discord.Collection();
@@ -307,11 +298,6 @@ async function messageDeleteHandler(deletedMessage) {
 
 async function shardErrorHandler(error) {
     console.error("possible shard error was caught: ", error);
-}
-
-async function sendMessageToBotStatusChannel(message) {
-    const outputChannel = client.channels.cache.get(process.env.ONLINE_STATUS_CHANNEL_ID);
-    await sendMessage(message,outputChannel);
 }
 
 function parseQuotedArgs(args) {

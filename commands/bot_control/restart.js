@@ -9,6 +9,7 @@ const params = [
     {
         param: "force",
         description: "forces the bot to restart rather than sending SIGTERM.",
+        type: "String|Boolean",
         optional: true,
     }
 ];
@@ -23,13 +24,14 @@ const execute = async function (client, message, args) {
         await sendMessage("You do not have the authority to perform that function.");
         return false;
     }
-    if (args[0] && args[0].toLowerCase() === "force") {
+    if (args[0] && args[0].toLowerCase() === "force" || args[0] === "true") {
         await sendMessage(`Killing bot process forcefully.`, message.channel);
         process.exit(2);
         return true;
     }
     await sendMessage(`Asking bot to restart nicely.`, message.channel);
     process.kill(process.pid,'SIGTERM');
+    return true;
 }
 
 //module export
