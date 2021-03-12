@@ -222,7 +222,7 @@ function coerceArgsToTypes(command, args) {
     let argTypeErrors = [];
     if (command.params) {
         for (let i = 0; i < command.params.length; i++) {
-            if (command.params[i].type) {
+            if (command.params[i].type && args[i]) {
                 const allowedTypes = command.params[i].type.split("|");
                 let coercibleTypes = {
                     int: false,
