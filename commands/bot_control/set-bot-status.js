@@ -1,4 +1,6 @@
 //imports
+const {sendMessage} = require("../../tools/sendMessage");
+const {isAdmin} = require("../../tools/utils");
 
 
 //module settings
@@ -20,6 +22,10 @@ const params = [
 
 //main
 const execute = async function (client, message, args) {
+    if (!isAdmin(message.member)) {
+        await sendMessage("You do not have the authority to perform that function.", message.channel);
+        return false;
+    }
     let arg_string = args.join(" ");
     await client.user.setActivity(arg_string, {type: "PLAYING"});
 }
