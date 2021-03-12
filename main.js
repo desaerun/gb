@@ -318,9 +318,9 @@ async function processExitHandler (exitCode,signal) {
     console.log(`Exit code: ${exitCode} | Signal: ${signal}`);
     if (signal && (signal === "SIGINT" || signal === "SIGTERM")) {
         console.log("Got SIGINT or SIGTERM");
-        await sendMessage(`The bot has received a request to terminate and will restart.`, outputChannel);
+        await sendMessageToBotStatusChannel(`The bot has received a request to terminate and will restart.`);
     } else {
-        await sendMessage(`The bot has experienced an error and will restart.`, outputChannel);
+        await sendMessageToBotStatusChannel(`The bot has experienced an error and will restart.`);
     }
     process.kill(process.pid,"SIGINT");
 }
