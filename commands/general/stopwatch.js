@@ -13,6 +13,7 @@ const params = [
         param: "stopwatchName",
         type: "string",
         description: "A name for the thing being timed",
+        optional: true,
         // no default, as we'll print a list of active stopwatches
     }
 ];
