@@ -304,6 +304,7 @@ async function processExitHandler (exitCode,signal) {
     const outputChannel = client.channels.cache.get(process.env.ONLINE_STATUS_CHANNEL_ID);
     console.log(`Exit code: ${exitCode} | Signal: ${signal}`);
     if (signal && (signal === "SIGINT" || signal === "SIGTERM")) {
+        console.log("Got SIGINT or SIGTERM");
         await sendMessage(`The bot has received a request to terminate and will restart.`, outputChannel);
         process.kill(process.pid, signal);
         return false;
