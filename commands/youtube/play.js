@@ -124,10 +124,10 @@ async function playNextSong(textChannel, voiceChannel) {
 }
 
 /**
-* Stops playing the current song and puts it back at the top of the queue.
-* @param textChannel - the object representing the Discord text channel that messages should be sent to.
-* @returns {Promise<void>}
-*/
+ * Stops playing the current song and puts it back at the top of the queue.
+ * @param textChannel - the object representing the Discord text channel that messages should be sent to.
+ * @returns {Promise<void>}
+ */
 async function stopPlaying(textChannel) {
     if (!playing) {
         await sendMessage("There is no song currently playing.", textChannel);

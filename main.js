@@ -93,9 +93,8 @@ async function incomingMessageHandler(message) {
  * @param args
  */
 async function runCommands(client, message, args) {
-    console.log(`args @ runCommands: ${args}`);
     let commandName = args.shift().toLowerCase();
-    console.log(`commandName: ${commandName}`);
+
     //support for uwu-ified command names
     if (uwuMode) {
         const possibleUwuCommandNames = generateUwuCombinations(commandName);
@@ -105,14 +104,12 @@ async function runCommands(client, message, args) {
             }
         }
     }
-    console.log(`commandName after uwu function: ${commandName}`);
 
     if (client.commands.has(commandName)) {
         try {
             let command = client.commands.get(commandName);
             args = setArgsToDefault(command, args);
 
-            console.log(`args after setting args to default: ${args}`);
             let argTypeErrors;
             [args, argTypeErrors] = coerceArgsToTypes(command, args);
             if (argTypeErrors.length > 0) {
@@ -120,9 +117,7 @@ async function runCommands(client, message, args) {
                 await sendMessage(errors, message.channel);
                 return false;
             }
-            console.log(`about to run ${commandName} with these args: ${args}`);
             command.execute(client, message, args);
-
         } catch (e) {
             await sendMessage(`There was an error running the command: ${e}`, message.channel);
         }
@@ -232,7 +227,6 @@ function coerceArgsToTypes(command, args) {
                     snowflake: false,
                 };
                 for (const currentAllowedType of allowedTypes) {
-                    console.log(`Currently processing allowed type: ${currentAllowedType}`);
                     switch (currentAllowedType.toLowerCase()) {
                         case "integer":
                         case "int":

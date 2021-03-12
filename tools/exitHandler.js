@@ -1,14 +1,15 @@
 const exitHook = require("async-exit-hook");
+const CONFIG = require("../config/config");
 const {sendMessage} = require("./sendMessage");
 
 exports.init = function (client) {
     exitHook((callback) => {
         console.log("SIGINT or SIGKILL received.");
-        sendMessageToBotStatusChannel(client,`The bot has received a request to terminate and will restart.`)
+        sendMessageToDevChannel(client, `The bot has received a request to terminate and will restart.`)
             .then(callback);
     });
     exitHook.unhandledRejectionHandler((err, callback) => {
-        sendMessageToBotStatusChannel(client, `The bot has experienced an uncaught exception: ${err}`)
+        sendMessageToDevChannel(client, `The bot has experienced an uncaught exception: ${err}`)
             .then(callback);
     });
     return true;
@@ -20,7 +21,7 @@ exports.init = function (client) {
  * @param message - the message to send
  * @returns {Promise<void>}
  */
-async function sendMessageToBotStatusChannel(client, message) {
-    const outputChannel = client.channels.cache.get(process.env.ONLINE_STATUS_CHANNEL_ID);
-    await sendMessage(message,outputChannel);
+async function sendMessageToDevChannel(client, message) {
+    const outputChannel = client.channels.cache.get(process.env.DEV_CHANNEL_ID);
+    await sendMessage(message, outputChannel);
 }
