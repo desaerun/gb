@@ -3,14 +3,13 @@ const {sendMessage} = require("./sendMessage");
 
 exports.init = function (client) {
     exitHook((callback) => {
+        console.log("SIGINT or SIGKILL received.");
         sendMessageToBotStatusChannel(`The bot has received a request to terminate and will restart.`)
-            .then(() => {
-                console.log("SIGINT or SIGKILL received.");
-            });
+            .then(callback);
     });
     exitHook.unhandledRejectionHandler((err, callback) => {
         sendMessageToBotStatusChannel(client, `The bot has experienced an uncaught exception: ${err}`)
-            .then();
+            .then(callback);
     });
     return true;
 }
