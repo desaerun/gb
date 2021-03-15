@@ -123,7 +123,7 @@ async function getCoinGeckoPriceData(symbols,vsCurrency = "usd") {
     }
 }
 async function getCoinGeckoCoinInfo(symbols) {
-    const coinsList = await getCoinGeckCoinsList();
+    const coinsList = await getCoinGeckoCoinsList();
     symbols = symbols.toLowerCase().split(",");
     const coins = coinsList.filter(c => symbols.includes(c.id));
     if (coins && coins.some(c => c.id)) {
@@ -132,7 +132,7 @@ async function getCoinGeckoCoinInfo(symbols) {
         return false;
     }
 }
-async function getCoinGeckCoinsList() {
+async function getCoinGeckoCoinsList() {
     const cryptoCoinsListFile = "./data/cryptoCoinsList.json";
     let coinsListData;
     let allowedAgeDiff = (24 * 60 * 60 * 1000); // new coin list cache is fresh if it's newer than 1 day
