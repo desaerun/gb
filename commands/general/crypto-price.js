@@ -3,7 +3,6 @@ const axios = require("axios");
 const moment = require("moment");
 const fs = require("fs");
 const sendLongMessage = require("../../tools/sendLongMessage");
-const {createCanvas} = require("canvas");
 
 //module settings
 const name = "crypto-price";
@@ -20,7 +19,6 @@ const params = [
 //main
 async function execute(client, message, args) {
     //todo: get coinbase data first, only fall back on coingecko if ticker is not available,
-    //or for OHLC data to draw candles
 
     //todo: draw candlestick chart
     //todo: make output prettier (discord embed? inline fields? include market cap/volume?)
@@ -29,50 +27,29 @@ async function execute(client, message, args) {
         return;
     }
 
-    //join the args to one big long comma-separated string
     let symbols = args;
     let output = [];
-    try {
-        //get the list of coins
-        const coinsList = await getCoinsList();
-
-        let coins = {};
-
-        //for each of the symbols, get the CoinGecko coin-id
-        for (const symbol of symbols) {
-            const coin = getCoinInfo(symbol, coinsList);
-            //and push it onto the coinIds array
-            if (coin) {
-                coins[coin.id] = coin;
-            } else {
-                await message.channel.send(`${symbol.toUpperCase()} is not a valid coin symbol.`);
-            }
+    let coinbaseCoins = {};
+    let coinbaseSuccessCoins = [];
+    for (const symbol of symbols) {
+        coinbaseCoins[symbol] = getCoinbasePriceData(symbol);
+        if (coinbaseCoins[symbol]) {
+            coinbaseSuccessCoins.push(symbol);
         }
-        if (Object.keys(coins).length > 0) {
-            const vsCurrency = "usd";
-            coins = await getCoinPrices(coins, vsCurrency);
-            for (let coinData of Object.values(coins)) {
-                const symbol = coinData.symbol.toUpperCase();
-                const price = coinData[vsCurrency];
-                const priceFormatted = formatMoney(price);
-                const percentChange = coinData[`${vsCurrency}_24h_change`];
-
-                const previousPrice = coinData[vsCurrency] / (1 + (percentChange / 100));
-                const priceChange = coinData[vsCurrency] - previousPrice;
-                const sign = (priceChange < 0) ? "" : "+";
-                const formatMaxDecPlaces = (price > 100) ? 2 : 6;
-                const priceChangeFormatted = formatMoney(priceChange, 2, formatMaxDecPlaces);
-                const percentChangeFormatted = `${sign}${percentChange.toFixed(2)}%`;
-
-                const updatedDateTime = moment.unix(coinData.last_updated_at).format("hh:mm:ssA [GMT]Z");
-
-                output.push(`1 **${symbol}** = **${priceFormatted}** (**${priceChangeFormatted}**[**${percentChangeFormatted}**] last 24hrs) (As of ${updatedDateTime})`);
-            }
-        } else {
-            await message.channel.send("There were no valid coin symbols provided.");
-        }
-    } catch (err) {
-        await message.channel.send(`error fetching crypto price: ${err}`);
+    }
+    const remainingSymbols = symbols.filter(s => !coinbaseSuccessCoins.includes(s)).join(",");
+    const coinGeckoCoins = getCoinGeckoPriceData(remainingSymbols,"usd");
+    const finalCoinsList = {
+        ...coinbaseCoins,
+        ...coinGeckoCoins,
+    }
+    for (const [coin,coinInfo] of Object.entries(finalCoinsList)) {
+        const priceDiff = coinInfo.last - coinInfo.open;
+        const percDiff = priceDiff / coinInfo.open;
+        let curPriceFormatted = currencyFormat.format(coinInfo.last);
+        let priceDiffFormatted = (priceDiff < 0) ? "" : "+" + currencyFormat.format(priceDiff);
+        let percDiffFormatted = (priceDiff < 0) ? "" : "+" + percentFormat.format(percDiff);
+        output.push(`1 ${coin.toUpperCase()} = **${curPriceFormatted}** (**${priceDiffFormatted}**[**${percDiffFormatted}**] last 24hrs) (${coinInfo.source})`)
     }
     if (output.length > 0) {
         await sendLongMessage(output.join("\n"),message.channel);
@@ -88,12 +65,35 @@ module.exports = {
 }
 
 //helper functions
-async function getCoinPrices(coins,vsCurrency = "usd") {
-    const coinIdsStr = Object.keys(coins).join(",");
+async function getCoinbasePriceData(symbol) {
+    try {
+        const coinbaseRequest = await axios.get(`https://api.pro.coinbase.com/products/${symbol}-USD/stats`);
+        if (coinbaseRequest.status === 200) {
+            const coinbaseData = coinbaseRequest.data;
+            if (coinbaseData.message && coinbaseData.message === "NotFound") {
+                return false;
+            }
+            let coins = {};
+            coins[symbol] = {
+                last: coinbaseData.last,
+                open: coinbaseData.open,
+                volume: coinbaseData.volume,
+                updated: +Date.now(),
+                source: "Coinbase",
+            };
+            return coins;
+        }
+    } catch (e) {
+        throw new Error("There was an unexpected error retrieving the price from Coinbase.");
+    }
+}
+async function getCoinGeckoPriceData(symbols,vsCurrency = "usd") {
+    const coinIds = getCoinGeckoCoinInfo(symbols);
+    let coins = {};
     try {
         const coinPriceRequest = await axios.get("https://api.coingecko.com/api/v3/simple/price",{
             params: {
-                ids: coinIdsStr,
+                ids: coinIds,
                 vs_currencies: vsCurrency,
                 include_market_cap: true,
                 include_24h_vol: true,
@@ -102,30 +102,37 @@ async function getCoinPrices(coins,vsCurrency = "usd") {
             }
         });
         if (coinPriceRequest.status === 200) {
-            for (const [coinId,priceData] of Object.entries(coinPriceRequest.data)) {
+            for (const [coinId, priceData] of Object.entries(coinPriceRequest.data)) {
+                //coinGecko only gives "last" and "percent change"...
+                //calculate the Opening price:
+                const open = priceData[vsCurrency] / ((100 + priceData[`${vsCurrency}_24h_change`]) / 100);
                 coins[coinId] = {
-                    ...coins[coinId],
-                    ...priceData
-                }
+                    last: priceData[vsCurrency],
+                    open: open,
+                    volume: priceData[`${vsCurrency}_24h_vol`],
+                    updated: priceData[last_updated_at],
+                    source: "CoinGecko",
+                };
             }
             return coins;
         } else {
-                throw new Error(`HTTP status was not 200: ${coinPriceRequest.status}`);
+            throw new Error(`HTTP status was not 200: ${coinPriceRequest.status}`);
         }
     } catch (e) {
-        throw new Error(`There was an unexpected error retrieving price data: ${e}`);
+        throw new Error(`There was an unexpected error retrieving CoinGecko price data: ${e}`);
     }
 }
-function getCoinInfo(symbol, coinsList) {
-    const crypto = symbol.toLowerCase();
-    const coin = coinsList.find(c => (c.symbol === crypto || c.id === crypto));
-    if (coin && coin.id) {
-        return coin;
+async function getCoinGeckoCoinInfo(symbols) {
+    const coinsList = await getCoinGeckCoinsList();
+    symbols = symbols.toLowerCase().split(",");
+    const coins = coinsList.filter(c => symbols.includes(c.id));
+    if (coins && coins.some(c => c.id)) {
+        return coins;
     } else {
         return false;
     }
 }
-async function getCoinsList() {
+async function getCoinGeckCoinsList() {
     const cryptoCoinsListFile = "./data/cryptoCoinsList.json";
     let coinsListData;
     let allowedAgeDiff = (24 * 60 * 60 * 1000); // new coin list cache is fresh if it's newer than 1 day
@@ -140,7 +147,7 @@ async function getCoinsList() {
         if (modified < allowedAge) {
             //if it's older than the allowed age, fetch data from API and update the cache.
             try {
-                coinsListData = await getAPICoinsList();
+                coinsListData = await getCoinGeckoAPICoinsList();
                 fs.writeFileSync(cryptoCoinsListFile,JSON.stringify(coinsListData));
                 return coinsListData;
             } catch (e)  {
@@ -154,7 +161,7 @@ async function getCoinsList() {
     } else {
         //if not, fetch from API and write to cache
         try {
-            coinsListData = await getAPICoinsList();
+            coinsListData = await getCoinGeckoAPICoinsList();
         } catch (e) {
             throw new Error(e);
         }
@@ -162,7 +169,7 @@ async function getCoinsList() {
         return coinsListData;
     }
 }
-async function getAPICoinsList() {
+async function getCoinGeckoAPICoinsList() {
     console.log("Fetching fresh coins list from API.");
     try {
         const coinsListRequest = await axios.get("https://api.coingecko.com/api/v3/coins/list");
@@ -175,7 +182,7 @@ async function getAPICoinsList() {
         throw new Error(`There was an unexpected error retrieving API coin list: ${e}`);
     }
 }
-async function getCoinOhlcData(coinId,vsCurrency = "usd", days = 1) {
+async function getCoinGeckoOhlcData(coinId,vsCurrency = "usd", days = 1) {
     try {
         const coinOhlcRequest = await axios.get(`https://api.coingeck.com/api/v3/coins/${coinId}/ohlc`,{
             params: {
@@ -192,34 +199,16 @@ async function getCoinOhlcData(coinId,vsCurrency = "usd", days = 1) {
         throw new Error(`There was an unexpected error retrieving OHLC data from API: ${e}`);
     }
 }
-function formatMoney(n,minPlaces = 2, maxPlaces = 8) {
-    const currencyFormat = new Intl.NumberFormat("en-US",
-        {
-            style: "currency",
-            currency: "USD",
-            minimumFractionDigits: minPlaces,
-            maximumFractionDigits: maxPlaces,
-        });
-    return currencyFormat.format(n);
-}
+const currencyFormat = new Intl.NumberFormat("en-US",
+    {
+        style: "currency",
+        currency: "USD",
+        minimumFractionDigits: minPlaces,
+        maximumFractionDigits: maxPlaces,
+    });
 const percentFormat = new Intl.NumberFormat("en-US",
     {
         style: "percent",
         minimumFractionDigits: 2,
         maximumFractionDigits: 2
     });
-
-async function drawCandles(ticker,range) {
-    let data = await getCoinOhlcData();
-
-    let width = 400;
-    let height = 400;
-
-    const canvas = createCanvas(width,height);
-    const context = canvas.getContext("2d");
-
-    context.fillStyle = "#000";
-    context.fillRect(0, 0, width, height);
-
-}
-
