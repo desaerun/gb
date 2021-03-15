@@ -1,8 +1,8 @@
 //imports
 const ytdl = require("ytdl-core-discord");
 const ytsr = require("ytsr");
-const sendLongMessage = require("../../tools/sendLongMessage");
 const {suppressUrls} = require("../../tools/utils");
+const {sendMessage} = require("../../tools/sendMessage")
 const Discord = require("discord.js");
 
 //module settings
@@ -11,7 +11,7 @@ const description = "play audio from a youtube file";
 const params = [
     {
         param: "youtubeQuery",
-        type: "string",
+        type: "String",
         description: "The query to be searched on youtube",
         default: "L4D2 jockey sounds",
     }
@@ -22,9 +22,9 @@ let queue = [];
 let playing = false;
 let currentSong = {};
 
-async function execute(client, message, args) {
+const execute = async function (client, message, args) {
     if (!message.member.voice.channel) {
-        await message.channel.send(`You must be in a voice channel to use this command.`);
+        await sendMessage(`You must be in a voice channel to use this command.`, message.channel);
         return false;
     }
     let q = args.join(" ");
@@ -36,7 +36,7 @@ async function execute(client, message, args) {
         let req = await ytsr(filter.url, {limit: 1});
         video = req.items[0];
     } catch (e) {
-        throw e;
+        await sendMessage(`Could not fetch video file: ${e}`, message.channel);
     }
     const song = {
         url: video.url,
@@ -61,54 +61,41 @@ module.exports = {
     clearQueue: clearQueue,
     nowPlaying: nowPlaying,
     playNextSong: playNextSong,
+    resumePlaying: resumePlaying,
 }
 
 //helper functions
-function addSongToQueue(song) {
-    queue.push(song);
-}
-
-async function stopPlaying(textChannel) {
-    if (!playing) {
-        await textChannel.send("There is no song currently playing.");
-        return;
-    }
-    textChannel.send("Stopping current song.");
-    currentSong.voiceChannel.leave();
-    queue.unshift(currentSong);
-    currentSong = {};
-    playing = false;
-}
-
-async function skipSong(textChannel) {
-    if (!playing) {
-        await textChannel.send(`There is no song currently playing.`);
-        return;
-    }
-    await textChannel.send(`Skipping **${suppressUrls(currentSong.song.title)}**`);
-    await playNextSong(textChannel, currentSong.voiceChannel);
-    if (!playing && queue.length === 0) {
-        await textChannel.send(`End of song queue.`);
-    }
-}
-
+/**
+ * Begins playing the song, or, if something is already playing, adds it to the queue.
+ * @param song - the object with song information, from ytsr
+ * @param textChannel - the object representing the Discord text channel that messages should be sent to.
+ * @param voiceChannel - the object representing the Discord voice channel the bot should join and play the song to.
+ * @returns {Promise<void>}
+ */
 async function playSong(song, textChannel, voiceChannel) {
-    if (queue.length > 0 || playing) {
-        addSongToQueue(song);
-        await textChannel.send(`Added **${suppressUrls(song.title)}** to the queue in position #${queue.length}`);
+    if (queue.length > 0 && !playing) {
+        addSongToTopOfQueue(song);
     } else {
         addSongToQueue(song);
+        await sendMessage(`Added **${suppressUrls(song.title)}** to the queue in position #${queue.length}`, textChannel);
+    }
+    if (!playing) {
         await playNextSong(textChannel, voiceChannel);
     }
 }
 
+/**
+ * Plays the next song in the queue, or leaves the channel if there are no songs remaining.
+ * @param textChannel - the object representing the Discord text channel that messages should be sent to.
+ * @param voiceChannel - the object representing the Discord voice channel the bot should join and play the song to.
+ * @returns {Promise<void>}
+ */
 async function playNextSong(textChannel, voiceChannel) {
     if (queue.length > 0) {
         const song = queue.shift();
         try {
             const connection = await voiceChannel.join();
-            const stream = await ytdl(song.url);
-            const dispatcher = connection.play(stream, {type: "opus"});
+            const dispatcher = connection.play(await ytdl(song.url), {type: "opus"});
             playing = true;
             currentSong = {
                 started: +Date.now(),
@@ -126,7 +113,8 @@ async function playNextSong(textChannel, voiceChannel) {
                 }
             });
         } catch (e) {
-            throw e;
+            await sendMessage(`Failed to play song ${song.title}: ${e}`, textChannel);
+            playing = false;
         }
     } else {
         playing = false;
@@ -135,46 +123,142 @@ async function playNextSong(textChannel, voiceChannel) {
     }
 }
 
+/**
+ * Stops playing the current song and puts it back at the top of the queue.
+ * @param textChannel - the object representing the Discord text channel that messages should be sent to.
+ * @returns {Promise<void>}
+ */
+async function stopPlaying(textChannel) {
+    if (!playing) {
+        await sendMessage("There is no song currently playing.", textChannel);
+        return;
+    }
+    await sendMessage("Stopping current song.  The song has been added back to the top of the queue. " +
+        "Use `-resume` to resume playing.", textChannel);
+    currentSong.voiceChannel.leave();
+    addSongToTopOfQueue(currentSong.song);
+    currentSong = {};
+    playing = false;
+}
+
+/**
+ * Resumes playing at the top of the queue without adding a new song.
+ * @param textChannel - the object representing the Discord text channel that messages should be sent to.
+ * @param voiceChannel - the object representing the Discord voice channel the bot should join and play the song to.
+ * @returns {Promise<void>}
+ */
+async function resumePlaying(textChannel, voiceChannel) {
+    if (playing) {
+        await sendMessage("A song is already playing!", textChannel);
+        return;
+    }
+    if (queue.length === 0) {
+        await sendMessage("There are no songs in the queue.", textChannel);
+        return;
+    }
+    await playNextSong(textChannel, voiceChannel);
+}
+
+/**
+ * Skips the current song and plays the next song in the queue, or leaves the channel if the queue is now empty.
+ * @param textChannel - the object representing the Discord text channel that messages should be sent to.
+ * @returns {Promise<void>}
+ */
+async function skipSong(textChannel) {
+    if (!playing) {
+        await sendMessage(`There is no song currently playing.`, textChannel);
+        return;
+    }
+    await sendMessage(`Skipping **${suppressUrls(currentSong.song.title)}**`, textChannel);
+    await playNextSong(textChannel, currentSong.voiceChannel);
+    if (!playing && queue.length === 0) {
+        await sendMessage(`End of song queue.`, textChannel);
+    }
+}
+
+/**
+ * Lists the song that is currently playing
+ * @param textChannel - the object representing the Discord text channel that messages should be sent to.
+ * @param showProgressBar - whether or not to show a progress bar
+ * @returns {Promise<void>}
+ */
 async function nowPlaying(textChannel, showProgressBar = true) {
     if (playing) {
         const songLength = durationStringToSeconds(currentSong.song.duration);
         const elapsed = (+Date.now() - currentSong.started) / 1000;
         const nowPlayingEmbed = new Discord.MessageEmbed()
             .setTitle(":musical_note: Now Playing :musical_note:")
-            .setDescription(`[**${currentSong.song.title}**](${currentSong.song.url})`)
-            .addField("Description", currentSong.song.description);
+            .setDescription(`[**${currentSong.song.title}**](${currentSong.song.url})`);
+        if (currentSong.song.description) {
+            nowPlayingEmbed.addField("Description", currentSong.song.description);
+        }
         if (showProgressBar) {
             nowPlayingEmbed.addField("Progress", generateProgressBar(21, elapsed, songLength));
         }
-        await textChannel.send(nowPlayingEmbed);
+        await sendMessage(nowPlayingEmbed, textChannel);
+    } else {
+        await sendMessage("There is no song currently playing.", textChannel);
     }
 }
 
+/**
+ * Lists the songs currently in the song queue.
+ * @param textChannel - the object representing the Discord text channel that messages should be sent to.
+ * @returns {Promise<void>}
+ */
 async function listQueue(textChannel) {
-    await nowPlaying(textChannel);
+    if (playing) {
+        await nowPlaying(textChannel);
+    }
     if (queue.length === 0) {
-        await textChannel.send("There are no songs currently in queue.");
+        await sendMessage("There are no songs currently in queue.", textChannel);
         return;
     }
     let totalDurationSeconds = 0;
-    let queueMessage = "Songs in queue:";
+    let queueMessageArr = [];
+    queueMessageArr.push("Songs in queue:");
     for (let i = 0; i < queue.length; i++) {
         let song = queue[i];
 
         totalDurationSeconds += durationStringToSeconds(song.duration);
-        queueMessage += `\n${i + 1}. **${suppressUrls(song.title)}** (${song.duration})`;
+        queueMessageArr.push(`${i + 1}. **${suppressUrls(song.title)}** (${song.duration})`);
     }
     if (playing) {
         totalDurationSeconds += durationStringToSeconds(currentSong.song.duration);
     }
     const totalDurationString = secondsToDurationString(totalDurationSeconds, 3);
-    queueMessage += `\nTotal duration: ${totalDurationString}`;
-    await sendLongMessage(queueMessage, textChannel, true);
+    queueMessageArr.push(`Total duration: ${totalDurationString}`);
+    let queueMessage = queueMessageArr.join("\n");
+    await sendMessage(queueMessage, textChannel, true);
 }
 
+/**
+ * Adds a song to the queue array
+ * @param song - the object with song information, from ytsr
+ */
+function addSongToQueue(song) {
+    queue.push(song);
+}
+
+/**
+ * Adds a song to the top of the queue.
+ * @param song - the object with song information, from ytsr
+ */
+function addSongToTopOfQueue(song) {
+    queue.unshift(song);
+}
+
+/**
+ * Empties the song queue.
+ * @param textChannel - the object representing the Discord text channel that messages should be sent to.
+ * @returns {Promise<void>}
+ */
 async function clearQueue(textChannel) {
     queue = [];
-    await textChannel.send("Song queue cleared.");
+    if (!playing) {
+        currentSong = {};
+    }
+    await sendMessage("Song queue cleared.", textChannel);
 }
 
 /**

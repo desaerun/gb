@@ -1,4 +1,6 @@
 //imports
+const {isAdmin} = require("../../tools/utils");
+
 // mysql
 const mysql = require("mysql2/promise");
 const db = require("../../config/db");
@@ -14,7 +16,11 @@ const name = "clear-message-history";
 const description = "Clears all message history from db";
 
 //main
-async function execute(client, message) {
+const execute = async function (client, message) {
+    if (!isAdmin(message.member)) {
+        await sendMessage("You do not have the authority to perform that function.", message.channel);
+        return false;
+    }
     try {
         await pool.query("DELETE FROM messages WHERE deleted IS NULL");
     } catch (e) {

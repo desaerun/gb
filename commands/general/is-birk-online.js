@@ -1,12 +1,13 @@
 //imports
-const logMessage = require("../../tools/logMessage");
+const {sendMessage} = require("../../tools/sendMessage");
+const {logMessage} = require("../../tools/utils");
 
 //module settings
 const name = "is-birk-online";
 const description = "Reports on Birk's status";
 
 //main
-async function execute(client, message) {
+const execute = async function (client, message) {
     let birk;
     try {
         const birkID = "97542223641464832";
@@ -37,7 +38,7 @@ async function execute(client, message) {
                 response = `tbh i don't even know what's going on right now`;
         }
         try {
-            await message.channel.send(response);
+            await sendMessage(response, message.channel);
         } catch (e) {
             logMessage(e, 2);
         }

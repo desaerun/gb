@@ -6,7 +6,7 @@ const name = "now-playing";
 const description = "Lists the currently playing song.";
 
 //main
-async function execute(client, message) {
+const execute = async function (client, message) {
     await nowPlaying(message.channel);
 }
 

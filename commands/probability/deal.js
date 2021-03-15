@@ -1,4 +1,5 @@
 //imports
+const {sendMessage} = require("../../tools/sendMessage");
 
 //module settings
 const name = "deal";
@@ -13,10 +14,10 @@ const params = [
 ];
 
 //main
-async function execute(client, message, args) {
+const execute = async function (client, message, args) {
     args[0] = Math.abs(args[0]);
     if (args[0] === 0) {
-        await message.channel.send("Cannot deal 0 cards.");
+        await sendMessage("Cannot deal 0 cards.", message.channel);
     }
 
     //build a deck
@@ -63,7 +64,7 @@ async function execute(client, message, args) {
         hand.push(card);
     }
     try {
-        await message.channel.send(`Dealt the following cards (${hand.length}): **${hand.join("**, **")}**`);
+        await sendMessage(`Dealt the following cards (${hand.length}): **${hand.join("**, **")}**`, message.channel);
     } catch (e) {
         throw e;
     }

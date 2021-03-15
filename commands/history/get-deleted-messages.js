@@ -1,6 +1,7 @@
 //imports
 const Discord = require("discord.js");
 const moment = require("moment");
+const {sendMessage} = require("../../tools/sendMessage");
 
 // mysql
 const mysql = require("mysql2/promise");
@@ -24,22 +25,22 @@ const params = [
     },
     {
         param: "numMessages",
-        type: "int",
+        type: "Integer",
         description: "The number of messages to retrieve",
-        default: 5,
+        default: 3,
     },
 ];
 
 //main
-async function execute(client, message, args) {
-    let userID = args[0];
+const execute = async function (client, message, args) {
+    let userId = args[0];
     if (message.mentions.users.first()) {
-        userID = message.mentions.users.first().id;
+        userId = message.mentions.users.first().id;
     }
     const numMessages = args[1] ? args[1] : params[1].default;
     let deletedMessages;
     try {
-        [deletedMessages] = await pool.query("SELECT" +
+        const query = "SELECT" +
             "    m.id," +
             "    m.content," +
             "    m.guild," +
@@ -58,41 +59,50 @@ async function execute(client, message, args) {
             " LEFT JOIN authors author ON" +
             "    m.author=author.id" +
             " WHERE" +
-            "    m.deleted IS NOT NULL and m.author = ?" +
+            "    m.author = ?" +
+            " AND" +
+            "    m.channel = ?" +
+            " AND" +
+            "    m.deleted IS NOT NULL" +
+            " AND" +
+            "    m.deletedBy = ?" +
             " ORDER BY" +
             "    m.timestamp" +
             " DESC" +
-            " LIMIT ?", [userID, +numMessages]);
+            " LIMIT ?";
+        [deletedMessages] = await pool.query(query, [userId, message.channel.id, "user", +numMessages]);
     } catch (e) {
         throw e;
     }
-    try {
-        await message.channel.send(`${deletedMessages[0].author_displayName}'s last ${numMessages} deleted messages:`);
-    } catch (e) {
-        console.error("There was an error sending the embed message:", e);
-        throw e;
-    }
-    for (const deletedMessage of deletedMessages) {
-        console.log(`Current message: ${JSON.stringify(deletedMessage)}`);
-        let embedMessage = new Discord.MessageEmbed()
-            .setAuthor(deletedMessage.author_displayName, deletedMessage.author_avatarURL)
-            .setThumbnail(deletedMessage.author_avatarURL)
-            .addField("Posted:", moment(deletedMessage.timestamp).format("dddd, MMMM Do YYYY @ hh:mm:ss a"))
-            .addField("Deleted:", moment(deletedMessage.deleted).format("dddd, MMMM Do YYYY @ hh:mm:ss a"))
-            .setFooter(`Message ID: ${deletedMessage.id}`);
-
-        if (deletedMessage.content) {
-            embedMessage.addField("\u200b", deletedMessage.content)
-        }
-        if (deletedMessage.attachmentURL) {
-            embedMessage.setImage(deletedMessage.attachmentURL);
-        }
+    if (deletedMessages.length > 0) {
         try {
-            await message.channel.send(embedMessage);
+            await sendMessage(`${deletedMessages[0].author_displayName}'s last ${numMessages} deleted messages:`, message.channel);
         } catch (e) {
             console.error("There was an error sending the embed message:", e);
-            return false;
+            throw e;
         }
+        for (const deletedMessage of deletedMessages) {
+            let deletedMessageEmbed = new Discord.MessageEmbed()
+                .setAuthor(deletedMessage.author_displayName, deletedMessage.author_avatarURL)
+                .setFooter(`Message ID: ${deletedMessage.id}`);
+            if (deletedMessage.content) {
+                deletedMessageEmbed.addField("\u200b", deletedMessage.content)
+            }
+            deletedMessageEmbed.addField("\u200b", "\u200b"); //spacer
+            deletedMessageEmbed.addField("Posted:", moment(deletedMessage.timestamp).format("dddd, MMMM Do YYYY @ hh:mm:ss a"));
+            deletedMessageEmbed.addField("Deleted:", moment(deletedMessage.deleted).format("dddd, MMMM Do YYYY @ hh:mm:ss a"))
+            if (deletedMessage.attachmentURL) {
+                deletedMessageEmbed.setImage(deletedMessage.attachmentURL);
+            }
+            try {
+                await sendMessage(deletedMessageEmbed, message.channel);
+            } catch (e) {
+                console.error("There was an error sending the embed message:", e);
+                return false;
+            }
+        }
+    } else {
+        await sendMessage("That user does not have any deleted messages in this channel.", message.channel);
     }
 }
 

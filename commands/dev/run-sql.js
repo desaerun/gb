@@ -1,4 +1,6 @@
 //imports
+const {sendMessage} = require("../../tools/sendMessage");
+const {isAdmin} = require("../../tools/utils");
 
 // mysql
 const mysql = require("mysql2/promise");
@@ -23,18 +25,21 @@ const params = [
 ];
 
 //main
-async function execute(client, message, args) {
-    //todo: make this exclusive to devs
+const execute = async function (client, message, args) {
+    if (!isAdmin(message.member)) {
+        await sendMessage("You do not have the authority to perform that function.", message.channel);
+        return false;
+    }
     let query = args.join(" ");
     let rows;
     try {
         [rows] = await pool.query(query);
     } catch (e) {
-        await message.channel.send(`MySQL error: ${e}`);
+        await sendMessage(`MySQL error: ${e}`, message.channel);
         throw e;
     }
     for (let row of rows) {
-        await message.channel.send(`\`\`\`${JSON.stringify(row)}\`\`\``);
+        await sendMessage(`\`\`\`${JSON.stringify(row)}\`\`\``, message.channel);
     }
 }
 

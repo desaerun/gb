@@ -1,5 +1,6 @@
 //imports
 const Discord = require("discord.js");
+const {sendMessage} = require("../../tools/sendMessage");
 
 //module settings
 const name = "ping";
@@ -7,7 +8,7 @@ const aliases = ["p"];
 const description = "this is a ping command";
 
 //main
-async function execute(client, message) {
+const execute = async function (client, message) {
     let latency = Date.now() - message.createdTimestamp;
 
     let embedMessage = new Discord.MessageEmbed()
@@ -16,7 +17,7 @@ async function execute(client, message) {
         .addField("Latency", `${latency} ms`)
         .addField("API", `${client.ws.ping} ms`);
 
-    await message.channel.send(embedMessage);
+    await sendMessage(embedMessage, message.channel);
 }
 
 //module export

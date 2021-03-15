@@ -1,11 +1,13 @@
 //imports
+const {isAdmin} = require("../../tools/utils");
+const {sendMessage} = require("../../tools/sendMessage");
 
 //module settings
 const name = "delete-message";
 const description = "Deletes a message"
 const params = [
     {
-        param: "messageID",
+        name: "messageID",
         description: "the ID of the message",
         type: "Snowflake",
         //no default, a message ID _must_ be given
@@ -13,9 +15,13 @@ const params = [
 ];
 
 //main
-async function execute(client, message, args) {
+const execute = async function (client, message, args) {
+    if (!isAdmin(message.member)) {
+        await sendMessage("You do not have the authority to perform that function.", message.channel);
+        return false;
+    }
     if (args.length !== 1) {
-        await message.channel.send(`You must provide the message ID.`)
+        await sendMessage(`You must provide the message ID.`, message.channel);
         return false;
     }
     let messageID = args[0];
@@ -27,7 +33,7 @@ async function execute(client, message, args) {
     } catch (e) {
         throw e;
     } finally {
-        await message.channel.send(`Message ${messageID} in channel "${targetMessage.guild.name}".#${targetMessage.channel.name} deleted.`)
+        await sendMessage(`Message ${messageID} in channel "${targetMessage.guild.name}".#${targetMessage.channel.name} deleted.`, message.channel);
     }
 }
 

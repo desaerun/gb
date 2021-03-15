@@ -1,6 +1,7 @@
 //imports
 const axios = require("axios");
 const decode = require("unescape");
+const {sendMessage} = require("../../tools/sendMessage");
 
 //module settings
 const name = "reddit";
@@ -8,7 +9,7 @@ const description = "Retrieves the top post of the day from the selected subredd
 const params = [
     {
         param: "subreddit",
-        type: "string",
+        type: "String",
         description: "A string representing the subreddit name",
         default: [
             "YoutubeHaiku",
@@ -26,7 +27,7 @@ const params = [
 const helpText = "This is sample help text";
 
 //main
-async function execute(client, message, args) {
+const execute = async function (client, message, args) {
 
     let subreddit = args[0];
     // Strip down to only content after "/" chars in case the user selected "r/youtubehaiku", for example
@@ -41,17 +42,17 @@ async function execute(client, message, args) {
         if (response.status === 200) {
 
             if (!response.data.data.children) {
-                await message.channel.send(`I wasn't able to find a post from the subreddit /r/${subreddit}.`);
+                await sendMessage(`I wasn't able to find a post from the subreddit /r/${subreddit}.`, message.channel);
                 return;
             }
 
             const desiredPostData = response.data.data.children[0].data;
 
             const fullMessage = buildMessageFromPostJSON(desiredPostData);
-            await message.channel.send(fullMessage);
+            await sendMessage(fullMessage, message.channel);
         }
     } catch (err) {
-        await message.channel.send(`Error encountered while requesting data from Reddit: ${err}`);
+        await sendMessage(`Error encountered while requesting data from Reddit: ${err}`, message.channel);
     }
 }
 

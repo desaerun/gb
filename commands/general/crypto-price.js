@@ -2,7 +2,7 @@
 const axios = require("axios");
 const moment = require("moment");
 const fs = require("fs");
-const sendLongMessage = require("../../tools/sendLongMessage");
+const sendMessage = require("../../tools/sendLongMessage");
 
 //module settings
 const name = "crypto-price";
@@ -10,7 +10,7 @@ const description = "Retrieves crypto prices from Coinbase API (in USD)";
 const params = [
     {
         param: "cryptoTicker",
-        type: "string",
+        type: "String",
         description: "a crypto ticker (BTC, ETH)",
         default: "BTC",
     }
