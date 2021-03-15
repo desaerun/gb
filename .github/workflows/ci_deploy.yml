@@ -1,4 +1,4 @@
-name: CI Deploy - GroidBot
+name: CI Deploy - GB
 on:
   push:
 
