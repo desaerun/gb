@@ -2,7 +2,7 @@
 const axios = require("axios");
 const moment = require("moment");
 const fs = require("fs");
-const sendMessage = require("../../tools/sendLongMessage");
+const {sendMessage} = require("../../tools/sendMessage");
 
 //module settings
 const name = "crypto-price";
@@ -46,13 +46,16 @@ async function execute(client, message, args) {
     for (const [coin,coinInfo] of Object.entries(finalCoinsList)) {
         const priceDiff = coinInfo.last - coinInfo.open;
         const percDiff = priceDiff / coinInfo.open;
-        let curPriceFormatted = currencyFormat.format(coinInfo.last);
-        let priceDiffFormatted = (priceDiff < 0) ? "" : "+" + currencyFormat.format(priceDiff);
-        let percDiffFormatted = (priceDiff < 0) ? "" : "+" + percentFormat.format(percDiff);
+
+        const curPriceFormatted = formatMoney(coinInfo.last);
+
+        const priceDiffFormatted = formatMoney(priceDiff);
+        const percDiffFormatted = (priceDiff < 0) ? "" : "+" + percentFormat.format(percDiff);
+
         output.push(`1 ${coin.toUpperCase()} = **${curPriceFormatted}** (**${priceDiffFormatted}**[**${percDiffFormatted}**] last 24hrs) (${coinInfo.source})`)
     }
     if (output.length > 0) {
-        await sendLongMessage(output.join("\n"),message.channel);
+        await sendMessage(output.join("\n"),message.channel);
     }
 }
 
@@ -199,13 +202,17 @@ async function getCoinGeckoOhlcData(coinId,vsCurrency = "usd", days = 1) {
         throw new Error(`There was an unexpected error retrieving OHLC data from API: ${e}`);
     }
 }
-const currencyFormat = new Intl.NumberFormat("en-US",
-    {
-        style: "currency",
-        currency: "USD",
-        minimumFractionDigits: minPlaces,
-        maximumFractionDigits: maxPlaces,
-    });
+function formatMoney(n) {
+    const maxPlaces = (n > 100) ? 2 : 6;
+    const currencyFormat = new Intl.NumberFormat("en-US",
+        {
+            style: "currency",
+            currency: "USD",
+            minimumFractionDigits: 2,
+            maximumFractionDigits: maxPlaces,
+        });
+    return currencyFormat.format(n);
+}
 const percentFormat = new Intl.NumberFormat("en-US",
     {
         style: "percent",
