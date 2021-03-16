@@ -32,13 +32,13 @@ async function execute(client, message, args) {
     let coinbaseCoins = {};
     let coinbaseSuccessCoins = [];
     for (const symbol of symbols) {
-        coinbaseCoins[symbol] = getCoinbasePriceData(symbol);
+        coinbaseCoins[symbol] = await getCoinbasePriceData(symbol);
         if (coinbaseCoins[symbol]) {
             coinbaseSuccessCoins.push(symbol);
         }
     }
     const remainingSymbols = symbols.filter(s => !coinbaseSuccessCoins.includes(s)).join(",");
-    const coinGeckoCoins = getCoinGeckoPriceData(remainingSymbols,"usd");
+    const coinGeckoCoins = await getCoinGeckoPriceData(remainingSymbols,"usd");
     const finalCoinsList = {
         ...coinbaseCoins,
         ...coinGeckoCoins,
