@@ -17,7 +17,7 @@ const params = [
 ];
 
 //main
-async function execute(client, message, args) {
+const execute = async function (client, message, args) {
     //todo: get coinbase data first, only fall back on coingecko if ticker is not available,
 
     //todo: draw candlestick chart
@@ -28,21 +28,24 @@ async function execute(client, message, args) {
     }
 
     let symbols = args;
-    let output = [];
     let coinbaseCoins = {};
-    let coinbaseSuccessCoins = [];
     for (const symbol of symbols) {
-        coinbaseCoins[symbol] = await getCoinbasePriceData(symbol);
-        if (coinbaseCoins[symbol]) {
-            coinbaseSuccessCoins.push(symbol);
+        const coinbasePriceData = await getCoinbasePriceData(symbol);
+        if (coinbasePriceData) {
+            coinbaseCoins[symbol] = coinbasePriceData;
         }
     }
-    const remainingSymbols = symbols.filter(s => !coinbaseSuccessCoins.includes(s)).join(",");
+    console.log(`Coins from Coinbase: ${JSON.stringify(coinbaseCoins)}`);
+    const remainingSymbols = symbols.filter(s => !Object.keys(coinbaseCoins).includes(s)).join(",");
+    console.log(`Remaining symbols: ${remainingSymbols}`);
     const coinGeckoCoins = await getCoinGeckoPriceData(remainingSymbols,"usd");
+    console.log(`CoinGecko coins: ${JSON.stringify(coinGeckoCoins)}`);
     const finalCoinsList = {
         ...coinbaseCoins,
         ...coinGeckoCoins,
     }
+    console.log(`Final coins list: ${JSON.stringify(finalCoinsList)}`);
+    let output = [];
     for (const [coin,coinInfo] of Object.entries(finalCoinsList)) {
         const priceDiff = coinInfo.last - coinInfo.open;
         const percDiff = priceDiff / coinInfo.open;
@@ -76,25 +79,32 @@ async function getCoinbasePriceData(symbol) {
             if (coinbaseData.message && coinbaseData.message === "NotFound") {
                 return false;
             }
-            let coins = {};
-            coins[symbol] = {
+            return {
                 last: coinbaseData.last,
                 open: coinbaseData.open,
                 volume: coinbaseData.volume,
                 updated: +Date.now(),
                 source: "Coinbase",
             };
-            return coins;
+        } else if (coinbaseRequest.status === 404) {
+            console.log(`Got 404 error for coinbase for ${symbol}`);
+            return false;
+        } else {
+            throw new Error(`HTTP status was not 200: ${coinbaseRequest.status}`);
         }
     } catch (e) {
-        throw new Error("There was an unexpected error retrieving the price from Coinbase.");
+        throw new Error(`There was an unexpected error retrieving the price from Coinbase: ${e}`);
     }
 }
 async function getCoinGeckoPriceData(symbols,vsCurrency = "usd") {
-    const coinIds = getCoinGeckoCoinInfo(symbols);
     let coins = {};
+    const coinIds = await getCoinGeckoCoinInfo(symbols).map(c => c.id);
+    if (!coinIds) {
+        console.log("Failed to get coinGecko coins list.")
+        return {};
+    }
     try {
-        const coinPriceRequest = await axios.get("https://api.coingecko.com/api/v3/simple/price",{
+        const coinGeckoRequest = await axios.get("https://api.coingecko.com/api/v3/simple/price",{
             params: {
                 ids: coinIds,
                 vs_currencies: vsCurrency,
@@ -104,8 +114,8 @@ async function getCoinGeckoPriceData(symbols,vsCurrency = "usd") {
                 include_last_updated_at: true,
             }
         });
-        if (coinPriceRequest.status === 200) {
-            for (const [coinId, priceData] of Object.entries(coinPriceRequest.data)) {
+        if (coinGeckoRequest.status === 200) {
+            for (const [coinId, priceData] of Object.entries(coinGeckoRequest.data)) {
                 //coinGecko only gives "last" and "percent change"...
                 //calculate the Opening price:
                 const open = priceData[vsCurrency] / ((100 + priceData[`${vsCurrency}_24h_change`]) / 100);
@@ -117,9 +127,10 @@ async function getCoinGeckoPriceData(symbols,vsCurrency = "usd") {
                     source: "CoinGecko",
                 };
             }
+            console.log(`Returning from Coingecko: ${JSON.stringify(coins)}`);
             return coins;
         } else {
-            throw new Error(`HTTP status was not 200: ${coinPriceRequest.status}`);
+            throw new Error(`HTTP status was not 200: ${coinGeckoRequest.status}`);
         }
     } catch (e) {
         throw new Error(`There was an unexpected error retrieving CoinGecko price data: ${e}`);
@@ -135,6 +146,7 @@ async function getCoinGeckoCoinInfo(symbols) {
         return false;
     }
 }
+
 async function getCoinGeckoCoinsList() {
     const cryptoCoinsListFile = "./data/cryptoCoinsList.json";
     let coinsListData;
