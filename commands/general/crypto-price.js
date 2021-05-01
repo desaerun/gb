@@ -215,7 +215,13 @@ async function getCoinGeckoOhlcData(coinId,vsCurrency = "usd", days = 1) {
     }
 }
 function formatMoney(n) {
-    const maxPlaces = (n > 100) ? 2 : 6;
+    let maxPlaces = 2;
+    if (n < 100) {
+        maxPlaces = 6;
+    } if (n < 0) {
+        maxPlaces = n.toString().length;
+    }
+
     const currencyFormat = new Intl.NumberFormat("en-US",
         {
             style: "currency",
