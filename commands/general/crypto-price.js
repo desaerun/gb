@@ -52,7 +52,10 @@ const execute = async function (client, message, args) {
 
         const curPriceFormatted = formatMoney(coinInfo.last);
 
-        const priceDiffFormatted = formatMoney(priceDiff);
+        const downSymbol = ":small_red_triangle_down:";
+        const upSymbol = ":evergreen_tree:";
+
+        const priceDiffFormatted = (priceDiff < 0) ? downSymbol + formatMoney(priceDiff) : upSymbol + formatMoney(priceDiff);
         const percDiffFormatted = (priceDiff < 0) ? ":small_red_triangle_down:" : ":evergreen_tree:" + percentFormat.format(percDiff);
 
         output.push(`1 ${coin.toUpperCase()} = **${curPriceFormatted}** (**${priceDiffFormatted}**[**${percDiffFormatted}**] last 24hrs) (${coinInfo.source})`)
@@ -93,7 +96,7 @@ async function getCoinbasePriceData(symbol) {
             throw new Error(`HTTP status was not 200: ${coinbaseRequest.status}`);
         }
     } catch (e) {
-        throw new Error(`There was an unexpected error retrieving the price from Coinbase: ${e}`);
+        console.log(`There was an unexpected error retrieving the price from Coinbase: ${e}`);
     }
 }
 async function getCoinGeckoPriceData(symbols,vsCurrency = "usd") {
