@@ -52,23 +52,27 @@ const execute = async function (client, message, args) {
         ...coinGeckoCoins,
     }
     console.log(`Final coins list: ${JSON.stringify(finalCoinsList)}`);
-    let output = [];
-    for (const [coin,coinInfo] of Object.entries(finalCoinsList)) {
-        const priceDiff = coinInfo.last - coinInfo.open;
-        const percDiff = priceDiff / coinInfo.open;
+    if (Object.keys(finalCoinsList).length > 0) {
+        let output = [];
+        for (const [coin, coinInfo] of Object.entries(finalCoinsList)) {
+            const priceDiff = coinInfo.last - coinInfo.open;
+            const percDiff = priceDiff / coinInfo.open;
 
-        const curPriceFormatted = formatMoney(coinInfo.last);
+            const curPriceFormatted = formatMoney(coinInfo.last);
 
-        const downSymbol = ":small_red_triangle_down:";
-        const upSymbol = ":evergreen_tree:";
+            const downSymbol = ":small_red_triangle_down:";
+            const upSymbol = ":evergreen_tree:";
 
-        const priceDiffFormatted = (priceDiff < 0) ? downSymbol + formatMoney(priceDiff) : upSymbol + formatMoney(priceDiff);
-        const percDiffFormatted = (priceDiff < 0) ? ":small_red_triangle_down:" : ":evergreen_tree:" + percentFormat.format(percDiff);
+            const priceDiffFormatted = (priceDiff < 0) ? downSymbol + formatMoney(priceDiff) : upSymbol + formatMoney(priceDiff);
+            const percDiffFormatted = (priceDiff < 0) ? ":small_red_triangle_down:" + percentFormat.format(percDiff) : ":evergreen_tree:" + percentFormat.format(percDiff);
 
-        output.push(`1 ${coin.toUpperCase()} = **${curPriceFormatted}** (**${priceDiffFormatted}**[**${percDiffFormatted}**] last 24hrs) (${coinInfo.source})`)
-    }
-    if (output.length > 0) {
-        await sendMessage(output.join("\n"),message.channel);
+            output.push(`1 ${coin.toUpperCase()} = **${curPriceFormatted}** (**${priceDiffFormatted}**[**${percDiffFormatted}**] last 24hrs) (${coinInfo.source})`)
+        }
+        if (output.length > 0) {
+            await sendMessage(output.join("\n"), message.channel);
+        }
+    } else {
+        await sendMessage("There was no price info available for any provided symbols.", message.channel);
     }
 }
 
@@ -81,6 +85,12 @@ module.exports = {
 }
 
 //helper functions
+/**
+ * gets pricing info about the given symbol from Coinbase API
+ * @param symbol the symbol to retrieve pricing data for
+ * @returns {Promise<{volume: *, last: any, id, source: string, updated: number, open}|boolean>} a promise that
+ * resolves to an object containing the pricing data
+ */
 async function getCoinbasePriceData(symbol) {
     try {
         const coinbaseRequest = await axios.get(`https://api.pro.coinbase.com/products/${symbol}-USD/stats`);
@@ -90,6 +100,7 @@ async function getCoinbasePriceData(symbol) {
                 return false;
             }
             return {
+                id: symbol,
                 last: coinbaseData.last,
                 open: coinbaseData.open,
                 volume: coinbaseData.volume,
@@ -106,6 +117,13 @@ async function getCoinbasePriceData(symbol) {
         console.log(`There was an unexpected error retrieving the price of ${symbol} from Coinbase: ${e}`);
     }
 }
+
+/**
+ * gets price data about given coin symbols from coinGecko, in the given currency
+ * @param symbols an array of symbols to fetch price data for
+ * @param vsCurrency the requested currency type to return (usd,aud,etc.)
+ * @returns {Promise<{}>} a promise that resolves to an object containing the pricing data
+ */
 async function getCoinGeckoPriceData(symbols,vsCurrency = "usd") {
     let coins = {};
     const coinIds = await getCoinGeckoCoinInfo(symbols);
@@ -113,11 +131,11 @@ async function getCoinGeckoPriceData(symbols,vsCurrency = "usd") {
         console.log("Failed to get coinGecko coins list.")
         return {};
     }
-    coinIds.map(c => c.id);
+    const coinIdsToFetch = coinIds.map(c => c.id).join(",");
     try {
         const coinGeckoRequest = await axios.get("https://api.coingecko.com/api/v3/simple/price",{
             params: {
-                ids: coinIds,
+                ids: coinIdsToFetch,
                 vs_currencies: vsCurrency,
                 include_market_cap: true,
                 include_24h_vol: true,
@@ -131,10 +149,11 @@ async function getCoinGeckoPriceData(symbols,vsCurrency = "usd") {
                 //calculate the Opening price:
                 const open = priceData[vsCurrency] / ((100 + priceData[`${vsCurrency}_24h_change`]) / 100);
                 coins[coinId] = {
+                    id: coinId,
                     last: priceData[vsCurrency],
                     open: open,
                     volume: priceData[`${vsCurrency}_24h_vol`],
-                    updated: priceData[last_updated_at],
+                    updated: priceData.last_updated_at,
                     source: "CoinGecko",
                 };
             }
@@ -158,9 +177,8 @@ async function getCoinGeckoCoinInfo(symbols) {
     const coinsList = await getCoinGeckoCoinsList();
     symbols = symbols.toLowerCase().split(",");
 
-    console.log("getCoinGeckoCoinInfo - symbols list: " + symbols);
     //filter the coins list to only the entries we are trying to retrieve
-    const coins = coinsList.filter(c => symbols.includes(c.symbol));
+    const coins = coinsList.filter(c => symbols.includes(c.symbol) || symbols.includes(c.name.toLowerCase()));
 
     //if any coins were able to be matched, return the list. otherwise, return false.
     if (coins && coins.some(c => c.id)) {
@@ -239,8 +257,8 @@ function formatMoney(n) {
     let maxPlaces = 2;
     if (n < 100) {
         maxPlaces = 6;
-    } if (n < 0) {
-        maxPlaces = n.toString().length;
+    } if (n < 1) {
+        maxPlaces = 10;
     }
 
     const currencyFormat = new Intl.NumberFormat("en-US",
