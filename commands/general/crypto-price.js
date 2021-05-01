@@ -28,6 +28,8 @@ const execute = async function (client, message, args) {
     }
 
     let symbols = args;
+
+    //get coins from coinbase first, when possible.
     let coinbaseCoins = {};
     for (const symbol of symbols) {
         const coinbasePriceData = await getCoinbasePriceData(symbol);
@@ -38,7 +40,12 @@ const execute = async function (client, message, args) {
     console.log(`Coins from Coinbase: ${JSON.stringify(coinbaseCoins)}`);
     const remainingSymbols = symbols.filter(s => !Object.keys(coinbaseCoins).includes(s)).join(",");
     console.log(`Remaining symbols: ${remainingSymbols}`);
-    const coinGeckoCoins = await getCoinGeckoPriceData(remainingSymbols,"usd");
+
+    // i f there are any coins remaining, attempt to get from CoinGecko.
+    let coinGeckoCoins = {};
+    if (remainingSymbols) {
+        coinGeckoCoins = await getCoinGeckoPriceData(remainingSymbols, "usd");
+    }
     console.log(`CoinGecko coins: ${JSON.stringify(coinGeckoCoins)}`);
     const finalCoinsList = {
         ...coinbaseCoins,
@@ -96,7 +103,7 @@ async function getCoinbasePriceData(symbol) {
             throw new Error(`HTTP status was not 200: ${coinbaseRequest.status}`);
         }
     } catch (e) {
-        console.log(`There was an unexpected error retrieving the price from Coinbase: ${e}`);
+        console.log(`There was an unexpected error retrieving the price of ${symbol} from Coinbase: ${e}`);
     }
 }
 async function getCoinGeckoPriceData(symbols,vsCurrency = "usd") {
@@ -137,13 +144,25 @@ async function getCoinGeckoPriceData(symbols,vsCurrency = "usd") {
             throw new Error(`HTTP status was not 200: ${coinGeckoRequest.status}`);
         }
     } catch (e) {
-        throw new Error(`There was an unexpected error retrieving CoinGecko price data: ${e}`);
+        console.log(`There was an unexpected error retrieving CoinGecko price data: ${e}`);
     }
 }
+
+/**
+ * gets basic info related to the coins passed in (symbol, name, etc)
+ * @param symbols an array of symbols to look up
+ * @returns {Promise<boolean|*>} a promise that resolves to either the info about the coins, or false
+ * if none of the symbols were able to be found in the list of coins
+ */
 async function getCoinGeckoCoinInfo(symbols) {
     const coinsList = await getCoinGeckoCoinsList();
     symbols = symbols.toLowerCase().split(",");
-    const coins = coinsList.filter(c => symbols.includes(c.id));
+
+    console.log("getCoinGeckoCoinInfo - symbols list: " + symbols);
+    //filter the coins list to only the entries we are trying to retrieve
+    const coins = coinsList.filter(c => symbols.includes(c.symbol));
+
+    //if any coins were able to be matched, return the list. otherwise, return false.
     if (coins && coins.some(c => c.id)) {
         return coins;
     } else {
@@ -151,6 +170,10 @@ async function getCoinGeckoCoinInfo(symbols) {
     }
 }
 
+/**
+ * retrieves the list of coins, either from the API or cached.
+ * @returns {Promise<any>} a promise that resolves to the full list of basic coin data
+ */
 async function getCoinGeckoCoinsList() {
     const cryptoCoinsListFile = "./data/cryptoCoinsList.json";
     let coinsListData;
@@ -188,6 +211,11 @@ async function getCoinGeckoCoinsList() {
         return coinsListData;
     }
 }
+
+/**
+ * Fetch the basic coin info from the coingecko API
+ * @returns {Promise<any>} a promise that resolves to the full list of coins from the coingecko API
+ */
 async function getCoinGeckoAPICoinsList() {
     console.log("Fetching fresh coins list from API.");
     try {
@@ -201,23 +229,12 @@ async function getCoinGeckoAPICoinsList() {
         throw new Error(`There was an unexpected error retrieving API coin list: ${e}`);
     }
 }
-async function getCoinGeckoOhlcData(coinId,vsCurrency = "usd", days = 1) {
-    try {
-        const coinOhlcRequest = await axios.get(`https://api.coingeck.com/api/v3/coins/${coinId}/ohlc`,{
-            params: {
-                vs_currency: vsCurrency,
-                days: days,
-            }
-        });
-        if (coinOhlcRequest.status === 200) {
-            return coinOhlcRequest.data;
-        } else {
-            throw new Error(`HTTP status not 200: ${coinOhlcRequest.status}`);
-        }
-    } catch (e) {
-        throw new Error(`There was an unexpected error retrieving OHLC data from API: ${e}`);
-    }
-}
+
+/**
+ * formats a number as currency, precision is based on the price
+ * @param n the number to format
+ * @returns {string}
+ */
 function formatMoney(n) {
     let maxPlaces = 2;
     if (n < 100) {
