@@ -7,6 +7,7 @@ const {sendMessage} = require("../../tools/sendMessage");
 
 //module settings
 const name = "crypto-price";
+const aliases = ["crypto","cp","price-crypto","cprice"];
 const description = "Retrieves crypto prices from Coinbase API (in USD)";
 const params = [
     {
@@ -106,6 +107,7 @@ const execute = async function (client, message, args) {
 //module export
 module.exports = {
     name: name,
+    aliases: aliases,
     description: description,
     params: params,
     execute: execute,
