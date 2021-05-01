@@ -2,6 +2,7 @@
 const axios = require("axios");
 const moment = require("moment");
 const fs = require("fs");
+const prettyMilliseconds = require("pretty-ms");
 const {sendMessage} = require("../../tools/sendMessage");
 
 //module settings
@@ -27,7 +28,7 @@ const execute = async function (client, message, args) {
         return;
     }
 
-    let symbols = args;
+    let symbols = args.map(s => s.toLowerCase());
 
     //get coins from coinbase first, when possible.
     let coinbaseCoins = {};
@@ -52,8 +53,18 @@ const execute = async function (client, message, args) {
         ...coinGeckoCoins,
     }
     console.log(`Final coins list: ${JSON.stringify(finalCoinsList)}`);
+    //generate a list of the symbols that weren't able to be matched to a price.
+    const unableToFindSymbols = symbols.filter(function (s) {
+
+        return !Object.values(finalCoinsList).map(c => c.symbol).includes(s) &&
+            !Object.values(finalCoinsList).map(c => c.id).includes(s) &&
+            !Object.values(finalCoinsList).map(c => c.name.toLowerCase()).includes(s);
+    });
+
+    let output = [];
+
+    //if some coin price was able to be retrieved
     if (Object.keys(finalCoinsList).length > 0) {
-        let output = [];
         for (const [coin, coinInfo] of Object.entries(finalCoinsList)) {
             const priceDiff = coinInfo.last - coinInfo.open;
             const percDiff = priceDiff / coinInfo.open;
@@ -63,10 +74,26 @@ const execute = async function (client, message, args) {
             const downSymbol = ":small_red_triangle_down:";
             const upSymbol = ":evergreen_tree:";
 
-            const priceDiffFormatted = (priceDiff < 0) ? downSymbol + formatMoney(priceDiff) : upSymbol + formatMoney(priceDiff);
-            const percDiffFormatted = (priceDiff < 0) ? ":small_red_triangle_down:" + percentFormat.format(percDiff) : ":evergreen_tree:" + percentFormat.format(percDiff);
+            //get the decimal precision that was used for the "current price"
+            const precisionFromCurPrice = curPriceFormatted.split(".")[1].length;
 
-            output.push(`1 ${coin.toUpperCase()} = **${curPriceFormatted}** (**${priceDiffFormatted}**[**${percDiffFormatted}**] last 24hrs) (${coinInfo.source})`)
+            const priceDiffFormatted = (priceDiff < 0) ? downSymbol + formatMoney(priceDiff,precisionFromCurPrice) : upSymbol + formatMoney(priceDiff,precisionFromCurPrice);
+            const percDiffFormatted = (priceDiff < 0) ? downSymbol + percentFormat.format(percDiff) : upSymbol + percentFormat.format(percDiff);
+
+            const coinName = (coinInfo.name && coinInfo.name !== coinInfo.symbol) ? `${coinInfo.symbol.toUpperCase()} (${coinInfo.name})` : coinInfo.symbol.toUpperCase();
+
+            const dataAge = Date.now() - (coinInfo.updated);
+            let formattedDataAge;
+            if (dataAge < (1000 * 30)) {
+                formattedDataAge = "Live";
+            } else {
+                formattedDataAge = prettyMilliseconds(dataAge,{secondsDecimalDigits: 0}) + " ago";
+            }
+
+            output.push(`1 ${coinName} = **${curPriceFormatted}** (**${priceDiffFormatted}**[**${percDiffFormatted}**] last 24hrs) (${coinInfo.source}) (${formattedDataAge})`);
+        }
+        for (const symbolUnableToBeFound of unableToFindSymbols) {
+            output.push(`Unable to find symbol ${symbolUnableToBeFound.toUpperCase()}.`);
         }
         if (output.length > 0) {
             await sendMessage(output.join("\n"), message.channel);
@@ -101,6 +128,8 @@ async function getCoinbasePriceData(symbol) {
             }
             return {
                 id: symbol,
+                symbol: symbol,
+                name: symbol,
                 last: coinbaseData.last,
                 open: coinbaseData.open,
                 volume: coinbaseData.volume,
@@ -145,15 +174,18 @@ async function getCoinGeckoPriceData(symbols,vsCurrency = "usd") {
         });
         if (coinGeckoRequest.status === 200) {
             for (const [coinId, priceData] of Object.entries(coinGeckoRequest.data)) {
+                const coin = coinIds.find(c => c.id === coinId);
                 //coinGecko only gives "last" and "percent change"...
                 //calculate the Opening price:
                 const open = priceData[vsCurrency] / ((100 + priceData[`${vsCurrency}_24h_change`]) / 100);
                 coins[coinId] = {
                     id: coinId,
+                    symbol: coin.symbol,
+                    name: coin.name,
                     last: priceData[vsCurrency],
                     open: open,
                     volume: priceData[`${vsCurrency}_24h_vol`],
-                    updated: priceData.last_updated_at,
+                    updated: priceData.last_updated_at * 1000,
                     source: "CoinGecko",
                 };
             }
@@ -251,21 +283,28 @@ async function getCoinGeckoAPICoinsList() {
 /**
  * formats a number as currency, precision is based on the price
  * @param n the number to format
+ * @param maxPlaces maximum number of decimal places
  * @returns {string}
  */
-function formatMoney(n) {
-    let maxPlaces = 2;
-    if (n < 100) {
-        maxPlaces = 6;
-    } if (n < 1) {
-        maxPlaces = 10;
+function formatMoney(n, maxPlaces) {
+    let minPlaces = 2;
+    if (!maxPlaces) {
+        maxPlaces = 2;
+        if (n < 100) {
+            maxPlaces = 6;
+        }
+        if (n < 1) {
+            maxPlaces = 10;
+        }
+    } else {
+        minPlaces = maxPlaces;
     }
 
     const currencyFormat = new Intl.NumberFormat("en-US",
         {
             style: "currency",
             currency: "USD",
-            minimumFractionDigits: 2,
+            minimumFractionDigits: minPlaces,
             maximumFractionDigits: maxPlaces,
         });
     return currencyFormat.format(n);
