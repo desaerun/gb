@@ -53,7 +53,7 @@ const execute = async function (client, message, args) {
         const curPriceFormatted = formatMoney(coinInfo.last);
 
         const priceDiffFormatted = formatMoney(priceDiff);
-        const percDiffFormatted = (priceDiff < 0) ? "" : "+" + percentFormat.format(percDiff);
+        const percDiffFormatted = (priceDiff < 0) ? ":small_red_triangle_down:" : ":evergreen_tree:" + percentFormat.format(percDiff);
 
         output.push(`1 ${coin.toUpperCase()} = **${curPriceFormatted}** (**${priceDiffFormatted}**[**${percDiffFormatted}**] last 24hrs) (${coinInfo.source})`)
     }
@@ -98,11 +98,12 @@ async function getCoinbasePriceData(symbol) {
 }
 async function getCoinGeckoPriceData(symbols,vsCurrency = "usd") {
     let coins = {};
-    const coinIds = await getCoinGeckoCoinInfo(symbols).map(c => c.id);
+    const coinIds = await getCoinGeckoCoinInfo(symbols);
     if (!coinIds) {
         console.log("Failed to get coinGecko coins list.")
         return {};
     }
+    coinIds.map(c => c.id);
     try {
         const coinGeckoRequest = await axios.get("https://api.coingecko.com/api/v3/simple/price",{
             params: {
