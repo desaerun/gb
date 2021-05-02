@@ -302,7 +302,7 @@ async function shardErrorHandler(error) {
 function parseQuotedArgs(args) {
     //handling for quoted args
     //this regex matches the inside of single or double quotes, or single words.
-    const re = /(?=["'])(?:"([^"\\]*(?:\\[\s\S][^"\\]*)*)"|'([^'\\]*(?:\\[\s\S][^'\\]*)*)')|\b([^\s]+)\b/;
+    const re = /(?=["'])(?:"([^"\\]*(?:\\[\s\S][^"\\]*)*)"|'([^'\\]*(?:\\[\s\S][^'\\]*)*)')|([^\s]+)/;
     const argRe = new RegExp(re, "ig");
 
     const matchesArr = [...args.matchAll(argRe)];
