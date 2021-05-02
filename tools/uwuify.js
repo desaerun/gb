@@ -107,12 +107,19 @@ function uwuify(text, replacementsFreqBase = 1) {
 
                 //replace characters one word at a time
                 for (const [re, replacement] of replacements) {
-                    const wordPart = words[i].match(/([\d\w]+)/);
+                    //extract just the alphanumeric component of the word being replaced,
+                    //for length checking and to exclude some abbreviations below
+                    const wordPart = words[i].match(/(\b[\d\w-]+\b)/);
                     if (
                         wordPart && wordPart[1].length > 2 && //only replace if word is >= 3 characters long
                         !noReplace.includes(wordPart[1].toLowerCase()) //skip some abbreviations
                     ) {
-                        words[i] = words[i].replace(re, replacement);
+                        words[i] = words[i].replace(/(:[^:]+:)|([\w\d\[\].%()$-,]+)/g, function(match, emojiMatch, wordMatch) {
+                            if (emojiMatch) {
+                                return emojiMatch;
+                            }
+                            return wordMatch.replace(re, replacement);
+                        });
                     }
                 }
 
