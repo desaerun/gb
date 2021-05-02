@@ -7,3 +7,4 @@ github_update.txt
 .gitignore
 .env
 todo
+data/cryptoCoinsList.json
