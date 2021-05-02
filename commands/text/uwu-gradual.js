@@ -34,9 +34,9 @@ const execute = async function (client, message, args) {
     const freq = parseFloat(args.shift()); //shift the frequency amount off the beginning of the array
     const text = args.join(" ");
     const uwuText = uwu.uwuify(text, freq);
-    await message.channel.send(uwuText);
+    await message.channel.send(uwuText, {split: true});
     await setDeletedBy(message, "uwu");
-    message.delete();
+    await message.delete();
 }
 
 //module export
