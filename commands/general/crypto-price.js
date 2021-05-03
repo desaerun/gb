@@ -14,14 +14,12 @@ const params = [
         param: "cryptoTicker",
         type: "String",
         description: "a crypto ticker (BTC, ETH)",
-        default: "BTC",
+        default: "BTC ETH DOGE BAN",
     }
 ];
 
 //main
 const execute = async function (client, message, args) {
-    //todo: get coinbase data first, only fall back on coingecko if ticker is not available,
-
     //todo: draw candlestick chart
     //todo: make output prettier (discord embed? inline fields? include market cap/volume?)
     if (args.length === 0) {
