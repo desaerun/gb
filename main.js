@@ -12,7 +12,7 @@ const {sendTrace} = require("./tools/devOutput");
 const {logMessage, getRandomArrayMember} = require("./tools/utils");
 const {generateUwuCombinations} = require("./tools/uwuify");
 const {sendMessage} = require("./tools/sendMessage");
-
+const {startWatching} = require("./tools/cryptoWatcher");
 
 //main
 global.uwuMode = false;
@@ -40,6 +40,7 @@ client.once("ready", async () => {
     //set initial bot status
     await setInitialActivity(client);
 
+    startWatching();
     //schedule crons
     // cron.schedule("* * * * *", () => {
     //     //todo: make command to add/remove guild/channel combos to historical messages cron

@@ -124,3 +124,33 @@ exports.touchFile = function (file) {
         }
     });
 }
+
+/**
+ * formats a number as currency, precision is based on the price
+ * @param n the number to format
+ * @param maxPlaces maximum number of decimal places
+ * @returns {string}
+ */
+exports.formatMoney = function (n, maxPlaces) {
+    let minPlaces = 2;
+    if (!maxPlaces) {
+        maxPlaces = 2;
+        if (n < 100) {
+            maxPlaces = 6;
+        }
+        if (n < 1) {
+            maxPlaces = 10;
+        }
+    } else {
+        minPlaces = maxPlaces;
+    }
+
+    const currencyFormat = new Intl.NumberFormat("en-US",
+        {
+            style: "currency",
+            currency: "USD",
+            minimumFractionDigits: minPlaces,
+            maximumFractionDigits: maxPlaces,
+        });
+    return currencyFormat.format(n);
+}
