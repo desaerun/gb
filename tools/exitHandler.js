@@ -1,5 +1,4 @@
 const exitHook = require("async-exit-hook");
-const CONFIG = require("../config/config");
 const {sendMessage} = require("./sendMessage");
 
 exports.init = function (client) {
@@ -9,7 +8,7 @@ exports.init = function (client) {
             .then(callback);
     });
     exitHook.unhandledRejectionHandler((err, callback) => {
-        sendMessageToDevChannel(client, `The bot has experienced an uncaught exception: ${err}`)
+        sendMessageToDevChannel(client, `The bot has experienced an uncaught exception: ${err.stack}`)
             .then(callback);
     });
     return true;
