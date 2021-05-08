@@ -52,11 +52,11 @@ const execute = async function (client, message, args) {
                 const precisionFromCurPrice = curPriceFormatted.split(".")[1].length;
 
                 const priceDiffFormatted = (priceDiff < 0) ?
-                    downSymbol + formatMoney(priceDiff, precisionFromCurPrice) :
-                    upSymbol + formatMoney(priceDiff, precisionFromCurPrice);
+                    `${downSymbol}${formatMoney(priceDiff, precisionFromCurPrice)}` :
+                    `${upSymbol}${formatMoney(priceDiff, precisionFromCurPrice)}`;
                 const percDiffFormatted = (priceDiff < 0) ?
-                    downSymbol + percentFormat.format(percDiff) :
-                    upSymbol + percentFormat.format(percDiff);
+                    `${downSymbol}${percentFormat.format(percDiff)}` :
+                    `${upSymbol}${percentFormat.format(percDiff)}`;
 
                 const coinName = (
                     cryptoInfoWithPriceData.name &&
