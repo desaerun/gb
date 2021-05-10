@@ -1,5 +1,6 @@
 //imports
 const axios = require("axios");
+const {formatMoney} = require("../../tools/utils");
 const {sendMessage} = require("../../tools/sendMessage");
 
 //module settings
@@ -27,8 +28,8 @@ const execute = async function (client, message, args) {
         let priceDiff = tickerData.c - tickerData.pc;
         let percDiff = priceDiff / tickerData.pc;
 
-        let curPriceFormatted = currencyFormat.format(tickerData.c);
-        let priceDiffFormatted = (priceDiff < 0 ? "" : "+") + currencyFormat.format(priceDiff);
+        let curPriceFormatted = formatMoney(tickerData.c);
+        let priceDiffFormatted = (priceDiff < 0 ? "" : "+") + formatMoney(priceDiff);
         let percDiffFormatted = (priceDiff < 0 ? "" : "+") + percentFormat.format(percDiff);
         await sendMessage(`${ticker} = **${curPriceFormatted}** (**${priceDiffFormatted}**[**${percDiffFormatted}**] today)`, message.channel);
     } catch (err) {

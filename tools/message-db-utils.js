@@ -150,7 +150,7 @@ exports.captureMessage = captureMessage;
  * @returns {Promise<void>}
  */
 deleteMessageFromDb = async function deleteMessageFromDb(deletedMessage) {
-    const now = +new Date();
+    const now = +Date.now();
     try {
         await pool.query("UPDATE messages SET deleted = ? WHERE id = ?", [now, deletedMessage.id]);
     } catch (e) {
