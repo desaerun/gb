@@ -52,7 +52,8 @@ const execute = async function (client, message, args) {
                 const outputLines = [];
                 for (const [symbol, data] of watchers.entries()) {
                     const currentPrice = priceDataForAllCryptosWithWatchers[symbol].priceData.last;
-                    const currentPricePrecision = currentPrice.toString().split(".")[1].length;
+                    const currentPriceParts = currentPrice.toString().split(".");
+                    const currentPricePrecision = (currentPriceParts.length > 1) ? currentPriceParts[1].length : 2;
                     outputLines.push(`**Active watchers** for **${symbol.toUpperCase()} (${data[0].name})** (Currently `
                         + `**${formatMoney(currentPrice)}**):`);
                     for (let i = 0; i < data.length; i++) {
@@ -122,7 +123,7 @@ const execute = async function (client, message, args) {
             }
             try {
                 await removeWatcher(symbol, (Number(args[2])));
-                await sendMessage("Watcher removed.");
+                await sendMessage("Watcher removed.", message.channel);
             } catch (e) {
                 await sendMessage(`An error occurred: ${e}`, message.channel);
             }
