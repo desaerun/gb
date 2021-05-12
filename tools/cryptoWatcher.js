@@ -87,8 +87,9 @@ const getWatchers = async function (symbol = null) {
 exports.getWatchers = getWatchers;
 
 const addWatcher = async function (symbol, requestedPriceValue, message) {
-    requestedPriceValue = requestedPriceValue.replace(/[^0-9.]/g,"");
+    requestedPriceValue = requestedPriceValue.replace(/[^0-9-+%.]/g,"");
     const cryptosInfoWithPriceData = await getCryptoInfoWithPriceData([symbol]);
+
     if (Object.keys(cryptosInfoWithPriceData).length === 0) {
         throw new Error("The symbol was not able to be found.");
     }
