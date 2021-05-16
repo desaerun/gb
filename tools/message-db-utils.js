@@ -3,12 +3,7 @@ const moment = require("moment");
 
 //prisma
 const {PrismaClient} = require("@prisma/client");
-const prisma = new PrismaClient({
-    log: ['query'],
-});
-prisma.$on('query', e => {
-    console.log(e);
-})
+const prisma = new PrismaClient();
 
 /**
  * Inserts a new message into the Database.  Also inserts and/or updates the Channel, Guild, and Author tables with
@@ -123,7 +118,7 @@ upsertMessage = async function (message, lastEditTimestamp = null) {
             logMessage(`Failed to upsert the message: ${e}`);
         }
         let i = 1;
-        //realistically, messages can only have one attachment
+        //realistically, messages can only have one attachment, but it is provided by discord API as an array
         for (let attachment of message.attachments) {
             //TODO: save attachment locally (node-fetch?)
             const attachmentData = attachment[1];
@@ -155,8 +150,9 @@ upsertMessage = async function (message, lastEditTimestamp = null) {
     } else if (message.channel.type === "dm") {
         try {
             const author = await message.author;
-            //todo: fix author/guild connection
-            const insertIntoBotDms = await prisma.botDm.upsert({
+
+            //upsert a bot DM entry
+            await prisma.botDm.upsert({
                 where: {
                     id: message.id,
                 },
@@ -190,7 +186,8 @@ upsertMessage = async function (message, lastEditTimestamp = null) {
                 //TODO: save attachment locally (node-fetch?)
                 //TODO: something if the attachment is deleted
                 const attachmentData = attachment[1];
-                const insertAttachment = prisma.dmAttachment.create({
+                //insert attachment entry
+                await prisma.dmAttachment.create({
                     data: {
                         id: attachmentData.id,
                         messageId: {
@@ -353,7 +350,8 @@ addMessageEdit = async function (oldMessage, newMessage) {
         newMessageContent += convertEmbedToText(embed);
     }
     try {
-        const editedMessage = await prisma.messageEditHistory.create({
+        //insert editHistory entry
+        await prisma.messageEditHistory.create({
             data: {
                 message: {
                     connect: {
