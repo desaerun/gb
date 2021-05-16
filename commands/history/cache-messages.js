@@ -3,18 +3,12 @@ const {captureMessage} = require("../../tools/message-db-utils");
 const {sendMessage} = require("../../tools/sendMessage");
 const {isAdmin} = require("../../tools/utils");
 
-// mysql
-const mysql = require("mysql2/promise");
-const db = require("../../config/db");
-const pool = mysql.createPool({
-    ...db,
-    waitForConnections: true,
-    connectionLimit: 100,
-    queueLimit: 0,
-});
+//prisma
+const {PrismaClient} = require("@prisma/client");
+const prisma = new PrismaClient();
 
 //module settings
-const name = "cache-message-history";
+const name = "cache-messages";
 const description = "Retrieves message history for the current channel and stores it to the DB";
 const params = [
     {
@@ -30,6 +24,11 @@ const params = [
         default: "false",
     },
 ];
+const examples = [
+    "this true",
+    "838152668782395425 true",
+    "674824072126922753 false",
+]
 
 //main
 const execute = async function (client, message, args) {
@@ -97,14 +96,17 @@ const execute = async function (client, message, args) {
             console.log(`(Error:  ${counts.error}|Success: ${counts.added}|Skipped: ${counts.skipped}|Bot: ${counts.bot}|No Author: ${counts.noAuthor})`);
         }
     } catch (e) {
-        await sendMessage(`There was an error fetching the messages: ${e}`, message.channel);
+        await sendMessage(`There was an error fetching the messages: ${e.stack}`, message.channel);
     }
     await sendMessage(`There have been ${counts.total} messages sent in channel #${targetChannel.name}.`, message.channel);
     try {
-        let [result] = await pool.execute("SELECT COUNT(*) AS `messageCount` FROM `messages` WHERE `channel` = ?", [targetChannel.id]);
-        console.log(result[0]);
-        await sendMessage(`Updated DB successfully.  Rows: ${result[0].messageCount}`, message.channel);
-        await sendMessage(`(Error:  ${counts.error}|Success: ${counts.added}|Skipped: ${counts.skipped}|Bot: ${counts.bot}|No Author: ${counts.noAuthor})`, message.channel);
+        const messageCount = await prisma.message.count({
+            where: {
+                channelId: targetChannel.id,
+            },
+        })
+        await sendMessage(`Updated DB successfully.  Rows: ${messageCount}`, message.channel);
+        await sendMessage(`(Error: ${counts.error}|Success: ${counts.added}|Skipped: ${counts.skipped}|Bot: ${counts.bot}|No Author: ${counts.noAuthor})`, message.channel);
     } catch (e) {
         await sendMessage(`Error occurred fetching message count: ${e}`, message.channel);
     }
@@ -116,6 +118,7 @@ module.exports = {
     description: description,
     params: params,
     execute: execute,
+    examples: examples,
 }
 
 //helper functions

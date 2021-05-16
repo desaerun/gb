@@ -19,8 +19,8 @@ const params = [
 const helpText = "Names that are more than one word can be searched by enclosing in quotes, e.g. " +
     "`-crypto-price \"Basic Attention Token\"`.";
 const examples = [
-    "-crypto-price btc",
-    "-crypto-price btc eth doge",
+    "btc",
+    "btc eth doge",
 ]
 
 //main

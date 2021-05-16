@@ -4,15 +4,9 @@ const locutus = require("locutus");
 const moment = require("moment");
 const {sendMessage} = require("../../tools/sendMessage");
 
-//mysql
-const mysql = require("mysql2/promise");
-const db = require("../../config/db");
-const pool = mysql.createPool({
-    ...db,
-    waitForConnections: true,
-    connectionLimit: 100,
-    queueLimit: 0,
-});
+//prisma
+const {PrismaClient} = require("@prisma/client");
+const prisma = new PrismaClient();
 
 //module settings
 const name = "random-message";
@@ -24,6 +18,11 @@ const params = [
         description: "A string representing from when the historical message should be retrieved",
         default: "now",
     },
+];
+const examples = [
+    "today",
+    "a week ago",
+    "January 1st 2021",
 ];
 
 //main
@@ -56,43 +55,33 @@ const execute = async function (client, message, args, forceGuildID = null, forc
     //get 11:59:59.999 at the end of that day
     let end_timestamp = timestamp + (24 * 60 * 60 * 1000) - 1;
 
-    console.log(`Selecting messages between (${timestamp})${moment(timestamp).format("MMMM Do YYYY HH:mm:ss a")} and (${end_timestamp})${moment(end_timestamp).format("MMMM Do YYYY HH:mm:ss a")}`);
+    console.log(`Selecting messages between (${timestamp})${moment(timestamp).format("MMMM Do YYYY HH:mm:ss a")}`
+        + ` and (${end_timestamp})${moment(end_timestamp).format("MMMM Do YYYY HH:mm:ss a")}`);
     console.log(`${timestamp} :: ${end_timestamp}`);
 
-    //select messages from the DB that are between the two timestamps retrieved previously
-    const message_sql = "SELECT" +
-        "    m.id," +
-        "    m.content," +
-        "    m.guild," +
-        "    m.channel," +
-        "    m.author," +
-        "    m.timestamp," +
-        "    a.url AS attachmentURL," +
-        "    author.displayName AS author_displayName," +
-        "    author.avatarURL AS author_avatarURL," +
-        "    author.isBot AS author_isBot" +
-        " FROM" +
-        "    messages m" +
-        " LEFT JOIN attachments a ON" +
-        "    m.id = a.messageId" +
-        " LEFT JOIN authors author ON" +
-        "    m.author=author.id" +
-        " WHERE" +
-        "    m.channel = ? AND m.timestamp BETWEEN ? AND ? AND m.deleted IS NULL" +
-        " ORDER BY" +
-        "    m.timestamp" +
-        " DESC";
-    let allMessages = [];
+    let allMessages;
     try {
-        const result = await pool.query(message_sql, [channel.id, timestamp, end_timestamp]);
-        allMessages = result[0];
+        //select messages from the DB that are between the two timestamps retrieved previously'
+        allMessages = await prisma.message.findMany({
+            where: {
+                channelId: channel.id,
+                timestamp: {
+                    gte: new Date(timestamp),
+                    lte: new Date(end_timestamp),
+                }
+            },
+            include: {
+                attachments: true,
+                author: true,
+            }
+        });
     } catch (err) {
         throw err;
     }
 
     //select a random message from the DB
     let selectedMessages = [];
-    const humanMessageResults = allMessages.filter(element => !element.author_isBot);
+    const humanMessageResults = allMessages.filter(m => !m.author.isBot);
     let noHumanMessages = (humanMessageResults.length === 0);
     if (noHumanMessages) {
         await sendMessage(`There were no messages on ${moment(timestamp).format("dddd MMMM Do YYYY")}`, channel);
@@ -122,14 +111,14 @@ const execute = async function (client, message, args, forceGuildID = null, forc
         for (const messageRow of selectedMessages) {
             let humanTimedate = moment(messageRow.timestamp).format("dddd, MMMM Do YYYY @ hh:mm:ss a");
             let embedMessage = new Discord.MessageEmbed()
-                .setAuthor(messageRow.author_displayName, messageRow.author_avatarURL);
+                .setAuthor(messageRow.author.displayName, messageRow.author.avatarUrl);
             if (messageRow.content) {
                 embedMessage.addField("\u200b", messageRow.content)
             }
             embedMessage.addField("\u200b", "\u200b");
-            embedMessage.addField(humanTimedate, `[**Jump to Message**](https://discord.com/channels/${messageRow.guild}/${messageRow.channel}/${messageRow.id})`);
-            if (messageRow.attachmentURL) {
-                embedMessage.setImage(messageRow.attachmentURL);
+            embedMessage.addField(humanTimedate, `[**Jump to Message**](https://discord.com/channels/${messageRow.guildId}/${messageRow.channelId}/${messageRow.id})`);
+            if (messageRow.attachments.length > 0) {
+                embedMessage.setImage(messageRow.attachments[0].attachmentUrl);
             }
             try {
                 await sendMessage(embedMessage, channel);
@@ -149,6 +138,7 @@ module.exports = {
     description: description,
     params: params,
     execute: execute,
+    examples: examples,
 }
 
 //helper functions

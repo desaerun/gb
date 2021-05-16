@@ -62,15 +62,13 @@ client.login(process.env.BOT_TOKEN);
 
 // HELPER FUNCTIONS
 
+/******************/
+/* EVENT HANDLERS */
+/******************/
+
 async function incomingMessageHandler(message) {
     //capture messages to DB
-    if (message.channel.type === "text") {
-        await captureMessage(client, message, true);
-    } else if (message.channel.type === "dm") {
-        if (message.author.bot) return;
-        await sendMessage("Sorry, I do not currently support bot commands via Direct Message.", message.channel);
-        return true;
-    }
+    await captureMessage(client, message, true);
 
     // Ignore my own messages
     if (message.author.bot) return;
@@ -87,6 +85,20 @@ async function incomingMessageHandler(message) {
     }
 }
 
+async function messageUpdateHandler(oldMessage, newMessage) {
+    console.log("Received edited message event, parsing.")
+    await updateEditedMessage(oldMessage, newMessage);
+}
+
+async function messageDeleteHandler(deletedMessage) {
+    console.log("Received deleted message, parsing.");
+    await deleteMessageFromDb(deletedMessage);
+}
+
+async function shardErrorHandler(error) {
+    console.error("possible shard error was caught: ", error);
+}
+
 /**
  * Searches client.commands for the parsed command, and executes if the command is valid
  * @param client
@@ -94,6 +106,7 @@ async function incomingMessageHandler(message) {
  * @param args
  */
 async function runCommands(client, message, args) {
+    //TODO: remove client requirement from most(all?) commands as it can be fetched with message.client
     let commandName = args.shift().toLowerCase();
 
     //support for uwu-ified command names
@@ -118,12 +131,22 @@ async function runCommands(client, message, args) {
                 await sendMessage(errors, message.channel);
                 return false;
             }
+            if (message.channel.type === "dm" && (!command.allowedContexts || command.allowedContexts.includes("dm"))) {
+                if (message.author.bot) return;
+                await sendMessage("Sorry, I do not currently support this command via Direct Message.",
+                    message.channel);
+                return true;
+            }
             command.execute(client, message, args);
+            return true;
         } catch (e) {
             await sendMessage(`There was an error running the command: ${e}`, message.channel);
         }
     } else {
-        await sendMessage(`\`${commandName}\` is not a valid command. Type \`${CONFIG.PREFIX}help\` to get a list of commands.`, message.channel);
+        await sendMessage(
+            `\`${commandName}\` is not a valid command. Type \`${CONFIG.PREFIX}help\` to get a list of commands.`,
+            message.channel
+        );
     }
 }
 
@@ -286,18 +309,6 @@ async function parseWithListeners(client, message) {
     } catch (e) {
         await sendMessage(`There was an error parsing listeners: ${e}`, message.channel);
     }
-}
-
-async function messageUpdateHandler(oldMessage, newMessage) {
-    await updateEditedMessage(oldMessage, newMessage);
-}
-
-async function messageDeleteHandler(deletedMessage) {
-    await deleteMessageFromDb(deletedMessage);
-}
-
-async function shardErrorHandler(error) {
-    console.error("possible shard error was caught: ", error);
 }
 
 function parseQuotedArgs(args) {

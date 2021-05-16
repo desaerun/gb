@@ -8,15 +8,14 @@ const description = "Restarts the bot.";
 const params = [
     {
         param: "force",
-        description: "forces the bot to restart rather than sending SIGTERM.",
+        description: "forces the bot to restart gracefully rather than sending SIGTERM.",
         type: "String|Boolean",
-        default: "",
         optional: true,
     }
 ];
 const examples = [
-    "-restart",
-    "-restart force",
+    "",
+    "force",
 ];
 
 //main
@@ -26,7 +25,7 @@ const execute = async function (client, message, args) {
         return false;
     }
     if (args[0] && (args[0].toLowerCase() === "force" || args[0] === "true")) {
-        await sendMessage(`Killing bot process forcefully in 10 seconds.  Bot will restart.`, message.channel);
+        await sendMessage(`Killing bot process forcefully in 10 seconds.  Bot will attempt to restart.`, message.channel);
         setTimeout(() => {
             process.exit(2);
         }, 10000);
