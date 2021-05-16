@@ -68,9 +68,17 @@ const execute = async function (client, message, args) {
             console.log(`*************Start of batch, messages.size=${messages.size}**************`);
             let last = messages.last().id;
 
+            let skipAuthors = [];
             let messageResult = 0;
-            for (let historical_message of messages.values()) {
-                messageResult = await captureMessage(client, historical_message, includeBotMessages);
+            for (let historicalMessage of messages.values()) {
+                //special handling to prevent trying to fetch GuildMember object for authors that are no longer joined
+                // to the guild from the guild cache/API, which is an expensive operation
+                if (skipAuthors.includes(historicalMessage.author.id)) {
+                    counts.noAuthor++;
+                    console.log("Fetching author failed previously this run, skipping...");
+                    continue;
+                }
+                messageResult = await captureMessage(client, historicalMessage, includeBotMessages);
                 console.log(`messageResult: ${messageResult}`);
                 switch (messageResult) {
                     case 1:
@@ -84,6 +92,9 @@ const execute = async function (client, message, args) {
                         break;
                     case 4:
                         counts.noAuthor++;
+                        //add the author to the list of authors that are not joined to the guild, this author will be
+                        //skipped over for further messages during this run.
+                        skipAuthors.push(historicalMessage.author.id);
                         break;
                     case 0:
                         counts.error++;
