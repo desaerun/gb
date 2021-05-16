@@ -84,7 +84,7 @@ upsertMessage = async function (message, lastEditTimestamp = null) {
                 },
                 create: messageValues,
             });
-            logMessage(`Successfully upserted message ${messageValues.id}`, 2);
+            logMessage(`Successfully upserted message ${messageValues.id}`, 3);
 
             //create author<->guild relationship
             await prisma.author.upsert({
@@ -113,9 +113,9 @@ upsertMessage = async function (message, lastEditTimestamp = null) {
                     }
                 }
             })
-            logMessage(`Successfully created author<->guild relationship between ${guildValues.id} and ${author.id}`);
+            logMessage(`Successfully created author<->guild relationship between ${guildValues.id} and ${author.id}`,4);
         } catch (e) {
-            logMessage(`Failed to upsert the message: ${e}`);
+            logMessage(`Failed to upsert the message: ${e}`,2);
         }
         let i = 1;
         //realistically, messages can only have one attachment, but it is provided by discord API as an array
@@ -238,16 +238,19 @@ captureMessage = async function (client, message, includeBotMessages = false) {
         if (!existingMessage) { // if message doesn't already exist in DB
             let author;
             if (message.channel.type === "text") {
-                author = await message.guild.members.fetch(message.author.id);
+                try {
+                    author = await message.guild.members.fetch(message.author.id);
+                } catch (e) {
+                    console.log(`Author is no longer joined to guild ${message.guild.id}`);
+                }
             } else if (message.channel.type === "dm") {
                 author = await message.client.users.fetch(message.author.id);
             }
-            console.log(author, JSON.stringify(author));
             if (!author) {
                 console.log(`Author was not able to be fetched for message ${message.id}`);
                 return 4; // no author
             } else {
-                if (!author.bot || includeBotMessages) {
+                if (!(author.bot || author.user.bot) || includeBotMessages) {
                     upsertMessage(message);
                     return 1; // added
                 } else {
