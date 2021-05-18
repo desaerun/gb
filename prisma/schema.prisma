@@ -1,0 +1,140 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Guild {
+  id        String    @id @db.VarChar(30)
+  name      String    @db.VarChar(255)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  channels  Channel[]
+  authors   Author[]
+  messages  Message[]
+
+  @@unique([id, name], name: "guild_unique_name")
+}
+
+model Channel {
+  id        String    @id @db.VarChar(30)
+  guildId   String    @db.VarChar(30)
+  name      String    @db.VarChar(255)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  guild     Guild     @relation(fields: [guildId], references: [id])
+  messages  Message[]
+
+  @@unique([id, guildId, name], name: "unique_channel")
+  @@index([guildId], name: "guild")
+}
+
+model Author {
+  id          String    @id @db.VarChar(30)
+  displayName String?   @db.VarChar(255)
+  avatarUrl   String?   @db.VarChar(255)
+  isBot       Boolean   @default(false)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  messages    Message[]
+  guilds      Guild[]
+  botdms      BotDm[]
+}
+
+model Message {
+  id                String               @id @db.VarChar(30)
+  guildId           String               @db.VarChar(30)
+  channelId         String               @db.VarChar(30)
+  authorId          String               @db.VarChar(30)
+  content           String?              @db.Text
+  timestamp         DateTime
+  lastEditTimestamp DateTime?
+  deletedAt         DateTime?
+  deletedBy         String?              @db.VarChar(255)
+  createdAt         DateTime             @default(now())
+  updatedAt         DateTime             @updatedAt
+  guild             Guild                @relation(fields: [guildId], references: [id])
+  channel           Channel              @relation(fields: [channelId], references: [id])
+  author            Author               @relation(fields: [authorId], references: [id])
+  editHistory       MessageEditHistory[]
+  attachments       MessageAttachment[]
+
+  @@index([authorId], name: "author")
+  @@index([channelId], name: "channel")
+  @@index([guildId], name: "guild")
+}
+
+model MessageEditHistory {
+  id            Int      @id @default(autoincrement())
+  messageId     String   @db.VarChar(30)
+  newContent    String?  @db.Text
+  oldContent    String?  @db.Text
+  editTimestamp DateTime
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  message       Message  @relation(fields: [messageId], references: [id])
+}
+
+model MessageAttachment {
+  id        String   @id @db.VarChar(30)
+  messageId String   @db.VarChar(30)
+  name      String   @db.VarChar(255)
+  url       String   @db.VarChar(255)
+  proxyUrl  String?  @db.VarChar(255)
+  size      BigInt   @db.UnsignedBigInt
+  height    Int?     @db.UnsignedInt
+  width     Int?     @db.UnsignedInt
+  timestamp DateTime
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  message   Message  @relation(fields: [messageId], references: [id])
+}
+
+model BotDm {
+  id                String          @id @db.VarChar(30)
+  authorId          String          @db.VarChar(30)
+  conversationId    String          @db.VarChar(30)
+  content           String          @db.Text
+  timestamp         DateTime
+  lastEditTimestamp DateTime?
+  deletedAt         DateTime?
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+  author            Author          @relation(fields: [authorId], references: [id])
+  editHistory       DmEditHistory[]
+  attachments       DmAttachment[]
+
+  @@index([authorId], name: "author")
+}
+
+model DmAttachment {
+  id        Int      @id @default(autoincrement())
+  messageId String   @db.VarChar(30)
+  name      String   @db.VarChar(255)
+  url       String   @db.VarChar(255)
+  proxyUrl  String?  @db.VarChar(255)
+  size      BigInt   @db.UnsignedBigInt
+  height    Int?     @db.UnsignedInt
+  width     Int?     @db.UnsignedInt
+  timestamp DateTime
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  message   BotDm    @relation(fields: [messageId], references: [id])
+}
+
+model DmEditHistory {
+  id            Int      @id @default(autoincrement())
+  messageId     String   @db.VarChar(30)
+  newContent    String?  @db.Text
+  oldContent    String?  @db.Text
+  editTimestamp DateTime
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  message       BotDm    @relation(fields: [messageId], references: [id])
+}

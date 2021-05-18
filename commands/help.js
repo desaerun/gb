@@ -130,7 +130,7 @@ function getHelpMessage(command) {
         let wrappedExamples = [];
         //wrap the examples in backticks for Discord code formatting
         for (const example of command.examples) {
-            wrappedExamples.push(`\`${example}\``);
+            wrappedExamples.push(`\`${CONFIG.PREFIX}${command.name} ${example}\``);
         }
         fields.push({
             name: "Examples:",

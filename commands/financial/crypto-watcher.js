@@ -29,11 +29,11 @@ const params = [
     },
 ];
 const examples = [
-    "-crypto-watcher list",
-    "-crypto-watcher list btc",
-    "-crypto-watcher add btc 60000",
-    "-crypto-watcher add btc 5%",
-    "-crypto-watcher delete btc 3",
+    "list",
+    "list btc",
+    "add btc 60000",
+    "add btc 5%",
+    "delete btc 3",
 ];
 
 //main

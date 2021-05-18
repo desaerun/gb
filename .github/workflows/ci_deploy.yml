@@ -79,4 +79,7 @@ jobs:
             #install/update dependencies
             #clear the logs + start the bot
             echo "Verifying/installing npm dependencies, clearing logs and spawning new pm2 process"
-            npm ci && pm2 flush && npm start
+            npm ci
+            npx prisma db push
+            pm2 flush
+            npm start

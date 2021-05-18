@@ -3,18 +3,12 @@ const {captureMessage} = require("../../tools/message-db-utils");
 const {sendMessage} = require("../../tools/sendMessage");
 const {isAdmin} = require("../../tools/utils");
 
-// mysql
-const mysql = require("mysql2/promise");
-const db = require("../../config/db");
-const pool = mysql.createPool({
-    ...db,
-    waitForConnections: true,
-    connectionLimit: 100,
-    queueLimit: 0,
-});
+//prisma
+const {PrismaClient} = require("@prisma/client");
+const prisma = new PrismaClient();
 
 //module settings
-const name = "cache-message-history";
+const name = "cache-messages";
 const description = "Retrieves message history for the current channel and stores it to the DB";
 const params = [
     {
@@ -30,6 +24,11 @@ const params = [
         default: "false",
     },
 ];
+const examples = [
+    "this true",
+    "838152668782395425 true",
+    "674824072126922753 false",
+]
 
 //main
 const execute = async function (client, message, args) {
@@ -69,9 +68,17 @@ const execute = async function (client, message, args) {
             console.log(`*************Start of batch, messages.size=${messages.size}**************`);
             let last = messages.last().id;
 
+            let skipAuthors = [];
             let messageResult = 0;
-            for (let historical_message of messages.values()) {
-                messageResult = await captureMessage(client, historical_message, includeBotMessages);
+            for (let historicalMessage of messages.values()) {
+                //special handling to prevent trying to fetch GuildMember object for authors that are no longer joined
+                // to the guild from the guild cache/API, which is an expensive operation
+                if (skipAuthors.includes(historicalMessage.author.id)) {
+                    counts.noAuthor++;
+                    console.log("Fetching author failed previously this run, skipping...");
+                    continue;
+                }
+                messageResult = await captureMessage(client, historicalMessage, includeBotMessages);
                 console.log(`messageResult: ${messageResult}`);
                 switch (messageResult) {
                     case 1:
@@ -85,6 +92,9 @@ const execute = async function (client, message, args) {
                         break;
                     case 4:
                         counts.noAuthor++;
+                        //add the author to the list of authors that are not joined to the guild, this author will be
+                        //skipped over for further messages during this run.
+                        skipAuthors.push(historicalMessage.author.id);
                         break;
                     case 0:
                         counts.error++;
@@ -97,14 +107,17 @@ const execute = async function (client, message, args) {
             console.log(`(Error:  ${counts.error}|Success: ${counts.added}|Skipped: ${counts.skipped}|Bot: ${counts.bot}|No Author: ${counts.noAuthor})`);
         }
     } catch (e) {
-        await sendMessage(`There was an error fetching the messages: ${e}`, message.channel);
+        await sendMessage(`There was an error fetching the messages: ${e.stack}`, message.channel);
     }
     await sendMessage(`There have been ${counts.total} messages sent in channel #${targetChannel.name}.`, message.channel);
     try {
-        let [result] = await pool.execute("SELECT COUNT(*) AS `messageCount` FROM `messages` WHERE `channel` = ?", [targetChannel.id]);
-        console.log(result[0]);
-        await sendMessage(`Updated DB successfully.  Rows: ${result[0].messageCount}`, message.channel);
-        await sendMessage(`(Error:  ${counts.error}|Success: ${counts.added}|Skipped: ${counts.skipped}|Bot: ${counts.bot}|No Author: ${counts.noAuthor})`, message.channel);
+        const messageCount = await prisma.message.count({
+            where: {
+                channelId: targetChannel.id,
+            },
+        })
+        await sendMessage(`Updated DB successfully.  Rows: ${messageCount}`, message.channel);
+        await sendMessage(`(Error: ${counts.error}|Success: ${counts.added}|Skipped: ${counts.skipped}|Bot: ${counts.bot}|No Author: ${counts.noAuthor})`, message.channel);
     } catch (e) {
         await sendMessage(`Error occurred fetching message count: ${e}`, message.channel);
     }
@@ -116,6 +129,7 @@ module.exports = {
     description: description,
     params: params,
     execute: execute,
+    examples: examples,
 }
 
 //helper functions
