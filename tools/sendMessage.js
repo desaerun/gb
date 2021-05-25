@@ -56,31 +56,38 @@ exports.sendMessage = async function (input, target, attachment, suppressEmbeds 
         }
         return output;
     }
+
+    //normal messages
     if (!forceNormalText) {
         input = uwuifyIfUwuMode(input, target.client.uwuMode);
     }
     const words = input.split(" ");
     let chunkWords = [];
-    let lastMessage;
+    let output;
     for (let i = 0; i < words.length; i++) {
-        const msgChunk = chunkWords.join(" ");
+        let msgChunk = chunkWords.join(" ");
+        const msgChunkLength = chunkWords.join(" ").length + words[i].length + 1;
         //if the current chunk plus the current word would go over the chunk size,
         //or if we're on the last word of the message, send the message
-        if (msgChunk.length + words[i].length >= chunkSize ||
-            i === words.length - 1) {
-            if (i === words.length - 1 && attachment) {
-                lastMessage = await target.send(msgChunk, attachment);
+        if (msgChunkLength >= chunkSize || i === words.length - 1) {
+            if (i === words.length - 1) {
+                msgChunk += " " + words[i];
+                if (!attachment) {
+                    attachment = null;
+                }
+                output = await target.send(msgChunk, attachment);
+                break;
             } else {
-                lastMessage = await target.send(msgChunk);
+                output = await target.send(msgChunk);
+                chunkWords = [];
+                i--;
             }
-            if (suppressEmbeds) {
-                await lastMessage.suppressEmbeds(true);
-            }
-            chunkWords = [];
-            i--;
         } else {
             chunkWords.push(words[i]);
         }
     }
-    return lastMessage;
+    if (suppressEmbeds) {
+        await output.suppressEmbeds(true);
+    }
+    return output;
 }
