@@ -1,7 +1,6 @@
 const CONFIG = {
     PREFIX: "-", // sets the prefix for commands
 
-    //todo: make verbosity output more consistent
     VERBOSITY: 3, // sets verbosity level
 
     //just hardcoding some channel/guild/user IDs for easier reference

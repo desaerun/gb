@@ -1,9 +1,7 @@
 //imports
 const Discord = require("discord.js");
 const CONFIG = require("../config/config");
-const fs = require("fs");
-const path = require("path");
-const {logMessage} = require("../tools/utils");
+const {isAdmin, isSuperAdmin, logMessage} = require("../tools/utils");
 const {sendMessage} = require("../tools/sendMessage");
 
 //module settings
@@ -13,25 +11,40 @@ const params = [
     {
         param: "commandName",
         type: "String",
-        description: "A string representing the name of the command you need help with",
+        description: "A string representing the name of the command you need help with.",
         optional: true,
     }
 ];
+const allowedContexts = [
+    "text",
+    "dm",
+];
+const adminOnly = false;
 
 //main
-const execute = async function (client, message, args) {
+const execute = async function (message, args) {
     if (args.length === 0) {
         try {
-            await sendMessage(generateCommandList(client.commands), message.channel);
+            if (message.channel.type === "text") {
+                await sendMessage("I have DM'ed you a list of commands, please check your messages.", message.channel);
+            }
+            await sendMessage(generateCommandList(message.client.commands, message), message.author);
         } catch (e) {
             throw e;
         }
-        return;
+        return true;
     }
     const helpWithCommand = args[0].match(/^-?([\w-_]+)$/)[1];
-    if (client.commands.has(helpWithCommand)) {
-        const embedMessage = getHelpMessage(client.commands.get(helpWithCommand));
-        await sendMessage(embedMessage, message.channel);
+    if (message.client.commands.has(helpWithCommand)) {
+        const command = message.client.commands.get(helpWithCommand);
+        if (command.adminOnly && !await isAdmin(message.author.id) ||
+            command.superAdminOnly && !await isSuperAdmin(message.author.id)
+        ) {
+            await sendMessage("You do not have permission to view details on that command.", message.channel);
+            return true;
+        }
+        const helpMessage = getHelpMessage(command);
+        await sendMessage(helpMessage, message.channel);
     } else {
         await sendMessage(`The command \`${helpWithCommand}\` does not exist.  Type \`${CONFIG.PREFIX}${name}\` for a commands list.`, message.channel);
     }
@@ -43,9 +56,60 @@ module.exports = {
     description: description,
     params: params,
     execute: execute,
+    allowedContexts: allowedContexts,
+    adminOnly: adminOnly,
 }
 
 //helper functions
+/**
+ * Generates the list of commands and the help text message.
+ *
+ * @param clientCommands - the Collection of client commands
+ * @param message
+ * @returns {string} -  the string with all of the commands, their descriptions, and the rest of the help text message.
+ */
+function generateCommandList(clientCommands, message) {
+    let commandListLines = [];
+    commandListLines.push("List of commands: ");
+
+    const commandsGrouped = {};
+    const alreadyProcessed = ["help"];
+    for (const command of [...clientCommands.values()]) {
+        if (alreadyProcessed.includes(command.name)) {
+            continue;
+        }
+
+        alreadyProcessed.push(command.name);
+
+        if (
+            (command.adminOnly && message.channel.type === "dm") ||
+            (command.adminOnly && !isAdmin(message.author.id))
+        ) {
+            continue;
+        }
+
+        if (!commandsGrouped[command.group]) {
+            commandsGrouped[command.group] = [];
+        }
+        commandsGrouped[command.group].push({
+            name: command.name,
+            description: command.description
+        });
+    }
+    for (const [groupName, commands] of Object.entries(commandsGrouped)) {
+        const prettyGroupName = uppercaseFirstLetter(groupName.replace("_", " "));
+        commandListLines.push(`**${prettyGroupName}** commands:`);
+        for (const command of commands) {
+            commandListLines.push(`    \`${CONFIG.PREFIX}${command.name}\`: ${command.description}`);
+        }
+    }
+    //special case for the HELP file
+    commandListLines.push(`\`${CONFIG.PREFIX}${name}\`: ${description}`);
+    commandListLines.push("");
+    commandListLines.push(`Type \`${CONFIG.PREFIX}${name} [command]\` for more detailed help information about specific commands.`);
+    return commandListLines.join("\n");
+}
+
 /**
  * Constructs a MessageEmbed object from member fields of the command,
  * including any custom helpText in order to relay helpful information about the
@@ -59,7 +123,7 @@ function getHelpMessage(command) {
     if (command.aliases) {
         let aliasList = [];
         for (const alias of command.aliases) {
-            aliasList.push(`\`${alias}\``);
+            aliasList.push(`\`-${alias}\``);
         }
         fields.push({
             name: "Aliases:",
@@ -73,6 +137,7 @@ function getHelpMessage(command) {
     let fullCommand = `${CONFIG.PREFIX}${command.name}`;
     if (command.params) {
         for (const currentArg of command.params) {
+
             logMessage(currentArg, 3);
             let optionalMod = (currentArg.optional) ? "?" : "";
             fullCommand += ` [${optionalMod}${currentArg.param}]`;
@@ -149,56 +214,15 @@ function getHelpMessage(command) {
     });
 }
 
-function generateCommandList(clientCommands) {
-    let dirPath = "./commands";
-
-    let response = [];
-
-    response.push("List of commands: ");
-
-    //special case for the HELP file
-    response.push(`\`${CONFIG.PREFIX}${name}\`: ${description}`);
-    response.push(getCommandsText(dirPath, clientCommands));
-    response.push("");
-    response.push(`Type \`${CONFIG.PREFIX}${name} [command]\` for more detailed help information about specific commands.`);
-    return response.join("\n");
-}
-
-function getCommandsText(dirPath, clientCommands, indentLevel = 0) {
-    let commandsTextArr = [];
-    const commandFiles = fs.readdirSync(dirPath);
-    for (const item of commandFiles) {
-        const fullItemName = `${dirPath}/${item}`;
-        if (fs.statSync(fullItemName).isDirectory()) {
-            const prettyDirName = uppercaseFirstLetter(item.replace("_", " "));
-            commandsTextArr.push(`${indent(indentLevel)}**${prettyDirName}** commands:`);
-            commandsTextArr.push(getCommandsText(fullItemName, clientCommands, indentLevel + 1));
-        } else {
-            if (item !== path.basename(__filename) && item.endsWith(".js")) {
-                const commandName = item.match(/(.+)\.js/)[1];
-                if (clientCommands.get(commandName)) {
-                    let currentCommand = clientCommands.get(commandName);
-                    commandsTextArr.push(`${indent(indentLevel)}\`${CONFIG.PREFIX}${currentCommand.name}\`: ${currentCommand.description}`);
-                } else {
-                    console.log(`${commandName} does not exist in client.commands`);
-                }
-            }
-        }
-    }
-    return commandsTextArr.join("\n");
-}
-
+/**
+ * Uppercases the first letter of each word in a string.
+ *
+ * @param str - the string
+ * @returns {string}  - the string with the first letter of each word capitalized.
+ */
 function uppercaseFirstLetter(str) {
     const words = str.split(" ");
     return words.map((word) => {
         return word[0].toUpperCase() + word.substring(1);
     }).join(" ");
-}
-
-function indent(level) {
-    let indentString = "";
-    for (let i = 0; i < level; i++) {
-        indentString += "    ";
-    }
-    return indentString;
 }

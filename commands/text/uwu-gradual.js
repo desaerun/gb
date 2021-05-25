@@ -19,10 +19,15 @@ const params = [
         type: "String",
         default: uwu.params[0].default,
     }
-]
+];
+const allowedContexts = [
+    "text",
+    "dm",
+];
+const adminOnly = false;
 
 //main
-const execute = async function (client, message, args) {
+const execute = async function (message, args) {
     if (!args[0] || (args[0] && isNaN(parseFloat(args[0])))) {
         args.unshift(params[0].default);
     } else if (args[0] >= 1) {
@@ -45,6 +50,8 @@ module.exports = {
     description: description,
     params: params,
     execute: execute,
+    allowedContexts: allowedContexts,
+    adminOnly: adminOnly,
 }
 
 //helper functions

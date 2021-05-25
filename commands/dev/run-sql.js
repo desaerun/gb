@@ -1,6 +1,5 @@
 //imports
 const {sendMessage} = require("../../tools/sendMessage");
-const {isAdmin} = require("../../tools/utils");
 
 //prisma
 const {PrismaClient} = require("@prisma/client");
@@ -17,13 +16,14 @@ const params = [
         default: "SELECT * FROM message LIMIT 5",
     }
 ];
+const allowedContexts = [
+    "text",
+    "dm",
+];
+const adminOnly = true;
 
 //main
-const execute = async function (client, message, args) {
-    if (!isAdmin(message.member)) {
-        await sendMessage("You do not have the authority to perform that function.", message.channel);
-        return false;
-    }
+const execute = async function (message, args) {
     let query = args.join(" ");
     let result;
     try {
@@ -59,6 +59,8 @@ module.exports = {
     description: description,
     params: params,
     execute: execute,
+    allowedContexts: allowedContexts,
+    adminOnly: adminOnly,
 }
 
 //helper functions

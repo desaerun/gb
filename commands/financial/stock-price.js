@@ -14,9 +14,14 @@ const params = [
         default: "GME",
     }
 ];
+const allowedContexts = [
+    "text",
+    "dm",
+];
+const adminOnly = false;
 
 //main
-const execute = async function (client, message, args) {
+const execute = async function (message, args) {
     if (args.length > 1) {
         await sendMessage(`You cannot make multiple requests at once. (Requested ${args})`, message.channel);
         return;
@@ -45,18 +50,12 @@ const getTickerData = async function (ticker) {
         if (response.status === 200) {
             return response.data;
         } else {
-            throw new Error(`Request returned status code ${response.status}`);
+            await sendMessage(`error fetching stock price: ${err}`, message.channel);
         }
     } catch (err) {
-        await sendMessage(`error fetching stock price: ${err}`, message.channel);
+        throw err;
     }
 }
-
-const currencyFormat = new Intl.NumberFormat("en-US",
-    {
-        style: "currency",
-        currency: "USD"
-    });
 
 const percentFormat = new Intl.NumberFormat("en-US",
     {
@@ -71,5 +70,7 @@ module.exports = {
     description: description,
     params: params,
     execute: execute,
+    allowedContexts: allowedContexts,
+    adminOnly: adminOnly,
     getTickerData: getTickerData,
 }

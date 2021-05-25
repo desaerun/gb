@@ -1,7 +1,6 @@
 //imports
 const Discord = require("discord.js");
 const moment = require("moment");
-const CONFIG = require("../../config/config");
 const {sendMessage} = require("../../tools/sendMessage");
 
 //prisma
@@ -10,6 +9,10 @@ const prisma = new PrismaClient();
 
 //module settings
 const name = "get-deleted-messages";
+const aliases = [
+    "deleted",
+    "deleted-messages",
+];
 const description = "Retrieves the recently deleted messages by the mentioned user";
 const params = [
     {
@@ -28,10 +31,14 @@ const params = [
 const examples = [
     `@desaerun`,
     `187048556643876864`,
-]
+];
+const allowedContexts = [
+    "text",
+];
+const adminOnly = false;
 
 //main
-const execute = async function (client, message, args) {
+const execute = async function (message, args) {
     let userId = args[0];
     if (message.mentions.users.first()) {
         userId = message.mentions.users.first().id;
@@ -107,10 +114,13 @@ const execute = async function (client, message, args) {
 //module export
 module.exports = {
     name: name,
+    aliases: aliases,
     description: description,
     params: params,
-    execute: execute,
     examples: examples,
+    execute: execute,
+    allowedContexts: allowedContexts,
+    adminOnly: adminOnly,
 }
 
 //helper functions

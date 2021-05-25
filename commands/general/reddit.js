@@ -24,10 +24,15 @@ const params = [
         ],
     }
 ];
-const helpText = "This is sample help text";
+const allowedContexts = [
+    "text",
+    "dm",
+];
+const adminOnly = false;
+
 
 //main
-const execute = async function (client, message, args) {
+const execute = async function (message, args) {
 
     let subreddit = args[0];
     // Strip down to only content after "/" chars in case the user selected "r/youtubehaiku", for example
@@ -61,8 +66,9 @@ module.exports = {
     name: name,
     description: description,
     params: params,
-    helpText: helpText,
     execute: execute,
+    allowedContexts: allowedContexts,
+    adminOnly: adminOnly,
 }
 
 //helper functions

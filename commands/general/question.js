@@ -3,6 +3,8 @@ const axios = require("axios");
 const cheerio = require("cheerio");
 const Discord = require("discord.js");
 const fs = require("fs");
+const {mkdirRecursiveSync} = require("../../tools/utils");
+const {logMessage} = require("../../tools/utils");
 const {sendMessage} = require("../../tools/sendMessage");
 
 //module settings
@@ -17,9 +19,14 @@ const params = [
         default: "boobies",
     }
 ];
+const allowedContexts = [
+    "text",
+    "dm",
+];
+const adminOnly = false;
 
 //main
-const execute = async function (client, message, args) {
+const execute = async function (message, args) {
 
     let query = args.join(" ");
     let queryUriString = `https://www.google.com/search?q=${encodeURIComponent(query)}`;
@@ -49,23 +56,24 @@ const execute = async function (client, message, args) {
             answerEmbed.addField("\u2800", `[More results on Google](${queryUriString})`, true);
             await sendMessage(answerEmbed, message.channel);
         } else {
-            console.log("No answer was found, attempting to parse search results instead");
+            logMessage("No answer was found, attempting to parse search results instead", 3);
             // If an answer was not able to be parsed, return the first few search results
             let resultsEmbedsArr = getSearchResultsAsEmbeddedMessages($);
-            console.log(`Successfully parsed search results.  Length: ${resultsEmbedsArr.length}`);
+            logMessage(`Successfully parsed search results.  Length: ${resultsEmbedsArr.length}`, 4);
             let moreGoogleResultsText;
             if (resultsEmbedsArr && resultsEmbedsArr.length > 0) {
                 await sendMessage(`Hmm, I couldn't figure that one out. Maybe these will help:`, message.channel);
                 moreGoogleResultsText = "More Results on Google";
                 for (let i = 0; i < resultsEmbedsArr.length; i++) {
-                    console.log(`Sending embed #${i}`);
+                    logMessage(`Sending embed #${i}`, 4);
                     await sendMessage(resultsEmbedsArr[i], message.channel);
                 }
 
             } else {
-                console.log("Unable to parse the search results.");
+                logMessage("Unable to parse the search results.", 2);
                 // write the html of the page to a file to try to figure out why it couldn't parse the search
                 // results page
+                mkdirRecursiveSync("/log/questionResults/");
                 fs.writeFileSync(`./log/questionResults/googleSearchResultsPage-${+Date.now()}.html`, $.html());
 
                 // If all else fails, kindly inform the user that an answer was not found.
@@ -89,6 +97,8 @@ module.exports = {
     description: description,
     params: params,
     execute: execute,
+    allowedContexts: allowedContexts,
+    adminOnly: adminOnly,
 }
 
 //helper functions
@@ -121,7 +131,7 @@ async function getAnswer($, query, maxRetries = 3) {
         if (JSON.stringify(answer) !== "{}" && answer.text) {
             break;
         }
-        console.log(`Couldn't find an answer. Attempting to retry, attempt #${i}`);
+        logMessage(`Couldn't find an answer. Attempting to retry, attempt #${i}`, 3);
         $ = await getGoogleSearchPageAsCheerioObject(query);
     }
     return answer;
@@ -131,7 +141,7 @@ async function getAnswer($, query, maxRetries = 3) {
  * Queries the Google search results page and returns the entire page as a Promise that resolves to a
  * Cheerio (node jQuery) object.
  * @param query -- What to search for.
- * @returns {Promise<cheerio.Root|jQuery|HTMLElement>}
+ * @returns {Promise<cheerio.Root|HTMLElement>}
  */
 async function getGoogleSearchPageAsCheerioObject(query) {
     let $;
@@ -148,7 +158,7 @@ async function getGoogleSearchPageAsCheerioObject(query) {
         if (response.status === 200) {
             $ = cheerio.load(response.data);
         } else {
-            throw new Error(`Response from server was not HTTP 200: ${response.status}`);
+            logMessage(`Response from server was not HTTP 200: ${response.status}`);
         }
     } catch (e) {
         throw e;
@@ -319,13 +329,7 @@ const selectors = {
  * }
  *
  * @param $ -- the jQuery (cheerio) context of the entire page
- * @returns {Promise<{
- *     text: String,
- *     context: String,
- *     sourceText: String,
- *     sourceUrl: String,
- *     sourcePane: String,
- * }>}
+ * @returns {Promise<{}>}
  */
 async function getAnswerFromGoogleSearch($) {
     try {
@@ -467,10 +471,10 @@ function getSearchResultsAsEmbeddedMessages($, maxSearchResults = 3) {
             // especially when there is a featured video or big non-parsed knowledge pane or info box at the top
             // of the search results.
             // this results in the "fuck you" message.
-            console.log("search results length was 0, returning false");
+            logMessage("search results length was 0, returning false", 2);
             return false;
         }
-        console.log(`retrieved valid search results, returning array of discord embeds, length: ${results.length}`);
+        logMessage(`retrieved valid search results, returning array of discord embeds, length: ${results.length}`, 4);
         return results;
     } catch (e) {
         throw new Error("Error retrieving search results.");

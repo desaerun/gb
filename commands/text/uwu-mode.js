@@ -11,12 +11,18 @@ const params = [
         type: String | Boolean,
     },
 ];
+const allowedContexts = [
+    "text",
+    "dm",
+];
+const adminOnly = true;
 
 //main
-async function execute(client, message, args) {
+async function execute(message, args) {
+    const client = message.client;
     let newNick;
     if (!args[0]) {
-        uwuMode = !uwuMode;
+        client.uwuMode = !client.uwuMode;
     } else {
         switch (args[0]) {
             case "true":
@@ -24,7 +30,7 @@ async function execute(client, message, args) {
             case "yes":
             case "on":
             case "enable": {
-                uwuMode = true;
+                client.uwuMode = true;
                 break;
             }
             case "false":
@@ -32,26 +38,26 @@ async function execute(client, message, args) {
             case "no":
             case "off":
             case "disable": {
-                uwuMode = false;
+                client.uwuMode = false;
                 break;
             }
             default: {
-                uwuMode = !uwuMode;
+                client.uwuMode = !client.uwuMode;
             }
         }
     }
     let onOff;
-    if (uwuMode) {
+    if (client.uwuMode) {
         onOff = "on!";
         newNick = uwuify(message.guild.me.displayName);
     } else {
         onOff = "off.";
-        newNick = normalNickname;
+        newNick = client.normalNickname;
     }
     await message.guild.me.setNickname(newNick);
 
     await sendMessage(`uwu-mode turned ${onOff}`, message.channel);
-    return uwuMode;
+    return true;
 }
 
 //module export
@@ -60,6 +66,8 @@ module.exports = {
     description: description,
     params: params,
     execute: execute,
+    allowedContexts: allowedContexts,
+    adminOnly: adminOnly,
 }
 
 //helper functions

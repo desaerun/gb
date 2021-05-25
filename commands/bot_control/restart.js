@@ -1,5 +1,4 @@
 //imports
-const {isAdmin} = require("../../tools/utils");
 const {sendMessage} = require("../../tools/sendMessage");
 
 //module settings
@@ -18,12 +17,14 @@ const examples = [
     "force",
 ];
 
+const allowedContexts = [
+    "text",
+    "dm",
+];
+const adminOnly = true;
+
 //main
-const execute = async function (client, message, args) {
-    if (!isAdmin(message.member)) {
-        await sendMessage("You do not have the authority to perform that function.", message.channel);
-        return false;
-    }
+const execute = async function (message, args) {
     if (args[0] && (args[0].toLowerCase() === "force" || args[0] === "true")) {
         await sendMessage(`Killing bot process forcefully in 10 seconds.  Bot will attempt to restart.`, message.channel);
         setTimeout(() => {
@@ -43,6 +44,8 @@ module.exports = {
     params: params,
     examples: examples,
     execute: execute,
+    allowedContexts: allowedContexts,
+    adminOnly: adminOnly,
 };
 
 //helper functions

@@ -4,12 +4,13 @@ const {uwuifyIfUwuMode} = require("./uwuify");
 /**
  * Splits a message into [chunkSize] parts.  Discord does not allow messages > 2000 characters, for example.
  * Does not break words.
+ *
  * @param input
  * @param target -- the Discord.js Channel/User object to send to
  * @param suppressEmbeds -- whether or not auto-generated Embeds should be suppressed
  * @param forceNormalText -- forces disabling uwu-mode
  * @param chunkSize -- the maximum size of each message
- * @returns {Promise<void>}
+ * @returns{Promise<"discord.js".Message>}
  */
 exports.sendMessage = async function (input, target, suppressEmbeds = false, forceNormalText = false, chunkSize = 2000) {
     if (input instanceof Discord.MessageEmbed) {
@@ -21,23 +22,23 @@ exports.sendMessage = async function (input, target, suppressEmbeds = false, for
             }
         } else {
             if (input.content) {
-                input.content = uwuifyIfUwuMode(input.content);
+                input.content = uwuifyIfUwuMode(input.content, target.client.uwuMode);
             }
             if (input.title) {
-                input.title = uwuifyIfUwuMode(input.title);
+                input.title = uwuifyIfUwuMode(input.title, target.client.uwuMode);
             }
             if (input.description) {
-                input.description = uwuifyIfUwuMode(input.description);
+                input.description = uwuifyIfUwuMode(input.description, target.client.uwuMode);
             }
             if (input.footer && input.footer.text) {
-                input.footer.text = uwuifyIfUwuMode(input.footer.text);
+                input.footer.text = uwuifyIfUwuMode(input.footer.text, target.client.uwuMode);
             }
             if (input.author && input.author.name) {
-                input.author.name = uwuifyIfUwuMode(input.author.name);
+                input.author.name = uwuifyIfUwuMode(input.author.name, target.client.uwuMode);
             }
             for (const field of input.fields) {
-                field.name = uwuifyIfUwuMode(field.name);
-                field.value = uwuifyIfUwuMode(field.value);
+                field.name = uwuifyIfUwuMode(field.name, target.client.uwuMode);
+                field.value = uwuifyIfUwuMode(field.value, target.client.uwuMode);
 
                 //if the value field is longer than allowed, take the first and last half of the characters and insert
                 // "..." between them.
@@ -60,15 +61,16 @@ exports.sendMessage = async function (input, target, suppressEmbeds = false, for
         input = input.replace(url, "<$1>");
     }
     if (!forceNormalText) {
-        input = uwuifyIfUwuMode(input);
+        input = uwuifyIfUwuMode(input, target.client.uwuMode);
     }
     const words = input.split(" ");
     let chunkWords = [];
+    let lastMessage;
     for (let i = 0; i < words.length; i++) {
         const msgChunk = chunkWords.join(" ");
         if (msgChunk.length + words[i].length >= chunkSize) {
             try {
-                await target.send(msgChunk);
+                lastMessage = await target.send(msgChunk);
             } catch (e) {
                 throw e;
             }
@@ -81,9 +83,10 @@ exports.sendMessage = async function (input, target, suppressEmbeds = false, for
     if (chunkWords.length > 0) {
         const msgChunk = chunkWords.join(" ");
         try {
-            await target.send(msgChunk);
+            lastMessage = await target.send(msgChunk);
         } catch (e) {
             throw e;
         }
     }
+    return lastMessage;
 }

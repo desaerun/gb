@@ -28,6 +28,8 @@ CREATE TABLE `Author` (
     `displayName` VARCHAR(255),
     `avatarUrl` VARCHAR(255),
     `isBot` BOOLEAN NOT NULL DEFAULT false,
+    `isAdmin` BOOLEAN NOT NULL DEFAULT false,
+    `isSuperAdmin` BOOLEAN NOT NULL DEFAULT false,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updatedAt` DATETIME(3) NOT NULL,
 
@@ -131,6 +133,27 @@ CREATE TABLE `DmEditHistory` (
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
+CREATE TABLE `CryptoWatcher` (
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `symbol` VARCHAR(191) NOT NULL,
+    `name` VARCHAR(191) NOT NULL,
+    `index` INTEGER UNSIGNED,
+    `startingPrice` DOUBLE NOT NULL,
+    `targetPrice` DOUBLE NOT NULL,
+    `requested` DOUBLE NOT NULL,
+    `direction` ENUM('UP', 'DOWN') NOT NULL,
+    `watcherType` ENUM('FIXED', 'CHANGE', 'PERCENT_CHANGE') NOT NULL,
+    `alertChannelId` VARCHAR(30) NOT NULL,
+    `authorId` VARCHAR(30) NOT NULL,
+    `triggeredAt` DATETIME(3),
+    `mentionIds` VARCHAR(191),
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NOT NULL,
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
 CREATE TABLE `_AuthorToGuild` (
     `A` VARCHAR(30) NOT NULL,
     `B` VARCHAR(30) NOT NULL,
@@ -140,7 +163,10 @@ CREATE TABLE `_AuthorToGuild` (
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- AddForeignKey
-ALTER TABLE `Channel` ADD FOREIGN KEY (`guildId`) REFERENCES `Guild`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE `MessageAttachment` ADD FOREIGN KEY (`messageId`) REFERENCES `Message`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `MessageEditHistory` ADD FOREIGN KEY (`messageId`) REFERENCES `Message`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `Message` ADD FOREIGN KEY (`guildId`) REFERENCES `Guild`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
@@ -152,22 +178,25 @@ ALTER TABLE `Message` ADD FOREIGN KEY (`channelId`) REFERENCES `Channel`(`id`) O
 ALTER TABLE `Message` ADD FOREIGN KEY (`authorId`) REFERENCES `Author`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `MessageEditHistory` ADD FOREIGN KEY (`messageId`) REFERENCES `Message`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE `MessageAttachment` ADD FOREIGN KEY (`messageId`) REFERENCES `Message`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE `BotDm` ADD FOREIGN KEY (`authorId`) REFERENCES `Author`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
 ALTER TABLE `DmAttachment` ADD FOREIGN KEY (`messageId`) REFERENCES `BotDm`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
+ALTER TABLE `Channel` ADD FOREIGN KEY (`guildId`) REFERENCES `Guild`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE `DmEditHistory` ADD FOREIGN KEY (`messageId`) REFERENCES `BotDm`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `CryptoWatcher` ADD FOREIGN KEY (`alertChannelId`) REFERENCES `Channel`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `CryptoWatcher` ADD FOREIGN KEY (`authorId`) REFERENCES `Author`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `_AuthorToGuild` ADD FOREIGN KEY (`A`) REFERENCES `Author`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `_AuthorToGuild` ADD FOREIGN KEY (`B`) REFERENCES `Guild`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `BotDm` ADD FOREIGN KEY (`authorId`) REFERENCES `Author`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
