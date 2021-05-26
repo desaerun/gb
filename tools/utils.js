@@ -1,6 +1,7 @@
 const CONFIG = require("../config/config");
 const fs = require("fs");
 const readline = require("readline");
+const axios = require("axios");
 
 //prisma
 const {PrismaClient} = require("@prisma/client");
@@ -254,4 +255,41 @@ exports.formatMoney = function (n, maxPlaces, currency = "USD") {
             maximumFractionDigits: maxPlaces,
         });
     return currencyFormat.format(n);
+}
+
+exports.downloadFile = async (url, targetPath) => {
+    //make sure the folder exists
+    if (!targetPath.endsWith("/")) {
+        targetPath += "/";
+    }
+    mkdirRecursiveSync(targetPath);
+
+    //get the file extension
+    const fileName = url.split("/").pop();
+    let baseName = fileName;
+    let extension = null;
+
+    let fileNameParts = fileName.split(".");
+    if (fileNameParts.length > 1) {
+        extension = fileNameParts.pop();
+        baseName = fileNameParts.join(".");
+    }
+
+    const fullFilePath = `${targetPath}${baseName}.${extension}`;
+    try {
+        axios({
+            url: url,
+            responseType: 'stream'
+        }).then(response =>
+            new Promise((resolve, reject) => {
+                //todo: convert svg to png
+                response.data.pipe(fs.createWriteStream(fullFilePath))
+                    .on("finish", () => resolve())
+                    .on("error", (e) => reject(e));
+            })
+        );
+    } catch (e) {
+        throw Error(`There was an error downloading the file at url ${url} to ${targetPath}: ${e.stack}`);
+    }
+    return fullFilePath;
 }

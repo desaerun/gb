@@ -45,6 +45,7 @@ async function watcherCycle() {
  * @returns {Promise<void>}
  */
 async function checkPrices() {
+    logMessage("Checking crypto prices...", 4);
     const activeWatchers = await prisma.cryptoWatcher.findMany({
         where: {
             triggeredAt: null,
@@ -365,6 +366,10 @@ async function reindexWatchers() {
         updatedWatchers.push(updated);
         previousSymbol = watcher.symbol;
     }
+
+    //reset cooldown on watcher reindexing
+    cooldowns.watcherReindex = +Date.now();
+
     return updatedWatchers;
 }
 
