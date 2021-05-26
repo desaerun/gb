@@ -5,9 +5,14 @@ const {logMessage} = require("../../tools/utils");
 //module settings
 const name = "is-birk-online";
 const description = "Reports on Birk's status";
+const allowedContexts = [
+    "text",
+    "dm",
+];
+const adminOnly = false;
 
 //main
-const execute = async function (client, message) {
+const execute = async function (message) {
     let birk;
     try {
         const birkID = "97542223641464832";
@@ -50,6 +55,8 @@ module.exports = {
     name: name,
     description: description,
     execute: execute,
+    allowedContexts: allowedContexts,
+    adminOnly: adminOnly,
 }
 
 //helper functions

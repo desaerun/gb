@@ -2,6 +2,7 @@
 const Discord = require("discord.js");
 const locutus = require("locutus");
 const moment = require("moment");
+const {logMessage} = require("../../tools/utils");
 const {sendMessage} = require("../../tools/sendMessage");
 
 //prisma
@@ -10,6 +11,9 @@ const prisma = new PrismaClient();
 
 //module settings
 const name = "random-message";
+const aliases = [
+    "history",
+];
 const description = "Chooses a random message from the DB from the day that is specified as an argument.";
 const params = [
     {
@@ -24,15 +28,20 @@ const examples = [
     "a week ago",
     "January 1st 2021",
 ];
+const allowedContexts = [
+    "text",
+    "dm",
+];
+const adminOnly = false;
 
 //main
-const execute = async function (client, message, args, forceGuildID = null, forceChannelID = null) {
+const execute = async function (message, args, forceGuildID = null, forceChannelID = null) {
     let channel = null;
     if ((forceGuildID || forceChannelID) && (forceGuildID ^ forceChannelID)) {
-        console.log("forceGuildID or forceChannelID was defined, but not both.");
+        logMessage("forceGuildID or forceChannelID was defined, but not both.", 2);
         return false;
     } else if (forceGuildID && forceChannelID) {
-        channel = client.guilds.cache.get(forceGuildID).channels.cache.get(forceChannelID);
+        channel = await message.client.channels.fetch(forceChannelID);
     } else {
         channel = message.channel;
     }
@@ -55,9 +64,9 @@ const execute = async function (client, message, args, forceGuildID = null, forc
     //get 11:59:59.999 at the end of that day
     let end_timestamp = timestamp + (24 * 60 * 60 * 1000) - 1;
 
-    console.log(`Selecting messages between (${timestamp})${moment(timestamp).format("MMMM Do YYYY HH:mm:ss a")}`
-        + ` and (${end_timestamp})${moment(end_timestamp).format("MMMM Do YYYY HH:mm:ss a")}`);
-    console.log(`${timestamp} :: ${end_timestamp}`);
+    logMessage(`Selecting messages between (${timestamp})${moment(timestamp).format("MMMM Do YYYY HH:mm:ss a")}`
+        + ` and (${end_timestamp})${moment(end_timestamp).format("MMMM Do YYYY HH:mm:ss a")}`, 3);
+    logMessage(`${timestamp} :: ${end_timestamp}`, 3);
 
     let allMessages;
     try {
@@ -88,7 +97,7 @@ const execute = async function (client, message, args, forceGuildID = null, forc
         return false;
     } else {
         if (allMessages.length < 3) {
-            console.log(`<3 messages sent this day`);
+            logMessage(`<3 messages sent this day`, 4);
             selectedMessages = allMessages;
         } else {
             //try to select a non-bot message
@@ -135,10 +144,13 @@ const execute = async function (client, message, args, forceGuildID = null, forc
 //module export
 module.exports = {
     name: name,
+    aliases: aliases,
     description: description,
     params: params,
-    execute: execute,
     examples: examples,
+    execute: execute,
+    allowedContexts: allowedContexts,
+    adminOnly: adminOnly,
 }
 
 //helper functions

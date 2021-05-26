@@ -11,59 +11,71 @@ generator client {
 }
 
 model Guild {
-  id        String    @id @db.VarChar(30)
-  name      String    @db.VarChar(255)
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  channels  Channel[]
-  authors   Author[]
-  messages  Message[]
+  id   String @id @db.VarChar(30)
+  name String @db.VarChar(255)
+
+  channels Channel[]
+  authors  Author[]
+  messages Message[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@unique([id, name], name: "guild_unique_name")
 }
 
 model Channel {
-  id        String    @id @db.VarChar(30)
-  guildId   String    @db.VarChar(30)
-  name      String    @db.VarChar(255)
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  guild     Guild     @relation(fields: [guildId], references: [id])
-  messages  Message[]
+  id      String @id @db.VarChar(30)
+  guildId String @db.VarChar(30)
+  name    String @db.VarChar(255)
+  guild   Guild  @relation(fields: [guildId], references: [id])
+
+  messages       Message[]
+  cryptoWatchers CryptoWatcher[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@unique([id, guildId, name], name: "unique_channel")
   @@index([guildId], name: "guild")
 }
 
 model Author {
-  id          String    @id @db.VarChar(30)
-  displayName String?   @db.VarChar(255)
-  avatarUrl   String?   @db.VarChar(255)
-  isBot       Boolean   @default(false)
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-  messages    Message[]
-  guilds      Guild[]
-  botdms      BotDm[]
+  id           String  @id @db.VarChar(30)
+  displayName  String? @db.VarChar(255)
+  avatarUrl    String? @db.VarChar(255)
+  isBot        Boolean @default(false)
+  isAdmin      Boolean @default(false)
+  isSuperAdmin Boolean @default(false)
+
+  messages       Message[]
+  guilds         Guild[]
+  botDms         BotDm[]
+  cryptoWatchers CryptoWatcher[]
+
+  createdAt           DateTime              @default(now())
+  updatedAt           DateTime              @updatedAt
 }
 
 model Message {
-  id                String               @id @db.VarChar(30)
-  guildId           String               @db.VarChar(30)
-  channelId         String               @db.VarChar(30)
-  authorId          String               @db.VarChar(30)
-  content           String?              @db.Text
+  id                String    @id @db.VarChar(30)
+  guildId           String    @db.VarChar(30)
+  channelId         String    @db.VarChar(30)
+  authorId          String    @db.VarChar(30)
+  content           String?   @db.Text
   timestamp         DateTime
   lastEditTimestamp DateTime?
   deletedAt         DateTime?
-  deletedBy         String?              @db.VarChar(255)
-  createdAt         DateTime             @default(now())
-  updatedAt         DateTime             @updatedAt
-  guild             Guild                @relation(fields: [guildId], references: [id])
-  channel           Channel              @relation(fields: [channelId], references: [id])
-  author            Author               @relation(fields: [authorId], references: [id])
-  editHistory       MessageEditHistory[]
-  attachments       MessageAttachment[]
+  deletedBy         String?   @db.VarChar(255)
+
+  guild       Guild                @relation(fields: [guildId], references: [id])
+  channel     Channel              @relation(fields: [channelId], references: [id])
+  author      Author               @relation(fields: [authorId], references: [id])
+  editHistory MessageEditHistory[]
+  attachments MessageAttachment[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([authorId], name: "author")
   @@index([channelId], name: "channel")
@@ -76,9 +88,11 @@ model MessageEditHistory {
   newContent    String?  @db.Text
   oldContent    String?  @db.Text
   editTimestamp DateTime
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-  message       Message  @relation(fields: [messageId], references: [id])
+
+  message Message @relation(fields: [messageId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model MessageAttachment {
@@ -91,24 +105,28 @@ model MessageAttachment {
   height    Int?     @db.UnsignedInt
   width     Int?     @db.UnsignedInt
   timestamp DateTime
+
+  message Message @relation(fields: [messageId], references: [id])
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  message   Message  @relation(fields: [messageId], references: [id])
 }
 
 model BotDm {
-  id                String          @id @db.VarChar(30)
-  authorId          String          @db.VarChar(30)
-  conversationId    String          @db.VarChar(30)
-  content           String          @db.Text
+  id                String    @id @db.VarChar(30)
+  authorId          String    @db.VarChar(30)
+  conversationId    String    @db.VarChar(30)
+  content           String    @db.Text
   timestamp         DateTime
   lastEditTimestamp DateTime?
   deletedAt         DateTime?
-  createdAt         DateTime        @default(now())
-  updatedAt         DateTime        @updatedAt
-  author            Author          @relation(fields: [authorId], references: [id])
-  editHistory       DmEditHistory[]
-  attachments       DmAttachment[]
+
+  author      Author          @relation(fields: [authorId], references: [id])
+  editHistory DmEditHistory[]
+  attachments DmAttachment[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([authorId], name: "author")
 }
@@ -123,9 +141,11 @@ model DmAttachment {
   height    Int?     @db.UnsignedInt
   width     Int?     @db.UnsignedInt
   timestamp DateTime
+
+  message BotDm @relation(fields: [messageId], references: [id])
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  message   BotDm    @relation(fields: [messageId], references: [id])
 }
 
 model DmEditHistory {
@@ -134,7 +154,42 @@ model DmEditHistory {
   newContent    String?  @db.Text
   oldContent    String?  @db.Text
   editTimestamp DateTime
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-  message       BotDm    @relation(fields: [messageId], references: [id])
+
+  message BotDm @relation(fields: [messageId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model CryptoWatcher {
+  id             Int                    @id @default(autoincrement())
+  symbol         String
+  name           String
+  index          Int?                   @db.UnsignedInt
+  startingPrice  Float
+  targetPrice    Float
+  requested      Float
+  direction      CryptoWatcherDirection
+  watcherType    CryptoWatcherType
+  alertChannelId String                 @db.VarChar(30)
+  authorId       String                 @db.VarChar(30)
+  triggeredAt    DateTime?
+  mentionIds     String?
+
+  alertChannel Channel @relation(fields: [alertChannelId], references: [id])
+  createdBy    Author  @relation(fields: [authorId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum CryptoWatcherType {
+  FIXED
+  CHANGE
+  PERCENT_CHANGE
+}
+
+enum CryptoWatcherDirection {
+  UP
+  DOWN
 }

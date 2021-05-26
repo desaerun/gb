@@ -14,9 +14,14 @@ const params = [
         default: "Message author",
     }
 ];
+const allowedContexts = [
+    "text",
+    "dm",
+];
+const adminOnly = false;
 
 //main
-const execute = async function (client, message, args) {
+const execute = async function (message, args) {
     let user;
     if (args[0] === params[0].default) {
         user = message.author;
@@ -42,7 +47,8 @@ const execute = async function (client, message, args) {
             {
                 name: `Online status:`,
                 value: `${user.presence.status}`
-            })
+            }
+            )
         .setFooter("Just another discord bot");
 
     await sendMessage(response, message.channel);
@@ -54,6 +60,8 @@ module.exports = {
     description: description,
     params: params,
     execute: execute,
+    allowedContexts: allowedContexts,
+    adminOnly: adminOnly,
 }
 
 //helper functions

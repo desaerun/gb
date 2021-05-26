@@ -28,11 +28,16 @@ const params = [
         ],
     }
 ];
+const allowedContexts = [
+    "text",
+    "dm",
+];
+const adminOnly = false;
 
 //main
-const execute = async function (client, message, args) {
+const execute = async function (message, args) {
     const uwuText = uwuify(args.join(" "));
-    await message.channel.send(uwuText,{split: true});
+    await message.channel.send(uwuText, {split: true});
     await setDeletedBy(message, "uwu");
     await message.delete();
 }
@@ -43,6 +48,8 @@ module.exports = {
     description: description,
     params: params,
     execute: execute,
+    allowedContexts: allowedContexts,
+    adminOnly: adminOnly,
     uwuify: uwuify,
 }
 

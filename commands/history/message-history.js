@@ -1,6 +1,7 @@
 //imports
 const Discord = require("discord.js");
 const moment = require("moment");
+const {logMessage} = require("../../tools/utils");
 const {sendMessage} = require("../../tools/sendMessage");
 
 //prisma
@@ -18,9 +19,13 @@ const params = [
         //no default, a message ID must be given
     },
 ];
+const allowedContexts = [
+    "text",
+];
+const adminOnly = false;
 
 //main
-const execute = async function (client, message, args) {
+const execute = async function (message, args) {
     if (args.length !== 1) {
         await sendMessage(`You must provide the message ID.`, message.channel);
         return false;
@@ -60,7 +65,7 @@ const execute = async function (client, message, args) {
     }
     let originalContent = messageFromDb.content;
     if (messageFromDb.deletedAt) {
-        console.log(messageFromDb.deletedAt);
+        logMessage(messageFromDb.deletedAt, 3);
         embedMessage.addField(":x: Deleted:", moment(messageFromDb.deletedAt).format(dateFormat));
     }
     if (messageFromDb.editHistory.length > 0) { // if the message has an edit history
@@ -160,6 +165,8 @@ module.exports = {
     description: description,
     params: params,
     execute: execute,
+    allowedContexts: allowedContexts,
+    adminOnly: adminOnly,
 }
 
 //helper functions

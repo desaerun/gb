@@ -7,7 +7,7 @@ const name = "joshisms";
 const description = "Responds to Josh talking about the things he talks about frequently.";
 
 //main
-async function listen(client, message) {
+async function listen(message) {
     if (message.author.id !== CONFIG.USER_JOSH_ID) return false;
     let wordResponseMap = buildWordResponseMap();
 

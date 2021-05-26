@@ -6,7 +6,7 @@ const name = "test";
 const description = "test listener";
 
 //main
-async function listen(client, message) {
+async function listen(message) {
     const rEStr = /^[\s]*\btest\b[\s]*$/i;
     const rE = new RegExp(rEStr);
     if (rE.test(message.content)) {

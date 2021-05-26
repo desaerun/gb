@@ -1,7 +1,6 @@
 //imports
 const os = require("os");
 const prettyMilliseconds = require("pretty-ms");
-const {isAdmin} = require("../../tools/utils");
 const {sendMessage} = require("../../tools/sendMessage");
 
 //module settings
@@ -16,13 +15,14 @@ const params = [
 ];
 const helpText = "Valid section titles are `all`,`user`,`cpu`,`net`,`db`,`tokens`. Multiple sections can be " +
     "specified, separated by spaces.";
+const allowedContexts = [
+    "text",
+    "dm",
+];
+const adminOnly = true;
 
 //main
-const execute = async function (client, message, args) {
-    if (!isAdmin(message.member)) {
-        await sendMessage("You do not have the authority to perform that function.", message.channel);
-        return false;
-    }
+const execute = async function (message, args) {
     let fields = [];
     fields.push(`OS info:`);
     fields.push(` Uptime: ${prettyMilliseconds(os.uptime * 1000)}`);
@@ -109,9 +109,11 @@ const execute = async function (client, message, args) {
 module.exports = {
     name: name,
     description: description,
-    execute: execute,
     params: params,
     helpText: helpText,
+    execute: execute,
+    allowedContexts: allowedContexts,
+    adminOnly: adminOnly,
 }
 
 //helper functions

@@ -1,4 +1,5 @@
 //imports
+const {getRandomArrayMember} = require("../../tools/utils");
 const {sendMessage} = require("../../tools/sendMessage");
 
 //module settings
@@ -12,9 +13,14 @@ const params = [
         default: 1,
     },
 ];
+const allowedContexts = [
+    "text",
+    "dm",
+];
+const adminOnly = false;
 
 //main
-const execute = async function (client, message, args) {
+const execute = async function (message, args) {
     args[0] = Math.abs(args[0]);
     if (args[0] === 0) {
         await sendMessage("Cannot deal 0 cards.", message.channel);
@@ -59,7 +65,7 @@ const execute = async function (client, message, args) {
     for (i = 1; i <= +args[0]; i++) {
         const cardIndex = Math.floor((Math.random() * cards.length));
 
-        const card = cards[cardIndex];
+        const card = getRandomArrayMember(cards);
         cards.splice(cardIndex, 1);
         hand.push(card);
     }
@@ -76,6 +82,8 @@ module.exports = {
     description: description,
     params: params,
     execute: execute,
+    allowedContexts: allowedContexts,
+    adminOnly: adminOnly,
 }
 
 //helper functions

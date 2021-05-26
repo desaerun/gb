@@ -2,6 +2,7 @@ const {cartesianProduct, getRandomArrayMember, isUrl} = require("./utils");
 
 /**
  * Uwu-ifies text
+ *
  * @param text The text to uwu-ify
  * @param replacementsFreqBase the frequency to replace the text
  * @returns {string} The uwu-ified text
@@ -114,7 +115,7 @@ function uwuify(text, replacementsFreqBase = 1) {
                         wordPart && wordPart[1].length > 2 && //only replace if word is >= 3 characters long
                         !noReplace.includes(wordPart[1].toLowerCase()) //skip some abbreviations
                     ) {
-                        words[i] = words[i].replace(/(:[^:]+:)|([\w\d\[\].%()$-,]+)/g, function(match, emojiMatch, wordMatch) {
+                        words[i] = words[i].replace(/(:[^:]+:)|([\w\d\[\].%()$-,]+)/g, function (match, emojiMatch, wordMatch) {
                             if (emojiMatch) {
                                 return emojiMatch;
                             }
@@ -176,21 +177,23 @@ exports.uwuify = uwuify;
 
 /**
  * Uwuifies the text only if Uwu-mode is on, otherwise returns the text unchanged.
+ *
  * @param text
+ * @param isUwuMode
  * @returns {string|*}
  */
-function uwuifyIfUwuMode(text) {
-    if (uwuMode) {
+function uwuifyIfUwuMode(text, isUwuMode) {
+    if (isUwuMode) {
         return uwuify(text);
     }
     return text;
 }
-
 exports.uwuifyIfUwuMode = uwuifyIfUwuMode;
 
 /**
  * generates all the combinations possible of replacing the W's in a string with L's or R's (attempt to un-uwuify
  * the string).  Returns an array with the combinations.
+ *
  * @param word
  * @returns {String[]}
  */

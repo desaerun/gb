@@ -18,9 +18,14 @@ const params = [
     }
 ];
 const helpText = "If this command is called with no arguments, a list of active stopwatches is printed.";
+const allowedContexts = [
+    "text",
+    "dm",
+];
+const adminOnly = false;
 
 //main
-const execute = async function (client, message, args) {
+const execute = async function (message, args) {
 
     if (args.length === 0) {
 
@@ -58,6 +63,8 @@ module.exports = {
     params: params,
     helpText: helpText,
     execute: execute,
+    allowedContexts: allowedContexts,
+    adminOnly: adminOnly,
 }
 
 //helper functions
