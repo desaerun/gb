@@ -123,7 +123,7 @@ async function playNextSong(textChannel, voiceChannel) {
                 }
             });
         } catch (e) {
-            await sendMessage(`Failed to play song ${song.title}: ${e}`, textChannel, null,true);
+            await sendMessage(`Failed to play song ${song.title}: ${e}`, textChannel, null, true);
             playing = false;
         }
     } else {
