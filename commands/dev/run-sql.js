@@ -1,16 +1,9 @@
 //imports
 const {sendMessage} = require("../../tools/sendMessage");
-const {isAdmin} = require("../../tools/utils");
 
-// mysql
-const mysql = require("mysql2/promise");
-const db = require("../../config/db");
-const pool = mysql.createPool({
-    ...db,
-    waitForConnections: true,
-    connectionLimit: 100,
-    queueLimit: 0,
-});
+//prisma
+const {PrismaClient} = require("@prisma/client");
+const prisma = new PrismaClient();
 
 //module settings
 const name = "run-sql";
@@ -20,26 +13,43 @@ const params = [
         param: "query",
         type: "String",
         description: "An SQL query",
-        default: "SELECT * FROM messages LIMIT 10",
+        default: "SELECT * FROM message LIMIT 5",
     }
 ];
+const allowedContexts = [
+    "text",
+    "dm",
+];
+const adminOnly = true;
 
 //main
-const execute = async function (client, message, args) {
-    if (!isAdmin(message.member)) {
-        await sendMessage("You do not have the authority to perform that function.", message.channel);
-        return false;
-    }
+const execute = async function (message, args) {
     let query = args.join(" ");
-    let rows;
+    let result;
     try {
-        [rows] = await pool.query(query);
+        if (
+            query.startsWith("SELECT") ||
+            query.startsWith("SHOW")
+        ) {
+            result = await prisma.$queryRaw(query);
+        } else {
+            result = await prisma.$executeRaw(query);
+        }
     } catch (e) {
         await sendMessage(`MySQL error: ${e}`, message.channel);
-        throw e;
+        return false;
     }
-    for (let row of rows) {
-        await sendMessage(`\`\`\`${JSON.stringify(row)}\`\`\``, message.channel);
+    if (result && Array.isArray(result) && result.length > 0) {
+        const outputLines = [];
+        for (let row of result) {
+            outputLines.push(`\`\`\`${JSON.stringify(row)}\`\`\``)
+        }
+        const output = outputLines.join("\n");
+        await sendMessage(output, message.channel);
+    } else if (result) {
+        await sendMessage(`Query was executed successfully. Affected rows: ${result}`, message.channel);
+    } else {
+        await sendMessage("Query was executed successfully, but no rows were returned.", message.channel);
     }
 }
 
@@ -49,6 +59,8 @@ module.exports = {
     description: description,
     params: params,
     execute: execute,
+    allowedContexts: allowedContexts,
+    adminOnly: adminOnly,
 }
 
 //helper functions

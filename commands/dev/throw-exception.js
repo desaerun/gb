@@ -1,17 +1,17 @@
 //imports
-const {sendMessage} = require("../../tools/sendMessage");
-const {isAdmin} = require("../../tools/utils");
+
 
 //module settings
 const name = "throw-exception";
 const description = "Throws a test exception";
+const allowedContexts = [
+    "text",
+    "dm",
+];
+const adminOnly = true;
 
 //main
-const execute = async function (client, message) {
-    if (!isAdmin(message.member)) {
-        await sendMessage("You do not have the authority to perform that function.", message.channel);
-        return false;
-    }
+const execute = function () {
     throw new Error("This is a test error");
 }
 
@@ -20,6 +20,8 @@ module.exports = {
     name: name,
     description: description,
     execute: execute,
+    allowedContexts: allowedContexts,
+    adminOnly: adminOnly,
 }
 
 //helper functions

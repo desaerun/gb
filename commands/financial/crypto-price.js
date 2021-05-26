@@ -19,16 +19,20 @@ const params = [
 const helpText = "Names that are more than one word can be searched by enclosing in quotes, e.g. " +
     "`-crypto-price \"Basic Attention Token\"`.";
 const examples = [
-    "-crypto-price btc",
-    "-crypto-price btc eth doge",
-]
+    "btc",
+    "btc eth doge",
+];
+const allowedContexts = [
+    "text",
+    "dm",
+];
+const adminOnly = false;
 
 //main
-const execute = async function (client, message, args) {
+const execute = async function (message, args) {
     //todo: draw candlestick chart
-    //todo: make output prettier (discord embed? inline fields? include market cap/volume?)
     if (args.length === 0) {
-        await message.channel.send(`You must include a crypto ticker (BTC, ETH) with this request.`);
+        await sendMessage(`You must include a crypto ticker (BTC, ETH) with this request.`, message.channel);
         return;
     }
     let cryptosInfoWithPriceData = await getCryptoInfoWithPriceData(args);
@@ -99,6 +103,8 @@ module.exports = {
     helpText: helpText,
     examples: examples,
     execute: execute,
+    allowedContexts: allowedContexts,
+    adminOnly: adminOnly,
 }
 
 //helper functions

@@ -5,9 +5,14 @@ const {getTickerData} = require("./stock-price");
 //module settings
 const name = "gme-price";
 const description = "Retrieves GME price from Finnhub API (in USD)";
+const allowedContexts = [
+    "text",
+    "dm",
+];
+const adminOnly = false;
 
 //main
-const execute = async function (client, message, args) {
+const execute = async function (message) {
     try {
         const tickerData = await getTickerData("GME");
 
@@ -28,6 +33,8 @@ module.exports = {
     name: name,
     description: description,
     execute: execute,
+    allowedContexts: allowedContexts,
+    adminOnly: adminOnly,
 }
 
 //helper functions

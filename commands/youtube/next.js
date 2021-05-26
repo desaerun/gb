@@ -5,9 +5,14 @@ const {skipSong} = require("./play.js");
 const name = "next";
 const aliases = ["skip"];
 const description = "Plays the next song in the queue.";
+const allowedContexts = [
+    "text",
+    "dm",
+];
+const adminOnly = false;
 
 //main
-const execute = async function (client, message) {
+const execute = async function (message) {
     await skipSong(message.channel);
 }
 
@@ -17,6 +22,8 @@ module.exports = {
     aliases: aliases,
     description: description,
     execute: execute,
+    allowedContexts: allowedContexts,
+    adminOnly: adminOnly,
 }
 
 //helper functions

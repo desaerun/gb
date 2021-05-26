@@ -6,9 +6,21 @@ const {getRandomInt} = require("../../tools/utils");
 
 //module settings
 const name = "roll";
-const aliases = ["dice", "dieroll", "die-roll", "diceroll", "dice-roll"];
+const aliases = [
+    "dice",
+    "dieroll",
+    "die-roll",
+    "diceroll",
+    "dice-roll"
+];
 const description = "Rolls a die.";
 const params = [
+    {
+        param: "upper",
+        type: "Integer",
+        description: "Upper bounds of the roll.",
+        default: 6,
+    },
     {
         param: "lower",
         type: "Integer",
@@ -16,16 +28,15 @@ const params = [
         default: 1,
         optional: true,
     },
-    {
-        param: "upper",
-        type: "Integer",
-        description: "Upper bounds of the roll.",
-        default: 6,
-    }
 ];
+const allowedContexts = [
+    "text",
+    "dm",
+];
+const adminOnly = false;
 
 //main
-const execute = async function (client, message, args) {
+const execute = async function (message, args) {
     let regularDie = false;
     if (!args || args.length < 2) {
         if (args.length === 1) {
@@ -36,15 +47,15 @@ const execute = async function (client, message, args) {
         args[0] = params[0].default;
         regularDie = true;
     }
-    const lower = Math.abs(args[0]);
-    const upper = Math.abs(args[1]);
+    const upper = Math.abs(args[0]);
+    const lower = Math.abs(args[1]);
     const roll = getRandomInt(lower, upper);
 
     let response;
     if (regularDie) {
-        response = `**${message.guild.me.displayName}** rolls a **${args[1]}-sided** die:  **${roll}**`;
+        response = `**${message.guild.me.displayName}** rolls a **${upper}-sided** die:  **${roll}**`;
     } else {
-        response = `**${message.guild.me.displayName}** rolls between **${args[0]}** and **${args[1]}**:  **${roll}**`;
+        response = `**${message.guild.me.displayName}** rolls between **${Math.min(upper, lower)}** and **${Math.max(lower, upper)}**:  **${roll}**`;
     }
     try {
         await sendMessage(response, message.channel);
@@ -61,6 +72,8 @@ module.exports = {
     description: description,
     params: params,
     execute: execute,
+    allowedContexts: allowedContexts,
+    adminOnly: adminOnly,
 }
 
 //helper functions

@@ -1,109 +1,238 @@
-const {snowflakeToTimestamp, logMessage} = require("./utils");
 const moment = require("moment");
+const axios = require("axios");
+const fs = require("fs");
+const {snowflakeToTimestamp, logMessage, mkdirRecursiveSync} = require("./utils");
 
-//mysql
-const mysql = require("mysql2/promise");
-const db = require("../config/db");
-const pool = mysql.createPool({
-    ...db,
-    waitForConnections: true,
-    connectionLimit: 100,
-    queueLimit: 0,
-});
+//prisma
+const {PrismaClient} = require("@prisma/client");
+const prisma = new PrismaClient();
 
 /**
- * Inserts a new message into the Database.  Also inserts and/or updates the Channel, Guild, and Author tables with
+ * Upserts a new message in the Database.  Also upserts the Channel, Guild, and Author tables with
  * information from the message.
+ *
  * @param message -- a Discord.Message object representing the message.
  * @param lastEditTimestamp -- the timestamp the message was last edited.
  * @returns {Boolean} -- Returns true if successful.
  */
-insertNewMessage = async function insertNewMessage(message, lastEditTimestamp = null) {
+upsertMessage = async function (message, lastEditTimestamp = null) {
     if (message.channel.type === "text") {
-        const author = message.guild.members.cache.get(message.author.id);
-        let guild_values = {
+        const author = await message.guild.members.fetch(message.author.id);
+        let guildValues = {
             id: message.guild.id,
             name: message.guild.name,
         }
-        let channel_values = {
+        let channelValues = {
             id: message.channel.id,
-            guild: guild_values.id,
+            guild: {
+                connectOrCreate: {
+                    where: {
+                        id: guildValues.id,
+                    },
+                    create: guildValues,
+                },
+            },
             name: message.channel.name,
         }
-        let author_values = {
+        let isBot;
+        if (author && author.user) {
+            isBot = author.user.bot;
+        } else {
+            isBot = author.bot;
+        }
+        let authorValues = {
             id: message.author.id,
-            guild: guild_values.id,
             displayName: author.displayName,
-            avatarURL: author.user.displayAvatarURL(),
-            isBot: author.user.bot,
+            avatarUrl: author.user.displayAvatarURL(),
+            isBot: isBot,
         }
         let messageContent = message.content;
         for (const embed of message.embeds) {
             messageContent += convertEmbedToText(embed)
         }
-        let message_values = {
+        let messageValues = {
             id: message.id,
-            author: author_values.id,
-            guild: guild_values.id,
-            channel: channel_values.id,
+            author: {
+                connectOrCreate: {
+                    where: {
+                        id: authorValues.id,
+                    },
+                    create: authorValues,
+                }
+            },
+            guild: {
+                connectOrCreate: {
+                    where: {
+                        id: guildValues.id,
+                    },
+                    create: guildValues,
+                },
+            },
+            channel: {
+                connectOrCreate: {
+                    where: {
+                        id: channelValues.id,
+                    },
+                    create: channelValues,
+                },
+            },
             content: messageContent,
-            timestamp: snowflakeToTimestamp(message.id),
-            lastEditTimestamp: lastEditTimestamp,
+            timestamp: new Date(message.createdTimestamp),
         }
-        logMessage(`Guild: ${JSON.stringify(message.guild)}...${JSON.stringify(guild_values)}`, 4);
-        logMessage(`Channel: ${JSON.stringify(message.channel)}...${JSON.stringify(channel_values)}`, 4);
-        logMessage(`Author: ${JSON.stringify(message.author)}...${JSON.stringify(author_values)}`, 4);
-        logMessage(`Cached Author:${JSON.stringify(message.guild.members.cache.get(author_values.id))}`, 4);
-        logMessage(`Message: ${JSON.stringify(message)}...${JSON.stringify(message_values)}`, 4);
-        logMessage(`Attachments: ${JSON.stringify(message.attachments)}`, 4);
-
-        // await pool.query("START TRANSACTION;");
+        if (lastEditTimestamp) {
+            messageValues.lastEditTimestamp = new Date(lastEditTimestamp);
+        }
         try {
-            await pool.query("INSERT INTO guilds SET ? ON DUPLICATE KEY UPDATE ?", [guild_values, guild_values]);
-            await pool.query("INSERT INTO channels SET ? ON DUPLICATE KEY UPDATE ?", [channel_values, channel_values]);
-            await pool.query("INSERT INTO authors SET ? ON DUPLICATE KEY UPDATE ?", [author_values, author_values]);
-            await pool.query("INSERT INTO messages SET ? ON DUPLICATE KEY UPDATE ?", [message_values, message_values]);
-            // await pool.query("COMMIT");
-        } catch (err) {
-            // await pool.query("ROLLBACK");
-            throw err;
-        }
-        logMessage(`Successfully inserted guild ${guild_values.id}`, 4);
-        logMessage(`Successfully inserted channel ${channel_values.id}`, 4);
-        logMessage(`Successfully inserted author ${author_values.id}`, 4);
-        logMessage(`Successfully inserted message ${message_values.id}`, 4);
-        let i = 1;
-        //realistically, messages can only have one attachment
-        for (let attachment of message.attachments) {
-            const attachment_data = attachment[1];
-            let attachment_values = {
-                id: attachment_data.id,
-                messageId: message.id,
-                name: attachment_data.name,
-                url: attachment_data.url,
-                proxyURL: attachment_data.proxyURL,
-                size: attachment_data.size,
-                height: attachment_data.height,
-                width: attachment_data.width,
-                timestamp: snowflakeToTimestamp(attachment_data.id),
-            };
-            pool.query("INSERT INTO attachments SET ? ON DUPLICATE KEY UPDATE ?", [attachment_values, attachment_values], (err) => {
-                if (err) throw err;
-                logMessage(`Successfully inserted attachment ${attachment_values.id} (${i} of ${message.attachments.size})`, 4);
-                i++;
+            //insert message
+            await prisma.message.upsert({
+                where: {
+                    id: message.id,
+                },
+                update: {
+                    lastEditTimestamp: messageValues.lastEditTimestamp,
+                },
+                create: messageValues,
             });
-        }
-        return true; // added
-    } else if (message.channel.type === "dm") {
+            logMessage(`Successfully upserted message ${messageValues.id}`, 3);
 
+            //create author<->guild relationship
+            await prisma.author.upsert({
+                where: {
+                    id: author.id,
+                },
+                update: {
+                    guilds: {
+                        connectOrCreate: {
+                            where: {
+                                id: guildValues.id,
+                            },
+                            create: guildValues,
+                        }
+                    }
+                },
+                create: {
+                    ...authorValues,
+                    guilds: {
+                        connectOrCreate: {
+                            where: {
+                                id: guildValues.id,
+                            },
+                            create: guildValues,
+                        }
+                    }
+                }
+            })
+            logMessage(`Successfully created author<->guild relationship between ${guildValues.id} and ${author.id}`, 4);
+        } catch (e) {
+            logMessage(`Failed to upsert the message: ${e}`, 2);
+        }
+        let i = 1;
+        //realistically, messages can only have one attachment, but it is provided by discord API as an array
+        for (let attachment of message.attachments) {
+            const attachmentData = attachment[1];
+
+            downloadAttachment(attachmentData);
+
+            try {
+                const insertAttachment = await prisma.messageAttachment.create({
+                    data: {
+                        id: attachmentData.id,
+                        message: {
+                            connect: {
+                                id: message.id,
+                            },
+                        },
+                        name: attachmentData.name,
+                        url: attachmentData.url,
+                        proxyUrl: attachmentData.proxyURL,
+                        size: attachmentData.size,
+                        height: attachmentData.height,
+                        width: attachmentData.width,
+                        timestamp: new Date(snowflakeToTimestamp(attachmentData.id)),
+                    }
+                });
+                logMessage(`Successfully upserted attachment ${insertAttachment.id} (${i} of ${message.attachments.size})`, 3);
+            } catch (e) {
+                logMessage(`The message attachment was not able to be upserted: ${e}`, 2);
+            }
+            i++;
+        }
+        return true; // upsert successful
+    } else if (message.channel.type === "dm") {
+        try {
+            const author = message.author;
+
+            //upsert a bot DM entry
+            await prisma.botDm.upsert({
+                where: {
+                    id: message.id,
+                },
+                update: {},
+                create: {
+                    id: message.id,
+                    conversationId: message.channel.id,
+                    author: {
+                        connectOrCreate: {
+                            where: {
+                                id: author.id,
+                            },
+                            create: {
+                                id: author.id,
+                                displayName: author.displayName,
+                                avatarUrl: author.displayAvatarURL(),
+                                isBot: author.bot || (author.user && author.user.bot),
+                            }
+                        }
+                    },
+                    content: message.content,
+                    timestamp: new Date(message.createdTimestamp),
+                }
+            });
+            logMessage(`Successfully upserted DM message ${message.id}`, 3);
+        } catch (e) {
+            await logMessage(`The message was not able to be upserted: ${e.stack}`, 2);
+        }
+        //realistically, messages can only have one attachment, but it is provided by discord API as an array
+        try {
+            for (let attachment of message.attachments) {
+                const attachmentData = attachment[1];
+
+                //download image locally
+                downloadAttachment(attachmentData);
+                //insert attachment entry
+                await prisma.dmAttachment.create({
+                    data: {
+                        id: attachmentData.id,
+                        messageId: {
+                            connect: {
+                                where: {
+                                    id: message.id,
+                                }
+                            },
+                        },
+                        name: attachmentData.name,
+                        url: attachmentData.url,
+                        proxyURL: attachmentData.proxyURL,
+                        size: attachmentData.size,
+                        height: attachmentData.height,
+                        width: attachmentData.width,
+                        timestamp: new Date(snowflakeToTimestamp(attachmentData.id)),
+                    }
+                });
+            }
+        } catch (e) {
+            await logMessage(`The attachment was not able to be upserted: ${e.stack}`, 2);
+        }
+
+        return true; // upsert successful
     }
 }
-exports.insertNewMessage = insertNewMessage;
+exports.upsertMessage = upsertMessage;
 
 /**
  * This function is called every time a message is posted, or when running the cache message history command.
  * Scrapes information about the message and adds it to the DB.
- * @param client -- A Discord.Client object representing the bot
+ *
  * @param message -- The message to be parsed
  * @param includeBotMessages -- Whether or not Bot messages should be added to the DB or skipped over.
  * @returns {Promise<number>} -- A status code:
@@ -113,63 +242,89 @@ exports.insertNewMessage = insertNewMessage;
  * 4: Author is no longer a part of the Discord Guild that is being parsed.  This would cause an error with
  * several functions, so these messages are skipped over.
  */
-captureMessage = async function captureMessage(client, message, includeBotMessages = false) {
+captureMessage = async function (message, includeBotMessages = false) {
     try {
-        let [rows] = await pool.execute("SELECT * FROM messages WHERE id = ?", [message.id]);
-        if (rows.length === 0) { // if message doesn't already exist in DB
+        let existingMessage = await prisma.message.findUnique({
+            where: {
+                id: message.id,
+            },
+        });
+        if (!existingMessage) { // if message doesn't already exist in DB
             let author;
             if (message.channel.type === "text") {
-                author = message.guild.members.cache.get(message.author.id);
+                try {
+                    author = await message.guild.members.fetch(message.author.id);
+                } catch (e) {
+                    logMessage(`Author is no longer joined to guild ${message.guild.id}`, 3);
+                }
+            } else if (message.channel.type === "dm") {
+                author = await message.client.users.fetch(message.author.id);
             }
             if (!author) {
-                console.log(`Author was not able to be fetched for message ${message.id}`);
+                logMessage(`Author ${message.author.id} was not able to be fetched for message ${message.id}`, 3);
                 return 4; // no author
             } else {
-                if (!author.user.bot || includeBotMessages) {
-                    insertNewMessage(message);
+                if (!author.bot || (author.user && !author.user.bot) || includeBotMessages) {
+                    upsertMessage(message);
                     return 1; // added
                 } else {
-                    console.log("Message was from a bot and includeBotMessages is false.");
+                    logMessage("Message was from a bot and includeBotMessages is false.", 3);
                     return 3; // bot message
                 }
             }
         } else {
-            console.log(`Message ${message.id} already exists in DB, skipping...`);
-            return 2; // skipped
+            logMessage(`Message ${message.id} already exists in DB, skipping...`, 3);
+            return 2; // exists
         }
     } catch (err) {
-        await message.channel.send(`Error occurred inserting message: ${err}`);
-        console.log(err);
+        logMessage(err, 2);
     }
 }
 exports.captureMessage = captureMessage;
 
 /**
  * Updates the DB with information about when a message was deleted.
+ *
  * @param deletedMessage
  * @returns {Promise<void>}
  */
-deleteMessageFromDb = async function deleteMessageFromDb(deletedMessage) {
-    const now = +Date.now();
+deleteMessageFromDb = async function (deletedMessage) {
     try {
-        await pool.query("UPDATE messages SET deleted = ? WHERE id = ?", [now, deletedMessage.id]);
+        await prisma.message.update({
+            where: {
+                id: deletedMessage.id,
+            },
+            data: {
+                deletedAt: new Date(),
+            }
+        });
+        logMessage(`Set deletedAt flag for ${deletedMessage.id}`);
     } catch (e) {
-        throw e;
+        logMessage(`The deletedAt flag was not able to be set for ${deletedMessage.id}: ${e.stack}`);
     }
 }
 exports.deleteMessageFromDb = deleteMessageFromDb;
 
 /**
  * sets the deletedBy field in the DB for the message ID given.
+ *
  * @param message -- A Discord.Message representing the message
  * @param deletedBy -- A "reason" or "source" of the deletion.
  * @returns {Promise<void>}
  */
-setDeletedBy = async function setDeletedBy(message, deletedBy) {
+setDeletedBy = async function (message, deletedBy) {
     try {
-        await pool.query("UPDATE messages SET deletedBy = ? WHERE id = ?", [deletedBy, message.id]);
+        await prisma.message.update({
+            where: {
+                id: message.id,
+            },
+            data: {
+                deletedBy: deletedBy,
+            },
+        });
+        logMessage(`The deletedBy field on ${message.id} was updated to ${deletedBy}.`);
     } catch (e) {
-        throw e;
+        logMessage(`The message delete reason was not able to be set to ${deletedBy}: ${e.stack}`);
     }
 }
 exports.setDeletedBy = setDeletedBy;
@@ -177,18 +332,19 @@ exports.setDeletedBy = setDeletedBy;
 /**
  * Retrieves the message if it is a partial before passing it along to the addMessageEdit function,
  * where it will be stored in the DB.
+ *
  * @param oldMessage
  * @param newMessage
  * @returns {Promise<void>}
  */
-updateEditedMessage = async function updateEditedMessage(oldMessage, newMessage) {
-    insertNewMessage(newMessage, Date.now());
+updateEditedMessage = async function (oldMessage, newMessage) {
+    upsertMessage(newMessage, +Date.now());
     if (oldMessage.partial) {
         try {
             const fetchedMessage = await oldMessage.fetch();
             await addMessageEdit(fetchedMessage, newMessage);
         } catch (e) {
-            throw e;
+            logMessage(`The message edit history was not able to be added: ${e.stack}`);
         }
     } else {
         await addMessageEdit(oldMessage, newMessage);
@@ -197,16 +353,52 @@ updateEditedMessage = async function updateEditedMessage(oldMessage, newMessage)
 exports.updateEditedMessage = updateEditedMessage;
 
 /**
+ * Adds a message edit entry to the DB
+ *
+ * @param oldMessage -- A Discord.Message object representing the message prior to editing
+ * @param newMessage -- A Discord.Message object representing the message after editing
+ * @returns {Promise<void>}
+ */
+addMessageEdit = async function (oldMessage, newMessage) {
+    logMessage(`Adding messageEdit history for ${newMessage.id}`, 4);
+    let oldMessageContent = oldMessage.content;
+    let newMessageContent = newMessage.content;
+    for (const embed of oldMessage.embeds) {
+        oldMessageContent += convertEmbedToText(embed);
+    }
+    for (const embed of newMessage.embeds) {
+        newMessageContent += convertEmbedToText(embed);
+    }
+    try {
+        //insert editHistory entry
+        await prisma.messageEditHistory.create({
+            data: {
+                message: {
+                    connect: {
+                        id: oldMessage.id,
+                    },
+                },
+                newContent: newMessageContent,
+                oldContent: oldMessageContent,
+                editTimestamp: new Date(newMessage.editedTimestamp),
+            }
+        });
+    } catch (e) {
+        logMessage(`The message edit history was not able to be created: ${e.stack}`);
+    }
+}
+
+/**
  * Converts a Discord embedded message into a big chunk of text, for storing in DB purposes or including
  * the text into another embed.
+ *
  * @param embed -- the Discord.MessageEmbed object
  * @returns {string} -- a string representing the embed object
  */
 convertEmbedToText = function convertEmbedToText(embed) {
     let textEmbedLines = [];
     textEmbedLines.push(``);
-    textEmbedLines.push(`\\*\\*\\*\\*\\*\\*\\*\\*\\*\\*\\*\\*\\*\\*\\*`);
-    textEmbedLines.push("\\*\\*\\*\\*\\**Embedded Content*\\*\\*\\*\\*\\*");
+    textEmbedLines.push("\\*\\*\\*\\*\\*\\*\\**Embedded Content*\\*\\*\\*\\*\\*\\*\\*");
     if (embed.title) {
         if (embed.url) {
             textEmbedLines.push(`[**${embed.title}**](${embed.url})`);
@@ -227,36 +419,37 @@ convertEmbedToText = function convertEmbedToText(embed) {
         const formattedTimestamp = moment(embed.timestamp).format("MMM Do YYYY h:mm:ssa [GMT]Z");
         textEmbedLines.push(`at ${formattedTimestamp}`);
     }
-    textEmbedLines.push(`\\*\\*\\*\\*\\*\\*\\*\\*\\*\\*\\*\\*\\*\\*\\*`);
+    textEmbedLines.push(`\\*\\*\\*\\*\\*\\*End Embedded Content\\*\\*\\*\\*\\*\\*`);
 
     return textEmbedLines.join("\n");
 }
 exports.convertEmbedToText = convertEmbedToText;
 
-/**
- * Adds a message edit entry to the DB
- * @param oldMessage -- A Discord.Message object representing the message prior to editing
- * @param newMessage -- A Discord.Message object representing the message after editing
- * @returns {Promise<void>}
- */
-addMessageEdit = async function addMessageEdit(oldMessage, newMessage) {
-    let oldMessageContent = oldMessage.content;
-    let newMessageContent = newMessage.content;
-    for (const embed of oldMessage.embeds) {
-        oldMessageContent += convertEmbedToText(embed);
+const downloadAttachment = async (attachmentData) => {
+    //make sure the folder for attachments exists
+    const attachmentsFolder = "./data/attachments/";
+    mkdirRecursiveSync(attachmentsFolder);
+
+    //get the file extension
+    const urlParts = attachmentData.url.split(".");
+    let extension = "";
+    if (urlParts.length > 1) {
+        extension = "." + urlParts[urlParts.length - 1];
     }
-    for (const embed of newMessage.embeds) {
-        newMessageContent += convertEmbedToText(embed);
-    }
-    const oldMessageParams = {
-        messageId: oldMessage.id,
-        newContent: newMessageContent,
-        oldContent: oldMessageContent,
-        editTimestamp: Date.now(),
-    }
+
+    const fullFilePath = attachmentsFolder + attachmentData.id + extension;
     try {
-        await pool.query("INSERT INTO messageEdits SET ?", oldMessageParams);
-    } catch (error) {
-        throw error;
+        axios({
+            url: attachmentData.url,
+            responseType: 'stream'
+        }).then(response =>
+            new Promise((resolve, reject) => {
+                response.data.pipe(fs.createWriteStream(fullFilePath))
+                    .on("finish", () => resolve())
+                    .on("error", () => reject(e));
+            })
+        );
+    } catch (e) {
+        throw Error(`There was an error downloading the attachment ${attachmentData.url}(${attachmentData.id}): ${e}`);
     }
 }

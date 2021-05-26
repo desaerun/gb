@@ -2,20 +2,18 @@
 const Discord = require("discord.js");
 const locutus = require("locutus");
 const moment = require("moment");
+const {logMessage} = require("../../tools/utils");
 const {sendMessage} = require("../../tools/sendMessage");
 
-//mysql
-const mysql = require("mysql2/promise");
-const db = require("../../config/db");
-const pool = mysql.createPool({
-    ...db,
-    waitForConnections: true,
-    connectionLimit: 100,
-    queueLimit: 0,
-});
+//prisma
+const {PrismaClient} = require("@prisma/client");
+const prisma = new PrismaClient();
 
 //module settings
 const name = "random-message";
+const aliases = [
+    "history",
+];
 const description = "Chooses a random message from the DB from the day that is specified as an argument.";
 const params = [
     {
@@ -25,15 +23,25 @@ const params = [
         default: "now",
     },
 ];
+const examples = [
+    "today",
+    "a week ago",
+    "January 1st 2021",
+];
+const allowedContexts = [
+    "text",
+    "dm",
+];
+const adminOnly = false;
 
 //main
-const execute = async function (client, message, args, forceGuildID = null, forceChannelID = null) {
+const execute = async function (message, args, forceGuildID = null, forceChannelID = null) {
     let channel = null;
     if ((forceGuildID || forceChannelID) && (forceGuildID ^ forceChannelID)) {
-        console.log("forceGuildID or forceChannelID was defined, but not both.");
+        logMessage("forceGuildID or forceChannelID was defined, but not both.", 2);
         return false;
     } else if (forceGuildID && forceChannelID) {
-        channel = client.guilds.cache.get(forceGuildID).channels.cache.get(forceChannelID);
+        channel = await message.client.channels.fetch(forceChannelID);
     } else {
         channel = message.channel;
     }
@@ -56,50 +64,40 @@ const execute = async function (client, message, args, forceGuildID = null, forc
     //get 11:59:59.999 at the end of that day
     let end_timestamp = timestamp + (24 * 60 * 60 * 1000) - 1;
 
-    console.log(`Selecting messages between (${timestamp})${moment(timestamp).format("MMMM Do YYYY HH:mm:ss a")} and (${end_timestamp})${moment(end_timestamp).format("MMMM Do YYYY HH:mm:ss a")}`);
-    console.log(`${timestamp} :: ${end_timestamp}`);
+    logMessage(`Selecting messages between (${timestamp})${moment(timestamp).format("MMMM Do YYYY HH:mm:ss a")}`
+        + ` and (${end_timestamp})${moment(end_timestamp).format("MMMM Do YYYY HH:mm:ss a")}`, 3);
+    logMessage(`${timestamp} :: ${end_timestamp}`, 3);
 
-    //select messages from the DB that are between the two timestamps retrieved previously
-    const message_sql = "SELECT" +
-        "    m.id," +
-        "    m.content," +
-        "    m.guild," +
-        "    m.channel," +
-        "    m.author," +
-        "    m.timestamp," +
-        "    a.url AS attachmentURL," +
-        "    author.displayName AS author_displayName," +
-        "    author.avatarURL AS author_avatarURL," +
-        "    author.isBot AS author_isBot" +
-        " FROM" +
-        "    messages m" +
-        " LEFT JOIN attachments a ON" +
-        "    m.id = a.messageId" +
-        " LEFT JOIN authors author ON" +
-        "    m.author=author.id" +
-        " WHERE" +
-        "    m.channel = ? AND m.timestamp BETWEEN ? AND ? AND m.deleted IS NULL" +
-        " ORDER BY" +
-        "    m.timestamp" +
-        " DESC";
-    let allMessages = [];
+    let allMessages;
     try {
-        const result = await pool.query(message_sql, [channel.id, timestamp, end_timestamp]);
-        allMessages = result[0];
+        //select messages from the DB that are between the two timestamps retrieved previously'
+        allMessages = await prisma.message.findMany({
+            where: {
+                channelId: channel.id,
+                timestamp: {
+                    gte: new Date(timestamp),
+                    lte: new Date(end_timestamp),
+                }
+            },
+            include: {
+                attachments: true,
+                author: true,
+            }
+        });
     } catch (err) {
         throw err;
     }
 
     //select a random message from the DB
     let selectedMessages = [];
-    const humanMessageResults = allMessages.filter(element => !element.author_isBot);
+    const humanMessageResults = allMessages.filter(m => !m.author.isBot);
     let noHumanMessages = (humanMessageResults.length === 0);
     if (noHumanMessages) {
         await sendMessage(`There were no messages on ${moment(timestamp).format("dddd MMMM Do YYYY")}`, channel);
         return false;
     } else {
         if (allMessages.length < 3) {
-            console.log(`<3 messages sent this day`);
+            logMessage(`<3 messages sent this day`, 4);
             selectedMessages = allMessages;
         } else {
             //try to select a non-bot message
@@ -122,14 +120,14 @@ const execute = async function (client, message, args, forceGuildID = null, forc
         for (const messageRow of selectedMessages) {
             let humanTimedate = moment(messageRow.timestamp).format("dddd, MMMM Do YYYY @ hh:mm:ss a");
             let embedMessage = new Discord.MessageEmbed()
-                .setAuthor(messageRow.author_displayName, messageRow.author_avatarURL);
+                .setAuthor(messageRow.author.displayName, messageRow.author.avatarUrl);
             if (messageRow.content) {
                 embedMessage.addField("\u200b", messageRow.content)
             }
             embedMessage.addField("\u200b", "\u200b");
-            embedMessage.addField(humanTimedate, `[**Jump to Message**](https://discord.com/channels/${messageRow.guild}/${messageRow.channel}/${messageRow.id})`);
-            if (messageRow.attachmentURL) {
-                embedMessage.setImage(messageRow.attachmentURL);
+            embedMessage.addField(humanTimedate, `[**Jump to Message**](https://discord.com/channels/${messageRow.guildId}/${messageRow.channelId}/${messageRow.id})`);
+            if (messageRow.attachments.length > 0) {
+                embedMessage.setImage(messageRow.attachments[0].attachmentUrl);
             }
             try {
                 await sendMessage(embedMessage, channel);
@@ -146,9 +144,13 @@ const execute = async function (client, message, args, forceGuildID = null, forc
 //module export
 module.exports = {
     name: name,
+    aliases: aliases,
     description: description,
     params: params,
+    examples: examples,
     execute: execute,
+    allowedContexts: allowedContexts,
+    adminOnly: adminOnly,
 }
 
 //helper functions

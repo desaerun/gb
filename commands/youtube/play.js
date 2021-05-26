@@ -16,13 +16,18 @@ const params = [
         default: "L4D2 jockey sounds",
     }
 ];
+const allowedContexts = [
+    "text",
+    "dm",
+];
+const adminOnly = false;
 
 //main
 let queue = [];
 let playing = false;
 let currentSong = {};
 
-const execute = async function (client, message, args) {
+const execute = async function (message, args) {
     if (!message.member.voice.channel) {
         await sendMessage(`You must be in a voice channel to use this command.`, message.channel);
         return false;
@@ -55,6 +60,8 @@ module.exports = {
     description: description,
     params: params,
     execute: execute,
+    allowedContexts: allowedContexts,
+    adminOnly: adminOnly,
     listQueue: listQueue,
     stopPlaying: stopPlaying,
     skipSong: skipSong,
@@ -67,6 +74,7 @@ module.exports = {
 //helper functions
 /**
  * Begins playing the song, or, if something is already playing, adds it to the queue.
+ *
  * @param song - the object with song information, from ytsr
  * @param textChannel - the object representing the Discord text channel that messages should be sent to.
  * @param voiceChannel - the object representing the Discord voice channel the bot should join and play the song to.
@@ -77,7 +85,8 @@ async function playSong(song, textChannel, voiceChannel) {
         addSongToTopOfQueue(song);
     } else {
         addSongToQueue(song);
-        await sendMessage(`Added **${suppressUrls(song.title)}** to the queue in position #${queue.length}`, textChannel);
+        await sendMessage(`Added **${suppressUrls(song.title)}** to the queue in position #${queue.length}`,
+            textChannel, null, true);
     }
     if (!playing) {
         await playNextSong(textChannel, voiceChannel);
@@ -86,6 +95,7 @@ async function playSong(song, textChannel, voiceChannel) {
 
 /**
  * Plays the next song in the queue, or leaves the channel if there are no songs remaining.
+ *
  * @param textChannel - the object representing the Discord text channel that messages should be sent to.
  * @param voiceChannel - the object representing the Discord voice channel the bot should join and play the song to.
  * @returns {Promise<void>}
@@ -113,7 +123,7 @@ async function playNextSong(textChannel, voiceChannel) {
                 }
             });
         } catch (e) {
-            await sendMessage(`Failed to play song ${song.title}: ${e}`, textChannel);
+            await sendMessage(`Failed to play song ${song.title}: ${e}`, textChannel, null, true);
             playing = false;
         }
     } else {
@@ -125,6 +135,7 @@ async function playNextSong(textChannel, voiceChannel) {
 
 /**
  * Stops playing the current song and puts it back at the top of the queue.
+ *
  * @param textChannel - the object representing the Discord text channel that messages should be sent to.
  * @returns {Promise<void>}
  */
@@ -143,6 +154,7 @@ async function stopPlaying(textChannel) {
 
 /**
  * Resumes playing at the top of the queue without adding a new song.
+ *
  * @param textChannel - the object representing the Discord text channel that messages should be sent to.
  * @param voiceChannel - the object representing the Discord voice channel the bot should join and play the song to.
  * @returns {Promise<void>}
@@ -161,6 +173,7 @@ async function resumePlaying(textChannel, voiceChannel) {
 
 /**
  * Skips the current song and plays the next song in the queue, or leaves the channel if the queue is now empty.
+ *
  * @param textChannel - the object representing the Discord text channel that messages should be sent to.
  * @returns {Promise<void>}
  */
@@ -169,7 +182,7 @@ async function skipSong(textChannel) {
         await sendMessage(`There is no song currently playing.`, textChannel);
         return;
     }
-    await sendMessage(`Skipping **${suppressUrls(currentSong.song.title)}**`, textChannel);
+    await sendMessage(`Skipping **${currentSong.song.title}**`, textChannel, null, true);
     await playNextSong(textChannel, currentSong.voiceChannel);
     if (!playing && queue.length === 0) {
         await sendMessage(`End of song queue.`, textChannel);
@@ -178,6 +191,7 @@ async function skipSong(textChannel) {
 
 /**
  * Lists the song that is currently playing
+ *
  * @param textChannel - the object representing the Discord text channel that messages should be sent to.
  * @param showProgressBar - whether or not to show a progress bar
  * @returns {Promise<void>}
@@ -203,6 +217,7 @@ async function nowPlaying(textChannel, showProgressBar = true) {
 
 /**
  * Lists the songs currently in the song queue.
+ *
  * @param textChannel - the object representing the Discord text channel that messages should be sent to.
  * @returns {Promise<void>}
  */
@@ -229,11 +244,12 @@ async function listQueue(textChannel) {
     const totalDurationString = secondsToDurationString(totalDurationSeconds, 3);
     queueMessageArr.push(`Total duration: ${totalDurationString}`);
     let queueMessage = queueMessageArr.join("\n");
-    await sendMessage(queueMessage, textChannel, true);
+    await sendMessage(queueMessage, textChannel, null, true);
 }
 
 /**
  * Adds a song to the queue array
+ *
  * @param song - the object with song information, from ytsr
  */
 function addSongToQueue(song) {
@@ -242,6 +258,7 @@ function addSongToQueue(song) {
 
 /**
  * Adds a song to the top of the queue.
+ *
  * @param song - the object with song information, from ytsr
  */
 function addSongToTopOfQueue(song) {
@@ -250,6 +267,7 @@ function addSongToTopOfQueue(song) {
 
 /**
  * Empties the song queue.
+ *
  * @param textChannel - the object representing the Discord text channel that messages should be sent to.
  * @returns {Promise<void>}
  */
@@ -263,6 +281,7 @@ async function clearQueue(textChannel) {
 
 /**
  * computes the remaining time in seconds, given a duration and the amount of time elapsed
+ *
  * @param duration
  * @param elapsed - the number of seconds that have elapsed
  * @returns {number}
@@ -273,6 +292,7 @@ function timeRemaining(duration, elapsed) {
 
 /**
  * converts a duration string into a number of seconds
+ *
  * @param durationString - a duration string, eg. "1:23:45" or "12:34"
  * @returns {number}
  */
@@ -299,6 +319,7 @@ function durationStringToSeconds(durationString) {
  * Generates a string representing the number of hours / minutes / seconds in format hh:ii:ss, given a number of seconds
  * A second parameter can be passed to specify the level of precision (whether or not a 0 should be printed on 0 hours)
  * Note: hours will always be printed if hours are > 0
+ *
  * @param seconds - the number of seconds
  * @param precision - 2 or 3, 3 will print hours as well even if there is 0 hours
  * @returns {string}
@@ -322,7 +343,8 @@ function secondsToDurationString(seconds, precision = 2) {
 }
 
 /**
- * generates a text status bar
+ * generates a cute text status bar
+ *
  * @param width
  * @param progress
  * @param total

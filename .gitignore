@@ -1,5 +1,5 @@
 .idea/
-
+log/
 node_modules/
 github_update.txt
 
@@ -8,3 +8,4 @@ github_update.txt
 .env
 todo
 data/cryptoCoinsList.json
+data/attachments

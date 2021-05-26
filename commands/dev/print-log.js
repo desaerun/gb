@@ -1,7 +1,6 @@
 //imports
 const readline = require("readline");
 const fs = require("fs");
-const {isAdmin} = require("../../tools/utils");
 const {sendMessage} = require("../../tools/sendMessage");
 
 //module settings
@@ -15,13 +14,14 @@ const params = [
         default: 10,
     }
 ];
+const allowedContexts = [
+    "text",
+    "dm",
+];
+const adminOnly = true;
 
 //main
-const execute = async function (client, message, args) {
-    if (!isAdmin(message.member)) {
-        await sendMessage("You do not have the authority to perform that function.", message.channel);
-        return false;
-    }
+const execute = async function (message, args) {
     const logFiles = [
         {
             name: "bot",
@@ -66,6 +66,8 @@ module.exports = {
     description: description,
     params: params,
     execute: execute,
+    allowedContexts: allowedContexts,
+    adminOnly: adminOnly,
 }
 
 // Helper functions
@@ -100,24 +102,4 @@ async function readLog(file, numLines = 10) {
     } catch (e) {
         throw e;
     }
-
-    // return new Promise(function (resolve, reject) {
-    //     let lineReader = readline.createInterface({
-    //         input: fs.createReadStream(file),
-    //     });
-    //
-    //     let lines = [];
-    //
-    //     lineReader
-    //         .on("line", function (line) {
-    //             let length = lines.push(line);
-    //
-    //             if (length === numLines) {
-    //                 lineReader.close();
-    //             }
-    //         })
-    //         .on("close", () => {
-    //             resolve(lines.join("\n"));
-    //         })
-    // });
 }

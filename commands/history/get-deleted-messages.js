@@ -3,18 +3,16 @@ const Discord = require("discord.js");
 const moment = require("moment");
 const {sendMessage} = require("../../tools/sendMessage");
 
-// mysql
-const mysql = require("mysql2/promise");
-const db = require("../../config/db");
-const pool = mysql.createPool({
-    ...db,
-    waitForConnections: true,
-    connectionLimit: 100,
-    queueLimit: 0,
-});
+//prisma
+const {PrismaClient} = require("@prisma/client");
+const prisma = new PrismaClient();
 
 //module settings
 const name = "get-deleted-messages";
+const aliases = [
+    "deleted",
+    "deleted-messages",
+];
 const description = "Retrieves the recently deleted messages by the mentioned user";
 const params = [
     {
@@ -30,69 +28,76 @@ const params = [
         default: 3,
     },
 ];
+const examples = [
+    `@desaerun`,
+    `187048556643876864`,
+];
+const allowedContexts = [
+    "text",
+];
+const adminOnly = false;
 
 //main
-const execute = async function (client, message, args) {
+const execute = async function (message, args) {
     let userId = args[0];
     if (message.mentions.users.first()) {
         userId = message.mentions.users.first().id;
+    } else if (userId === params[0].default) {
+        userId = message.author.id;
     }
     const numMessages = args[1] ? args[1] : params[1].default;
     let deletedMessages;
     try {
-        const query = "SELECT" +
-            "    m.id," +
-            "    m.content," +
-            "    m.guild," +
-            "    m.channel," +
-            "    m.author," +
-            "    m.timestamp," +
-            "    m.deleted," +
-            "    a.url AS attachmentURL," +
-            "    author.displayName AS author_displayName," +
-            "    author.avatarURL AS author_avatarURL," +
-            "    author.isBot AS author_isBot" +
-            " FROM" +
-            "    messages m" +
-            " LEFT JOIN attachments a ON" +
-            "    m.id = a.messageId" +
-            " LEFT JOIN authors author ON" +
-            "    m.author=author.id" +
-            " WHERE" +
-            "    m.author = ?" +
-            " AND" +
-            "    m.channel = ?" +
-            " AND" +
-            "    m.deleted IS NOT NULL" +
-            " AND" +
-            "    m.deletedBy = ?" +
-            " ORDER BY" +
-            "    m.timestamp" +
-            " DESC" +
-            " LIMIT ?";
-        [deletedMessages] = await pool.query(query, [userId, message.channel.id, "user", +numMessages]);
+        deletedMessages = await prisma.message.findMany({
+            where: {
+                authorId: userId,
+                channelId: message.channel.id,
+                NOT: {
+                    OR: {
+                        deletedAt: null,
+                        deletedBy: "uwu"
+                    }
+                },
+            },
+            orderBy: {
+                timestamp: "desc"
+            },
+            include: {
+                author: true,
+                attachments: true,
+            }
+        });
     } catch (e) {
         throw e;
     }
-    if (deletedMessages.length > 0) {
-        try {
-            await sendMessage(`${deletedMessages[0].author_displayName}'s last ${numMessages} deleted messages:`, message.channel);
-        } catch (e) {
-            console.error("There was an error sending the embed message:", e);
-            throw e;
-        }
-        for (const deletedMessage of deletedMessages) {
+    const totalDeletedMessages = deletedMessages.length;
+    if (totalDeletedMessages > 0) {
+        const author = deletedMessages[0].author;
+        const deletedMessagesSlice = deletedMessages.slice(0, numMessages);
+
+        await sendMessage(`${author.displayName}'s most recent ${Math.min(numMessages, totalDeletedMessages)} `
+            + `(of ${totalDeletedMessages}) deleted messages:`,
+            message.channel
+        );
+        for (const deletedMessage of deletedMessagesSlice) {
             let deletedMessageEmbed = new Discord.MessageEmbed()
-                .setAuthor(deletedMessage.author_displayName, deletedMessage.author_avatarURL)
+                .setAuthor(author.displayName, author.avatarUrl)
                 .setFooter(`Message ID: ${deletedMessage.id}`);
             if (deletedMessage.content) {
                 deletedMessageEmbed.addField("\u200b", deletedMessage.content)
             }
             deletedMessageEmbed.addField("\u200b", "\u200b"); //spacer
-            deletedMessageEmbed.addField("Posted:", moment(deletedMessage.timestamp).format("dddd, MMMM Do YYYY @ hh:mm:ss a"));
-            deletedMessageEmbed.addField("Deleted:", moment(deletedMessage.deleted).format("dddd, MMMM Do YYYY @ hh:mm:ss a"))
-            if (deletedMessage.attachmentURL) {
-                deletedMessageEmbed.setImage(deletedMessage.attachmentURL);
+            deletedMessageEmbed.addField("Message History:",
+                `Use \`-message-history ${deletedMessage.id}\` to retrieve the message history.`
+            );
+            deletedMessageEmbed.addField("Posted:",
+                moment(deletedMessage.timestamp).format("dddd, MMMM Do YYYY @ hh:mm:ss a"),
+                true);
+            deletedMessageEmbed.addField("Deleted:",
+                moment(deletedMessage.deletedAt).format("dddd, MMMM Do YYYY @ hh:mm:ss a"),
+                true);
+            if (deletedMessage.attachments.length > 0) {
+                deletedMessageEmbed.setImage(deletedMessage.attachments[0].url);
             }
             try {
                 await sendMessage(deletedMessageEmbed, message.channel);
@@ -109,9 +114,13 @@ const execute = async function (client, message, args) {
 //module export
 module.exports = {
     name: name,
+    aliases: aliases,
     description: description,
     params: params,
+    examples: examples,
     execute: execute,
+    allowedContexts: allowedContexts,
+    adminOnly: adminOnly,
 }
 
 //helper functions

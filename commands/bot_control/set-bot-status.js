@@ -1,6 +1,4 @@
 //imports
-const {sendMessage} = require("../../tools/sendMessage");
-const {isAdmin} = require("../../tools/utils");
 
 
 //module settings
@@ -12,22 +10,24 @@ const params = [
         type: "String",
         description: "The value to set as the bots status",
         default: [
-            "eating chicken and grape drank",
+            "eating chicken and drinking grape drank",
             "UwUing",
             "since 2020",
             "your mother",
         ],
     }
 ];
+const allowedContexts = [
+    "text",
+    "dm",
+];
+const adminOnly = true;
+
 
 //main
-const execute = async function (client, message, args) {
-    if (!isAdmin(message.member)) {
-        await sendMessage("You do not have the authority to perform that function.", message.channel);
-        return false;
-    }
+const execute = async function (message, args) {
     let arg_string = args.join(" ");
-    await client.user.setActivity(arg_string, {type: "PLAYING"});
+    message.client.user.setActivity(arg_string, {type: "PLAYING"}).then(() => {});
 }
 
 //module export
@@ -36,6 +36,8 @@ module.exports = {
     description: description,
     params: params,
     execute: execute,
+    allowedContexts: allowedContexts,
+    adminOnly: adminOnly,
 };
 
 //helper functions

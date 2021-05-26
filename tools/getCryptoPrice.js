@@ -1,5 +1,7 @@
 const fs = require("fs");
 const axios = require("axios");
+const {mkdirRecursiveSync} = require("./utils");
+const {logMessage} = require("./utils");
 
 /**
  * gets the coin + pricing info for a given set of symbols.
@@ -24,6 +26,9 @@ const axios = require("axios");
  * }
  */
 exports.getCryptoInfoWithPriceData = async function (symbols) {
+    if (!Array.isArray(symbols)) {
+        symbols = [symbols];
+    }
     const coinData = await getBasicCryptoInfo(symbols);
     let validSymbols = Object.keys(coinData);
 
@@ -102,6 +107,7 @@ exports.getBasicCryptoInfo = getBasicCryptoInfo;
 
 /**
  * gets pricing info about the given symbol from Coinbase API
+ *
  * @param symbol the symbol to retrieve pricing data for
  * @returns {Promise<{volume: *, last: any, id, source: string, updated: number, open}|boolean>} a promise that
  * resolves to an object containing the pricing data
@@ -122,10 +128,10 @@ async function getCoinbasePriceData(symbol) {
                 source: "Coinbase",
             };
         } else if (coinbaseRequest.status === 404) {
-            console.log(`Got 404 error for coinbase for ${symbol}`);
+            logMessage(`Got 404 error for coinbase for ${symbol}`, 3);
             return false;
         } else {
-            throw new Error(`HTTP status was not 200: ${coinbaseRequest.status}`);
+            return null;
         }
     } catch (e) {
         return null;
@@ -134,6 +140,7 @@ async function getCoinbasePriceData(symbol) {
 
 /**
  * gets price data about given coin symbols from coinGecko, in the given currency
+ *
  * @param coinData an object with the basic coin data, {
  *     id: the coinGecko coin ID
  *     symbol: the symbol representing the coin
@@ -177,15 +184,16 @@ async function getCoinGeckoPriceData(coinData, vsCurrency = "usd") {
             }
             return coins;
         } else {
-            throw new Error(`HTTP status was not 200: ${coinGeckoRequest.status}`);
+            logMessage(`There was an unexpected error retrieving CoinGecko price data.`, 2);
         }
     } catch (e) {
-        console.log(`There was an unexpected error retrieving CoinGecko price data: ${e}`);
+        return null;
     }
 }
 
 /**
  * retrieves the list of coins, either from the API or cached.
+ *
  * @returns {Promise<any>} a promise that resolves to the full list of basic coin data
  */
 async function getCoinGeckoCoinsList() {
@@ -203,6 +211,7 @@ async function getCoinGeckoCoinsList() {
             //if it's older than the allowed age, fetch data from API and update the cache.
             try {
                 coinsListData = await getCoinGeckoAPICoinsList();
+                mkdirRecursiveSync("./data/");
                 fs.writeFileSync(cryptoCoinsListFile, JSON.stringify(coinsListData));
                 return coinsListData;
             } catch (e) {
@@ -219,6 +228,7 @@ async function getCoinGeckoCoinsList() {
         } catch (e) {
             throw new Error(e);
         }
+        mkdirRecursiveSync("./data/");
         fs.writeFileSync(cryptoCoinsListFile, JSON.stringify(coinsListData));
         return coinsListData;
     }
@@ -226,16 +236,17 @@ async function getCoinGeckoCoinsList() {
 
 /**
  * Fetch the basic coin info from the coingecko API
+ *
  * @returns {Promise<any>} a promise that resolves to the full list of coins from the coingecko API
  */
 async function getCoinGeckoAPICoinsList() {
-    console.log("Coins list file doesn't exist or is out of date, fetching from CoinGecko API.");
+    logMessage("Coins list file doesn't exist or is out of date, fetching from CoinGecko API.", 3);
     try {
         const coinsListRequest = await axios.get("https://api.coingecko.com/api/v3/coins/list");
         if (coinsListRequest.status === 200) {
             return coinsListRequest.data;
         } else {
-            throw new Error(`HTTP status was not 200: ${coinsListRequest.status}`);
+            logMessage(`HTTP status for coinGecko coins list was not 200: ${coinsListRequest.status}`);
         }
     } catch (e) {
         throw new Error(`There was an unexpected error retrieving API coin list: ${e}`);

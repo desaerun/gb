@@ -1,5 +1,10 @@
 const CONFIG = require("../config/config");
 const fs = require("fs");
+const readline = require("readline");
+
+//prisma
+const {PrismaClient} = require("@prisma/client");
+const prisma = new PrismaClient();
 
 /**
  * Gets a random member from an array.
@@ -24,7 +29,7 @@ exports.getRandomInt = function (min, max) {
  * Suppresses URLs posted in discord messages from auto-generating Embeds by wrapping them in <>.
  * Returns the input string but with any URLs wrapped in <>.
  * @param text
- * @returns {*}
+ * @returns {string}
  */
 exports.suppressUrls = function (text) {
     const urlRegex = '((?!mailto:)(?:(?:http|https|ftp)://)(?:\\S+(?::\\S*)?@)?(?:(?:(?:[1-9]\\d?|1\\d\\d|2[01]\\d|22[0-3])(?:\\.(?:1?\\d{1,2}|2[0-4]\\d|25[0-5])){2}(?:\\.(?:[0-9]\\d?|1\\d\\d|2[0-4]\\d|25[0-4]))|(?:(?:[a-z\\u00a1-\\uffff0-9]+-?)*[a-z\\u00a1-\\uffff0-9]+)(?:\\.(?:[a-z\\u00a1-\\uffff0-9]+-?)*[a-z\\u00a1-\\uffff0-9]+)*(?:\\.(?:[a-z\\u00a1-\\uffff]{2,})))|localhost)(?::\\d{2,5})?(?:(/|\\?|#)[^\\s]*)?)';
@@ -55,13 +60,24 @@ exports.logMessage = function (message, minVerbosity = 3) {
     if (CONFIG.VERBOSITY >= minVerbosity) {
         //convert objects to JSON.stringify
         if (typeof (message) === "object" && message !== null) {
-            console.log(JSON.stringify(message));
+            try {
+                console.log(JSON.stringify(message));
+            } catch (e) {
+                console.log(message);
+            }
             return;
         }
         console.log(message);
     }
 }
 
+
+/**
+ * determines if a given string is a URL.
+ *
+ * @param text - the string to check
+ * @returns {boolean} - true if the string is a URL, false otherwise.
+ */
 exports.isUrl = function (text) {
     const urlRegex = '((?!mailto:)(?:(?:http|https|ftp)://)(?:\\S+(?::\\S*)?@)?(?:(?:(?:[1-9]\\d?|1\\d\\d|2[01]\\d|22[0-3])(?:\\.(?:1?\\d{1,2}|2[0-4]\\d|25[0-5])){2}(?:\\.(?:[0-9]\\d?|1\\d\\d|2[0-4]\\d|25[0-4]))|(?:(?:[a-z\\u00a1-\\uffff0-9]+-?)*[a-z\\u00a1-\\uffff0-9]+)(?:\\.(?:[a-z\\u00a1-\\uffff0-9]+-?)*[a-z\\u00a1-\\uffff0-9]+)*(?:\\.(?:[a-z\\u00a1-\\uffff]{2,})))|localhost)(?::\\d{2,5})?(?:(/|\\?|#)[^\\s]*)?)';
     const rE = new RegExp(urlRegex, "i");
@@ -70,8 +86,9 @@ exports.isUrl = function (text) {
 
 /**
  * generates the n-fold Cartesian product of a set of arrays.
+ *
  * @param arrays -- the arrays to merge
- * @returns {String[]} --
+ * @returns {String[]} -- an array containing the cartesian products
  */
 exports.cartesianProduct = function (...arrays) {
     return arrays.reduce((acc, val) => {
@@ -84,20 +101,50 @@ exports.cartesianProduct = function (...arrays) {
 }
 
 /**
- * Checks whether or not the user is an administrator.
- * @param user
- * @returns {boolean}
+ * Checks whether or not the user is an administrator, according to the database.
+ *
+ * @param userId - the ID of the user
+ * @returns {Promise<boolean>} - Promise that resolves to true if user is Admin, false otherwise
  */
-exports.isAdmin = function (user) {
-    return user.hasPermission("ADMINISTRATOR");
+exports.isAdmin = async function (userId) {
+    const userFromDb = await prisma.author.findUnique({
+        where: {
+            id: userId,
+        }
+    });
+    if (!userFromDb) return false;
+    return !!userFromDb.isAdmin;
+}
+
+/**
+ * Checks whether or not the user is a super administrator, according to the database.
+ *
+ * @param userId - the ID of the user
+ * @returns {Promise<boolean>} - Promise that resolves to true if user is SuperAdmin, false otherwise
+ */
+exports.isSuperAdmin = async function (userId) {
+    const userFromDb = await prisma.author.findUnique({
+        where: {
+            id: userId,
+        }
+    });
+    if (!userFromDb) return false;
+    return !!userFromDb.isSuperAdmin;
 }
 
 /**
  * Synchronously "touch"es a file (linux command).  This will create the file if it does not exists,
- * if it does exist it will simply update the Modified time on the file.
- * @param file -- the path of the file
+ * if it does exist it will simply update the Modified time on the file. It will also create the directory the
+ * file is supposed to exist in, if it does not exist.
+ *
+ * @param file -- the path to the file
  */
 exports.touchFileSync = function (file) {
+    const filePathParts = file.split("/");
+    filePathParts.pop();
+    const filePath = filePathParts.join("");
+    mkdirRecursiveSync(filePath);
+
     const now = new Date();
     try {
         fs.utimesSync(file, now, now);
@@ -108,10 +155,17 @@ exports.touchFileSync = function (file) {
 
 /**
  * Asynchronously "touch"es a file (linux command).  This will create the file if it does not exists,
- * if it does exist it will simply update the Modified time on the file.
- * @param file
+ * if it does exist it will simply update the Modified time on the file. It will also create the directory the
+ * file is supposed to exist in, if it does not exist.
+ *
+ * @param file - the path to the file
  */
-exports.touchFile = function (file) {
+exports.touchFile = async function (file) {
+    const filePathParts = file.split("/");
+    filePathParts.pop();
+    const filePath = filePathParts.join("");
+    await mkdirRecursive(filePath);
+
     const now = new Date();
     fs.utimes(file, now, now, err => {
         if (err) {
@@ -126,12 +180,59 @@ exports.touchFile = function (file) {
 }
 
 /**
+ * makes the given directory synchronously, if it does not exist.
+ * @param path - the directory to create
+ */
+mkdirRecursiveSync = function (path) {
+    fs.mkdirSync(path, {recursive: true});
+}
+exports.mkdirRecursiveSync = mkdirRecursiveSync;
+
+/**
+ * makes the given directory asynchronously, if it does not exist.
+ * @param path - the directory to create
+ */
+mkdirRecursive = async function (path) {
+    await fs.promises.mkdir(path, {recursive: true});
+}
+exports.mkdirRecursive = mkdirRecursive;
+
+/**
+ * Reads the top line of a file and returns it.
+ *
+ * @param filename
+ * @returns Promise<string>
+ */
+exports.readSingleLine = function (filename) {
+    return new Promise((resolve, reject) => {
+        let input;
+        if (!fs.existsSync(filename)) {
+            resolve("");
+        }
+        input = fs.createReadStream(filename);
+
+        let lineReader = readline.createInterface({input});
+        lineReader.on("line", (line) => {
+            lineReader.close();
+            resolve(line);
+        });
+        lineReader.on("error", reject);
+
+        input.on("end", () => {
+            resolve("");
+        })
+    });
+}
+
+/**
  * formats a number as currency, precision is based on the price
+ *
  * @param n the number to format
  * @param maxPlaces maximum number of decimal places
+ * @param currency - the currency code to format as (default USD)
  * @returns {string}
  */
-exports.formatMoney = function (n, maxPlaces) {
+exports.formatMoney = function (n, maxPlaces, currency = "USD") {
     let minPlaces = 2;
     if (!maxPlaces) {
         maxPlaces = 2;
@@ -148,7 +249,7 @@ exports.formatMoney = function (n, maxPlaces) {
     const currencyFormat = new Intl.NumberFormat("en-US",
         {
             style: "currency",
-            currency: "USD",
+            currency: currency,
             minimumFractionDigits: minPlaces,
             maximumFractionDigits: maxPlaces,
         });
