@@ -85,7 +85,8 @@ async function playSong(song, textChannel, voiceChannel) {
         addSongToTopOfQueue(song);
     } else {
         addSongToQueue(song);
-        await sendMessage(`Added **${suppressUrls(song.title)}** to the queue in position #${queue.length}`, textChannel);
+        await sendMessage(`Added **${suppressUrls(song.title)}** to the queue in position #${queue.length}`,
+            textChannel, null, true);
     }
     if (!playing) {
         await playNextSong(textChannel, voiceChannel);
@@ -122,7 +123,7 @@ async function playNextSong(textChannel, voiceChannel) {
                 }
             });
         } catch (e) {
-            await sendMessage(`Failed to play song ${song.title}: ${e}`, textChannel);
+            await sendMessage(`Failed to play song ${song.title}: ${e}`, textChannel, null, true);
             playing = false;
         }
     } else {
@@ -181,7 +182,7 @@ async function skipSong(textChannel) {
         await sendMessage(`There is no song currently playing.`, textChannel);
         return;
     }
-    await sendMessage(`Skipping **${suppressUrls(currentSong.song.title)}**`, textChannel);
+    await sendMessage(`Skipping **${currentSong.song.title}**`, textChannel, null, true);
     await playNextSong(textChannel, currentSong.voiceChannel);
     if (!playing && queue.length === 0) {
         await sendMessage(`End of song queue.`, textChannel);
@@ -243,7 +244,7 @@ async function listQueue(textChannel) {
     const totalDurationString = secondsToDurationString(totalDurationSeconds, 3);
     queueMessageArr.push(`Total duration: ${totalDurationString}`);
     let queueMessage = queueMessageArr.join("\n");
-    await sendMessage(queueMessage, textChannel, true);
+    await sendMessage(queueMessage, textChannel, null, true);
 }
 
 /**

@@ -28,6 +28,8 @@ const execute = async function (message, args) {
             if (message.channel.type === "text") {
                 await sendMessage("I have DM'ed you a list of commands, please check your messages.", message.channel);
             }
+            //todo: some users might have DMs disabled, this needs to at least generate an error message directing
+            // them to add the bot or enable DMs
             await sendMessage(generateCommandList(message.client.commands, message), message.author);
         } catch (e) {
             throw e;
