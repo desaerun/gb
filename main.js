@@ -35,12 +35,12 @@ client.once("ready", async () => {
         setNicknameAllGuilds(),     //set bot nickname in all guilds to its "normal" nickname
         sendOnlineStatusMessage(),  // send online status message
         setInitialBotStatus(),      // set bot status message
-        startCryptoWatchers(),      // start crypto-watcher cron
+        startCryptoWatchers(client),      // start crypto-watcher cron
     ]).then(() => {
         logMessage("Bot start-up process completed successfully.", 3);
         catchUpOnMessages();        // catch up on all messages missed while the bot was offline
-    }).catch(() => {
-        logMessage("There was an error completing the start-up process.", 1);
+    }).catch((e) => {
+        logMessage(`There was an error completing the start-up process: ${e}`, 1);
     });
 });
 
